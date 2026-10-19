@@ -1,0 +1,27 @@
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.token
+
+# Temp, backup and caches
+*.tmp
+*.temp
+*.bak
+*.log
+.DS_Store
+Thumbs.db
+__pycache__/
+.cache/
+.vscode/
+
+# Roblox local/autosave files — não versionar binários por padrão
+*.rbxl
+*.rbxlx
+*.rbxm
+*.rbxmx
+*.rbxl.lock
+
+# Note: if using Rojo later, explicitly review project layout and tracked assets.
