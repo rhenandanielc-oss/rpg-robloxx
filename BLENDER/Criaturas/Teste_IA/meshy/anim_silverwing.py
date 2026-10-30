@@ -29,7 +29,10 @@ ENCOLHE = float(os.environ.get("ENCOLHE", "0.62")); ENCOLHE_EXTRA = {"v": 1.0}
 # giro das patas no voo (graus, para TRAS): traseiras / dianteiras; 0 = usa ANG_QUADRIL_VOO nas duas
 ANG_VOO_TRAS = float(os.environ.get("ANG_VOO_TRAS", "0")); ANG_VOO_FRENTE = float(os.environ.get("ANG_VOO_FRENTE", "0"))
 ENCOLHE_FRENTE = float(os.environ.get("ENCOLHE_FRENTE", str(ENCOLHE)))   # dianteiras: menos encolhidas, deitadas para tras
-PLANEIO_ABAIXA = float(os.environ.get("PLANEIO_ABAIXA", "0"))   # graus: baixa as pontas das asas no planeio
+PLANEIO_ABAIXA = float(os.environ.get("PLANEIO_ABAIXA", "0"))
+# fator da queda da base da cauda (1 = Silverwing). Caudas que ja descem no repouso (CR_Dragao) usam ~0: senao a
+# cauda encosta no chao e o apoio a dobra para cima em gancho
+CAUDA_BASE_K = float(os.environ.get("CAUDA_BASE_K", "1"))   # graus: baixa as pontas das asas no planeio
 sc = bpy.context.scene; sc.render.fps = FPS
 A = bpy.data.objects["Silverwing_Rig"]; M = bpy.data.objects["Silverwing"]
 for m in M.modifiers: m.show_viewport = False
@@ -107,6 +110,9 @@ DIR_DOBRA = {
     "wing_feather_2_0": (-0.02, 0.84, -0.48), "wing_feather_2_1": (-0.04, 0.86, -0.46), "wing_feather_2_tip": (-0.06, 0.87, -0.44),
     "wing_feather_1_0": (0.10, 0.75, 0.05), "wing_feather_1_1": (0.08, 0.80, 0.0), "wing_feather_1_tip": (0.06, 0.82, -0.05),
 }
+if os.environ.get("DOBRA_JSON"):                      # dobra propria de outro dragao (mesmo esqueleto, asas diferentes)
+    import json
+    DIR_DOBRA.update({k: tuple(v) for k, v in json.load(open(os.environ["DOBRA_JSON"], encoding="utf-8")).items()})
 def _basis_dobra(resp=0.0):
     """basis (local) de cada osso de asa para a dobra; resp (-1..1) = pequena variacao (respiracao/ajuste)"""
     W = {}; out = {}
@@ -250,6 +256,7 @@ def cauda(p, base_cima, curv, lat, chao=True, onda=None):
     """base_cima: graus no 1o segmento; curv: graus somados por segmento (curva continua);
     lat: lista de desvios laterais (+esquerda) por segmento; chao: a cauda deita no chao (z>=0.035)"""
     W, _ = resolver(p)
+    base_cima *= CAUDA_BASE_K
     # curva CONTINUA: a queda da base se distribui nos 4 primeiros segmentos (antes vinha toda no 1o = "quebra" no
     # quadril) e a subida de apoio comeca so no meio da cauda
     DIST = [0.34, 0.28, 0.22, 0.16, 0, 0, 0]; SUB = [0, 0, 0, 0.5, 1, 1, 0.8]
