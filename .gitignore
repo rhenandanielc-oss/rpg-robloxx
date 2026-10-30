@@ -48,3 +48,5 @@ BLENDER/**/anim_json*/
 .claude/*.lock
 sourcemap.json
 .obsidian/
+BLENDER/**/meshy_tex/
+BLENDER/**/final/
