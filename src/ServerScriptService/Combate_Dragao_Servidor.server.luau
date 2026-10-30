@@ -11,10 +11,12 @@ local function dragao(m) return m:IsA("Model") and m:FindFirstChildOfClass("Anim
 for _, m in ipairs(workspace:GetChildren()) do if dragao(m) then N.registrar(m) end end
 workspace.ChildAdded:Connect(function(m) task.defer(function() if dragao(m) then N.registrar(m) end end) end)
 
--- escolha da IA (ofensiva): Ruptura Vulcanica quando ha alvo no leque de erupcao e o dragao esta no solo (com espaco
--- minimo entre usos alem da recarga, para nao ficar repetitiva), Tempestade contra grupos, cauda atras, mordida/garra perto,
--- sopro a media distancia, arremetida a longa distancia. So entram habilidades da forma (temHabilidade).
+-- escolha da IA (ofensiva): Coracao Infernal com alvos ao redor (solo ou ar; intervalo extra entre usos alem da
+-- recarga, para nao ficar repetitiva), Tempestade contra grupos, cauda atras, mordida/garra perto, sopro a media
+-- distancia, arremetida a longa distancia. So entram habilidades da forma (temHabilidade). Ruptura/Dominio so para
+-- formas que as tenham (o Montanhas nao tem mais, oficial 30/10).
 local ultimaRuptura = {}
+local ultimoCoracao = {}
 local function raiz(m) return m and (m:FindFirstChild("HumanoidRootPart") or m.PrimaryPart) end
 local function escolher_antigo(c, alvo)          -- substituida pela escolha tatica abaixo
 	local r = raiz(alvo); if not r then return nil end
@@ -77,10 +79,22 @@ local function escolher(c, alvo)
 	elseif d < 45 and not noAr and mesmoNivel then add(atras and "Cauda" or "Garra", 0.95)
 	elseif d < 45 then table.insert(bloqueio, "corpo a corpo: desnivel") end
 	if atras and d < 62 and mesmoNivel then add("Cauda", 1.0) end
-	-- Ruptura: so no solo (o Nucleo confirma), alvo no leque a frente, intervalo extra entre usos
+	-- Ruptura (outras formas): so no solo (o Nucleo confirma), alvo no leque a frente, intervalo extra entre usos
 	local R = Cfg.habilidades.Ruptura
-	if not noAr and mesmoNivel and d > 10 and d < R.aneis[#R.aneis] + 4 and not atras and os.clock() - (ultimaRuptura[c.m] or -99) > R.recarga * 1.6 then
+	if c:temHabilidade("Ruptura") and not noAr and mesmoNivel and d > 10 and d < R.aneis[#R.aneis] + 4 and not atras and os.clock() - (ultimaRuptura[c.m] or -99) > R.recarga * 1.6 then
 		add("Ruptura", perto >= 2 and 1.05 or 0.85)
+	end
+	-- Coracao Infernal: alvo(s) dentro do raio da lamina e na faixa de altura do plano dela (solo ou ar)
+	local CI = Cfg.habilidades.Coracao
+	if c:temHabilidade("Coracao") and os.clock() - (ultimoCoracao[c.m] or -99) > CI.recarga * 1.5 then
+		local naLamina = 0
+		for _, a in ipairs(c:alvosValidos()) do
+			local ra = raiz(a).Position
+			if Vector3.new(ra.X - p.X, 0, ra.Z - p.Z).Magnitude < CI.raioExterno * 0.9 and math.abs(ra.Y - b.Y) < CI.alturaFaixa + 6 then naLamina += 1 end
+		end
+		if naLamina >= 2 then add("Coracao", 1.15)
+		elseif naLamina == 1 and d > 18 then add("Coracao", 0.8)
+		elseif naLamina == 0 and d < CI.raioExterno then table.insert(bloqueio, "Coracao: alvo fora do plano da lamina") end
 	end
 	-- Tempestade: grupo de verdade (3+, ou 2 cercando/aleatorio), espaco livre acima para o impulso
 	if perto >= 3 or (perto >= 2 and (atrasN >= 1 or math.random() < 0.35)) then
@@ -107,6 +121,7 @@ local function escolher(c, alvo)
 			local ok, motivo = c:podeUsar(h)
 			if ok then
 				if h == "Ruptura" then ultimaRuptura[c.m] = os.clock() end
+				if h == "Coracao" then ultimoCoracao[c.m] = os.clock() end
 				c.m:SetAttribute("IA_Habilidade", h); c.m:SetAttribute("IA_Bloqueio", #bloqueio > 0 and table.concat(bloqueio, "; ") or nil)
 				return h
 			end
@@ -187,7 +202,17 @@ dbg.OnInvoke = function(cmd, nome, a, b)
 	if cmd == "trocar" then return c:trocarElemento(a) end
 	if cmd == "pode" then return c:podeUsar(a) end
 	if cmd == "auditar" then return table.concat(c:auditarDados(), "; ") end
-	if cmd == "lista" then return table.concat(Cfg.habilidadesForma[c.forma] or {}, ",") .. " | elementos=" .. table.concat(c:elementos(), ",") end
+	if cmd == "lista" then return table.concat(Cfg.habilidadesForma[c.forma] or {}, ",") .. " | passivas=" .. table.concat(Cfg.passivasForma[c.forma] or {}, ",") .. " | elementos=" .. table.concat(c:elementos(), ",") end
+	-- teste das passivas: dano direto vindo do modelo 'b' (nome) e estado das queimaduras / Sangue de Magma
+	if cmd == "ferir" then local fonte = workspace:FindFirstChild(b or ""); return N.ferir(fonte, m, a, "Fogo", "Teste", "leve") end
+	if cmd == "passivas" then
+		local q = {}
+		for alvo, porFonte in pairs(N.Passivas.queimas) do for fonte, x in pairs(porFonte) do
+			table.insert(q, ("%s<-%s fim=%.1fs renov=%d"):format(alvo.Name, fonte.Name, x.fim - workspace:GetServerTimeNow(), x.renov)) end end
+		local sf = m:GetAttribute("SangueMagmaFim")
+		return ("sangue=%s mult=%.2f vida=%s | queimas: %s"):format(sf and ("%.1fs"):format(sf - workspace:GetServerTimeNow()) or "-",
+			N.Passivas.multiplicadorOfensivo(m), tostring(m:GetAttribute("Vida")), table.concat(q, "; "))
+	end
 	if cmd == "escolher" then return escolher(c, b) end
 	if cmd == "info" then
 		local rec = {}; for h, t in pairs(c.recargas) do if t > os.clock() then table.insert(rec, ("%s %.1fs"):format(h, t - os.clock())) end end

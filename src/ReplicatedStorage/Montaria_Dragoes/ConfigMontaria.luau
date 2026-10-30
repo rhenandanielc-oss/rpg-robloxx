@@ -53,13 +53,14 @@ return {
 		pousar = {Enum.KeyCode.F, Enum.KeyCode.ButtonB},
 		subirAr = {Enum.KeyCode.E}, descerAr = {Enum.KeyCode.Q},          -- (29/10) E sobe / Q desce (prioridade sobre a camera)
 		desmontar = {Enum.KeyCode.X, Enum.KeyCode.DPadDown},
-		elemento = {Enum.KeyCode.Z, Enum.KeyCode.DPadUp},
-		habilidades = {                                                   -- ordem oficial das 4 habilidades
-			{"Sopro", Enum.KeyCode.One, Enum.KeyCode.ButtonR2},
-			{"Arremetida", Enum.KeyCode.Two, Enum.KeyCode.ButtonR1},
-			{"Tempestade", Enum.KeyCode.Three, Enum.KeyCode.ButtonX},
-			{"Ruptura", Enum.KeyCode.Four, Enum.KeyCode.DPadRight},
+		elemento = {Enum.KeyCode.Z, Enum.KeyCode.DPadUp},                  -- so liga em forma com MAIS de um elemento (nenhuma hoje)
+		habilidades = {                                                   -- ordem oficial das 4 ativas (oficial 30/10): {id, tecla, gamepad, rotulo}
+			{"Sopro", Enum.KeyCode.One, Enum.KeyCode.ButtonR2, "Sopro"},
+			{"Arremetida", Enum.KeyCode.Two, Enum.KeyCode.ButtonR1, "Arremetida"},
+			{"Tempestade", Enum.KeyCode.Three, Enum.KeyCode.ButtonX, "Tempestade"},
+			{"Coracao", Enum.KeyCode.Four, Enum.KeyCode.DPadRight, "Coração Inf."},
 		},
+		passivas = {SangueDeMagma = "Sangue de Magma", Burning = "Burning"},   -- exibicao no HUD (lista vem do atributo Passivas)
 	},
 	-- alturaAlvo: ACIMA do dorso (o pivo fica no chao; o dorso esta a ~34). Antes era 14 = dentro do tronco, e a camera
 	-- de oclusao do Roblox colava no corpo. No ar soma alturaVoo (os clipes de voo erguem o corpo 14 acima do pivo).

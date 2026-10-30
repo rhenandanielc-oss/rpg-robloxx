@@ -521,15 +521,276 @@ local function ruptura(m, d, f)
 	end
 end
 
+-- ===== ossos com nomes do rig novo (CR_Dragao: nomes do Blender) ===============================================
+local function ossoA(m, ...) for _, n in ipairs({...}) do local b = osso(m, n); if b then return b end end end
+local function centroDe(m)                                           -- meio do tronco (mesma regra do servidor)
+	local q = osso(m, "Quadril"); local c = ossoA(m, "Coluna3", "Coluna2")
+	if not q then return m:GetPivot().Position end
+	local a = q.TransformedWorldCFrame.Position
+	return c and (a + c.TransformedWorldCFrame.Position) / 2 or a
+end
+local function bocaReal(m)                                           -- ponta do focinho (rig Mesh2Motion/CR) ou estimativa
+	local f = osso(m, "mouth_upper_tip")
+	if f then local _, dir = bocaDe(m); return f.TransformedWorldCFrame.Position, dir end
+	return bocaDe(m)
+end
+
+-- ===== Coracao Infernal ==========================================================================================
+-- Lamina de fogo VOLUMETRICA (nao e peca rigida): cadeia de ancoras ao longo da lamina, ligadas por Beams em camadas
+-- (nucleo incandescente branco-amarelo, chama laranja com textura correndo, halo vermelho escuro), particulas de chama
+-- e brasas em cada ancora (ficam para tras = rastro), Trails na ponta e no meio (risco do giro), luz no meio. A pose da
+-- lamina vem da MESMA funcao de angulo do servidor (t0 do servidor), centrada no tronco que se move (no ar o voo segue).
+local coracoes = {}                                                  -- [modelo] = {hl, luz, pecas...}
+local function coracaoEstado(d, t)
+	if t < 0 then return 0, 0, false end
+	if t <= d.expele then local k = t / d.expele; return 0, 1 - (1 - k) ^ 3, true end
+	local k = math.clamp((t - d.expele) / d.giro, 0, 1)
+	return d.sentido * 2 * math.pi * d.voltas * (k * k * (3 - 2 * k)), 1, t <= d.expele + d.giro
+end
+local function brilhoCarga(m, dur, f)
+	local s = coracoes[m] or {}; coracoes[m] = s
+	if s.hl then s.hl:Destroy() end
+	local hl = Instance.new("Highlight"); hl.FillColor = C3(255, 105, 25); hl.OutlineColor = C3(255, 170, 60); hl.FillTransparency = 1; hl.OutlineTransparency = 1
+	hl.DepthMode = Enum.HighlightDepthMode.Occluded; hl.Adornee = m; hl.Parent = m; s.hl = hl
+	TweenService:Create(hl, TweenInfo.new(dur, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {FillTransparency = 0.62, OutlineTransparency = 0.55}):Play()
+	-- energia convergindo para o peito e a garganta (brasas puxadas para dentro), calor crescendo
+	for _, b in ipairs({ossoA(m, "Coluna2", "spine_0"), ossoA(m, "Pescoco4", "Pescoco2")}) do
+		local e = emissor(b, {Shape = Enum.ParticleEmitterShape.Sphere, ShapeInOut = Enum.ParticleEmitterShapeInOut.Inward, Texture = TEX.faisca,
+			Color = seq({C3(255, 240, 170), C3(255, 120, 30)}), LightEmission = 1, Size = ns(0, 0.9, 1, 0), Lifetime = NumberRange.new(0.35, 0.6),
+			Speed = NumberRange.new(14, 24), Rate = 60 * f}); Debris:AddItem(e, dur)
+		local e2 = emissor(b, flip({Color = BRANCO, LightEmission = 0.6, LightInfluence = 0, Size = ns(0, 3, 1, 0.5), Transparency = ns(0, 0.6, 1, 1),
+			Lifetime = NumberRange.new(0.3, 0.5), Speed = NumberRange.new(0, 3), SpreadAngle = Vector2.new(180, 180), Rate = 18 * f}, FB.fogo)); Debris:AddItem(e2, dur)
+	end
+	local peito = ossoA(m, "Coluna2", "spine_0")
+	if peito then
+		local l = luz(peito, C3(255, 120, 40), 0.4, 18); s.luz = l
+		if l then TweenService:Create(l, TweenInfo.new(dur, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Brightness = 2.2, Range = 26}):Play() end
+	end
+end
+local function fimCarga(m, dur)
+	local s = coracoes[m]; if not s then return end
+	if s.hl then local hl = s.hl; TweenService:Create(hl, TweenInfo.new(dur), {FillTransparency = 1, OutlineTransparency = 1}):Play(); Debris:AddItem(hl, dur + 0.05); s.hl = nil end
+	if s.luz then local l = s.luz; s.luz = nil; TweenService:Create(l, TweenInfo.new(dur), {Brightness = 0}):Play(); task.delay(dur, function() liberarLuz(l) end) end
+end
+local NA = 9                                                          -- ancoras ao longo da lamina
+local function larguraEm(u)                                           -- perfil de espada: base estreita, largura maxima ~25%, ponta fina
+	if u < 0.22 then return 0.45 + 0.55 * (u / 0.22) end
+	return ((1 - u) / 0.78) ^ 0.85
+end
+local function lamina(m, d, f)
+	local s = coracoes[m] or {}; coracoes[m] = s
+	local pasta = pastaFX()
+	local anc = {}
+	for i = 1, NA do local a = Instance.new("Attachment"); a.Parent = workspace.Terrain; anc[i] = a end
+	local wMax = (d.largura or 6) * 2.6                                -- espada larga e legivel de longe
+	local camadas = {
+		{cor = seq({C3(255, 255, 235), C3(255, 236, 150)}), transp = 0.02, larg = 0.42, luz = 1, tex = nil},                 -- nucleo incandescente
+		{cor = seq({C3(255, 200, 80), C3(255, 120, 25)}), transp = 0.12, larg = 0.85, luz = 0.9, tex = TEX.fogo, vel = 3.2},   -- chama
+		{cor = seq({C3(240, 80, 20), C3(120, 25, 10)}), transp = 0.62, larg = 1.35, luz = 0.55, tex = TEX.fogo, vel = -2.2},   -- halo/turbulencia
+	}
+	local beams = {}
+	for _, c in ipairs(camadas) do
+		for i = 1, NA - 1 do
+			local b = Instance.new("Beam"); b.Attachment0 = anc[i]; b.Attachment1 = anc[i + 1]; b.FaceCamera = true; b.Segments = 4
+			b.Color = c.cor; b.LightEmission = c.luz; b.LightInfluence = 0; b.Transparency = NumberSequence.new(c.transp)
+			if c.tex then b.Texture = c.tex; b.TextureMode = Enum.TextureMode.Stretch; b.TextureLength = 1; b.TextureSpeed = c.vel end
+			b.Width0, b.Width1 = 0, 0; b.Parent = anc[i]
+			table.insert(beams, {b = b, c = c, i = i})
+		end
+	end
+	-- particulas: chamas e brasas soltas pela lamina em movimento ficam para tras (rastro); fumaca leve no halo
+	local emis = {}
+	for i = 2, NA do
+		local u = (i - 1) / (NA - 1)
+		table.insert(emis, emissor(anc[i], flip({Color = BRANCO, LightEmission = 0.55, LightInfluence = 0, Size = ns(0, 3.5 * larguraEm(u) + 1, 0.5, 6 * larguraEm(u) + 2, 1, 1),
+			Transparency = ns(0, 0.1, 0.8, 0.5, 1, 1), Lifetime = NumberRange.new(0.3, 0.5), Speed = NumberRange.new(1, 5), SpreadAngle = Vector2.new(180, 180),
+			Acceleration = Vector3.new(0, 10, 0), Rotation = NumberRange.new(0, 360), RotSpeed = NumberRange.new(-60, 60), Rate = 32 * f}, FB.fogo)))
+		if i % 2 == 0 then
+			table.insert(emis, emissor(anc[i], {Texture = TEX.faisca, Color = seq({C3(255, 235, 160), C3(255, 110, 25)}), LightEmission = 1, Size = ns(0, 0.6, 1, 0),
+				Lifetime = NumberRange.new(0.6, 1.2), Speed = NumberRange.new(4, 14), SpreadAngle = Vector2.new(180, 180), Acceleration = Vector3.new(0, -22, 0), Drag = 1.2, Rate = 22 * f}))
+			table.insert(emis, emissor(anc[i], flip({Color = seq({C3(80, 62, 52), C3(40, 34, 32)}), LightInfluence = 1, Size = ns(0, 3, 1, 10), Transparency = ns(0, 0.6, 1, 1),
+				Lifetime = NumberRange.new(0.8, 1.3), Speed = NumberRange.new(2, 6), SpreadAngle = Vector2.new(180, 180), Acceleration = Vector3.new(0, 8, 0), Rate = 5 * f}, FB.fumaca)))
+		end
+	end
+	-- riscos do giro: trails horizontais na ponta e no meio (pares de ancoras acima/abaixo do plano)
+	local rastros = {}
+	for _, iu in ipairs({NA, math.floor(NA * 0.55)}) do
+		local a0 = Instance.new("Attachment"); a0.Parent = workspace.Terrain
+		local a1 = Instance.new("Attachment"); a1.Parent = workspace.Terrain
+		local tr = Instance.new("Trail"); tr.Attachment0 = a0; tr.Attachment1 = a1; tr.Lifetime = 0.32; tr.LightEmission = 1; tr.LightInfluence = 0
+		tr.Color = seq({C3(255, 220, 120), C3(255, 90, 20), C3(110, 20, 8)}); tr.Transparency = ns(0, 0.15, 0.6, 0.55, 1, 1); tr.FaceCamera = true
+		tr.WidthScale = ns(0, 1, 1, 0.2); tr.Texture = TEX.fogo; tr.TextureMode = Enum.TextureMode.Stretch; tr.Parent = a0
+		table.insert(rastros, {a0 = a0, a1 = a1, i = iu, tr = tr})
+	end
+	local luzMeio = luz(anc[math.floor(NA * 0.5)], C3(255, 130, 40), 2.2, 28)       -- luz contida (sem "disco" no chao)
+	-- clarao na boca no instante em que a lamina sai
+	local b0 = bocaReal(m); rajada(b0, "Fogo", 0.32, f)
+	local rp = RaycastParams.new(); rp.FilterType = Enum.RaycastFilterType.Exclude; rp.FilterDescendantsInstances = {m, pasta}
+	local ultChao, fimTotal = 0, d.expele + d.giro + d.dissipa
+	local con
+	con = RunService.RenderStepped:Connect(function()
+		local t = workspace:GetServerTimeNow() - d.t0
+		if not m.Parent or t > fimTotal + 0.05 then
+			con:Disconnect()
+			for _, e in ipairs(emis) do e.Enabled = false end
+			for _, r in ipairs(rastros) do r.tr.Enabled = false end
+			task.delay(1.4, function()
+				for _, a in ipairs(anc) do a:Destroy() end
+				for _, r in ipairs(rastros) do r.a0:Destroy(); r.a1:Destroy() end
+			end)
+			liberarLuz(luzMeio)
+			return
+		end
+		local ang, ext = coracaoEstado(d, math.min(t, d.expele + d.giro))
+		local fade = t > d.expele + d.giro and 1 - (t - d.expele - d.giro) / d.dissipa or 1   -- dissipacao
+		local c = centroDe(m); local yL = c.Y + d.dy
+		local dir = CFrame.Angles(0, ang, 0):VectorToWorldSpace(d.dir0)
+		local base = Vector3.new(c.X, yL, c.Z) + dir * d.rIn
+		if t < d.expele then base = bocaReal(m) end                       -- nasce na boca
+		local ponta = Vector3.new(c.X, yL, c.Z) + dir * (d.rIn + (d.rOut - d.rIn) * ext)
+		-- leve ondulacao vertical (turbulencia) e curvatura para tras do giro (a lamina "arrasta" a ponta)
+		local lado = Vector3.new(0, 1, 0):Cross(dir) * -d.sentido
+		for i = 1, NA do
+			local u = (i - 1) / (NA - 1)
+			local p = base:Lerp(ponta, u) + lado * (u * u * 4 * (t > d.expele and 1 or 0)) + Vector3.new(0, math.sin(t * 13 + i * 0.9) * 0.6 * u, 0)
+			anc[i].WorldPosition = p
+		end
+		for _, x in ipairs(beams) do
+			local u0, u1 = (x.i - 1) / (NA - 1), x.i / (NA - 1)
+			local w = wMax * x.c.larg * fade * (0.92 + 0.08 * math.sin(t * 20 + x.i))
+			x.b.Width0 = w * larguraEm(u0); x.b.Width1 = w * larguraEm(u1)
+			if fade < 1 then x.b.Transparency = NumberSequence.new(1 - (1 - x.c.transp) * fade) end
+		end
+		for _, r in ipairs(rastros) do
+			local p = anc[r.i].WorldPosition
+			r.a0.WorldPosition = p + Vector3.new(0, 1.6 * fade, 0); r.a1.WorldPosition = p - Vector3.new(0, 1.6 * fade, 0)
+		end
+		if fade < 1 then for _, e in ipairs(emis) do e.Enabled = fade > 0.5 end end
+		-- rastro de chamas no chao sob a ponta (so com superficie perto; no ar alto nao aparece nada no chao)
+		if f > 0 and t > d.expele and t < d.expele + d.giro and os.clock() - ultChao > 0.07 then
+			ultChao = os.clock()
+			local h = workspace:Raycast(ponta * Vector3.new(1, 0, 1) + Vector3.new(0, yL + 2, 0), Vector3.new(0, -32, 0), rp)
+			if h then
+				local a = ancora(h.Position); Debris:AddItem(a, 2.2)
+				emissor(a, flip({Color = BRANCO, LightEmission = 0.5, LightInfluence = 0, Size = ns(0, 2.5, 0.4, 6, 1, 3), Transparency = ns(0, 0.15, 1, 1),
+					Lifetime = NumberRange.new(0.7, 1.3), Speed = NumberRange.new(2, 6), SpreadAngle = Vector2.new(25, 25), EmissionDirection = Enum.NormalId.Top,
+					Acceleration = Vector3.new(0, 6, 0), Rotation = NumberRange.new(0, 360), Rate = 0}, FB.fogo)):Emit(math.floor(5 * f) + 1)
+				emissor(a, {Texture = TEX.faisca, Color = seq({C3(255, 220, 140), C3(255, 90, 20)}), LightEmission = 1, Size = ns(0, 0.5, 1, 0),
+					Lifetime = NumberRange.new(0.6, 1.2), Speed = NumberRange.new(6, 16), SpreadAngle = Vector2.new(60, 60), EmissionDirection = Enum.NormalId.Top,
+					Acceleration = Vector3.new(0, -30, 0), Rate = 0}):Emit(math.floor(6 * f) + 1)
+			end
+		end
+	end)
+end
+local function coracao(m, d, f)
+	if d.fase == "carga" then brilhoCarga(m, d.carga or 1.1, math.max(f, 0.3))
+	elseif d.fase == "lamina" then lamina(m, d, math.max(f, 0.3)); task.delay(d.expele + d.giro, function() fimCarga(m, d.dissipa + 0.4) end)
+	elseif d.fase == "impacto" and f > 0 then rajada(d.pos, "Fogo", 0.7, f) end
+end
+
+-- ===== passivas: Burning (alvos) e Sangue de Magma (dragao) ======================================================
+-- Indicadores DISCRETOS guiados por atributos do servidor: Queimando (fim, tempo do servidor) e SangueMagmaFim.
+local queimando, sangue = {}, {}
+local function raizDe(m) return m:FindFirstChild("HumanoidRootPart") or m.PrimaryPart end
+local function ligarQueima(m)
+	local r = raizDe(m); if not r then return end
+	local grande = m:GetAttribute("FormaRegional") ~= nil
+	local k = grande and 3 or 1
+	local a = Instance.new("Attachment"); a.Name = "VFX_Queimando"; a.Parent = r
+	if grande then local q = osso(m, "Quadril"); if q then a.Parent = q end end
+	local e = {
+		emissor(a, flip({Color = BRANCO, LightEmission = 0.45, LightInfluence = 0, Size = ns(0, 1.2 * k, 0.5, 2.6 * k, 1, 0.6 * k), Transparency = ns(0, 0.25, 1, 1),
+			Lifetime = NumberRange.new(0.45, 0.8), Speed = NumberRange.new(2, 5), SpreadAngle = Vector2.new(40, 40), EmissionDirection = Enum.NormalId.Top,
+			Shape = Enum.ParticleEmitterShape.Box, Acceleration = Vector3.new(0, 6, 0), Rotation = NumberRange.new(0, 360), Rate = 9 * k}, FB.fogo)),
+		emissor(a, {Texture = TEX.faisca, Color = seq({C3(255, 220, 140), C3(255, 90, 20)}), LightEmission = 1, Size = ns(0, 0.35 * k, 1, 0),
+			Lifetime = NumberRange.new(0.7, 1.3), Speed = NumberRange.new(3, 8), SpreadAngle = Vector2.new(50, 50), EmissionDirection = Enum.NormalId.Top, Rate = 6 * k}),
+		emissor(a, flip({Color = seq({C3(70, 60, 55), C3(40, 36, 34)}), LightInfluence = 1, Size = ns(0, 1.5 * k, 1, 5 * k), Transparency = ns(0, 0.6, 1, 1),
+			Lifetime = NumberRange.new(1, 1.6), Speed = NumberRange.new(2, 5), EmissionDirection = Enum.NormalId.Top, Acceleration = Vector3.new(0, 4, 0), Rate = 3 * k}, FB.fumaca)),
+	}
+	local l = Instance.new("PointLight"); l.Color = C3(255, 120, 40); l.Brightness = 0.8; l.Range = 8 * k; l.Shadows = false; l.Parent = a
+	queimando[m] = a
+end
+local function desligarQueima(m)
+	local a = queimando[m]; queimando[m] = nil
+	if a then for _, e in ipairs(a:GetChildren()) do if e:IsA("ParticleEmitter") then e.Enabled = false end end; Debris:AddItem(a, 1.4) end
+end
+local function ligarSangue(m)
+	local hl = Instance.new("Highlight"); hl.FillColor = C3(255, 90, 20); hl.OutlineColor = C3(255, 150, 50); hl.FillTransparency = 0.86; hl.OutlineTransparency = 0.7
+	hl.DepthMode = Enum.HighlightDepthMode.Occluded; hl.Adornee = m; hl.Parent = m
+	local b = ossoA(m, "Coluna2", "spine_0") or raizDe(m)
+	local e = b and emissor(b, {Texture = TEX.faisca, Color = seq({C3(255, 220, 140), C3(255, 80, 20)}), LightEmission = 1, Size = ns(0, 0.6, 1, 0),
+		Lifetime = NumberRange.new(0.8, 1.4), Speed = NumberRange.new(4, 9), SpreadAngle = Vector2.new(70, 70), EmissionDirection = Enum.NormalId.Top,
+		Shape = Enum.ParticleEmitterShape.Sphere, Rate = 10})
+	local l = b and Instance.new("PointLight"); if l then l.Color = C3(255, 110, 40); l.Brightness = 1.2; l.Range = 22; l.Shadows = false; l.Parent = b end
+	sangue[m] = {hl = hl, e = e, l = l}
+end
+local function desligarSangue(m)
+	local s = sangue[m]; sangue[m] = nil; if not s then return end
+	TweenService:Create(s.hl, TweenInfo.new(0.6), {FillTransparency = 1, OutlineTransparency = 1}):Play(); Debris:AddItem(s.hl, 0.7)
+	if s.e then s.e.Enabled = false; Debris:AddItem(s.e, 1.5) end
+	if s.l then Debris:AddItem(s.l, 0.1) end
+end
+task.spawn(function()
+	while true do
+		task.wait(0.25)
+		local agora = workspace:GetServerTimeNow()
+		local vistos = {}
+		for _, m in ipairs(workspace:GetChildren()) do
+			if m:IsA("Model") then
+				vistos[m] = true
+				local q = m:GetAttribute("Queimando")
+				if q and q > agora and fatorLOD(m:GetPivot().Position) > 0 then if not queimando[m] then ligarQueima(m) end
+				elseif queimando[m] then desligarQueima(m) end
+				local sm = m:GetAttribute("SangueMagmaFim")
+				if sm and sm > agora then if not sangue[m] then ligarSangue(m) end
+				elseif sangue[m] then desligarSangue(m) end
+			end
+		end
+		for m in pairs(queimando) do if not vistos[m] then desligarQueima(m) end end
+		for m in pairs(sangue) do if not vistos[m] then desligarSangue(m) end end
+	end
+end)
+local function lancamento(d)                                          -- reacao curta do proprio personagem (empurrao)
+	local ch = Players.LocalPlayer and Players.LocalPlayer.Character
+	local r = ch and ch:FindFirstChild("HumanoidRootPart"); local h = ch and ch:FindFirstChildOfClass("Humanoid")
+	if r and h and typeof(d.vel) == "Vector3" and d.vel.Magnitude < 120 then
+		h:ChangeState(Enum.HumanoidStateType.Jumping); r.AssemblyLinearVelocity = d.vel
+	end
+end
+-- fragmentos de rocha arrancados da SUPERFICIE real sob a onda (nunca no ar sem chao)
+local function fragmentosSolo(centro, raio, f, escala)
+	local rp = RaycastParams.new(); rp.FilterType = Enum.RaycastFilterType.Include; rp.FilterDescendantsInstances = {workspace.Terrain, workspace:FindFirstChild("Baseplate")}
+	for i = 1, math.floor(9 * f * escala) do
+		local ang = math.random() * math.pi * 2; local r = raio * (0.2 + math.random() * 0.45)
+		local x = centro + Vector3.new(math.cos(ang) * r, 0, math.sin(ang) * r)
+		local h = workspace:Raycast(x + Vector3.new(0, 20, 0), Vector3.new(0, -50, 0), rp)
+		if h then
+			local p = peca({Size = Vector3.new(1.2, 0.9, 1.4) * (1 + math.random() * 1.6), Material = Enum.Material.Basalt, Color = C3(62, 52, 46),
+				CFrame = CFrame.new(h.Position) * CFrame.Angles(math.random() * 6, math.random() * 6, 0)}, math.random() < 0.5 and "WedgePart" or "Part")
+			local fora = Vector3.new(math.cos(ang), 0, math.sin(ang))
+			local topo = h.Position + fora * (8 + math.random() * 10) * escala + Vector3.new(0, 6 + math.random() * 8 * escala, 0)
+			local cai = Vector3.new(topo.X, h.Position.Y, topo.Z) + fora * 6
+			TweenService:Create(p, TweenInfo.new(0.32, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Position = topo}):Play()
+			task.delay(0.32, function() if p.Parent then TweenService:Create(p, TweenInfo.new(0.45, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Position = cai, Transparency = 0.35}):Play() end end)
+			Debris:AddItem(p, 1.9)
+		end
+	end
+end
+
 -- ===== despacho ==================================================================================================
 local trilhasArr = {}
 function M.evento(d)
 	local m = d.d; if not m or not m.Parent then return end
 	local f = fatorLOD(m:GetPivot().Position); local el = d.el or "Fogo"; local P = PERFIL[el]
 	if d.fase == "reacao" then reacao(d.alvo, el, d.intensidade); return end
-	if d.hab == "Ruptura" and d.fase == "lancamento" then ruptura(m, d, 1); return end
+	if d.fase == "lancamento" then lancamento(d); return end              -- empurrao (Tempestade/Ruptura): so o personagem atingido
 	if f <= 0 then return end
 	if d.hab == "Ruptura" then ruptura(m, d, f); return end
+	if d.hab == "Coracao" then coracao(m, d, f); return end
+	if d.hab == "SangueDeMagma" and d.fase == "ativar" then                -- reforco ativado: pulso de calor no peito (discreto)
+		local b = ossoA(m, "Coluna2", "spine_0"); local pos = b and b.TransformedWorldCFrame.Position or m:GetPivot().Position
+		rajada(pos, "Fogo", 0.35, f); return
+	end
 	if d.hab == "Sopro" then
 		if d.fase == "preparo" then                                    -- acumulo perto da boca (sem dano)
 			local b = bocaDe(m); local a = ancora(b); Debris:AddItem(a, 1.2)
@@ -584,15 +845,21 @@ function M.evento(d)
 		elseif d.fase == "fim" then soproAtivo[m] = (soproAtivo[m] or 0) + 1; miraSopro[m] = nil; ligarSopro(m, el, false, f); if el == "Fogo" then brilhoCorpo(m, 0.8, 0.9) end end
 	elseif d.hab == "Arremetida" then
 		if d.fase == "emissao" then
-			local a0, a1 = osso(m, "AsaE_1"), osso(m, "AsaD_1")
+			local a0, a1 = ossoA(m, "AsaE_1", "wing_1_l"), ossoA(m, "AsaD_1", "wing_1_r")
 			if a0 and a1 then
 				local tr = Instance.new("Trail"); tr.Attachment0 = a0; tr.Attachment1 = a1; tr.Lifetime = 0.45; tr.LightEmission = el == "Terra" and 0.1 or 0.8
 				tr.Color = seq({P.nucleo[1], P.nucleo[3]}); tr.Transparency = ns(0, 0.25, 1, 1); tr.FaceCamera = false; tr.Parent = m.PrimaryPart
 				trilhasArr[m] = tr; Debris:AddItem(tr, (d.duracao or 0.7) + 0.6)
 			end
-			local b = osso(m, "Coluna2"); if b then local e = emissor(b, {Texture = el == "Fogo" and TEX.fogo or el == "Raio" and TEX.faisca or TEX.fumaca, Color = seq(P.nucleo),
-				LightEmission = (el == "Fogo" or el == "Raio") and 1 or 0, Size = ns(0, 4, 1, 12), Transparency = ns(0, el == "Ar" and 0.75 or 0.3, 1, 1),
-				Lifetime = NumberRange.new(0.4, 0.8), Speed = NumberRange.new(5, 15), SpreadAngle = Vector2.new(180, 180), Rate = 90 * f}); Debris:AddItem(e, d.duracao or 0.7) end
+			-- chamas envolvendo PARTE do corpo (peito, pescoco, quadril) durante a investida; somem na recuperacao
+			for _, b in ipairs({osso(m, "Coluna2"), ossoA(m, "Pescoco4", "Pescoco2"), osso(m, "Quadril")}) do
+				local e = emissor(b, el == "Fogo" and flip({Color = BRANCO, LightEmission = 0.5, LightInfluence = 0, Size = ns(0, 3, 0.5, 8, 1, 2), Transparency = ns(0, 0.2, 1, 1),
+					Lifetime = NumberRange.new(0.25, 0.45), Speed = NumberRange.new(4, 12), SpreadAngle = Vector2.new(180, 180), Rotation = NumberRange.new(0, 360), Rate = 45 * f}, FB.fogo)
+					or {Texture = el == "Raio" and TEX.faisca or TEX.fumaca, Color = seq(P.nucleo), LightEmission = el == "Raio" and 1 or 0, Size = ns(0, 4, 1, 12),
+					Transparency = ns(0, el == "Ar" and 0.75 or 0.3, 1, 1), Lifetime = NumberRange.new(0.4, 0.8), Speed = NumberRange.new(5, 15), SpreadAngle = Vector2.new(180, 180), Rate = 90 * f})
+				Debris:AddItem(e, d.duracao or 0.7)
+			end
+			if el == "Fogo" then local pp = m.PrimaryPart; if pp then luz(pp, P.luz, 3, 40, (d.duracao or 0.7) + 0.3) end end
 		elseif d.fase == "impacto" then rajada(d.pos, el, 1.0, f)
 		elseif d.fase == "fim" then local tr = trilhasArr[m]; if tr and tr.Parent then tr.Enabled = false end end
 	elseif d.hab == "Tempestade" then
@@ -603,8 +870,8 @@ function M.evento(d)
 				Rotation = NumberRange.new(0, 360), Rate = 30 * f}, FB.fumaca)); Debris:AddItem(e, 1.1)
 		elseif d.fase == "impulso" then                                    -- patas deixam o chao: poeira e detritos, rastros nas pontas das asas
 			rajada(d.pos, "Terra", 0.7, f); anel(d.pos + Vector3.new(0, 1, 0), 40, C3(160, 140, 120), 0.6, 1.2, 0.5)
-			for _, nome in ipairs({"Dedo2E", "Dedo2D"}) do
-				local b = osso(m, nome); local b2 = osso(m, nome:gsub("Dedo2", "Dedo1"))
+			for _, lado in ipairs({{"Dedo2E", "Dedo1E", "wing_tip_l", "wing_3_l"}, {"Dedo2D", "Dedo1D", "wing_tip_r", "wing_3_r"}}) do
+				local b = ossoA(m, lado[1], lado[3]); local b2 = ossoA(m, lado[2], lado[4])
 				if b and b2 then
 					local tr = Instance.new("Trail"); tr.Attachment0 = b; tr.Attachment1 = b2; tr.Lifetime = 0.35; tr.LightEmission = el == "Fogo" and 0.7 or 0.1
 					tr.Color = seq({PERFIL[el].nucleo[2], PERFIL[el].nucleo[4]}); tr.Transparency = ns(0, 0.45, 1, 1); tr.Parent = m.PrimaryPart; Debris:AddItem(tr, 1.9)
@@ -612,8 +879,18 @@ function M.evento(d)
 			end
 		elseif d.fase == "pouso" then
 			rajada(d.pos, "Terra", 0.6, f); tremor(d.pos, 0.3, 0.3)
+		elseif d.fase == "batida" and d.superficie == false then
+			-- no alto, sem superficie perto: so a onda de vento quente em volta do corpo (nada de rocha/poeira no ar)
+			local c = m:GetPivot().Position + Vector3.new(0, 14, 0)
+			anel(c, (d.raio or 70) * 0.8, P.cor, 0.6, 0.8, 0.6)
+			local a = ancora(c); Debris:AddItem(a, 2)
+			emissor(a, flip({Shape = Enum.ParticleEmitterShape.Disc, Color = BRANCO, LightEmission = 0.4, LightInfluence = 0, Size = ns(0, 4, 1, 12), Transparency = ns(0, 0.45, 1, 1),
+				Lifetime = NumberRange.new(0.4, 0.6), Speed = NumberRange.new(50, 80), Rotation = NumberRange.new(0, 360), Rate = 0}, FB.fogo)):Emit(math.floor(24 * f))
+			return
 		elseif d.fase == "batida" then
+			if (d.indice or 1) > 1 then f *= 0.6 end                       -- batidas seguintes: ondas menores
 			tremor(d.pos, 0.5, 0.4)
+			if d.superficie then fragmentosSolo(d.pos, d.raio or 70, f, (d.indice or 1) == 1 and 1 or 0.6) end
 			-- massa de ar descendo das asas ate o chao (coluna) antes da onda radial
 			local topo = d.pos + Vector3.new(0, (d.altura or 0) + 20, 0)
 			local col = ancora(topo); Debris:AddItem(col, 2.5)
@@ -658,8 +935,8 @@ function M.evento(d)
 				Lifetime = NumberRange.new(0.6, 1.1), Speed = NumberRange.new(45, 80), Rate = 0, Drag = 1.5, RotSpeed = NumberRange.new(-200, 200)}):Emit(math.floor(90 * f))
 			if el == "Raio" then for i = 1, 3 do local ang = math.random() * 6.28; M.descarga(c + Vector3.new(0, 30, 0), c + Vector3.new(math.cos(ang) * raio * 0.7, 1, math.sin(ang) * raio * 0.7), "Raio", 0.25, 2) end end
 			if el == "Terra" then rajada(c, "Terra", 1.3, f) elseif el == "Fogo" then luz(base, P.luz, 5, raio, 0.5) end
-			for _, nome in ipairs({"Dedo2E", "Dedo2D"}) do                   -- rajada saindo das pontas das asas
-				local b = osso(m, nome); if b then local e = emissor(b, {Texture = TEX.fumaca, Color = seq(P.nucleo), Size = ns(0, 4, 1, 16), Transparency = ns(0, 0.7, 1, 1),
+			for _, nome in ipairs({{"Dedo2E", "wing_tip_l"}, {"Dedo2D", "wing_tip_r"}}) do   -- rajada saindo das pontas das asas
+				local b = ossoA(m, nome[1], nome[2]); if b then local e = emissor(b, {Texture = TEX.fumaca, Color = seq(P.nucleo), Size = ns(0, 4, 1, 16), Transparency = ns(0, 0.7, 1, 1),
 					Lifetime = NumberRange.new(0.5, 0.9), Speed = NumberRange.new(30, 60), SpreadAngle = Vector2.new(40, 40), Rate = 0}); e:Emit(math.floor(25 * f)); Debris:AddItem(e, 1.2) end
 			end
 		end

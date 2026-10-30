@@ -1325,6 +1325,47 @@ def f_tempestade_ar(u):
     boca_abre(base, 0.5 * golpe)
     return base
 
+# CORACAO INFERNAL (oficial 30/10; substitui a Ruptura no Montanhas). 4,2 s, casado com ConfigCombate.Coracao:
+# carga 0-1,1 s (peito sobe e expande, pescoco recua e ergue, boca entreaberta) | expele 1,1-1,5 (pescoco projeta a
+# cabeca, mandibula abre ao maximo, corpo empurra a frente) | giro 1,5-3,2 (a cabeca ACOMPANHA a lamina que gira ao
+# redor do corpo: vira para o lado em que ela esta, ida e volta; tronco torce junto, cauda faz contrapeso) |
+# dissipa 3,2-3,8 | recupera ate 4,2. Giro: 1,25 volta anti-horaria (sentido 1) com a mesma suavizacao do servidor.
+CI_T = 4.2; CI_CARGA, CI_EXPELE, CI_GIRO, CI_VOLTAS = 1.1, 0.4, 1.7, 1.25
+def _ci_ang(t):
+    if t <= CI_CARGA + CI_EXPELE: return 0.0
+    k = min(1.0, (t - CI_CARGA - CI_EXPELE) / CI_GIRO)
+    return 2 * math.pi * CI_VOLTAS * (k * k * (3 - 2 * k))
+def f_coracao(base_ar=False):
+    def fn(u):
+        t = u * CI_T
+        carga = pulso(u, 0.0, 0.24, 0.255, 0.30)
+        expele = pulso(u, 0.255, 0.30, 0.36, 0.46)
+        giro = janela(u, 0.34, 0.40) * (1 - janela(u, 0.74, 0.86))
+        rec = janela(u, 0.86, 1.0)
+        ang = _ci_ang(t)
+        segue = 46 * math.sin(ang) * giro                      # cabeca acompanha o lado em que a lamina esta
+        boca = 0.18 * carga + 1.05 * expele + 0.45 * giro * (1 - janela(u, 0.62, 0.78))
+        if base_ar:
+            p = f_pairar(u * 3 % 1.0)
+            p.arf += 6 * carga - 5 * expele
+            pescoco_voo(p, cima=-30 + 14 * carga - 10 * expele, esq=segue, cab=-p.arf * 0.2 + 6 * carga - 10 * expele)
+            p.curva["spine_0"] = (p.curva.get("spine_0", (0, 0))[0], -0.25 * segue)
+        else:
+            p = Pose(); em_pe(p, agach=0.03 * carga + 0.02 * expele)
+            p.off += Vector((0, 0.015 * carga - 0.03 * expele, 0.008 * carga))
+            p.arf += 7 * carga - 5 * expele
+            pescoco_alto(p, cima=14 * carga - 12 * expele - 4 * giro, esq=segue, cab=6 * carga - 10 * expele)
+            p.curva["spine_0"] = (-2 * expele, -0.3 * segue)
+            if ASAS_ARMADAS: p.asas = asas_armadas(0.25 * carga + 0.15 * giro, math.sin(2 * math.pi * 3 * u))
+            else: p.asas = asas_ameaca(0.4 * carga + 0.3 * giro)
+            lat = [(-0.45 * segue) * PESO_CAUDA[k] for k in range(7)]
+            cauda(p, -14 + 5 * carga, 5.0, somar(lat, onda_cauda(u, [(3.0, 1, 0.0, 1.0)])),
+                  onda=[(4 * carga - 3 * expele) * PESO_CAUDA[k] for k in range(7)])
+        p.curva["spine_1"] = (p.curva.get("spine_1", (0, 0))[0] + 7 * carga - 3 * expele, 0)   # peito expande na carga
+        boca_abre(p, boca)
+        return p
+    return fn
+
 def f_ruptura(u):
     """Ruptura Vulcanica 3,6 s: firma as traseiras, EMPINA (dianteiras sobem recolhidas, asas meio abertas, rugido),
     GOLPEIA o chao (contato 0,389), fica baixo enquanto a erupcao sobe (0,458) com as asas abertas, recupera."""
@@ -1408,6 +1449,8 @@ for ar_, suf in ((False, ""), (True, "_Camada")):
 gerar("Tempestade_Asas", n(3.4), f_tempestade, loop=False)
 gerar("Tempestade_Asas_Ar", n(2.4), f_tempestade_ar, loop=False)
 gerar("Ruptura_Vulcanica", n(3.6), f_ruptura, loop=False)
+gerar("Coracao_Infernal", n(CI_T), f_coracao(False), loop=False)
+gerar("Coracao_Infernal_Camada", n(CI_T), f_coracao(True), loop=False)
 # comportamento natural da IA selvagem (nomes logicos do EstadosDragao)
 gerar("Beber", n(9.0), f_beber, loop=False)
 gerar("Comer", n(8.5), f_comer, loop=False)

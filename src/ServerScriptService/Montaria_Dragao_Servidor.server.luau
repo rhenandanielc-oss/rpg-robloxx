@@ -234,8 +234,10 @@ local function passoChao(M, dt)
 	local e = entrada(M)
 	local ataque = m:GetAttribute("EmAtaque")
 	-- um so controlador por vez: durante a investida e a elevacao da Tempestade quem move o corpo e o combate
-	if ataque == "Arremetida" or m:GetAttribute("CorpoElevado") then M.vel = 0; return end
-	local fixo = ataque == "Ruptura" or ataque == "Tempestade" or ataque == "Garra" or ataque == "Mordida" or ataque == "Cauda"
+	-- Arremetida: o Nucleo acelera o corpo; a velocidade dele volta ao controlador no fim (recuperacao gradual, sem tranco)
+	if ataque == "Arremetida" then M.vel = m:GetAttribute("VelArremetida") or 0; return end
+	if m:GetAttribute("CorpoElevado") then M.vel = 0; return end
+	local fixo = ataque == "Ruptura" or ataque == "Coracao" or ataque == "Tempestade" or ataque == "Garra" or ataque == "Mordida" or ataque == "Cauda"
 		or m:GetAttribute("Incapacitado")
 	local alvo = 0
 	if not fixo then
@@ -358,13 +360,14 @@ local function mordidaAcertos(M, dir)
 			if not M.mordida.atingidos[alvo] then
 				M.mordida.atingidos[alvo] = true
 				local okN, Nc = pcall(require, game:GetService("ServerScriptService").Combate_Dragao.Nucleo)
-				if okN and Nc.danoGuardiao(alvo, MA.dano, m) then
+				if okN and Nc.ferir(m, alvo, MA.dano, nil, "MordidaAerea", "moderado") then           -- aplica Burning (passiva)
 					m:SetAttribute("MordidaAcertou", workspace:GetServerTimeNow()); M.vel *= MA.freioImpacto
 				end
 			end
 		elseif hum and hum.Health > 0 and not M.mordida.atingidos[alvo] and not Players:GetPlayerFromCharacter(alvo) then
 			M.mordida.atingidos[alvo] = true
-			hum:TakeDamage(MA.dano)
+			local okN, Nc = pcall(require, game:GetService("ServerScriptService").Combate_Dragao.Nucleo)
+			if okN then Nc.ferir(m, alvo, MA.dano, nil, "MordidaAerea", "moderado") else hum:TakeDamage(MA.dano) end   -- + Burning
 			local r = alvo:FindFirstChild("HumanoidRootPart") or alvo.PrimaryPart
 			if r and not r.Anchored then r.AssemblyLinearVelocity += dir * MA.empurrao + Y * MA.empurrao * 0.35 end
 			m:SetAttribute("MordidaAcertou", workspace:GetServerTimeNow())          -- cliente: tranco de camera
@@ -511,7 +514,7 @@ local function passoVoo(M, dt)
 	local m, L = M.m, M.L
 	local e = entrada(M)
 	local ataque = m:GetAttribute("EmAtaque")
-	if ataque == "Arremetida" then return end
+	if ataque == "Arremetida" then M.vel = m:GetAttribute("VelArremetida") or M.vel; return end    -- o Nucleo move; a velocidade volta no fim
 	if m:GetAttribute("VooLivre") and temMix(M) then return passoVooLivre(M, dt) end
 	if m:GetAttribute("Incapacitado") then M.planar = true end                                   -- incapacitado: plana e desce
 	if temMix(M) then

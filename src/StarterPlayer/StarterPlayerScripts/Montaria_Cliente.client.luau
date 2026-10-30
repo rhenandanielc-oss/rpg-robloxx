@@ -95,7 +95,7 @@ for i, h in ipairs(C.habilidades) do
 	local cob = Instance.new("Frame"); cob.BackgroundColor3 = Color3.new(0, 0, 0); cob.BackgroundTransparency = 0.45; cob.BorderSizePixel = 0
 	cob.AnchorPoint = Vector2.new(0, 1); cob.Position = UDim2.fromScale(0, 1); cob.Size = UDim2.fromScale(1, 0); cob.Parent = f
 	rotulo(f, {Text = tostring(i), Position = UDim2.fromOffset(6, 2), Size = UDim2.fromOffset(20, 16), TextSize = 13})
-	rotulo(f, {Text = h[1], Position = UDim2.fromOffset(0, 24), Size = UDim2.new(1, 0, 0, 18), TextXAlignment = Enum.TextXAlignment.Center, TextSize = 12})
+	rotulo(f, {Text = h[4] or h[1], Position = UDim2.fromOffset(0, 24), Size = UDim2.new(1, 0, 0, 18), TextXAlignment = Enum.TextXAlignment.Center, TextSize = 12})
 	local tr = rotulo(f, {Text = "", Position = UDim2.fromOffset(0, 42), Size = UDim2.new(1, 0, 0, 18), TextXAlignment = Enum.TextXAlignment.Center, TextSize = 13})
 	slots[h[1]] = {cob = cob, txt = tr}
 end
@@ -112,7 +112,7 @@ do
 	slots.MordidaAerea = {cob = cob, txt = tr}
 end
 local dica = rotulo(gui, {Position = UDim2.new(0, 16, 1, -148), Size = UDim2.fromOffset(560, 40), TextSize = 12, TextWrapped = true, TextYAlignment = Enum.TextYAlignment.Top,
-	Text = "Mouse: direcao (no ar: sobe/desce/vira para onde a camera olha) | W acelera, S desacelera | Espaco decolar | G planar | F pousar | X desmontar | 1-4 habilidades | Z elemento | Alt solta o mouse"})
+	Text = "Mouse: direcao (no ar: sobe/desce/vira para onde a camera olha) | W acelera, S desacelera | Espaco decolar | G planar | F pousar | X desmontar | 1-4 habilidades | Alt solta o mouse"})
 -- avisos ficam numa tela SEMPRE ligada: recusas de montaria (longe, nao e seu...) chegam antes de montar
 local guiAviso = Instance.new("ScreenGui"); guiAviso.Name = "MontariaAvisos"; guiAviso.ResetOnSpawn = false; guiAviso.Parent = lp.PlayerGui
 local toast = rotulo(guiAviso, {AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.new(0.5, 0, 0, 90), Size = UDim2.fromOffset(520, 30), TextXAlignment = Enum.TextXAlignment.Center,
@@ -166,14 +166,16 @@ local function ligarAcoes()
 	end
 	acao("Mont_Pousar", function(st) if st == Enum.UserInputState.Begin then Comando:FireServer("pousar") end; return Enum.ContextActionResult.Sink end, C.pousar, "Pousar")
 	acao("Mont_Desmontar", function(st) if st == Enum.UserInputState.Begin then Comando:FireServer("desmontar") end; return Enum.ContextActionResult.Sink end, C.desmontar, "Sair")
-	acao("Mont_Elemento", function(st)
+	-- troca de elemento: so em forma com MAIS de um elemento (oficial 30/10: o Montanhas e so Fogo, sem troca)
+	local varios = #string.split(m and m:GetAttribute("ElementosValidos") or "", ",") > 1
+	if varios then acao("Mont_Elemento", function(st)
 		if st == Enum.UserInputState.Begin and m and Pedido then
 			local lista = string.split(m:GetAttribute("ElementosValidos") or "", ","); local at = m:GetAttribute("ElementoAtivo")
 			local i = table.find(lista, at) or 0; local prox = lista[i % #lista + 1]
 			if prox and prox ~= "" then Pedido:FireServer(m, "elemento", prox) end
 		end
 		return Enum.ContextActionResult.Sink
-	end, C.elemento, "Elem.")
+	end, C.elemento, "Elem.") end
 	for _, h in ipairs(C.habilidades) do
 		acao("Mont_" .. h[1], function(st)
 			if not (m and Pedido) then return Enum.ContextActionResult.Sink end
@@ -318,8 +320,8 @@ local function entrar(dragao)
 		task.delay(0.2, function() lp.CameraMinZoomDistance = camCfg("distMin"); lp.CameraMaxZoomDistance = camCfg("distMax") end)
 	end
 	dica.Text = m:GetAttribute("VooLivre") and
-		"Botao direito: girar a camera (o dragao segue) | Cursor: mira | W acelera | solte W: para no ar | E sobe / Q desce | Espaco: decolar | segure 1: sopro continuo (mira no cursor) | R: garra (no chao) | M1: mordida (no chao: terrestre; no ar: mordida aerea | G planar | X desmontar | Roda: zoom | Alt solta o mouse"
-		or "Mouse: direcao (no ar: sobe/desce/vira para onde a camera olha) | W acelera, S desacelera | Espaco decolar | G planar | F pousar | X desmontar | 1-4 habilidades | Z elemento | Alt solta o mouse"
+		"Botao direito: girar a camera (o dragao segue) | Cursor: mira | W acelera | solte W: para no ar | E sobe / Q desce | Espaco: decolar | segure 1: sopro continuo (mira no cursor) | 2 Arremetida | 3 Tempestade | 4 Coracao Infernal | R: garra (no chao) | M1: mordida (no chao: terrestre; no ar: mordida aerea | G planar | X desmontar | Roda: zoom | Alt solta o mouse"
+		or "Mouse: direcao (no ar: sobe/desce/vira para onde a camera olha) | W acelera, S desacelera | Espaco decolar | G planar | F pousar | X desmontar | 1-4 habilidades | Alt solta o mouse"
 	slotMordida.Visible = m:GetAttribute("VooLivre") == true
 	gui.Enabled = true; if reticula then reticula.Visible = UIS.MouseEnabled end
 	ligarAcoes()
@@ -381,7 +383,16 @@ RunService.RenderStepped:Connect(function(dt)
 	tVoo.Text = not voo and "Voo montado: bloqueado (missao de voo)"
 		or (m:GetAttribute("VooDesbloqueado") == true and "Voo montado: liberado" or "Voo montado: liberado (DEV - teste)")
 	tVoo.TextColor3 = voo and Color3.fromRGB(190, 230, 170) or Color3.fromRGB(240, 170, 140)
-	tElem.Text = "Elemento: " .. tostring(m:GetAttribute("ElementoAtivo") or "-") .. "   [" .. tostring(m:GetAttribute("ElementosValidos") or "") .. "]"
+	-- elemento unico + passivas (Sangue de Magma mostra o reforco ativo)
+	local pas = {}
+	for _, id in ipairs(string.split(m:GetAttribute("Passivas") or "", ",")) do
+		if id ~= "" then
+			local nome = (C.passivas and C.passivas[id]) or id
+			if id == "SangueDeMagma" and (m:GetAttribute("SangueMagmaFim") or 0) > workspace:GetServerTimeNow() then nome ..= " (ativo)" end
+			table.insert(pas, nome)
+		end
+	end
+	tElem.Text = "Elemento: " .. tostring(m:GetAttribute("ElementoAtivo") or "-") .. (#pas > 0 and ("  |  Passivas: " .. table.concat(pas, ", ")) or "")
 	energia.Size = UDim2.fromScale(math.clamp((m:GetAttribute("Energia") or 0) / 100, 0, 1), 1)
 	local agora = workspace:GetServerTimeNow()
 	for hab, s in pairs(slots) do

@@ -1,5 +1,5 @@
 -- Nucleo (ModuleScript, ServerScriptService.Combate_Dragao) — combate do Dragao das Montanhas, AUTORIDADE DO SERVIDOR.
--- Validacao (elemento equipado, energia, recarga compartilhada por habilidade, ocupado, vivo/incapacitado), deteccao de
+-- Validacao (elemento unico da forma, energia, recarga por habilidade, ocupado, vivo/incapacitado), deteccao de
 -- acerto (geometria + linha de visao, no instante dos marcadores da animacao no servidor, com tempo de reserva),
 -- aplicacao de dano (Humanoid:TakeDamage) e eventos cosmeticos para os clientes (RemoteEvent FX, so servidor->cliente).
 -- O cliente nunca informa dano, alvo ou acerto.
@@ -7,6 +7,7 @@ local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local RS = game:GetService("ReplicatedStorage")
 local Cfg = require(script.Parent.ConfigCombate)
+local Passivas = require(script.Parent.Passivas)
 
 local pastaRede = RS:FindFirstChild("Combate_Dragoes") or Instance.new("Folder"); pastaRede.Name = "Combate_Dragoes"; pastaRede.Parent = RS
 local FX = pastaRede:FindFirstChild("FX") or Instance.new("RemoteEvent"); FX.Name = "FX"; FX.Parent = pastaRede
@@ -14,6 +15,8 @@ local FX = pastaRede:FindFirstChild("FX") or Instance.new("RemoteEvent"); FX.Nam
 local N = {}
 N.__index = N
 N.registro = {}
+N.FX = FX
+N.Passivas = Passivas
 
 local function raiz(m) return m and (m:FindFirstChild("HumanoidRootPart") or m.PrimaryPart) end
 local function osso(m, nome) for _, d in ipairs(m:GetDescendants()) do if d:IsA("Bone") and d.Name == nome then return d end end end
@@ -41,6 +44,7 @@ function N.registrar(modelo)
 	modelo:SetAttribute("ElementoNato", nato)
 	if not modelo:GetAttribute("ElementoAtivo") then modelo:SetAttribute("ElementoAtivo", nato) end
 	modelo:SetAttribute("Energia", self.energia)
+	modelo:SetAttribute("Passivas", table.concat(Cfg.passivasForma[self.forma] or {}, ","))   -- exibicao (HUD); efeito so no servidor
 	N.registro[modelo] = self
 	self:auditarDados()
 	modelo.AncestryChanged:Connect(function(_, p) if not p then N.registro[modelo] = nil end end)
@@ -87,6 +91,7 @@ function N:temHabilidade(hab)
 	return false
 end
 function N:trocarElemento(e)
+	if #(Cfg.elementosForma[self.forma] or {}) <= 1 then return false, "forma de elemento unico (sem troca)" end   -- oficial 30/10
 	for _, x in ipairs(self:elementos()) do
 		if x == e then self.m:SetAttribute("ElementoAtivo", e); FX:FireAllClients({d = self.m, fase = "elemento", el = e}); return true end
 	end
@@ -157,10 +162,14 @@ end
 N.emZonaSegura = emZonaSegura
 -- PATCH_IA_DERROTA_AR: guardiao selvagem DERROTAVEL (decisao do usuario 30/10). Vida em atributos; so dragao de JOGADOR
 -- fere; em 0 -> Incapacitado (o Cerebro pousa/deita e recupera). Valores experimentais (Config da IA).
-function N.danoGuardiao(g, dano, atacante)
+function N.danoGuardiao(g, dano, atacante, el)
 	if not (g and g.Parent and g:GetAttribute("GuardiaoNinho")) or g:GetAttribute("Incapacitado") or not dano or dano <= 0 then return false end
 	if not (atacante and atacante:GetAttribute("DonoUserId")) then return false end
 	if g.PrimaryPart and emZonaSegura(g.PrimaryPart.Position) then return false end
+	-- resistencia a Fogo (Sangue de Magma ou atributo ResistenciaFogo) e ativacao do reforco (passiva do proprio guardiao)
+	if Passivas.tem(g, "SangueDeMagma") then dano = Passivas.danoRecebido(g, dano, el)
+	elseif el == "Fogo" then dano *= (1 - Passivas.resistenciaFogo(g)) end
+	if dano <= 0 then return false end
 	local max = g:GetAttribute("VidaMax") or 600
 	local v = math.max(0, (g:GetAttribute("Vida") or max) - dano)
 	g:SetAttribute("Vida", v); g:SetAttribute("UltimoDano", workspace:GetServerTimeNow())
@@ -205,17 +214,29 @@ function N:visivel(de, alvoMod)
 	local p = raiz(alvoMod).Position
 	return workspace:Raycast(de, p - de, rp) == nil
 end
+-- dano UNICO do combate (habilidades, basicos, mordida aerea da montaria e ticks de Burning): resistencia a Fogo do alvo,
+-- vida do guardiao ou Humanoid. Acerto que causou dano (e nao e tick) aplica Burning se a fonte tem a passiva.
+function N.ferir(fonte, a, dano, el, tipo, intensidade, ehTick)
+	if not (a and a.Parent) or not dano or dano <= 0 then return false end
+	local h = a:FindFirstChildOfClass("Humanoid")
+	local ok = false
+	if not h and a:GetAttribute("GuardiaoNinho") then
+		ok = N.danoGuardiao(a, dano, fonte, el)
+	elseif h and h.Health > 0 then
+		if el == "Fogo" then dano *= (1 - Passivas.resistenciaFogo(a)) end
+		if dano > 0 then h:TakeDamage(dano); ok = true end
+	end
+	if ok and not ehTick then
+		FX:FireAllClients({d = fonte, fase = "reacao", alvo = a, intensidade = intensidade, el = el, tipo = tipo})
+		Passivas.aplicarBurning(fonte, a)
+	end
+	return ok
+end
 function N:aplicar(alvos, dano, tipo, intensidade, el)
-	local mult = (self.m:GetAttribute("DominioAtivo") and Cfg.habilidades.Dominio.multiplicadorDano) or 1
+	local mult = ((self.m:GetAttribute("DominioAtivo") and Cfg.habilidades.Dominio.multiplicadorDano) or 1) * Passivas.multiplicadorOfensivo(self.m)
 	local n = 0
 	for _, a in ipairs(alvos) do
-		local h = a:FindFirstChildOfClass("Humanoid")
-		if not h and a:GetAttribute("GuardiaoNinho") then
-			if N.danoGuardiao(a, dano * mult, self.m) then n += 1 end
-		elseif h and h.Health > 0 and dano > 0 then
-			h:TakeDamage(dano * mult); n += 1
-			FX:FireAllClients({d = self.m, fase = "reacao", alvo = a, intensidade = intensidade, el = el, tipo = tipo})
-		end
+		if N.ferir(self.m, a, dano * mult, el, tipo, intensidade) then n += 1 end
 	end
 	return n
 end
@@ -395,29 +416,54 @@ function N:_Sopro(def, el, noAr, op)
 	local tf = self:tocar("Sopro_Fim", noAr, {}, function() end); task.wait(0.8)
 end
 
+-- Arremetida Draconica (oficial 30/10): ACELERACAO fisica, nunca teleporte. Preparo (o corpo recolhe e perde a
+-- velocidade que trazia), impulso com ganho progressivo a partir da velocidade atual, pico, desaceleracao suave ate a
+-- velocidade de saida e devolucao dessa velocidade ao controlador (atributo VelArremetida, lido pela montaria).
+-- Posicao integrada quadro a quadro (v * dt); para antes de parede. Dano 1x por alvo.
 function N:_Arremetida(def, el, noAr, op)
-	local dir = self:direcaoPara(op)
+	local montado = self.m:GetAttribute("Cavaleiro") ~= nil
+	-- montado: segue o rumo do corpo (o controlador manda o rumo); IA: direcao do alvo
+	local dir = montado and self:frente() or self:direcaoPara(op)
+	local subida = 0
+	if noAr and montado and typeof(op.direcao) == "Vector3" and op.direcao.Magnitude > 0.1 then subida = math.clamp(op.direcao.Unit.Y, -0.45, 0.35) end
+	local dirMov = (dir + Vector3.new(0, subida, 0)).Unit
+	local v0 = self.m:GetAttribute("Velocidade") or 0
 	FX:FireAllClients({d = self.m, hab = "Arremetida", fase = "preparo", el = el})
 	self:tocar("Arremetida", noAr, {}, function() end)
-	task.wait(0.7)
-	FX:FireAllClients({d = self.m, hab = "Arremetida", fase = "emissao", el = el, duracao = def.duracao})
+	self.m:SetAttribute("VelArremetida", v0 * 0.5)
+	task.wait(def.preparo)
+	local T = def.acelera + def.sustenta + def.desacelera
+	FX:FireAllClients({d = self.m, hab = "Arremetida", fase = "emissao", el = el, duracao = T})
 	local atingidos = {}
-	local inicio = self.m:GetPivot(); local t0 = os.clock()
+	local inicio = self.m:GetPivot(); local rot = inicio.Rotation
 	local gp = RaycastParams.new(); gp.FilterType = Enum.RaycastFilterType.Include; gp.FilterDescendantsInstances = {workspace.Terrain, workspace:FindFirstChild("Baseplate")}
-	local alt0 = inicio.Position.Y - ((workspace:Raycast(inicio.Position + Vector3.new(0, 45, 0), Vector3.new(0, -300, 0), gp) or {Position = inicio.Position}).Position.Y)
-	local alvoY = op.alvo and raiz(op.alvo) and raiz(op.alvo).Position.Y
-	while os.clock() - t0 < def.duracao do
+	local function chao(p) local h = workspace:Raycast(p + Vector3.new(0, 45, 0), Vector3.new(0, -300, 0), gp); return h and h.Position.Y end
+	local alt0 = inicio.Position.Y - (chao(inicio.Position) or inicio.Position.Y)
+	local alvoY = (not montado) and op.alvo and raiz(op.alvo) and raiz(op.alvo).Position.Y
+	local vIni = math.max(v0 * 0.5, 8)
+	local vSaida = noAr and def.velSaidaAr or def.velSaidaChao
+	local pos = inicio.Position; local v = vIni; local bateu = false
+	local t0 = os.clock()
+	while self.m.Parent and not self.m:GetAttribute("Incapacitado") do
 		local dt = RunService.Heartbeat:Wait()
-		local k = math.min((os.clock() - t0) / def.duracao, 1)
-		local passo = dir * def.distancia * k
-		local p = inicio.Position + passo
-		-- trajetoria validada: nao atravessa terreno (para antes de parede)
-		local frente = workspace:Spherecast(self.m:GetPivot().Position + Vector3.new(0, 20, 0), 14, dir * 25, gp)
-		if frente then break end
-		local g = workspace:Raycast(Vector3.new(p.X, p.Y + 45, p.Z), Vector3.new(0, -300, 0), gp)
-		local y = noAr and (alvoY and (inicio.Position.Y + (alvoY + 10 - inicio.Position.Y) * k) or p.Y) or ((g and g.Position.Y or p.Y) + alt0)
-		self.m:PivotTo(CFrame.new(Vector3.new(p.X, y, p.Z)) * inicio.Rotation)
-		local c = self.m:GetPivot().Position + Vector3.new(0, 18, 0) + dir * 30
+		local t = os.clock() - t0
+		if t >= T then break end
+		if t < def.acelera then local k = t / def.acelera; v = vIni + (def.velPico - vIni) * (1 - (1 - k) ^ 2)
+		elseif t < def.acelera + def.sustenta then v = def.velPico
+		else local k = (t - def.acelera - def.sustenta) / def.desacelera; v = def.velPico + (vSaida - def.velPico) * (k * k * (3 - 2 * k)) end
+		if workspace:Spherecast(pos + Vector3.new(0, 20, 0), 14, dirMov * math.max(22, v * dt * 3), gp) then bateu = true; break end
+		local nova = pos + dirMov * v * dt
+		local y
+		if noAr then
+			y = alvoY and (nova.Y + math.clamp(alvoY + 10 - nova.Y, -v * dt * 0.5, v * dt * 0.5)) or nova.Y
+			local g = chao(nova); if g then y = math.max(y, g + 12) end                  -- nunca entra no chao
+		else
+			y = (chao(nova) or (nova.Y - alt0)) + alt0
+		end
+		pos = Vector3.new(nova.X, y, nova.Z)
+		self.m:PivotTo(CFrame.new(pos) * rot)
+		self.m:SetAttribute("VelArremetida", v)
+		local c = pos + Vector3.new(0, 18, 0) + dir * 30
 		for _, a in ipairs(self:alvosValidos()) do
 			if not atingidos[a] and naEsfera(c, def.raio, a) then
 				atingidos[a] = true; self:aplicar({a}, def.dano, "Arremetida", def.intensidade, el)
@@ -425,37 +471,64 @@ function N:_Arremetida(def, el, noAr, op)
 			end
 		end
 	end
+	self.m:SetAttribute("VelArremetida", bateu and 0 or vSaida)
 	FX:FireAllClients({d = self.m, hab = "Arremetida", fase = "fim", el = el})
-	task.wait(0.7)
+	task.wait(0.45)                                                              -- recuperacao (o clipe termina sozinho)
 end
 
--- Tempestade de Asas: terrestre = agacha, IMPULSO (o corpo sobe de verdade, def.elevacao), batida devastadora unica,
--- paira, desce e assenta; aerea = clipe proprio sem decolagem. Dano so no marcador Batida, uma vez por alvo.
+-- Tempestade de Asas: terrestre = agacha, IMPULSO (o corpo sobe de verdade, def.elevacao) e batidas repetidas; aerea =
+-- batidas direto, sem decolagem. Cada batida REAL do clipe (def.batidasChao/batidasAr) solta uma onda de vento quente:
+-- dano (1a cheia, demais x fatorSecundario) + empurrao para fora, 1 acerto por alvo POR BATIDA.
 local gpTerreno = RaycastParams.new(); gpTerreno.FilterType = Enum.RaycastFilterType.Include
+function N:empurrar(alvos, origem, horizontal, vertical, hab)
+	for _, a in ipairs(alvos) do
+		local r = raiz(a)
+		if r and not a:GetAttribute("GuardiaoNinho") then                       -- guardiao (ancorado) nao e lancado
+			local v = plano(r.Position - origem); v = v.Magnitude > 0.1 and v.Unit or self:frente()
+			local vel = v * horizontal + Vector3.new(0, vertical, 0)
+			local plr = Players:GetPlayerFromCharacter(a)
+			if plr then FX:FireClient(plr, {d = self.m, hab = hab, fase = "lancamento", vel = vel})   -- personagem e do cliente
+			elseif not r.Anchored then
+				local h = a:FindFirstChildOfClass("Humanoid"); if h then h:ChangeState(Enum.HumanoidStateType.Jumping) end
+				r.AssemblyLinearVelocity = vel
+			end
+		end
+	end
+end
 function N:_Tempestade(def, el, noAr)
 	FX:FireAllClients({d = self.m, hab = "Tempestade", fase = "preparo", el = el, noAr = noAr})
 	local base = self.m:GetPivot()
 	gpTerreno.FilterDescendantsInstances = {workspace.Terrain, workspace:FindFirstChild("Baseplate")}
-	local function chaoSob(p) local h = workspace:Raycast(p + Vector3.new(0, 30, 0), Vector3.new(0, -400, 0), gpTerreno); return h and h.Position or p end
-	local batido = false
-	local function batida()
-		if batido then return end; batido = true
-		local c = self.m:GetPivot().Position; local solo = chaoSob(c)
+	local function chaoSob(p) local h = workspace:Raycast(p + Vector3.new(0, 30, 0), Vector3.new(0, -400, 0), gpTerreno); return h and h.Position, h end
+	local batidas = noAr and def.batidasAr or def.batidasChao
+	local feitas = {}
+	local function batida(i)
+		if feitas[i] then return end; feitas[i] = true
+		local c = self.m:GetPivot().Position; local solo, hit = chaoSob(c)
+		local centro = solo or c
+		local altura = solo and (c.Y - solo.Y) or 999
 		local alvos = {}
 		for _, a in ipairs(self:alvosValidos()) do
-			if naEsfera(solo, def.raio, a) and self:visivel(c + Vector3.new(0, 25, 0), a) then table.insert(alvos, a) end
+			if naEsfera(centro, def.raio, a) and self:visivel(c + Vector3.new(0, 25, 0), a) then table.insert(alvos, a) end
 		end
-		self:aplicar(alvos, def.dano, "Tempestade", def.intensidade, el)
-		FX:FireAllClients({d = self.m, hab = "Tempestade", fase = "batida", el = el, pos = solo, raio = def.raio, altura = c.Y - solo.Y, frente = self:frente()})
+		local fator = i == 1 and 1 or def.fatorSecundario
+		self:aplicar(alvos, def.dano * fator, "Tempestade", def.intensidade, el)
+		self:empurrar(alvos, centro, def.empurrao.horizontal * (i == 1 and 1 or 0.6), def.empurrao.vertical * (i == 1 and 1 or 0.6), "Tempestade")
+		-- superficie real perto (altura <= 60) => o cliente levanta poeira/brasas/fragmentos; sem superficie: so vento
+		FX:FireAllClients({d = self.m, hab = "Tempestade", fase = "batida", el = el, pos = centro, raio = def.raio, altura = altura,
+			frente = self:frente(), indice = i, superficie = hit ~= nil and altura <= 60, material = hit and hit.Material.Name})
 	end
+	local reserva = {}
+	for i, tb in ipairs(batidas) do reserva["Batida" .. i] = tb end
 	if noAr then
-		local t = self:tocar("Tempestade_Asas_Ar", false, {Batida = 1.0}, function(n) if n == "Batida" then batida() end end)
+		local t = self:tocar("Tempestade_Asas_Ar", false, reserva, function(n) local i = tonumber(n:match("^Batida(%d+)$")); if i then batida(i) end end)
 		task.wait(math.max(t and t.Length or 0, 2.4) - 0.1)
 		return
 	end
-	local t = self:tocar("Tempestade_Asas", false, {Impulso = 1.1, Batida = 1.75, LandingImpact = 2.95}, function(n)
+	reserva.Impulso = 1.1; reserva.LandingImpact = 2.95
+	local t = self:tocar("Tempestade_Asas", false, reserva, function(n)
 		if n == "Impulso" then
-			FX:FireAllClients({d = self.m, hab = "Tempestade", fase = "impulso", el = el, pos = chaoSob(base.Position)})
+			FX:FireAllClients({d = self.m, hab = "Tempestade", fase = "impulso", el = el, pos = chaoSob(base.Position) or base.Position})
 			task.spawn(function()                                           -- elevacao real do corpo (nao so visual)
 				local t0 = os.clock(); local H = def.elevacao or 10
 				while os.clock() - t0 < 1.85 and self.m.Parent do
@@ -466,8 +539,8 @@ function N:_Tempestade(def, el, noAr)
 				end
 				self.m:PivotTo(base)
 			end)
-		elseif n == "Batida" then batida()
-		elseif n == "LandingImpact" then FX:FireAllClients({d = self.m, hab = "Tempestade", fase = "pouso", el = el, pos = chaoSob(base.Position)}) end
+		elseif n == "LandingImpact" then FX:FireAllClients({d = self.m, hab = "Tempestade", fase = "pouso", el = el, pos = chaoSob(base.Position) or base.Position})
+		else local i = tonumber(n:match("^Batida(%d+)$")); if i then batida(i) end end
 	end)
 	self.m:SetAttribute("CorpoElevado", true)
 	task.wait(math.max(t and t.Length or 0, 3.4) - 0.1)
@@ -508,7 +581,7 @@ function N.emEstrutura(pos)
 end
 function N:centroCorpo()                                             -- meio do tronco (entre quadril e ombros), nao o pivo
 	local q = self.quadril.TransformedWorldCFrame.Position
-	local c3 = osso(self.m, "Coluna3"); local o = c3 and c3.TransformedWorldCFrame.Position or q
+	local c3 = osso(self.m, "Coluna3") or osso(self.m, "Coluna2"); local o = c3 and c3.TransformedWorldCFrame.Position or q
 	return (q + o) / 2
 end
 -- silhueta do corpo no plano (pose atual): segmentos osso-pai -> osso-filho com folga, e poligonos das membranas
@@ -652,6 +725,78 @@ function N:_Ruptura(def, el, noAr, op)
 	FX:FireAllClients({d = self.m, hab = "Ruptura", fase = "fim"})
 end
 
+-- ===== Coracao Infernal (oficial 30/10; substitui a Ruptura no Montanhas) ======================================
+-- Linha do tempo: CARGA (peito e garganta brilham) -> EXPELE (a lamina sai do focinho e se estende ate o raio externo,
+-- na direcao da cabeca) -> GIRO (a lamina gira ao redor do corpo, no plano horizontal da boca, centrada no tronco que
+-- continua se movendo: no ar o voo nao para) -> DISSIPA. A mesma funcao de angulo roda no cliente (VFX) com o t0 do
+-- servidor; o dano acompanha a trajetoria REAL: a cada quadro o setor varrido entre o angulo anterior e o atual e
+-- testado (raio interno..externo, meia-largura da lamina, faixa vertical). 1 acerto por alvo por uso.
+function N.coracaoEstado(def, t)
+	-- devolve (angulo em rad a partir da direcao inicial, extensao 0..1, ativo)
+	if t < 0 then return 0, 0, false end
+	if t <= def.expele then local k = t / def.expele; return 0, 1 - (1 - k) ^ 3, true end
+	local k = math.clamp((t - def.expele) / def.giro, 0, 1)
+	return def.sentido * 2 * math.pi * def.voltas * (k * k * (3 - 2 * k)), 1, t <= def.expele + def.giro
+end
+local function anguloAssinado(de, para)                              -- em torno de +Y (positivo = anti-horario visto de cima)
+	return math.atan2(de:Cross(para).Y, de:Dot(para))
+end
+function N:_Coracao(def, el, noAr, op)
+	FX:FireAllClients({d = self.m, hab = "Coracao", fase = "carga", el = el, carga = def.carga})
+	local t = self:tocar("Coracao_Infernal", noAr, {Expele = def.carga}, function() end)
+	task.wait(def.carga)
+	if not self.m.Parent or self.m:GetAttribute("Incapacitado") then return end
+	-- geometria fixada no instante em que a lamina sai da boca
+	local b = self:boca()
+	local c0 = self:centroCorpo()
+	local dir0 = plano(b - c0); dir0 = dir0.Magnitude > 1 and dir0.Unit or self:frente()
+	local rIn = math.clamp(plano(b - c0).Magnitude, 6, 40)
+	local dy = b.Y - c0.Y
+	local t0 = workspace:GetServerTimeNow()
+	FX:FireAllClients({d = self.m, hab = "Coracao", fase = "lamina", el = el, t0 = t0, dir0 = dir0, rIn = rIn, rOut = def.raioExterno,
+		dy = dy, expele = def.expele, giro = def.giro, voltas = def.voltas, sentido = def.sentido, dissipa = def.dissipa, largura = def.larguraLamina})
+	local atingidos = {}
+	local angAnt = 0
+	local fimAtivo = def.expele + def.giro
+	while self.m.Parent and not self.m:GetAttribute("Incapacitado") do
+		RunService.Heartbeat:Wait()
+		local tt = workspace:GetServerTimeNow() - t0
+		local ang, ext, ativo = N.coracaoEstado(def, tt)
+		if not ativo then break end
+		local centro = self:centroCorpo(); local yL = centro.Y + dy
+		local alcance = rIn + (def.raioExterno - rIn) * ext
+		local a0, a1 = math.min(angAnt, ang), math.max(angAnt, ang)
+		for _, a in ipairs(self:alvosValidos()) do
+			if not atingidos[a] then
+				local p = raiz(a).Position
+				local extra = a:GetAttribute("GuardiaoNinho") and (a:GetAttribute("CorpoRaio") or 8) * 1.6 or 2
+				local v = plano(p - centro); local r = v.Magnitude
+				if r > 0.5 and r >= rIn - extra - 4 and r <= alcance + extra and math.abs(p.Y - yL) <= def.alturaFaixa + extra then
+					local phi = anguloAssinado(dir0, v.Unit)
+					local tol = math.asin(math.clamp((def.larguraLamina + extra) / r, 0, 1))
+					-- o setor varrido pode passar de 360 graus: testa phi e as voltas equivalentes
+					local dentro = false
+					for k = -2, 2 do
+						local q = phi + k * 2 * math.pi
+						if q >= a0 - tol and q <= a1 + tol then dentro = true; break end
+					end
+					if dentro then
+						atingidos[a] = true
+						self:aplicar({a}, def.dano, "Coracao", def.intensidade, el)
+						FX:FireAllClients({d = self.m, hab = "Coracao", fase = "impacto", el = el, pos = p})
+					end
+				end
+			end
+		end
+		angAnt = ang
+		if tt > fimAtivo then break end
+	end
+	self.m:SetAttribute("UltimoCoracao", ("alvos=%d raio=%d voltas=%.2f"):format((function() local n = 0; for _ in pairs(atingidos) do n += 1 end; return n end)(), def.raioExterno, def.voltas))
+	task.wait(def.dissipa)
+	local resto = t and (t.Length - (def.carga + fimAtivo + def.dissipa)) or 0
+	if resto > 0 then task.wait(math.min(resto, 0.8)) end                  -- recuperacao do clipe
+end
+
 -- energia
 task.spawn(function()
 	while true do
@@ -661,4 +806,5 @@ task.spawn(function()
 		end
 	end
 end)
+Passivas.ligar(N)
 return N

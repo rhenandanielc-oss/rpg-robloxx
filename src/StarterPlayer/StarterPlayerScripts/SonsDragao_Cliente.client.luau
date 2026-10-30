@@ -164,8 +164,23 @@ if FX then
 		elseif h == "Sopro" and f == "projetil" then tocar(pp, Cfg.avanco, 0.7, 1.1)
 		elseif h == "Arremetida" and f == "emissao" then tocar(pp, Cfg.avanco, 1.4, 0.75)
 		elseif h == "Arremetida" and f == "impacto" then tocar(pp, Cfg.rocha, 1, 1, 0.6)
-		elseif h == "Tempestade" and (f == "impulso" or f == "batida") then tocar(pp, sorteia(Cfg.asa), 1.6, 0.6); tocar(pp, Cfg.ar, 1.2, 0.7)
+		elseif h == "Tempestade" and f == "impulso" then tocar(pp, sorteia(Cfg.asa), 1.6, 0.6); tocar(pp, Cfg.ar, 1.2, 0.7)
+		elseif h == "Tempestade" and f == "batida" then                    -- cada batida real: asa + rajada (seguintes mais leves)
+			local k = (e.indice or 1) == 1 and 1 or 0.65
+			tocar(pp, sorteia(Cfg.asa), 1.6 * k, 0.6); tocar(pp, Cfg.ar, 1.2 * k, 0.7); if e.superficie then tocar(pp, Cfg.rochaArrasto, 0.6 * k, 0.9) end
 		elseif h == "Tempestade" and f == "pouso" then tocar(pp, Cfg.rocha, 0.8, 1, 0.5)
+		-- Coracao Infernal: carga (rosnado grave contido) -> lamina sai da boca (chama forte + rugido curto) -> silvos a cada
+		-- meia volta da lamina (casados com a funcao de giro do servidor) -> impactos
+		elseif h == "Coracao" and f == "carga" then tocar(pp, Cfg.esforco, 0.7, 0.7, 1.1); tocar(pp, Cfg.fogo, 0.5, 0.6)
+		elseif h == "Coracao" and f == "lamina" then
+			tocar(pp, Cfg.rugido, 1.0, 0.8, 1.2); tocar(pp, Cfg.fogo, 1.5, 0.75)
+			local n = math.max(1, math.floor((e.voltas or 1) * 2))
+			for i = 1, n do
+				local k = (i - 0.5) / n                                       -- fracao do giro (velocidade maior no meio)
+				task.delay((e.expele or 0.4) + (e.giro or 1.7) * k, function() if pp.Parent then tocar(pp, Cfg.avanco, 1.1, 0.7 + 0.1 * math.random()); tocar(pp, Cfg.fogo, 0.6, 0.9) end end)
+			end
+		elseif h == "Coracao" and f == "impacto" then tocar(pp, Cfg.impacto, 0.8, 0.85, Cfg.impactoCorte)
+		elseif h == "SangueDeMagma" and f == "ativar" then tocar(pp, Cfg.esforco, 0.6, 0.65, 1.0)
 		elseif h == "Ruptura" and f == "preparo" then tocar(pp, Cfg.rugido, 0.9, 0.9)
 		elseif h == "Ruptura" and f == "impacto" then tocar(pp, Cfg.rocha, 1.6, 0.8); tocar(pp, Cfg.rochaArrasto, 1.2, 0.8)
 		elseif h == "Mordida" and f == "preparo" then
