@@ -797,3 +797,15 @@ dbg.OnInvoke = function(cmd, plr, a)
 		return M.modo
 	end
 end
+
+-- montarias SOLTAS (nunca montadas desde o inicio do servidor): nenhum clipe tocava, o dragao ficava na pose de
+-- repouso e a camada MovimentoVivo do cliente acumulava giros na cabeca (usuario 31/10: "mexe a cabeca igual louco
+-- quando parado"). Toca o Idle como depois de desmontar. Guardioes de ninho sao da IA (IA_Dragao_Servidor).
+local function idleSolta(m)
+	if not m:IsA("Model") or not m:GetAttribute("FormaRegional") or m:GetAttribute("GuardiaoNinho") then return end
+	if montarias[m] or m:GetAttribute("Controlador") or not m:FindFirstChildOfClass("AnimationController") then return end   -- o Animator so nasce no EstadosDragao.novo
+	local E = estados[m] or EstadosDragao.novo(m); estados[m] = E
+	E:Mudar("Idle")
+end
+for _, m in ipairs(workspace:GetChildren()) do task.spawn(idleSolta, m) end
+workspace.ChildAdded:Connect(function(m) task.defer(idleSolta, m) end)

@@ -37,10 +37,13 @@ local function preparar(m, P)
 	return e
 end
 
+local atual   -- estado do modelo em processamento: guarda quanto esta camada somou em cada osso neste quadro
 local function girar(osso, eixoMundo, ang)
 	if not osso or math.abs(ang) < 1e-4 then return end
 	local local_ = osso.TransformedWorldCFrame:VectorToObjectSpace(eixoMundo)
-	osso.Transform = osso.Transform * CFrame.fromAxisAngle(local_, ang)
+	local R = CFrame.fromAxisAngle(local_, ang)
+	osso.Transform = osso.Transform * R
+	if atual then atual.soma[osso] = (atual.soma[osso] or CFrame.identity) * R end
 end
 
 local function jogadorProximo(m, dist)
@@ -54,6 +57,13 @@ end
 
 local function passo(e, dt)
 	local P, m = e.P, e.m
+	-- a soma vale para UM quadro sobre a pose do clipe. Se nenhum clipe reescreveu o osso desde o quadro anterior
+	-- (modelo sem animacao tocando), desfaz a soma anterior antes de somar de novo: antes a rotacao acumulava a cada
+	-- quadro e a cabeca girava sem parar perto do jogador ("cabeca louca", usuario 31/10)
+	for osso, r in pairs(e.ultSoma or {}) do
+		if osso.Transform == r.T then osso.Transform = r.T * r.soma:Inverse() end
+	end
+	e.soma = {}; atual = e
 	local cf = m:GetPivot()
 	-- movimento real: o servidor move o modelo ancorado e o pivo chega em degraus (~30 Hz, metade dos quadros sem
 	-- mudar). As grandezas so sao recalculadas quando o pivo muda, com o tempo ACUMULADO desde a ultima mudanca, e
@@ -140,6 +150,9 @@ local function passo(e, dt)
 		local F = cf.LookVector
 		girar(e.ombroE, F, rad(asa * P.sinalAsa)); girar(e.ombroD, F, rad(asa * P.sinalAsa))
 	end
+	local ult = {}
+	for osso, soma in pairs(e.soma) do ult[osso] = {T = osso.Transform, soma = soma} end
+	e.ultSoma = ult; atual = nil
 end
 
 local function registrar(m)

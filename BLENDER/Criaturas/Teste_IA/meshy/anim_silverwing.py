@@ -607,18 +607,20 @@ def f_comer(u):
           onda=[2.5 * puxa * PESO_CAUDA[k] for k in range(7)])
     return p
 
-def segura(u, alvos):
-    """olhar em etapas: vira, SEGURA, vira (nao seno continuo). alvos = lista de graus, um por trecho"""
+def segura(u, alvos, giro=0.35):
+    """olhar em etapas: vira, SEGURA, vira (nao seno continuo). alvos = lista de graus, um por trecho; giro = fracao
+    do trecho gasta virando"""
     n_ = len(alvos); x = (u % 1.0) * n_; i = int(x); t = x - i
-    return lerp(alvos[i - 1], alvos[i], smooth(t / 0.35))          # alvos[-1] = ultimo (laco fecha)
+    return lerp(alvos[i - 1], alvos[i], smooth(t / giro))          # alvos[-1] = ultimo (laco fecha)
 
 def f_observar(u):
     """Observar 7 s: corpo parado e firme, cabeca/pescoco varrem o ambiente em etapas (vira, segura, vira), ergue o
     pescoco para olhar longe, respiracao, troca de apoio, cauda em S lento."""
     p = Pose(); em_pe(p)
     r = math.sin(2 * math.pi * 3 * u)
-    esq = segura(u, [0, 30, 30, -24, -24, 8, 0])
-    cima = segura(u, [0, 6, 10, 2, 8, 0, 0])
+    # usuario 31/10 ("cabeca igual louco"): viradas mais lentas e menores (pico 263 -> ~100 graus/s)
+    esq = segura(u, [0, 24, 24, -18, -18, 6, 0], 0.65)
+    cima = segura(u, [0, 5, 8, 2, 6, 0, 0], 0.65)
     p.off += Vector((0, 0, 0.003 * r)); p.arf += 0.8 * r
     p.curva["spine_0"] = (0, -0.12 * esq)
     pescoco_alto(p, cima=-10 + cima, esq=esq, cab=-2 * r)
