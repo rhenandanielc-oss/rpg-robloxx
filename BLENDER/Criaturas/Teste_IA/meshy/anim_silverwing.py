@@ -117,14 +117,14 @@ DIR_DOBRA = {
 if os.environ.get("DOBRA_JSON"):                      # dobra propria de outro dragao (mesmo esqueleto, asas diferentes)
     import json
     DIR_DOBRA.update({k: tuple(v) for k, v in json.load(open(os.environ["DOBRA_JSON"], encoding="utf-8")).items()})
-def _basis_dobra(resp=0.0):
+def _basis_dobra(resp=0.0, dirs=None):
     """basis (local) de cada osso de asa para a dobra; resp (-1..1) = pequena variacao (respiracao/ajuste)"""
-    W = {}; out = {}
+    W = {}; out = {}; dirs = dirs or DIR_DOBRA
     for n in ORD:
         pai = PAI[n]; Mc = (W[pai] @ REL[n]) if pai else REL[n].copy()
         base = n[:-2] if n.endswith(("_l", "_r")) else n
-        if n in ASA and base in DIR_DOBRA:
-            d = Vector(DIR_DOBRA[base])
+        if n in ASA and base in dirs:
+            d = Vector(dirs[base])
             if base == "wing_1": d = d + Vector((0, 0, 0.03 * resp))                 # cotovelo sobe/desce de leve
             if base.startswith("wing_feather"): d = d + Vector((-0.015 * resp, 0, 0))   # dedos encostam/afastam
             if n.endswith("_r"): d.x = -d.x
@@ -137,6 +137,73 @@ def _basis_dobra(resp=0.0):
     return out
 if DOBRA:
     CACHE["Silverwing_Idle"] = [_basis_dobra(math.sin(2 * math.pi * k / 30)) for k in range(31)]
+
+# ASAS ARMADAS no chao (usuario 31/10: "nao quero ver as asas dobradas de novo"): no lugar da dobra, asas meio abertas
+# e um pouco erguidas (referencia do dragao marrom andando): umero para fora/tras/cima, punho alto, dedos em leque para
+# tras e para baixo, membrana aberta. ERGUIDA = asas acima do corpo (referencia do dragao verde sentado). Entre as duas,
+# mistura das direcoes (ergue 0..1). Substitui o "Silverwing_Idle" do CACHE: todos os clipes de chao e as misturas com
+# o voo passam a partir das asas armadas.
+ASAS_ARMADAS = os.environ.get("ASAS_ARMADAS") == "1"
+DIR_ARMADA = {
+    "wing_1": (0.55, 0.35, 0.75), "wing_2": (0.45, -0.25, 0.85),
+    "wing_3": (0.60, 0.10, 0.55), "wing_4": (0.70, 0.30, 0.10), "wing_5": (0.60, 0.50, -0.30), "wing_tip": (0.50, 0.60, -0.50),
+    "wing_feather_5_0": (0.55, 0.55, -0.20), "wing_feather_5_1": (0.52, 0.58, -0.25), "wing_feather_5_tip": (0.50, 0.60, -0.30),
+    "wing_feather_4_0": (0.40, 0.75, -0.40), "wing_feather_4_1": (0.38, 0.76, -0.42), "wing_feather_4_tip": (0.36, 0.77, -0.45),
+    "wing_feather_3_0": (0.25, 0.85, -0.50), "wing_feather_3_1": (0.24, 0.85, -0.52), "wing_feather_3_tip": (0.22, 0.85, -0.54),
+    "wing_feather_2_0": (0.15, 0.90, -0.45), "wing_feather_2_1": (0.14, 0.90, -0.46), "wing_feather_2_tip": (0.13, 0.90, -0.47),
+    "wing_feather_1_0": (0.10, 0.97, -0.20), "wing_feather_1_1": (0.10, 0.97, -0.22), "wing_feather_1_tip": (0.10, 0.96, -0.24),
+}
+DIR_ERGUIDA = {
+    "wing_1": (0.35, 0.35, 0.87), "wing_2": (0.25, -0.10, 0.96),
+    "wing_3": (0.30, 0.35, 0.88), "wing_4": (0.30, 0.60, 0.60), "wing_5": (0.30, 0.80, 0.30), "wing_tip": (0.25, 0.90, 0.10),
+    "wing_feather_5_0": (0.30, 0.85, 0.30), "wing_feather_5_1": (0.30, 0.86, 0.25), "wing_feather_5_tip": (0.30, 0.87, 0.20),
+    "wing_feather_4_0": (0.30, 0.90, 0.00), "wing_feather_4_1": (0.30, 0.90, -0.05), "wing_feather_4_tip": (0.30, 0.90, -0.10),
+    "wing_feather_3_0": (0.25, 0.90, -0.30), "wing_feather_3_1": (0.25, 0.90, -0.33), "wing_feather_3_tip": (0.24, 0.90, -0.36),
+    "wing_feather_2_0": (0.20, 0.85, -0.50), "wing_feather_2_1": (0.20, 0.85, -0.52), "wing_feather_2_tip": (0.19, 0.85, -0.54),
+    "wing_feather_1_0": (0.10, 0.90, -0.40), "wing_feather_1_1": (0.10, 0.90, -0.42), "wing_feather_1_tip": (0.10, 0.89, -0.44),
+}
+def _sub(raiz):
+    """osso + descendentes"""
+    out = {raiz}; mudou = True
+    while mudou:
+        mudou = False
+        for n in ORD:
+            if n not in out and PAI[n] in out: out.add(n); mudou = True
+    return out
+def _giro_em(p, R): return Matrix.Translation(p) @ R.to_4x4() @ Matrix.Translation(-p)
+# parametros (graus): ergue = sobe a asa inteira no ombro; recua = varre para tras; cotovelo/punho = meia dobra
+# (antebraco para frente, dedos para tras), fecha os dedos em leque. ARMADA (andar/parado) e ERGUIDA (sentado)
+P_ARMADA = dict(ergue=38, recua=18, cotovelo=-14, punho=30, leque=0.25)
+P_ERGUIDA = dict(ergue=72, recua=26, cotovelo=-22, punho=44, leque=0.35)
+def asas_armadas(ergue=0.0, resp=0.0):
+    """Asas ARMADAS a partir do PLANEIO (pose validada, membrana sem lascas): giros RIGIDOS de subarvores (punho,
+    cotovelo, ombro) em vez de direcoes osso a osso -> a membrana entre os dedos nao torce. ergue 0 = armada,
+    1 = erguida acima do corpo (sentado); resp = respiracao (pequena variacao)"""
+    P = {k: lerp(P_ARMADA[k], P_ERGUIDA[k], ergue) for k in P_ARMADA}
+    G = asas("Silverwing_Fly_Glide", 0.2); W = {}
+    for n in ORD:                                                   # planeio com o corpo em repouso
+        pai = PAI[n]; Mc = (W[pai] @ REL[n]) if pai else REL[n].copy()
+        W[n] = Mc @ G[n] if n in G else Mc
+    Wt = dict(W)
+    for s_, sg in (("l", 1), ("r", -1)):
+        def gira(raiz, piv_osso, R, extra=()):
+            pv = Wt[piv_osso].translation.copy(); Mg = _giro_em(pv, R)
+            for n in _sub(raiz) | set(extra): Wt[n] = Mg @ Wt[n]
+        # leque: dedos 3/4/5 se aproximam do dedo de ataque (wing_3) girando para frente no plano da asa
+        for k, f in (("3", 1.0), ("4", 0.7), ("5", 0.35)):
+            raiz = "wing_feather_%s_0_%s" % (k, s_)
+            gira(raiz, raiz, Rax(Z, -sg * 40 * P["leque"] * f))
+        gira("wing_3_" + s_, "wing_3_" + s_, Rax(Z, sg * P["punho"]))                       # dedos para tras
+        gira("wing_2_" + s_, "wing_2_" + s_, Rax(Z, sg * P["cotovelo"]))                    # antebraco a frente
+        R = Rax(Z, sg * (P["recua"] + 1.5 * resp)) @ Rax(Y, -sg * (P["ergue"] + 2.0 * resp))
+        gira("wing_1_" + s_, "wing_1_" + s_, R, extra=_sub("wing_feather_1_0_" + s_))      # asa inteira sobe
+    out = {}
+    for n in ASA:
+        pai = PAI[n]; Mc = (Wt[pai] @ REL[n]) if pai else REL[n].copy()
+        out[n] = Mc.inverted() @ Wt[n]
+    return out
+if ASAS_ARMADAS:
+    CACHE["Silverwing_Idle"] = [asas_armadas(0.0, math.sin(2 * math.pi * k / 30)) for k in range(31)]
 # fase da batida: altura da ponta da asa no Fly_Flap (para o corpo reagir a batida)
 def _alt_ponta():
     act = bpy.data.actions["Silverwing_Fly_Flap"]; A.animation_data.action = act; A.animation_data.action_slot = act.slots[0]
@@ -372,7 +439,11 @@ def andadura(T_ciclo, duty, S, fases, alt_pd, alt_pt, bob, rol, guin, arf_osc=0.
         else:
             pescoco_alto(p, cima=(-38 if PASSO_PESADO else -30) * PENDULO + 3 * AC * 1.6 * math.cos(4 * math.pi * u - 0.7),
                          esq=-guin * 1.2 * math.sin(2 * math.pi * u - 0.3), cab=-2.5 * AC * math.cos(4 * math.pi * u - 1.2))
-        p.asas = asas(nome_asa, u)
+        if ASAS_ARMADAS:                       # asas armadas balancam com o passo (2 por ciclo), com atraso do tronco
+            ergue = (0.12 if corrida else 0.08) + (0.30 if corrida else 0.22) * math.cos(4 * math.pi * u - 1.3)
+            p.asas = asas_armadas(ergue, 1.0 * math.sin(4 * math.pi * u - 1.9))
+        else:
+            p.asas = asas(nome_asa, u)
         # cauda: onda lateral que nasce no quadril (contrapeso do passo) e cresce com atraso para a ponta; na corrida
         # menor e mais rigida (contrapeso, nao chicote)
         # (+ 2o harmonico: a curva muda de forma entre as passadas em vez de so trocar de lado)
@@ -442,7 +513,7 @@ def pose_sentado(p, a, r=0.0, olhar=0.0, ponta=None):
             alvo = 0.03 + 0.004 * k
             corr = math.degrees(math.asin(max(-1, min(1, (alvo - tz) / Lb)))) * 0.9 * a
             c, e = p.curva[n]; p.curva[n] = (c + corr, e)
-    p.asas = asas("Silverwing_Idle", 0.0)
+    p.asas = asas_armadas(a, r) if ASAS_ARMADAS else asas("Silverwing_Idle", 0.0)    # sentado: asas acima do corpo
     return p
 def f_sentar(u):                    # em pe -> sentado: o quadril desce primeiro, o peito sobe no fim
     return pose_sentado(Pose(), smooth(u))
