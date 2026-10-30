@@ -84,8 +84,9 @@ for s in (1, -1):
     cadeia([(V((0.058 * s, -0.750, 0.742)), 0.031, 0.026), (V((0.052 * s, -0.800, 0.733)), 0.017, 0.014)], esp[I_CRAN])   # maca
     cadeia([(V((0.018 * s, -0.945, 0.733)), 0.013, 0.012)], esp[I_FOC])                                                   # narina
     raiz, cot, pul, dedos = asa(s)
-    braco = cadeia([(raiz, 0.062, 0.058), (lerp(raiz, cot, 0.5), 0.042, 0.038), (cot, 0.033, 0.030),
-                    (lerp(cot, pul, 0.5), 0.024, 0.021), (pul, 0.026, 0.023)], esp[I_PEITO])
+    # glacial (refino 31/10): braco da asa mais fino e aerodinamico, punho marcado (mesmos pontos de articulacao)
+    braco = cadeia([(raiz, 0.056, 0.052), (lerp(raiz, cot, 0.5), 0.034, 0.031), (cot, 0.030, 0.027),
+                    (lerp(cot, pul, 0.5), 0.019, 0.017), (pul, 0.024, 0.021)], esp[I_PEITO])
     for d in dedos:
         cadeia([(lerp(pul, d[0], 0.5), 0.016, 0.013), (d[0], 0.013, 0.011), (d[1], 0.009, 0.008), (d[2], 0.004, 0.004)], braco[-1])
     cadeia([(pul + V((0.02 * s, -0.045, 0.012)), 0.012, 0.011), (pul + V((0.03 * s, -0.085, 0.008)), 0.005, 0.005)], braco[-1])
@@ -127,6 +128,30 @@ for v in ob.data.vertices:                                     # rosto: boca, na
         d = (p - V((OLHO.x * s_, OLHO.y, OLHO.z))).length
         if d < 0.02: p -= nrm * 0.008 * (1 - d / 0.02) ** 2
 ob.data.update()
+# REFINO DO ROSTO (glacial 31/10): orbita mais funda com aro, arcada da sobrancelha saliente (olhar severo), crista
+# nasal, narinas em fenda, sulco da maca, linha da mandibula marcada e placas faciais; tudo pequeno (mesmo volume)
+for v in ob.data.vertices:
+    p, nrm = v.co, v.normal; x, y, z = p
+    if y > -0.70: continue
+    for s_ in (1, -1):
+        olho = V((OLHO.x * s_, OLHO.y, OLHO.z))
+        d = (p - olho).length
+        if 0.016 < d < 0.032: p += nrm * 0.0035 * math.sin(math.pi * (d - 0.016) / 0.016)        # aro da orbita
+        if d < 0.018: p -= nrm * 0.004 * (1 - d / 0.018)                                          # orbita mais funda
+        sob = olho + V((0.004 * s_, 0.004, 0.022))                                                # arcada sobre o olho
+        e = V(((x - sob.x) / 0.022, (y - sob.y) / 0.034, (z - sob.z) / 0.010))
+        if e.length < 1.0: p += nrm * 0.007 * (1 - e.length) ** 1.5
+        nar = V((0.020 * s_, -0.950, 0.738))                                                      # narina em fenda
+        e = V(((x - nar.x) / 0.008, (y - nar.y) / 0.016, (z - nar.z) / 0.004))
+        if e.length < 1.0: p -= nrm * 0.005 * (1 - e.length)
+        if -0.90 < y < -0.80 and s_ * x > 0.02:                                                   # sulco da maca
+            zs = 0.738 - (y + 0.80) * 0.12
+            p -= nrm * 0.0022 * math.exp(-((z - zs) / 0.004) ** 2)
+    if abs(x) < 0.016 and y < -0.82 and z > 0.735:                                                # crista nasal
+        p += nrm * 0.004 * (1 - abs(x) / 0.016) * suave((-0.82 - y) / 0.04)
+    if y < -0.74 and 0.684 < z < 0.700 and abs(x) > 0.015:                                        # borda da mandibula
+        p += nrm * 0.0025 * math.exp(-((z - 0.692) / 0.004) ** 2)
+ob.data.update()
 K_CAB, PIV = 1.2, V((0, -0.64, 0.725))         # glacial: cabeca proporcional (referencia elegante); articulacoes iguais
 def cabeca(p, w=None):
     w = suave((-0.61 - p.y) / 0.09) if w is None else w
@@ -136,11 +161,13 @@ ob.data.update()
 
 # ------------------------------------------------------------------ membranas (presas so ao flanco, a frente do quadril)
 def membrana(s):
-    raiz, cot, pul, dedos = asa(s); pts, faces = [], []
+    raiz, cot, pul, dedos = asa(s); pts, faces, uvs = [], [], []
+    regiao = [0]
     def grade(P, nu, nv):
         base = len(pts)
         for j in range(nv + 1):
-            for i in range(nu + 1): pts.append(P(i / nu, j / nv))
+            for i in range(nu + 1):
+                pts.append(P(i / nu, j / nv)); uvs.append((regiao[0] + i / nu, j / nv))   # U = setor + posicao no setor
         for j in range(nv):
             for i in range(nu):
                 a = base + j * (nu + 1) + i; faces.append((a, a + 1, a + nu + 2, a + nu + 1))
@@ -156,8 +183,9 @@ def membrana(s):
             pa, pb = dedo(a, t), dedo(b, t); p = lerp(pa, pb, u); corda = (pb - pa).length
             p += (pul - p).normalized() * 0.40 * corda * math.sin(math.pi * u) * t ** 3
             p.z -= 0.035 * math.sin(math.pi * u) * t
+            p.z -= 0.006 * math.sin(math.pi * 2 * u) ** 2 * t * (1 - t) * 4                     # prega suave no meio do setor
             return p
-        grade(P, 10, 18)
+        grade(P, 14, 22); regiao[0] += 1
     flanco = V((0.115 * s, 0.30, 0.47))
     def braco(u):
         if u < 0.55: return lerp(pul, cot, u / 0.55)
@@ -167,12 +195,15 @@ def membrana(s):
     def Pc(u, t):
         p = lerp(braco(u), borda(u), t); p.z -= 0.04 * math.sin(math.pi * u) * math.sin(math.pi * t)
         return lerp(p, dedo(dedos[3], t), (1 - u) ** 3)
-    grade(Pc, 12, 16)
+    grade(Pc, 14, 18); regiao[0] += 1
     def Pp(u, t):
         a = lerp(raiz + V((0, -0.02, 0.0)), pul, u); b = a + V((0, -0.08, 0.006)) * math.sin(math.pi * u)
         return lerp(a, b, t)
     grade(Pp, 10, 3)
     m = bpy.data.meshes.new("Membrana"); m.from_pydata([tuple(p) for p in pts], [], faces)
+    uvl = m.uv_layers.new(name="UVMembrana")
+    for pl in m.polygons:
+        for li in pl.loop_indices: uvl.data[li].uv = uvs[m.loops[li].vertex_index]
     o = bpy.data.objects.new("GL_Dragao_Membrana_" + ("L" if s > 0 else "R"), m); sc.collection.objects.link(o)
     for p in m.polygons: p.use_smooth = True
     o.modifiers.new("Solda", "WELD").merge_threshold = 0.002
@@ -196,7 +227,7 @@ def tubo(pts, r0, nome, expo=1.15):
         r = r0 * (1 - i / (n - 1)) ** expo + 0.0012; d.radius = (r, r); d.use_root = i == 0
     s2 = o.modifiers.new("Sub", "SUBSURF"); s2.levels = s2.render_levels = 2
     return o
-CHIFRES, ESPINHOS, GARRAS, OLHOS = [], [], [], []
+CHIFRES, ESPINHOS, GARRAS, OLHOS, DENTES = [], [], [], [], []
 for s in (1, -1):
     # COROA (referencia): chifre principal longo e fino varrido para tras, 3 pontas menores em leque atras/fora
     CHIFRES.append(tubo([V((0.030 * s, -0.745, 0.830)), V((0.044 * s, -0.690, 0.868)), V((0.056 * s, -0.625, 0.900)),
@@ -243,14 +274,27 @@ for s in (1, -1):
     for dian in (True, False):
         for d in dedos_pe(s, dian):
             ponta = d[-1][0]; dirv = (ponta - d[0][0]).normalized()
-            pts = [ponta + dirv * 0.004, ponta + dirv * 0.026 + V((0, 0, 0.002)), ponta + dirv * 0.046 + V((0, 0, -0.010)),
-                   ponta + dirv * 0.058 + V((0, 0, -0.028))]
-            GARRAS.append(tubo(pts, 0.0125, "Garra"))
+            pts = [ponta + dirv * 0.004, ponta + dirv * 0.024 + V((0, 0, 0.004)), ponta + dirv * 0.044 + V((0, 0, -0.004)),
+                   ponta + dirv * 0.058 + V((0, 0, -0.020)), ponta + dirv * 0.064 + V((0, 0, -0.034))]
+            GARRAS.append(tubo(pts, 0.0115, "Garra", 1.45))                     # garra curva e afiada (refino)
     raiz, cot, pul, dedos = asa(s)
     for d in dedos[:1]:                                         # garra na ponta do dedo de ataque
         GARRAS.append(tubo([d[2], d[2] + (d[2] - d[1]).normalized() * 0.03 + V((0, 0, -0.012))], 0.006, "Garra_Asa"))
     pol = pul + V((0.03 * s, -0.085, 0.008))
     GARRAS.append(tubo([pol, pol + V((0.008 * s, -0.03, -0.006)), pol + V((0.012 * s, -0.045, -0.022))], 0.0075, "Garra_Polegar"))
+# dentes (refino): presas curtas aparecendo na linha da boca fechada (a boca real com dentes e lingua e feita no rig,
+# como no CR_Dragao: refinar_rosto.py)
+for s in (1, -1):
+    for k, (yy, comp) in enumerate(((-0.905, 0.014), (-0.875, 0.011), (-0.845, 0.009), (-0.815, 0.008))):
+        zb = 0.704 + (yy + 0.95) * 0.07
+        xx = (0.030 - 0.006 * k * 0) * s * (0.85 + 0.05 * k)
+        b0 = V((xx, yy, zb + 0.004))
+        DENTES.append(tubo([b0, b0 + V((0.001 * s, -0.002, -comp * 0.6)), b0 + V((0.0005 * s, -0.003, -comp))], 0.0032, "Dente", 1.5))
+# ponta da cauda (refino): tres laminas finas de gelo em leque, discretas (seguem o ultimo osso)
+for k, (yy, ang, alt) in enumerate(((1.66, 0.0, 0.030), (1.72, 0.55, 0.022), (1.72, -0.55, 0.022))):
+    z, r = eixo_em(yy)
+    lam = espinho_dorsal(V((0, yy, z + r * 0.6)), alt, 0.014, -0.55, "Espinho_Dorsal_Cauda_%d" % k)
+    lam.rotation_euler = (-0.55, ang, 0); ESPINHOS.append(lam)
 for s in (1, -1):
     bpy.ops.mesh.primitive_uv_sphere_add(radius=0.0092, location=(OLHO.x * s, OLHO.y, OLHO.z), segments=24, ring_count=12)
     o = bpy.context.object; o.name = "Olho"; o.scale = (0.7, 1.35, 0.72); bpy.ops.object.shade_smooth(); OLHOS.append(o)
@@ -286,7 +330,17 @@ def mat_corpo():
         return x.outputs[0]
     corpo_f = mr(pos.outputs["Y"], -0.72, -0.45)                         # 0 cabeca -> 1 corpo
     dors_f = mr(nr.outputs["Z"], 0.0, 0.7)                               # dorso (face para cima) = escamas maiores
-    tam = op("SUBTRACT", mr(corpo_f, 0, 1, 250, 165), op("MULTIPLY", dors_f, v=30.0))       # glacial: escamas mais finas
+    # HIERARQUIA (refino): face fina -> pescoco/tronco medio -> faixa dorsal e ombros/coxas maiores; laterais do pescoco
+    # e dobras das patas menores (areas flexiveis)
+    axn = op("ABSOLUTE", nr.outputs["X"]); axpos = op("ABSOLUTE", pos.outputs["X"])
+    faixa_dors = op("MULTIPLY", mr(nr.outputs["Z"], 0.70, 0.95), mr(axpos, 0.07, 0.025))
+    pesc_lat = op("MULTIPLY", op("MULTIPLY", mr(pos.outputs["Y"], -0.30, -0.42), mr(pos.outputs["Y"], -0.74, -0.66)), mr(axn, 0.35, 0.75))
+    flex = op("MULTIPLY", mr(pos.outputs["Z"], 0.30, 0.20), mr(pos.outputs["Z"], 0.05, 0.12))        # canela/punho
+    massa = op("MULTIPLY", mr(pos.outputs["Z"], 0.30, 0.40), mr(axn, 0.55, 0.85))                     # ombro/coxa (lateral alto)
+    tam0 = op("SUBTRACT", mr(corpo_f, 0, 1, 330, 175), op("MULTIPLY", dors_f, v=30.0))
+    tam1 = op("SUBTRACT", op("ADD", tam0, op("ADD", op("MULTIPLY", pesc_lat, v=90.0), op("MULTIPLY", flex, v=80.0))),
+              op("ADD", op("MULTIPLY", faixa_dors, v=85.0), op("MULTIPLY", massa, v=35.0)))
+    tam = op("MAXIMUM", tam1, v=60.0)
     estica = n(nt, "ShaderNodeVectorMath", operation="MULTIPLY"); estica.inputs[1].default_value = (1.0, 0.72, 1.0)
     L.new(tc.outputs["Object"], estica.inputs[0])
     ve = n(nt, "ShaderNodeTexVoronoi", feature="DISTANCE_TO_EDGE"); vc = n(nt, "ShaderNodeTexVoronoi")
@@ -297,15 +351,18 @@ def mat_corpo():
     ruido = n(nt, "ShaderNodeTexNoise"); ruido.inputs["Scale"].default_value = 7; L.new(tc.outputs["Object"], ruido.inputs["Vector"])
     # vermelho-alaranjado vivo do conceito (lineares; sRGB ~ 220,60,40 no tom medio)
     verm = rampa(nt, L, ruido.outputs["Fac"], [(0.3, (0.08, 0.26, 0.60, 1)), (0.55, (0.20, 0.46, 0.82, 1)), (0.8, (0.40, 0.66, 0.94, 1))])   # azul-gelo saturado
-    tom = n(nt, "ShaderNodeMix", data_type="RGBA", blend_type="MULTIPLY"); tom.inputs["Factor"].default_value = 0.18
+    tom = n(nt, "ShaderNodeMix", data_type="RGBA", blend_type="MULTIPLY"); tom.inputs["Factor"].default_value = 0.32   # cada escama com tom proprio
     L.new(verm.outputs["Color"], tom.inputs[6]); L.new(vc.outputs["Color"], tom.inputs[7])
     fr_ = mr(ve.outputs["Distance"], 0.0, 0.12)
     fr = n(nt, "ShaderNodeMath", operation="ADD"); L.new(fr_, fr.inputs[0]); fr.inputs[1].default_value = 0.0   # compat: fr.outputs[0]
     brilho = op("MULTIPLY", op("POWER", fr.outputs[0], v=0.5), tras)     # borda de tras erguida pega luz
     realce = n(nt, "ShaderNodeMix", data_type="RGBA"); L.new(op("MULTIPLY", brilho, v=0.55), realce.inputs["Factor"])
-    L.new(tom.outputs[2], realce.inputs[6]); realce.inputs[7].default_value = (0.82, 0.92, 1.0, 1)    # borda clara (gelo)
+    # dorso mais profundo e saturado, flancos mais claros (contraste dorso/ventre da referencia)
+    dorsal_cor = n(nt, "ShaderNodeMix", data_type="RGBA", blend_type="MULTIPLY"); L.new(op("MULTIPLY", mr(nr.outputs["Z"], 0.2, 0.9), v=0.55), dorsal_cor.inputs["Factor"])
+    L.new(tom.outputs[2], dorsal_cor.inputs[6]); dorsal_cor.inputs[7].default_value = (0.42, 0.58, 0.86, 1)
+    L.new(dorsal_cor.outputs[2], realce.inputs[6]); realce.inputs[7].default_value = (0.86, 0.95, 1.0, 1)    # borda clara (gelo)
     esc = n(nt, "ShaderNodeMix", data_type="RGBA"); L.new(op("POWER", fr.outputs[0], v=0.6), esc.inputs["Factor"])
-    esc.inputs[6].default_value = (0.012, 0.03, 0.09, 1); L.new(realce.outputs[2], esc.inputs[7])    # fendas azul-marinho
+    esc.inputs[6].default_value = (0.03, 0.07, 0.17, 1); L.new(realce.outputs[2], esc.inputs[7])     # fendas azul-marinho (suaves)
     ALT_ESC = op("MULTIPLY", op("POWER", fr.outputs[0], v=0.5), op("ADD", op("MULTIPLY", tras, v=0.7), v=0.3))
     # ventre marfim em placas: faixa central de baixo (tronco/cauda) e frente do pescoco/garganta
     ax = n(nt, "ShaderNodeMath", operation="ABSOLUTE"); L.new(nr.outputs["X"], ax.inputs[0])
@@ -329,13 +386,17 @@ def mat_corpo():
     L.new(tc.outputs["Object"], eix.inputs[0])
     sel = n(nt, "ShaderNodeMix", data_type="FLOAT"); L.new(pesc.outputs[0], sel.inputs["Factor"])
     L.new(pos.outputs["Y"], sel.inputs[2]); L.new(eix.outputs["Value"], sel.inputs[3])
-    onda = n(nt, "ShaderNodeMath", operation="MULTIPLY"); L.new(sel.outputs[0], onda.inputs[0]); onda.inputs[1].default_value = 2 * math.pi * 26
+    onda = n(nt, "ShaderNodeMath", operation="MULTIPLY"); L.new(sel.outputs[0], onda.inputs[0]); onda.inputs[1].default_value = 2 * math.pi * 24
     sen = n(nt, "ShaderNodeMath", operation="SINE"); L.new(onda.outputs[0], sen.inputs[0])
-    sulco = n(nt, "ShaderNodeMapRange"); sulco.inputs[1].default_value = -1.0; sulco.inputs[2].default_value = -0.82
+    sulco = n(nt, "ShaderNodeMapRange"); sulco.inputs[1].default_value = -1.0; sulco.inputs[2].default_value = -0.86   # sulco fino e nitido (placas largas)
     L.new(sen.outputs[0], sulco.inputs[0])
-    marfim = rampa(nt, L, ruido.outputs["Fac"], [(0.3, (0.62, 0.76, 0.90, 1)), (0.7, (0.84, 0.93, 1.0, 1))])   # placas quase brancas
+    # placa abaulada: clara no meio, levemente mais escura nas bordas (le o volume de cada placa)
+    meio_placa = mr(sen.outputs[0], -0.6, 1.0)
+    marfim0 = rampa(nt, L, ruido.outputs["Fac"], [(0.3, (0.64, 0.78, 0.92, 1)), (0.7, (0.86, 0.94, 1.0, 1))])
+    marfim = n(nt, "ShaderNodeMix", data_type="RGBA", blend_type="MULTIPLY"); L.new(op("SUBTRACT", op("MULTIPLY", meio_placa, v=-1.0), v=-1.0), marfim.inputs["Factor"])
+    L.new(marfim0.outputs["Color"], marfim.inputs[6]); marfim.inputs[7].default_value = (0.74, 0.84, 0.95, 1)
     placa = n(nt, "ShaderNodeMix", data_type="RGBA"); L.new(sulco.outputs[0], placa.inputs["Factor"])
-    placa.inputs[6].default_value = (0.20, 0.34, 0.52, 1); L.new(marfim.outputs["Color"], placa.inputs[7])
+    placa.inputs[6].default_value = (0.24, 0.38, 0.58, 1); L.new(marfim.outputs[2], placa.inputs[7])     # sulco azul (sem cara de cano)
     cor = n(nt, "ShaderNodeMix", data_type="RGBA"); L.new(ventre.outputs[0], cor.inputs["Factor"])
     L.new(esc.outputs[2], cor.inputs[6]); L.new(placa.outputs[2], cor.inputs[7])
     # dedos da asa mais claros (pessego)
@@ -343,31 +404,70 @@ def mat_corpo():
     cor2 = n(nt, "ShaderNodeMix", data_type="RGBA"); L.new(ded.outputs[0], cor2.inputs["Factor"])
     L.new(cor.outputs[2], cor2.inputs[6]); cor2.inputs[7].default_value = (0.70, 0.84, 0.96, 1)   # dedos da asa claros
     L.new(cor2.outputs[2], b.inputs["Base Color"])
-    rg = n(nt, "ShaderNodeMapRange"); rg.inputs[3].default_value = 0.75; rg.inputs[4].default_value = 0.52; L.new(fr.outputs[0], rg.inputs[0])
-    L.new(rg.outputs[0], b.inputs["Roughness"])
-    if "Coat Weight" in b.inputs: b.inputs["Coat Weight"].default_value = 0.25          # brilho frio de gelo
+    rg = n(nt, "ShaderNodeMapRange"); rg.inputs[3].default_value = 0.80; rg.inputs[4].default_value = 0.58; L.new(fr.outputs[0], rg.inputs[0])   # fosco natural
+    # geada: pontos finos que brilham frio (moderado) -> rugosidade menor nesses pontos, nao plastico no resto
+    geada = n(nt, "ShaderNodeTexNoise"); geada.inputs["Scale"].default_value = 520; L.new(tc.outputs["Object"], geada.inputs["Vector"])
+    pontos = mr(geada.outputs["Fac"], 0.66, 0.74)
+    rugf = op("SUBTRACT", rg.outputs[0], op("MULTIPLY", pontos, v=0.30))
+    L.new(rugf, b.inputs["Roughness"])
+    if "Coat Weight" in b.inputs:
+        L.new(op("ADD", op("MULTIPLY", pontos, v=0.30), v=0.04), b.inputs["Coat Weight"])   # so os pontos de geada brilham
+        if "Coat Roughness" in b.inputs: b.inputs["Coat Roughness"].default_value = 0.25
     # relevo: escamas (fora do ventre) + sulcos das placas (no ventre)
     alt_esc = n(nt, "ShaderNodeMath", operation="MULTIPLY"); L.new(fr.outputs[0], alt_esc.inputs[0])
     inv = n(nt, "ShaderNodeMath", operation="SUBTRACT"); inv.inputs[0].default_value = 1.0; L.new(ventre.outputs[0], inv.inputs[1])
     L.new(inv.outputs[0], alt_esc.inputs[1])
-    alt_pl = n(nt, "ShaderNodeMath", operation="MULTIPLY"); L.new(sulco.outputs[0], alt_pl.inputs[0]); L.new(ventre.outputs[0], alt_pl.inputs[1])
+    alt_pl = n(nt, "ShaderNodeMath", operation="MULTIPLY"); L.new(op("MULTIPLY", sulco.outputs[0], op("ADD", op("MULTIPLY", meio_placa, v=0.5), v=0.5)), alt_pl.inputs[0]); L.new(ventre.outputs[0], alt_pl.inputs[1])
     alt_esc2 = n(nt, "ShaderNodeMath", operation="MULTIPLY"); L.new(ALT_ESC, alt_esc2.inputs[0]); L.new(inv.outputs[0], alt_esc2.inputs[1])
     alt = n(nt, "ShaderNodeMath", operation="ADD"); L.new(alt_esc2.outputs[0], alt.inputs[0]); L.new(alt_pl.outputs[0], alt.inputs[1])
-    bp = n(nt, "ShaderNodeBump"); bp.inputs["Strength"].default_value = 0.85; bp.inputs["Distance"].default_value = 0.004
+    bp = n(nt, "ShaderNodeBump"); bp.inputs["Strength"].default_value = 0.6; bp.inputs["Distance"].default_value = 0.004
     L.new(alt.outputs[0], bp.inputs["Height"]); L.new(bp.outputs[0], b.inputs["Normal"])
     return m
 def mat_membrana():
+    """membrana de gelo (refino): azul muito claro, translucida; veios finos ramificados que seguem cada setor (UV:
+    U = setor + posicao entre os dedos, V = da base a borda); borda de fuga mais clara e fina; base junto aos ossos
+    mais densa; textura organica leve (sem plastico)"""
     m, nt, b, L = mat("M_Dragao_Membrana")
+    uv = n(nt, "ShaderNodeUVMap"); uv.uv_map = "UVMembrana"
+    sp = n(nt, "ShaderNodeSeparateXYZ"); L.new(uv.outputs["UV"], sp.inputs[0])
     tc = n(nt, "ShaderNodeTexCoord")
-    veia = n(nt, "ShaderNodeTexNoise"); veia.inputs["Scale"].default_value = 18; veia.inputs["Detail"].default_value = 3
-    veia.inputs["Distortion"].default_value = 1.2; L.new(tc.outputs["Object"], veia.inputs["Vector"])
-    vr = rampa(nt, L, veia.outputs["Fac"], [(0.35, (0.36, 0.56, 0.80, 1)), (0.65, (0.62, 0.80, 0.96, 1))])
-    L.new(vr.outputs["Color"], b.inputs["Base Color"]); b.inputs["Roughness"].default_value = 0.5
-    tr = n(nt, "ShaderNodeBsdfTranslucent"); tr.inputs["Color"].default_value = (0.55, 0.80, 1.0, 1)
-    mx = n(nt, "ShaderNodeMixShader"); mx.inputs[0].default_value = 0.42                  # membrana translucida azul
+    def op(o_, a, b_=None, v=None):
+        x = n(nt, "ShaderNodeMath", operation=o_); L.new(a, x.inputs[0])
+        if b_ is not None: L.new(b_, x.inputs[1])
+        if v is not None: x.inputs[1].default_value = v
+        return x.outputs[0]
+    def mr(ent, a, b_, c=0.0, d=1.0):
+        x = n(nt, "ShaderNodeMapRange"); x.inputs[1].default_value = a; x.inputs[2].default_value = b_
+        x.inputs[3].default_value = c; x.inputs[4].default_value = d; L.new(ent, x.inputs[0]); return x.outputs[0]
+    fracu = op("FRACT", sp.outputs["X"])
+    # veios principais: 2 por setor, ondulados por ruido; secundarios via voronoi esticado ao longo de V
+    rn = n(nt, "ShaderNodeTexNoise"); rn.inputs["Scale"].default_value = 6; L.new(tc.outputs["Object"], rn.inputs["Vector"])
+    ond = op("ADD", fracu, op("MULTIPLY", op("SUBTRACT", rn.outputs["Fac"], v=0.5), v=0.08))
+    v1 = mr(op("ABSOLUTE", op("SUBTRACT", ond, v=0.36)), 0.0, 0.018, 1.0, 0.0)
+    v2 = mr(op("ABSOLUTE", op("SUBTRACT", ond, v=0.68)), 0.0, 0.014, 1.0, 0.0)
+    est = n(nt, "ShaderNodeVectorMath", operation="MULTIPLY"); L.new(uv.outputs["UV"], est.inputs[0]); est.inputs[1].default_value = (9.0, 3.0, 1.0)
+    vor = n(nt, "ShaderNodeTexVoronoi", feature="DISTANCE_TO_EDGE"); L.new(est.outputs[0], vor.inputs["Vector"]); vor.inputs["Scale"].default_value = 3.0
+    v3 = op("MULTIPLY", mr(vor.outputs["Distance"], 0.0, 0.03, 1.0, 0.0), mr(sp.outputs["Y"], 0.25, 0.6))
+    veios = op("MINIMUM", op("ADD", op("MAXIMUM", v1, v2), op("MULTIPLY", v3, v=0.6)), v=1.0)
+    borda = mr(sp.outputs["Y"], 0.80, 1.0)                                   # borda de fuga
+    base_ = mr(sp.outputs["Y"], 0.18, 0.0)                                   # junto ao braco/dedos
+    grao = n(nt, "ShaderNodeTexNoise"); grao.inputs["Scale"].default_value = 60; grao.inputs["Detail"].default_value = 4; L.new(tc.outputs["Object"], grao.inputs["Vector"])
+    cor0 = rampa(nt, L, grao.outputs["Fac"], [(0.35, (0.50, 0.70, 0.90, 1)), (0.65, (0.66, 0.82, 0.96, 1))])
+    c1 = n(nt, "ShaderNodeMix", data_type="RGBA"); L.new(op("MULTIPLY", base_, v=0.6), c1.inputs["Factor"])
+    L.new(cor0.outputs["Color"], c1.inputs[6]); c1.inputs[7].default_value = (0.26, 0.44, 0.70, 1)
+    c2 = n(nt, "ShaderNodeMix", data_type="RGBA"); L.new(op("MULTIPLY", veios, v=0.7), c2.inputs["Factor"])
+    L.new(c1.outputs[2], c2.inputs[6]); c2.inputs[7].default_value = (0.20, 0.36, 0.62, 1)
+    c3 = n(nt, "ShaderNodeMix", data_type="RGBA"); L.new(op("MULTIPLY", borda, v=0.55), c3.inputs["Factor"])
+    L.new(c2.outputs[2], c3.inputs[6]); c3.inputs[7].default_value = (0.86, 0.94, 1.0, 1)
+    L.new(c3.outputs[2], b.inputs["Base Color"]); b.inputs["Roughness"].default_value = 0.42
+    if "Coat Weight" in b.inputs: b.inputs["Coat Weight"].default_value = 0.15
+    tr = n(nt, "ShaderNodeBsdfTranslucent"); tr.inputs["Color"].default_value = (0.60, 0.84, 1.0, 1)
+    mx = n(nt, "ShaderNodeMixShader")
+    L.new(mr(op("ADD", borda, op("MULTIPLY", base_, v=-0.6)), 0.0, 1.0, 0.38, 0.62), mx.inputs[0])   # translucida na borda
     out = nt.nodes["Material Output"]; L.new(b.outputs[0], mx.inputs[1]); L.new(tr.outputs[0], mx.inputs[2]); L.new(mx.outputs[0], out.inputs[0])
-    bp = n(nt, "ShaderNodeBump"); bp.inputs["Strength"].default_value = 0.3; L.new(veia.outputs["Fac"], bp.inputs["Height"])
-    L.new(bp.outputs[0], b.inputs["Normal"]); return m
+    bp = n(nt, "ShaderNodeBump"); bp.inputs["Strength"].default_value = 0.45; bp.inputs["Distance"].default_value = 0.003
+    L.new(op("ADD", veios, op("MULTIPLY", grao.outputs["Fac"], v=0.25)), bp.inputs["Height"]); L.new(bp.outputs[0], b.inputs["Normal"])
+    return m
 def mat_marfim(nome, base, ponta, rug, comp):
     m, nt, b, L = mat(nome)
     tc = n(nt, "ShaderNodeTexCoord")
@@ -380,6 +480,16 @@ def mat_marfim(nome, base, ponta, rug, comp):
     L.new(gr.outputs["Color"], b.inputs["Base Color"]); b.inputs["Roughness"].default_value = rug
     bp = n(nt, "ShaderNodeBump"); bp.inputs["Strength"].default_value = 0.25; L.new(an.outputs["Fac"], bp.inputs["Height"])
     L.new(bp.outputs[0], b.inputs["Normal"]); return m
+def mat_cristal(nome, base, ponta, comp, aneis=30):
+    """chifre/garra de gelo (refino): gradiente base azul -> ponta branca, aneis de crescimento, brilho frio e um pouco
+    de transmissao (levemente cristalino, sem virar vidro)"""
+    m = mat_marfim(nome, base, ponta, 0.28, comp)
+    nt = m.node_tree; b = nt.nodes["Principled BSDF"]
+    for k, v in (("Transmission Weight", 0.18), ("Coat Weight", 0.55), ("Coat Roughness", 0.12), ("Specular IOR Level", 0.6)):
+        if k in b.inputs: b.inputs[k].default_value = v
+    for x in nt.nodes:
+        if x.bl_idname == "ShaderNodeTexWave": x.inputs["Scale"].default_value = aneis
+    return m
 def mat_espinho():
     m, nt, b, L = mat("M_Dragao_Espinho")
     tc = n(nt, "ShaderNodeTexCoord"); sep = n(nt, "ShaderNodeSeparateXYZ"); L.new(tc.outputs["Generated"], sep.inputs[0])
@@ -388,21 +498,40 @@ def mat_espinho():
     if "Coat Weight" in b.inputs: b.inputs["Coat Weight"].default_value = 0.5             # cristal de gelo
     return m
 def mat_olho():
+    """olho glacial (refino): iris radial azul-gelo com fibras, centro claro, aro limbal escuro, pupila em fenda
+    vertical, cornea com verniz (reflexo vivo) e brilho frio contido (sem olho de desenho)"""
     m, nt, b, L = mat("M_Dragao_Olho")
     tc = n(nt, "ShaderNodeTexCoord"); sep = n(nt, "ShaderNodeSeparateXYZ"); L.new(tc.outputs["Generated"], sep.inputs[0])
-    d = n(nt, "ShaderNodeMath", operation="ABSOLUTE"); sub_ = n(nt, "ShaderNodeMath", operation="SUBTRACT")
-    L.new(sep.outputs["Y"], sub_.inputs[0]); sub_.inputs[1].default_value = 0.5; L.new(sub_.outputs[0], d.inputs[0])
-    pup = n(nt, "ShaderNodeMapRange"); pup.inputs[1].default_value = 0.05; pup.inputs[2].default_value = 0.09; L.new(d.outputs[0], pup.inputs[0])
-    cor = n(nt, "ShaderNodeMix", data_type="RGBA"); L.new(pup.outputs[0], cor.inputs["Factor"])
-    cor.inputs[6].default_value = (0.005, 0.01, 0.03, 1); cor.inputs[7].default_value = (0.40, 0.80, 1.0, 1)
-    L.new(cor.outputs[2], b.inputs["Base Color"]); b.inputs["Roughness"].default_value = 0.05
-    b.inputs["Emission Color"].default_value = (0.35, 0.75, 1.0, 1)
-    em = n(nt, "ShaderNodeMath", operation="MULTIPLY"); L.new(pup.outputs[0], em.inputs[0]); em.inputs[1].default_value = 0.35
-    L.new(em.outputs[0], b.inputs["Emission Strength"])
+    def op(o_, a, b_=None, v=None):
+        x = n(nt, "ShaderNodeMath", operation=o_); L.new(a, x.inputs[0])
+        if b_ is not None: L.new(b_, x.inputs[1])
+        if v is not None: x.inputs[1].default_value = v
+        return x.outputs[0]
+    def mr(ent, a, b_, c=0.0, d=1.0):
+        x = n(nt, "ShaderNodeMapRange"); x.inputs[1].default_value = a; x.inputs[2].default_value = b_
+        x.inputs[3].default_value = c; x.inputs[4].default_value = d; L.new(ent, x.inputs[0]); return x.outputs[0]
+    dy = op("SUBTRACT", sep.outputs["Y"], v=0.5); dz = op("SUBTRACT", sep.outputs["Z"], v=0.5)
+    r = op("SQRT", op("ADD", op("MULTIPLY", dy, dy), op("MULTIPLY", dz, dz)))
+    ang = op("ARCTAN2", dz, dy)
+    fib = n(nt, "ShaderNodeTexNoise"); fib.inputs["Scale"].default_value = 3.0
+    cmb = n(nt, "ShaderNodeCombineXYZ"); L.new(op("MULTIPLY", ang, v=8.0), cmb.inputs[0]); L.new(op("MULTIPLY", r, v=4.0), cmb.inputs[1]); L.new(cmb.outputs[0], fib.inputs["Vector"])
+    iris = rampa(nt, L, mr(r, 0.0, 0.5), [(0.0, (0.80, 0.97, 1.0, 1)), (0.35, (0.30, 0.72, 1.0, 1)), (0.75, (0.06, 0.32, 0.75, 1)), (1.0, (0.01, 0.04, 0.12, 1))])
+    vfib = n(nt, "ShaderNodeMix", data_type="RGBA", blend_type="MULTIPLY"); vfib.inputs["Factor"].default_value = 0.45
+    L.new(iris.outputs["Color"], vfib.inputs[6]); L.new(fib.outputs["Color"], vfib.inputs[7])
+    pup = mr(op("ABSOLUTE", dy), 0.025, 0.045)                               # fenda vertical
+    pup2 = op("MAXIMUM", pup, mr(op("ABSOLUTE", dz), 0.30, 0.36))           # a fenda nao passa do centro da iris
+    cor = n(nt, "ShaderNodeMix", data_type="RGBA"); L.new(pup2, cor.inputs["Factor"])
+    cor.inputs[6].default_value = (0.002, 0.004, 0.01, 1); L.new(vfib.outputs[2], cor.inputs[7])
+    L.new(cor.outputs[2], b.inputs["Base Color"]); b.inputs["Roughness"].default_value = 0.2
+    for k, v in (("Coat Weight", 1.0), ("Coat Roughness", 0.02)):
+        if k in b.inputs: b.inputs[k].default_value = v
+    b.inputs["Emission Color"].default_value = (0.30, 0.72, 1.0, 1)
+    L.new(op("MULTIPLY", op("MULTIPLY", pup2, mr(r, 0.45, 0.15)), v=0.6), b.inputs["Emission Strength"])
     return m
 MC, MM, ME, MO = mat_corpo(), mat_membrana(), mat_espinho(), mat_olho()
-MH = mat_marfim("M_Dragao_Chifre", (0.26, 0.44, 0.66, 1), (0.88, 0.95, 1.0, 1), 0.30, 0.22)   # chifre azul -> ponta branca de gelo
-MG = mat_marfim("M_Dragao_Garra", (0.40, 0.52, 0.66, 1), (0.88, 0.94, 1.0, 1), 0.30, 0.06)
+MH = mat_cristal("M_Dragao_Chifre", (0.16, 0.32, 0.56, 1), (0.90, 0.97, 1.0, 1), 0.22)   # chifre: azul profundo -> branco de gelo
+MG = mat_cristal("M_Dragao_Garra", (0.30, 0.42, 0.58, 1), (0.92, 0.97, 1.0, 1), 0.06, 60)
+MD = mat_cristal("M_Dragao_Dente", (0.70, 0.80, 0.90, 1), (0.95, 0.98, 1.0, 1), 0.02, 80)
 ob.data.materials.append(MC)
 for o in MEMB: o.data.materials.append(MM)
 for o in CHIFRES: o.data.materials.append(MH)
@@ -412,7 +541,8 @@ for s in (1, -1):                                                               
     for k in range(2):
         b0 = V((0.046 * s, -0.800 + 0.022 * k, 0.792 - 0.004 * k))
         ESPINHOS.append(tubo([b0, b0 + V((0.012 * s, 0.022, 0.012)), b0 + V((0.020 * s, 0.040, 0.016))], 0.0065, "Espinho_Sobrancelha"))
-for o in CHIFRES + OLHOS + [e for e in ESPINHOS if e.name.split(".")[0] in ("Espinho_Bochecha", "Espinho_Focinho", "Espinho_Sobrancelha")]:
+for o in DENTES: o.data.materials.append(MD)
+for o in CHIFRES + OLHOS + DENTES + [e for e in ESPINHOS if e.name.split(".")[0] in ("Espinho_Bochecha", "Espinho_Focinho", "Espinho_Sobrancelha")]:
     para_cabeca(o)
 for e in ESPINHOS:
     if e.name.startswith("Espinho_Dorsal"): e.location = cabeca(e.location)
@@ -434,7 +564,7 @@ for o in ESPINHOS: o.data.materials.append(ME)
 for o in GARRAS: o.data.materials.append(MG)
 for o in OLHOS: o.data.materials.append(MO)
 col = bpy.data.collections.new("GL_Dragao"); sc.collection.children.link(col)
-for o in [ob] + MEMB + CHIFRES + ESPINHOS + GARRAS + OLHOS:
+for o in [ob] + MEMB + CHIFRES + ESPINHOS + GARRAS + OLHOS + DENTES:
     for c in o.users_collection: c.objects.unlink(o)
     col.objects.link(o)
 dg = bpy.context.evaluated_depsgraph_get()
@@ -470,7 +600,10 @@ if "sem_render" not in ARGS:
     VISTAS = [("34_frente", V((-2.4, -3.6, 1.3)), V((0, -0.15, 0.5)), 42), ("lado", V((-5.6, 0.25, 0.75)), V((0, 0.25, 0.5)), 42),
               ("frente", V((0, -5.2, 1.0)), V((0, 0, 0.6)), 42), ("34_tras", V((2.9, 3.4, 2.0)), V((0, 0.1, 0.55)), 42),
               ("cima", V((0.01, 0.3, 6.2)), V((0, 0.3, 0.4)), 42), ("cabeca", V((-0.85, -1.75, 1.02)), V((0, -0.82, 0.77)), 62),
-              ("conceito", V((-1.6, -2.3, 0.62)), V((0, -0.2, 0.62)), 35)]
+              ("conceito", V((-1.6, -2.3, 0.62)), V((0, -0.2, 0.62)), 35),
+              # closes do refino: olho/rosto, asa (membrana e ossos), escamas do pescoco/ombro/peito
+              ("olho", V((-0.42, -1.12, 0.86)), V((0.03, -0.85, 0.79)), 85), ("asa_perto", V((-1.55, -0.95, 1.75)), V((-1.05, -0.05, 0.86)), 40),
+              ("escamas", V((-0.62, -0.78, 0.70)), V((-0.08, -0.36, 0.56)), 50), ("peito_pescoco", V((-0.35, -1.25, 0.45)), V((0, -0.45, 0.58)), 45)]
     for nome, pos, alvo, lente in VISTAS:
         cam.location = pos; cam.rotation_euler = (alvo - pos).to_track_quat("-Z", "Y").to_euler(); camd.lens = lente
         sc.render.filepath = os.path.join(OUT, "vista_%s.png" % nome); bpy.ops.render.render(write_still=True)
