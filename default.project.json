@@ -1,0 +1,82 @@
+{
+  "name": "RPG_Dragoes",
+  "servePort": 34872,
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "$className": "ReplicatedStorage",
+      "$ignoreUnknownInstances": true,
+      "Animacoes_Silverwing": {
+        "$path": "src/ReplicatedStorage/Animacoes_Silverwing",
+        "$ignoreUnknownInstances": true
+      },
+      "Combate_Dragoes": {
+        "$path": "src/ReplicatedStorage/Combate_Dragoes",
+        "$ignoreUnknownInstances": true
+      },
+      "Comportamento_Dragoes": {
+        "$path": "src/ReplicatedStorage/Comportamento_Dragoes",
+        "$ignoreUnknownInstances": true
+      },
+      "Montaria_Dragoes": {
+        "$path": "src/ReplicatedStorage/Montaria_Dragoes",
+        "$ignoreUnknownInstances": true
+      },
+      "MovimentoVivo": {
+        "$path": "src/ReplicatedStorage/MovimentoVivo",
+        "$ignoreUnknownInstances": true
+      },
+      "VFX_Dragoes": {
+        "$path": "src/ReplicatedStorage/VFX_Dragoes",
+        "$ignoreUnknownInstances": true
+      }
+    },
+    "ServerScriptService": {
+      "$className": "ServerScriptService",
+      "$ignoreUnknownInstances": true,
+      "Combate_Dragao": {
+        "$path": "src/ServerScriptService/Combate_Dragao",
+        "$ignoreUnknownInstances": true
+      },
+      "Combate_Dragao_Servidor": {
+        "$path": "src/ServerScriptService/Combate_Dragao_Servidor.server.luau"
+      },
+      "IA_Dragao": {
+        "$path": "src/ServerScriptService/IA_Dragao",
+        "$ignoreUnknownInstances": true
+      },
+      "IA_Dragao_Servidor": {
+        "$path": "src/ServerScriptService/IA_Dragao_Servidor.server.luau"
+      },
+      "Montaria_Dragao_Servidor": {
+        "$path": "src/ServerScriptService/Montaria_Dragao_Servidor.server.luau"
+      },
+      "Teste_Montaria_Dono": {
+        "$path": "src/ServerScriptService/Teste_Montaria_Dono.server.luau"
+      }
+    },
+    "StarterPlayer": {
+      "$className": "StarterPlayer",
+      "$ignoreUnknownInstances": true,
+      "StarterPlayerScripts": {
+        "$className": "StarterPlayerScripts",
+        "$ignoreUnknownInstances": true,
+        "EfeitosAsas_Cliente": {
+          "$path": "src/StarterPlayer/StarterPlayerScripts/EfeitosAsas_Cliente.client.luau"
+        },
+        "Montaria_Cliente": {
+          "$path": "src/StarterPlayer/StarterPlayerScripts/Montaria_Cliente.client.luau"
+        },
+        "MovimentoVivo_Cliente": {
+          "$path": "src/StarterPlayer/StarterPlayerScripts/MovimentoVivo_Cliente.client.luau"
+        },
+        "SonsDragao_Cliente": {
+          "$path": "src/StarterPlayer/StarterPlayerScripts/SonsDragao_Cliente.client.luau"
+        },
+        "VFXCombate_Cliente": {
+          "$path": "src/StarterPlayer/StarterPlayerScripts/VFXCombate_Cliente.client.luau"
+        }
+      }
+    }
+  }
+}
