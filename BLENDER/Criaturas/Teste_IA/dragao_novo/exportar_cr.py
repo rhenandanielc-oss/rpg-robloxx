@@ -29,6 +29,39 @@ bm.select_flush(True); bm.to_mesh(corpo.data); bm.free()
 bpy.ops.object.mode_set(mode="EDIT"); bpy.ops.mesh.separate(type="SELECTED"); bpy.ops.object.mode_set(mode="OBJECT")
 asas = [o for o in bpy.context.selected_objects if o is not corpo][0]; asas.name = "Silverwing_Asas"
 corpo.name = "Silverwing_Corpo"
+# O Roblox liga a malha aos ossos PELO NOME: renomear Bone no Studio desliga os vertices desses ossos (ficam parados
+# no repouso: boca nao abria, olho/espinhos flutuavam). Os nomes do jogo saem prontos daqui (os grupos de vertices
+# acompanham a troca de nome do osso).
+MAPA = {"head": "Cabeca", "hips": "Quadril", "spine_1": "Coluna2", "mouth_lower": "Mandibula", "spine_4": "Pescoco4",
+        "spine_2": "Pescoco2", "tail_3": "Cauda3", "wing_2_l": "AsaE_2", "wing_2_r": "AsaD_2"}
+from mathutils import Vector as V
+bpy.ops.object.select_all(action="DESELECT"); A.select_set(True); bpy.context.view_layer.objects.active = A
+bpy.ops.object.mode_set(mode="EDIT")
+for s in ("l", "r"): A.data.edit_bones["horn_base_" + s].parent = A.data.edit_bones["head"]   # chifres seguem a cabeca
+bpy.ops.object.mode_set(mode="OBJECT")
+# ossos sem peso somem na importacao (mouth_upper_tip e usado pelo sopro/montaria): 1 vertice proximo, 100% no osso
+malhas = (corpo, asas, det)
+def usados():
+    u = set()
+    for o in malhas:
+        nomes = {g.index: g.name for g in o.vertex_groups}
+        for v in o.data.vertices:
+            for g in v.groups:
+                if g.weight > 0.001: u.add(nomes[g.group])
+    return u
+u = usados()
+for bn in A.data.bones:
+    if bn.name in u or bn.name in ("root", "DRV_root"): continue
+    alvo = A.matrix_world @ ((bn.head_local + bn.tail_local) / 2)
+    o, v = min(((o, v) for o in malhas for v in o.data.vertices), key=lambda ov: ((ov[0].matrix_world @ ov[1].co) - alvo).length)
+    for g in o.vertex_groups: g.remove([v.index])
+    (o.vertex_groups.get(bn.name) or o.vertex_groups.new(name=bn.name)).add([v.index], 1.0, "REPLACE")
+    print("OSSO_GARANTIDO", bn.name, "->", o.name, v.index)
+for velho, novo in MAPA.items():
+    A.data.bones[velho].name = novo
+    for o in malhas:
+        g = o.vertex_groups.get(velho)
+        if g: g.name = novo
 for o in (corpo, asas, det):
     print("EXPORT", o.name, "tris", sum(len(p.vertices) - 2 for p in o.data.polygons))
     assert sum(len(p.vertices) - 2 for p in o.data.polygons) <= 20000, o.name + " passa de 20k tris"

@@ -7,9 +7,14 @@ local MAPA = {head = "Cabeca", hips = "Quadril", spine_1 = "Coluna2", mouth_lowe
 	spine_2 = "Pescoco2", tail_3 = "Cauda3", wing_2_l = "AsaE_2", wing_2_r = "AsaD_2"}
 local novo
 for _, m in ipairs(workspace:GetChildren()) do
-	if m.Name == "Scene" and m:FindFirstChild("Silverwing_Corpo", true) then novo = m end
+	if m.Name == "Scene" and m:FindFirstChild("Silverwing_Detalhes", true) then novo = m end
 end
-assert(novo, "importacao 'Scene' com Silverwing_Corpo nao encontrada no Workspace")
+assert(novo, "importacao 'Scene' com Silverwing_Detalhes nao encontrada no Workspace")
+-- o importador nomeia as MeshParts pela malha do Blender: Silverwing (corpo) e Silverwing.001 (membranas)
+local RENOMEIA = {["Silverwing"] = "Silverwing_Corpo", ["Silverwing.001"] = "Silverwing_Asas"}
+for _, d in ipairs(novo:GetDescendants()) do
+	if d:IsA("MeshPart") and RENOMEIA[d.Name] then d.Name = RENOMEIA[d.Name] end
+end
 local log = {}
 -- 1) backup unico dos clipes atuais (KeyframeSequences do Silverwing Drake4)
 local pasta = RS.Animacoes_Silverwing
@@ -24,7 +29,8 @@ local guard = SS:FindFirstChild("Dragoes_Retirados") or Instance.new("Folder"); 
 local function preparar(m)
 	m:ScaleTo(17.5)
 	for _, d in ipairs(m:GetDescendants()) do
-		if d:IsA("Bone") and MAPA[d.Name] then d.Name = MAPA[d.Name] end
+		-- NAO renomear ossos aqui: o Roblox liga a malha ao osso pelo nome (o GLB ja vem com Cabeca, Mandibula...)
+		assert(not (d:IsA("Bone") and MAPA[d.Name]), "GLB antigo com nomes do Blender (" .. d.Name .. "); reexporte com exportar_cr.py")
 		if d:IsA("BasePart") then d.Anchored = true end
 		if d:IsA("MeshPart") then d.DoubleSided = true end      -- membranas sem espessura e interior da boca
 	end
@@ -39,7 +45,8 @@ local function trocar(nomeAntigo)
 	m:PivotTo(velho:GetPivot())
 	local cfN, szN = m:GetBoundingBox()
 	m:PivotTo(m:GetPivot() + Vector3.new(0, (cfV.Position.Y - szV.Y / 2) - (cfN.Position.Y - szN.Y / 2), 0))
-	velho.Name = nomeAntigo .. "_Drake4_" .. carimbo; velho.Parent = guard
+	local ver = tostring(velho:GetAttribute("Versao") or ""):find("^CR_Dragao") and "_CRv1_" or "_Drake4_"
+	velho.Name = nomeAntigo .. ver .. carimbo; velho.Parent = guard
 	m.Parent = workspace
 	table.insert(log, nomeAntigo .. " trocado; anterior em ServerStorage.Dragoes_Retirados." .. velho.Name)
 end
