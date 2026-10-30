@@ -173,7 +173,8 @@ def _sub(raiz):
 def _giro_em(p, R): return Matrix.Translation(p) @ R.to_4x4() @ Matrix.Translation(-p)
 # parametros (graus): ergue = sobe a asa inteira no ombro; recua = varre para tras; cotovelo/punho = meia dobra
 # (antebraco para frente, dedos para tras), fecha os dedos em leque. ARMADA (andar/parado) e ERGUIDA (sentado)
-P_ARMADA = dict(ergue=38, recua=18, cotovelo=-14, punho=30, leque=0.25)
+# usuario 31/10: no andar as asas estavam altas e perto do montador -> mais baixas e abertas para os lados
+P_ARMADA = dict(ergue=18, recua=14, cotovelo=-8, punho=24, leque=0.2)
 # sentado (usuario 31/10: de frente parecia borboleta): menos vertical, mais para tras e com leve dobra para o lado
 P_ERGUIDA = dict(ergue=58, recua=48, cotovelo=-34, punho=58, leque=0.5)
 def asas_armadas(ergue=0.0, resp=0.0):
