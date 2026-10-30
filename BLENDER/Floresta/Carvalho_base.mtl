@@ -1,0 +1,2714 @@
+newmtl Galho60Mtl
+Material Color
+Ka 0.0717615 0.0477758 0.0277553
+Kd 0.0717615 0.0477758 0.0277553
+Ks 0.00393984 0.00262298 0.00152382 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Musgo35Mtl
+Material Color
+Ka 0.0328759 0.0962661 0.0103978
+Kd 0.0328759 0.0962661 0.0103978
+Ks 0.000902476 0.0026426 0.00028543 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Raiztrepadeira2Mtl
+Material Color
+Ka 0.254916 0.170138 0.0915184
+Kd 0.254916 0.170138 0.0915184
+Ks 0.0139954 0.00934093 0.00502454 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Raizcircular2Mtl
+Material Color
+Ka 0.180144 0.121986 0.0657539
+Kd 0.180144 0.121986 0.0657539
+Ks 0.00989028 0.00669726 0.00361002 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Raizcircular1Mtl
+Material Color
+Ka 0.186989 0.12753 0.0677246
+Kd 0.186989 0.12753 0.0677246
+Ks 0.010266 0.00700164 0.00371821 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Raizanel1Mtl
+Material Color
+Ka 0.0600316 0.0414519 0.0231036
+Kd 0.0600316 0.0414519 0.0231036
+Ks 0.00329585 0.00227579 0.00126843 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Galho57Mtl
+Material Color
+Ka 0.0528416 0.0356144 0.0209511
+Kd 0.0528416 0.0356144 0.0209511
+Ks 0.00290111 0.0019553 0.00115026 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Raiztrepadeira1Mtl
+Material Color
+Ka 0.259027 0.173439 0.0915184
+Kd 0.259027 0.173439 0.0915184
+Ks 0.0142211 0.00952214 0.00502454 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Raiztrepadeira4Mtl
+Material Color
+Ka 0.2468 0.163641 0.0869013
+Kd 0.2468 0.163641 0.0869013
+Ks 0.0135498 0.00898419 0.00477105 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Galho9Mtl
+Material Color
+Ka 0.0600316 0.0399472 0.0231036
+Kd 0.0600316 0.0399472 0.0231036
+Ks 0.00329585 0.00219318 0.00126843 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Galho8Mtl
+Material Color
+Ka 0.0545923 0.0370285 0.0209511
+Kd 0.0545923 0.0370285 0.0209511
+Ks 0.00299722 0.00203294 0.00115026 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Raiztrepadeira3Mtl
+Material Color
+Ka 0.212044 0.14198 0.0759261
+Kd 0.212044 0.14198 0.0759261
+Ks 0.0116417 0.007795 0.00416849 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Musgo2Mtl
+Material Color
+Ka 0.0962661 0.190463 0.0277553
+Kd 0.0962661 0.190463 0.0277553
+Ks 0.0026426 0.00522839 0.00076191 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Raizcircular4Mtl
+Material Color
+Ka 0.193972 0.130352 0.0697271
+Kd 0.193972 0.130352 0.0697271
+Ks 0.0106495 0.0071566 0.00382815 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Galho19Mtl
+Material Color
+Ka 0.0563741 0.0384727 0.0209511
+Kd 0.0563741 0.0384727 0.0209511
+Ks 0.00309505 0.00211223 0.00115026 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Lobo38Mtl
+Material Color
+Ka 0.0915184 0.0600316 0.0356144
+Kd 0.0915184 0.0600316 0.0356144
+Ks 0.00502454 0.00329585 0.0019553 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Raiztrepadeira5Mtl
+Material Color
+Ka 0.215764 0.14198 0.0759261
+Kd 0.215764 0.14198 0.0759261
+Ks 0.0118459 0.007795 0.00416849 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Raizcircular6Mtl
+Material Color
+Ka 0.190463 0.12753 0.0697271
+Kd 0.190463 0.12753 0.0697271
+Ks 0.0104568 0.00700164 0.00382815 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Raizcircular5Mtl
+Material Color
+Ka 0.163641 0.111299 0.0600316
+Kd 0.163641 0.111299 0.0600316
+Ks 0.00898419 0.00611056 0.00329585 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Galho77Mtl
+Material Color
+Ka 0.0528416 0.0370285 0.0209511
+Kd 0.0528416 0.0370285 0.0209511
+Ks 0.00290111 0.00203294 0.00115026 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Galho51Mtl
+Material Color
+Ka 0.0738278 0.0494335 0.0277553
+Kd 0.0738278 0.0494335 0.0277553
+Ks 0.00405329 0.00271399 0.00152382 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Raizcircular7Mtl
+Material Color
+Ka 0.176774 0.119264 0.0657539
+Kd 0.176774 0.119264 0.0657539
+Ks 0.00970526 0.00654783 0.00361002 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Raizcircular8Mtl
+Material Color
+Ka 0.176774 0.119264 0.0638149
+Kd 0.176774 0.119264 0.0638149
+Ks 0.00970526 0.00654783 0.00350356 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Galho40Mtl
+Material Color
+Ka 0.0677246 0.0461488 0.0265487
+Kd 0.0677246 0.0461488 0.0265487
+Ks 0.00371821 0.00253366 0.00145757 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Galho1Mtl
+Material Color
+Ka 0.0638149 0.042987 0.0242229
+Kd 0.0638149 0.042987 0.0242229
+Ks 0.00350356 0.00236007 0.00132989 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Raiz55Mtl
+Material Color
+Ka 0.0891935 0.0581872 0.0342302
+Kd 0.0891935 0.0581872 0.0342302
+Ks 0.0048969 0.00319459 0.00187931 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Raizanel2Mtl
+Material Color
+Ka 0.0962661 0.0657539 0.0370285
+Kd 0.0962661 0.0657539 0.0370285
+Ks 0.0052852 0.00361002 0.00203294 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Ramo1Mtl
+Material Color
+Ka 0.111299 0.0759261 0.042987
+Kd 0.111299 0.0759261 0.042987
+Ks 0.00611056 0.00416849 0.00236007 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Galho16Mtl
+Material Color
+Ka 0.0891935 0.0600316 0.0342302
+Kd 0.0891935 0.0600316 0.0342302
+Ks 0.0048969 0.00329585 0.00187931 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Galho2Mtl
+Material Color
+Ka 0.0697271 0.0477758 0.0265487
+Kd 0.0697271 0.0477758 0.0265487
+Ks 0.00382815 0.00262298 0.00145757 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Galho3Mtl
+Material Color
+Ka 0.0869013 0.0581872 0.0328759
+Kd 0.0869013 0.0581872 0.0328759
+Ks 0.00477105 0.00319459 0.00180495 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Folha210Mtl
+Material Color
+Ka 0.0717615 0.139022 0.0134734
+Kd 0.0717615 0.139022 0.0134734
+Ks 0.00196992 0.0038163 0.000369858 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Musgo3Mtl
+Material Color
+Ka 0.116576 0.311181 0.0231036
+Kd 0.116576 0.311181 0.0231036
+Ks 0.00320012 0.00854221 0.000634215 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Galho4Mtl
+Material Color
+Ka 0.0697271 0.0461488 0.0265487
+Kd 0.0697271 0.0461488 0.0265487
+Ks 0.00382815 0.00253366 0.00145757 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Galho11Mtl
+Material Color
+Ka 0.0780566 0.0528416 0.0302565
+Kd 0.0780566 0.0528416 0.0302565
+Ks 0.00428546 0.00290111 0.00166114 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Galho37Mtl
+Material Color
+Ka 0.0802193 0.0545923 0.0302565
+Kd 0.0802193 0.0545923 0.0302565
+Ks 0.0044042 0.00299722 0.00166114 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Galho5Mtl
+Material Color
+Ka 0.0657539 0.0445526 0.0253713
+Kd 0.0657539 0.0445526 0.0253713
+Ks 0.00361002 0.00244603 0.00139293 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Galho29Mtl
+Material Color
+Ka 0.0846415 0.0563741 0.0328759
+Kd 0.0846415 0.0563741 0.0328759
+Ks 0.00464699 0.00309505 0.00180495 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Galho6Mtl
+Material Color
+Ka 0.0619075 0.0414519 0.0231036
+Kd 0.0619075 0.0414519 0.0231036
+Ks 0.00339884 0.00227579 0.00126843 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Galho7Mtl
+Material Color
+Ka 0.0846415 0.0563741 0.0315514
+Kd 0.0846415 0.0563741 0.0315514
+Ks 0.00464699 0.00309505 0.00173223 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Folha1Mtl
+Material Color
+Ka 0.0445526 0.116576 0.0134734
+Kd 0.0445526 0.116576 0.0134734
+Ks 0.00122301 0.00320012 0.000369858 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Galho12Mtl
+Material Color
+Ka 0.0846415 0.0581872 0.0328759
+Kd 0.0846415 0.0581872 0.0328759
+Ks 0.00464699 0.00319459 0.00180495 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Galho14Mtl
+Material Color
+Ka 0.0759261 0.0511221 0.0289912
+Kd 0.0759261 0.0511221 0.0289912
+Ks 0.00416849 0.0028067 0.00159167 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Raiz7Mtl
+Material Color
+Ka 0.0619075 0.0414519 0.0242229
+Kd 0.0619075 0.0414519 0.0242229
+Ks 0.00339884 0.00227579 0.00132989 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Madeiraexposta8Mtl
+Material Color
+Ka 0.368591 0.238828 0.12753
+Kd 0.368591 0.238828 0.12753
+Ks 0.0202364 0.0131121 0.00700164 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Raiz2Mtl
+Material Color
+Ka 0.0780566 0.0511221 0.0302565
+Kd 0.0780566 0.0511221 0.0302565
+Ks 0.00428546 0.0028067 0.00166114 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Folha188Mtl
+Material Color
+Ka 0.0328759 0.0759261 0.00775103
+Kd 0.0328759 0.0759261 0.00775103
+Ks 0.000902476 0.00208425 0.000212773 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Galho21Mtl
+Material Color
+Ka 0.0802193 0.0545923 0.0315514
+Kd 0.0802193 0.0545923 0.0315514
+Ks 0.0044042 0.00299722 0.00173223 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Galho85Mtl
+Material Color
+Ka 0.0780566 0.0528416 0.0289912
+Kd 0.0780566 0.0528416 0.0289912
+Ks 0.00428546 0.00290111 0.00159167 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Galho24Mtl
+Material Color
+Ka 0.0563741 0.0384727 0.022013
+Kd 0.0563741 0.0384727 0.022013
+Ks 0.00309505 0.00211223 0.00120856 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Galho26Mtl
+Material Color
+Ka 0.0581872 0.0399472 0.0231036
+Kd 0.0581872 0.0399472 0.0231036
+Ks 0.00319459 0.00219318 0.00126843 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Galho79Mtl
+Material Color
+Ka 0.0891935 0.0619075 0.0342302
+Kd 0.0891935 0.0619075 0.0342302
+Ks 0.0048969 0.00339884 0.00187931 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Galho36Mtl
+Material Color
+Ka 0.0824142 0.0563741 0.0315514
+Kd 0.0824142 0.0563741 0.0315514
+Ks 0.0045247 0.00309505 0.00173223 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Galho39Mtl
+Material Color
+Ka 0.0677246 0.0461488 0.0253713
+Kd 0.0677246 0.0461488 0.0253713
+Ks 0.00371821 0.00253366 0.00139293 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Ramo42Mtl
+Material Color
+Ka 0.042987 0.0289912 0.0160677
+Kd 0.042987 0.0289912 0.0160677
+Ks 0.00236007 0.00159167 0.000882148 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Galho55Mtl
+Material Color
+Ka 0.0581872 0.0384727 0.022013
+Kd 0.0581872 0.0384727 0.022013
+Ks 0.00319459 0.00211223 0.00120856 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Galho70Mtl
+Material Color
+Ka 0.0915184 0.0619075 0.0342302
+Kd 0.0915184 0.0619075 0.0342302
+Ks 0.00502454 0.00339884 0.00187931 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Galho59Mtl
+Material Color
+Ka 0.0717615 0.0494335 0.0277553
+Kd 0.0717615 0.0494335 0.0277553
+Ks 0.00393984 0.00271399 0.00152382 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Galho116Mtl
+Material Color
+Ka 0.0581872 0.0399472 0.022013
+Kd 0.0581872 0.0399472 0.022013
+Ks 0.00319459 0.00219318 0.00120856 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Galho61Mtl
+Material Color
+Ka 0.0869013 0.0600316 0.0342302
+Kd 0.0869013 0.0600316 0.0342302
+Ks 0.00477105 0.00329585 0.00187931 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Galho68Mtl
+Material Color
+Ka 0.0869013 0.0600316 0.0328759
+Kd 0.0869013 0.0600316 0.0328759
+Ks 0.00477105 0.00329585 0.00180495 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Musgo6Mtl
+Material Color
+Ka 0.0384727 0.12753 0.0118813
+Kd 0.0384727 0.12753 0.0118813
+Ks 0.00105611 0.00350082 0.000326154 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Musgo1Mtl
+Material Color
+Ka 0.0697271 0.227137 0.0169881
+Kd 0.0697271 0.227137 0.0169881
+Ks 0.00191408 0.00623512 0.000466339 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Raiz4Mtl
+Material Color
+Ka 0.0962661 0.0638149 0.0370285
+Kd 0.0962661 0.0638149 0.0370285
+Ks 0.0052852 0.00350356 0.00203294 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Musgo7Mtl
+Material Color
+Ka 0.190463 0.399293 0.0356144
+Kd 0.190463 0.399293 0.0356144
+Ks 0.00522839 0.010961 0.000977649 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Galho71Mtl
+Material Color
+Ka 0.0619075 0.042987 0.0242229
+Kd 0.0619075 0.042987 0.0242229
+Ks 0.00339884 0.00236007 0.00132989 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Galho74Mtl
+Material Color
+Ka 0.0638149 0.0445526 0.0242229
+Kd 0.0638149 0.0445526 0.0242229
+Ks 0.00350356 0.00244603 0.00132989 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Folha122Mtl
+Material Color
+Ka 0.0370285 0.0891935 0.00969633
+Kd 0.0370285 0.0891935 0.00969633
+Ks 0.00101647 0.00244845 0.000266174 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Folha16Mtl
+Material Color
+Ka 0.139022 0.234895 0.0231036
+Kd 0.139022 0.234895 0.0231036
+Ks 0.0038163 0.00644811 0.000634215 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Galho87Mtl
+Material Color
+Ka 0.0915184 0.0619075 0.0356144
+Kd 0.0915184 0.0619075 0.0356144
+Ks 0.00502454 0.00339884 0.0019553 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Cipo1Mtl
+Material Color
+Ka 0.0231036 0.0545923 0.0103978
+Kd 0.0231036 0.0545923 0.0103978
+Ks 0.000634215 0.00149861 0.00028543 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Raiz1Mtl
+Material Color
+Ka 0.101145 0.0677246 0.0384727
+Kd 0.101145 0.0677246 0.0384727
+Ks 0.00555307 0.00371821 0.00211223 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Raiz5Mtl
+Material Color
+Ka 0.103634 0.0697271 0.0399472
+Kd 0.103634 0.0697271 0.0399472
+Ks 0.00568972 0.00382815 0.00219318 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Madeiraexposta5Mtl
+Material Color
+Ka 0.284452 0.183549 0.0986892
+Kd 0.284452 0.183549 0.0986892
+Ks 0.015617 0.0100772 0.00541823 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Raiz6Mtl
+Material Color
+Ka 0.0802193 0.0528416 0.0302565
+Kd 0.0802193 0.0528416 0.0302565
+Ks 0.0044042 0.00290111 0.00166114 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Raiz8Mtl
+Material Color
+Ka 0.0986892 0.0657539 0.0384727
+Kd 0.0986892 0.0657539 0.0384727
+Ks 0.00541823 0.00361002 0.00211223 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Raiz10Mtl
+Material Color
+Ka 0.0697271 0.0461488 0.0277553
+Kd 0.0697271 0.0461488 0.0277553
+Ks 0.00382815 0.00253366 0.00152382 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Raiz11Mtl
+Material Color
+Ka 0.0986892 0.0657539 0.0370285
+Kd 0.0986892 0.0657539 0.0370285
+Ks 0.00541823 0.00361002 0.00203294 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Raiz12Mtl
+Material Color
+Ka 0.0938759 0.0619075 0.0356144
+Kd 0.0938759 0.0619075 0.0356144
+Ks 0.00515397 0.00339884 0.0019553 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Raiz13Mtl
+Material Color
+Ka 0.0738278 0.0494335 0.0289912
+Kd 0.0738278 0.0494335 0.0289912
+Ks 0.00405329 0.00271399 0.00159167 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Raiz22Mtl
+Material Color
+Ka 0.0759261 0.0511221 0.0302565
+Kd 0.0759261 0.0511221 0.0302565
+Ks 0.00416849 0.0028067 0.00166114 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Raiz24Mtl
+Material Color
+Ka 0.106156 0.0697271 0.0399472
+Kd 0.106156 0.0697271 0.0399472
+Ks 0.00582818 0.00382815 0.00219318 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Raiz28Mtl
+Material Color
+Ka 0.0581872 0.0384727 0.0231036
+Kd 0.0581872 0.0384727 0.0231036
+Ks 0.00319459 0.00211223 0.00126843 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Raiz32Mtl
+Material Color
+Ka 0.0638149 0.042987 0.0253713
+Kd 0.0638149 0.042987 0.0253713
+Ks 0.00350356 0.00236007 0.00139293 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Raiz38Mtl
+Material Color
+Ka 0.0802193 0.0528416 0.0315514
+Kd 0.0802193 0.0528416 0.0315514
+Ks 0.0044042 0.00290111 0.00173223 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Raiz41Mtl
+Material Color
+Ka 0.0600316 0.0399472 0.0242229
+Kd 0.0600316 0.0399472 0.0242229
+Ks 0.00329585 0.00219318 0.00132989 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Raiz51Mtl
+Material Color
+Ka 0.0563741 0.0370285 0.022013
+Kd 0.0563741 0.0370285 0.022013
+Ks 0.00309505 0.00203294 0.00120856 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Raiz52Mtl
+Material Color
+Ka 0.0545923 0.0370285 0.022013
+Kd 0.0545923 0.0370285 0.022013
+Ks 0.00299722 0.00203294 0.00120856 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Raiz54Mtl
+Material Color
+Ka 0.0563741 0.0384727 0.0231036
+Kd 0.0563741 0.0384727 0.0231036
+Ks 0.00309505 0.00211223 0.00126843 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Raiz60Mtl
+Material Color
+Ka 0.0915184 0.0600316 0.0342302
+Kd 0.0915184 0.0600316 0.0342302
+Ks 0.00502454 0.00329585 0.00187931 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Raiz68Mtl
+Material Color
+Ka 0.0657539 0.042987 0.0253713
+Kd 0.0657539 0.042987 0.0253713
+Ks 0.00361002 0.00236007 0.00139293 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Raiz72Mtl
+Material Color
+Ka 0.0824142 0.0545923 0.0315514
+Kd 0.0824142 0.0545923 0.0315514
+Ks 0.0045247 0.00299722 0.00173223 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Raiz78Mtl
+Material Color
+Ka 0.0759261 0.0494335 0.0289912
+Kd 0.0759261 0.0494335 0.0289912
+Ks 0.00416849 0.00271399 0.00159167 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Raiz79Mtl
+Material Color
+Ka 0.0545923 0.0356144 0.022013
+Kd 0.0545923 0.0356144 0.022013
+Ks 0.00299722 0.0019553 0.00120856 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Raiz85Mtl
+Material Color
+Ka 0.0938759 0.0638149 0.0370285
+Kd 0.0938759 0.0638149 0.0370285
+Ks 0.00515397 0.00350356 0.00203294 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Raiz127Mtl
+Material Color
+Ka 0.0657539 0.0445526 0.0265487
+Kd 0.0657539 0.0445526 0.0265487
+Ks 0.00361002 0.00244603 0.00145757 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Raiz131Mtl
+Material Color
+Ka 0.0545923 0.0356144 0.0209511
+Kd 0.0545923 0.0356144 0.0209511
+Ks 0.00299722 0.0019553 0.00115026 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Raiz152Mtl
+Material Color
+Ka 0.0638149 0.0414519 0.0242229
+Kd 0.0638149 0.0414519 0.0242229
+Ks 0.00350356 0.00227579 0.00132989 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Raiz159Mtl
+Material Color
+Ka 0.103634 0.0677246 0.0384727
+Kd 0.103634 0.0677246 0.0384727
+Ks 0.00568972 0.00371821 0.00211223 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Raiz162Mtl
+Material Color
+Ka 0.0677246 0.0445526 0.0265487
+Kd 0.0677246 0.0445526 0.0265487
+Ks 0.00371821 0.00244603 0.00145757 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Raiz170Mtl
+Material Color
+Ka 0.103634 0.0677246 0.0399472
+Kd 0.103634 0.0677246 0.0399472
+Ks 0.00568972 0.00371821 0.00219318 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Lobo2Mtl
+Material Color
+Ka 0.0477758 0.0315514 0.018913
+Kd 0.0477758 0.0315514 0.018913
+Ks 0.00262298 0.00173223 0.00103836 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Lobo5Mtl
+Material Color
+Ka 0.0697271 0.0477758 0.0277553
+Kd 0.0697271 0.0477758 0.0277553
+Ks 0.00382815 0.00262298 0.00152382 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Lobo10Mtl
+Material Color
+Ka 0.0511221 0.0342302 0.0199178
+Kd 0.0511221 0.0342302 0.0199178
+Ks 0.0028067 0.00187931 0.00109353 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Lobo19Mtl
+Material Color
+Ka 0.0494335 0.0328759 0.0199178
+Kd 0.0494335 0.0328759 0.0199178
+Ks 0.00271399 0.00180495 0.00109353 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Lobo30Mtl
+Material Color
+Ka 0.0477758 0.0328759 0.0199178
+Kd 0.0477758 0.0328759 0.0199178
+Ks 0.00262298 0.00180495 0.00109353 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Nucleo8Mtl
+Material Color
+Ka 0.0938759 0.0638149 0.0356144
+Kd 0.0938759 0.0638149 0.0356144
+Ks 0.00515397 0.00350356 0.0019553 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Lobo49Mtl
+Material Color
+Ka 0.0461488 0.0315514 0.018913
+Kd 0.0461488 0.0315514 0.018913
+Ks 0.00253366 0.00173223 0.00103836 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Lobo62Mtl
+Material Color
+Ka 0.0511221 0.0342302 0.0209511
+Kd 0.0511221 0.0342302 0.0209511
+Ks 0.0028067 0.00187931 0.00115026 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Cogumelo1Mtl
+Material Color
+Ka 0.311181 0.121986 0.0445526
+Kd 0.311181 0.121986 0.0445526
+Ks 0.123252 0.0483159 0.0176463 
+
+d 1
+
+Ns 0
+
+map_Ka Cogumelo1_diff.png
+map_Kd Cogumelo1_diff.png
+map_d Cogumelo1_diff.png
+
+map_Bump Cogumelo1_nmap.png
+
+newmtl Madeiraexposta1Mtl
+Material Color
+Ka 0.230998 0.151058 0.0824142
+Kd 0.230998 0.151058 0.0824142
+Ks 0.0126823 0.00829338 0.0045247 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Madeiraexposta2Mtl
+Material Color
+Ka 0.259027 0.170138 0.0915184
+Kd 0.259027 0.170138 0.0915184
+Ks 0.0142211 0.00934093 0.00502454 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Madeiraexposta3Mtl
+Material Color
+Ka 0.20836 0.136099 0.0759261
+Kd 0.20836 0.136099 0.0759261
+Ks 0.0114394 0.00747208 0.00416849 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Madeiraexposta4Mtl
+Material Color
+Ka 0.21952 0.144972 0.0780566
+Kd 0.21952 0.144972 0.0780566
+Ks 0.0120521 0.00795926 0.00428546 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Cogumelo3Mtl
+Material Color
+Ka 0.560499 0.399293 0.183549
+Kd 0.560499 0.399293 0.183549
+Ks 0.222002 0.158151 0.0726998 
+
+d 1
+
+Ns 0
+
+map_Ka Cogumelo1_diff.png
+map_Kd Cogumelo1_diff.png
+map_d Cogumelo1_diff.png
+
+map_Bump Cogumelo1_nmap.png
+
+newmtl Madeiraexposta6Mtl
+Material Color
+Ka 0.2468 0.160444 0.0869013
+Kd 0.2468 0.160444 0.0869013
+Ks 0.0135498 0.00880866 0.00477105 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Madeiraexposta7Mtl
+Material Color
+Ka 0.271577 0.176774 0.0962661
+Kd 0.271577 0.176774 0.0962661
+Ks 0.0149101 0.00970526 0.0052852 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Madeiraexposta9Mtl
+Material Color
+Ka 0.288816 0.186989 0.101145
+Kd 0.288816 0.186989 0.101145
+Ks 0.0158566 0.010266 0.00555307 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Folha17Mtl
+Material Color
+Ka 0.0962661 0.190463 0.0209511
+Kd 0.0962661 0.190463 0.0209511
+Ks 0.0026426 0.00522839 0.000575129 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Folha20Mtl
+Material Color
+Ka 0.190463 0.293216 0.0302565
+Kd 0.190463 0.293216 0.0302565
+Ks 0.00522839 0.00804907 0.000830571 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Folha22Mtl
+Material Color
+Ka 0.0619075 0.144972 0.0151752
+Kd 0.0619075 0.144972 0.0151752
+Ks 0.00169942 0.00397963 0.000416575 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Folha27Mtl
+Material Color
+Ka 0.0384727 0.106156 0.0103978
+Kd 0.0384727 0.106156 0.0103978
+Ks 0.00105611 0.00291409 0.00028543 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Ramito125Mtl
+Material Color
+Ka 0.0414519 0.0277553 0.0169881
+Kd 0.0414519 0.0277553 0.0169881
+Ks 0.00227579 0.00152382 0.000932677 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Folha120Mtl
+Material Color
+Ka 0.0511221 0.116576 0.0103978
+Kd 0.0511221 0.116576 0.0103978
+Ks 0.00140335 0.00320012 0.00028543 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Folha121Mtl
+Material Color
+Ka 0.0962661 0.183549 0.0179364
+Kd 0.0962661 0.183549 0.0179364
+Ks 0.0026426 0.0050386 0.000492373 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Folha182Mtl
+Material Color
+Ka 0.0738278 0.154152 0.0151752
+Kd 0.0738278 0.154152 0.0151752
+Ks 0.00202664 0.00423163 0.000416575 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Folha123Mtl
+Material Color
+Ka 0.0494335 0.116576 0.0103978
+Kd 0.0494335 0.116576 0.0103978
+Ks 0.001357 0.00320012 0.00028543 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Folha168Mtl
+Material Color
+Ka 0.0738278 0.14198 0.0134734
+Kd 0.0738278 0.14198 0.0134734
+Ks 0.00202664 0.0038975 0.000369858 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Folha169Mtl
+Material Color
+Ka 0.0414519 0.0962661 0.00837312
+Kd 0.0414519 0.0962661 0.00837312
+Ks 0.0011379 0.0026426 0.00022985 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Folha170Mtl
+Material Color
+Ka 0.0315514 0.0759261 0.00775103
+Kd 0.0315514 0.0759261 0.00775103
+Ks 0.000866117 0.00208425 0.000212773 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Folha171Mtl
+Material Color
+Ka 0.0414519 0.0986892 0.00902149
+Kd 0.0414519 0.0986892 0.00902149
+Ks 0.0011379 0.00270912 0.000247649 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Folha184Mtl
+Material Color
+Ka 0.0600316 0.12753 0.0118813
+Kd 0.0600316 0.12753 0.0118813
+Ks 0.00164793 0.00350082 0.000326154 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Folha186Mtl
+Material Color
+Ka 0.101145 0.170138 0.0160677
+Kd 0.101145 0.170138 0.0160677
+Ks 0.00277653 0.00467047 0.000441074 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Folha190Mtl
+Material Color
+Ka 0.0384727 0.0915184 0.00775103
+Kd 0.0384727 0.0915184 0.00775103
+Ks 0.00105611 0.00251227 0.000212773 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Folha207Mtl
+Material Color
+Ka 0.0677246 0.14198 0.0134734
+Kd 0.0677246 0.14198 0.0134734
+Ks 0.00185911 0.0038975 0.000369858 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Folha191Mtl
+Material Color
+Ka 0.130352 0.20836 0.0209511
+Kd 0.130352 0.20836 0.0209511
+Ks 0.0035783 0.00571968 0.000575129 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Folha193Mtl
+Material Color
+Ka 0.101145 0.166872 0.0160677
+Kd 0.101145 0.166872 0.0160677
+Ks 0.00277653 0.00458081 0.000441074 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Folha195Mtl
+Material Color
+Ka 0.0563741 0.12753 0.0118813
+Kd 0.0563741 0.12753 0.0118813
+Ks 0.00154752 0.00350082 0.000326154 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Folha196Mtl
+Material Color
+Ka 0.139022 0.215764 0.022013
+Kd 0.139022 0.215764 0.022013
+Ks 0.0038163 0.00592294 0.000604278 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Folha197Mtl
+Material Color
+Ka 0.133209 0.212044 0.0209511
+Kd 0.133209 0.212044 0.0209511
+Ks 0.0036567 0.00582083 0.000575129 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Folha200Mtl
+Material Color
+Ka 0.0697271 0.144972 0.0134734
+Kd 0.0697271 0.144972 0.0134734
+Ks 0.00191408 0.00397963 0.000369858 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Folha201Mtl
+Material Color
+Ka 0.0846415 0.163641 0.0160677
+Kd 0.0846415 0.163641 0.0160677
+Ks 0.00232349 0.0044921 0.000441074 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Galho182Mtl
+Material Color
+Ka 0.0759261 0.0528416 0.0289912
+Kd 0.0759261 0.0528416 0.0289912
+Ks 0.00416849 0.00290111 0.00159167 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Folha205Mtl
+Material Color
+Ka 0.0717615 0.151058 0.0143105
+Kd 0.0717615 0.151058 0.0143105
+Ks 0.00196992 0.00414669 0.000392838 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Folha218Mtl
+Material Color
+Ka 0.103634 0.170138 0.0169881
+Kd 0.103634 0.170138 0.0169881
+Ks 0.00284486 0.00467047 0.000466339 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Folha209Mtl
+Material Color
+Ka 0.111299 0.180144 0.0179364
+Kd 0.111299 0.180144 0.0179364
+Ks 0.00305528 0.00494514 0.000492373 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Folha215Mtl
+Material Color
+Ka 0.0461488 0.103634 0.00969633
+Kd 0.0461488 0.103634 0.00969633
+Ks 0.00126683 0.00284486 0.000266174 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Folha217Mtl
+Material Color
+Ka 0.0802193 0.154152 0.0151752
+Kd 0.0802193 0.154152 0.0151752
+Ks 0.0022021 0.00423163 0.000416575 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Folha219Mtl
+Material Color
+Ka 0.0638149 0.136099 0.0134734
+Kd 0.0638149 0.136099 0.0134734
+Ks 0.00175178 0.00373604 0.000369858 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Ramo65Mtl
+Material Color
+Ka 0.116576 0.0780566 0.0445526
+Kd 0.116576 0.0780566 0.0445526
+Ks 0.00640024 0.00428546 0.00244603 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+
+newmtl Galho183Mtl
+Material Color
+Ka 0.0738278 0.0511221 0.0277553
+Kd 0.0738278 0.0511221 0.0277553
+Ks 0.00405329 0.0028067 0.00152382 
+
+d 1
+
+Ns 0
+
+map_Ka Raizcircular1_diff.png
+map_Kd Raizcircular1_diff.png
+map_d Raizcircular1_diff.png
+
+map_Bump Raizcircular1_nmap.png
+
+map_Ns Raizcircular1_spec.png
+

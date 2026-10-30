@@ -1,0 +1,16 @@
+﻿Uso (Blender 5.2, linha de comando). <pasta_trabalho> recebe as renderizacoes de conferencia; <pasta_destino> recebe GLB/FBX/PNG/.blend.
+  blender -b --factory-startup -P dragao_1_geometria.py -- <pasta_trabalho> <Montanhas|Glacial|Sombrio>
+  blender -b --factory-startup -P dragao_2_rig_animacoes_textura_export.py -- <pasta_trabalho> <pasta_destino> <Montanhas|Glacial|Sombrio>
+  blender -b --factory-startup -P dragao_3_vistas.py -- <pasta_trabalho> <arquivo.blend>          (vistas frente/lado/tras/escala)
+  blender -b --factory-startup -P wyvern_completo.py -- <pasta_trabalho> <pasta_destino>
+  blender -b --factory-startup -P aquaticos_serpente_leviata.py -- <pasta_trabalho> <pasta_destino> <Serpente|Leviata>
+  blender -b --factory-startup -P repteis_crocodilo_basilisco_lagarto.py -- <pasta_trabalho> <pasta_destino> <Crocodilo|Basilisco|Lagarto>
+  blender -b --factory-startup -P escorpiao_colossal.py -- <pasta_trabalho> <pasta_destino>
+  blender -b --factory-startup -P cerbero_sombrio_PROVISORIO.py -- <pasta_trabalho> <pasta_destino>   (rascunho; aparencia NAO aprovada)
+  blender -b --factory-startup -P render_padroes.py -- ...                                          (folha com os 3 padroes)
+  blender -b --factory-startup -P renomear_reexportar.py -- <pasta_destino> <Nome_da_Forma>         (corrige nomes e reexporta do .blend)
+  blender -b --factory-startup -P validar_glb.py -- <arquivo.glb>
+
+Observacoes
+- Ao reimportar um GLB, o Blender cria uma "Icosphere" (80 tris) como forma de exibicao dos ossos. Ela NAO esta no arquivo (o GLB tem 1 malha).
+- Cada script gera tudo de uma vez: malha, esqueleto, pesos (ate 4 influencias), acoes, textura assada 2048 (cor x3 padroes + normal) e exportacao.

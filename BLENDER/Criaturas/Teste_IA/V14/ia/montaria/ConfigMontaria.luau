@@ -1,0 +1,54 @@
+-- ConfigMontaria (ModuleScript, ReplicatedStorage.Montaria_Dragoes) — PROTOTIPO, lido por servidor e cliente.
+-- Velocidades, curvas, planeio e controles sao CALIBRACAO DE TESTE (NAO_APROVADO): ajustar apos testes de jogo.
+-- Regras oficiais aplicadas: so o dono monta; ovo/bebe/jovem nao montam; pre-adulto so montaria terrestre (especie
+-- grande); voo montado exige a missao de desbloqueio (atributo VooDesbloqueado), nao basta ser adulto; guardiao
+-- selvagem de ninho nunca e montavel; sem desmontar em pleno voo.
+return {
+	NAO_APROVADO = true,
+	estagios = {                                     -- estagio -> {chao, voo} (voo ainda exige a missao)
+		Ovo = {false, false}, Bebe = {false, false}, Jovem = {false, false},
+		PreAdulto = {true, false}, Adulto = {true, true}, Anciao = {true, true},
+	},
+	formasGrandes = {Montanhas = true},              -- pre-adulto so monta em especie grande
+	distMontar = 38,                                 -- studs do jogador ate o dorso
+	assento = {osso = "Coluna2", acima = 10.6, frente = 0.6, seguirOsso = 0.75},   -- sela entre as asas (sem cristas/pescoco)
+	-- chao (studs/s, graus/s)
+	andarVel = 4.8, correrVel = 17, recuarVel = 2.4,
+	acelChao = 9, freioChao = 15, giroAndar = 30, giroCorrer = 40, giroParado = 24,
+	ritmoAndarBase = 3.2, ritmoCorrerBase = 13,      -- velocidade calibrada dos clipes Andar/Correr
+	frenagemMin = 11,                                -- acima disto, soltar o acelerador toca Correr_Frenagem
+	-- ar
+	vooVel = 34, vooRapidoVel = 55, vooMin = 14, acelVoo = 10, freioVoo = 8,   -- vooMin = sustentacao: S nunca para nem voa para tras
+	giroVoo = 42, giroVooRapido = 28,                -- graus/s: dragao colossal nao faz curva de 180 instantanea
+	inclinacaoMax = 32, suavRoll = 2.5,              -- graus / resposta
+	vSubida = 24, vDescida = 30, pitchCamera = 0.55,  -- quanto a camera inclina a trajetoria
+	planeioQueda = 7, planeioPerda = 1.6, planeioMin = 18,   -- planeio: perde altura e velocidade (sem sustentacao infinita)
+	-- voo guiado pela camera (arcade assistido; NAO_APROVADO): graus, graus/s, studs/s
+	voo = {zonaMorta = 5, ganhoPitch = 1.0, gamaMaxSubida = 40, gamaMaxDescida = 60, gamaTaxa = 70, planeioGama = 4,
+		gravidade = 16, arrastoExcesso = 0.6, mergulhoVel = 80, mergulhoInicio = 22,
+		ganhoYaw = 2.4, acelGiro = 140, giroLento = 58, velGiroLento = 22, velPairar = 22, narizSegue = 0.85},
+	folgaChao = 8, tetoDecolagem = 60,               -- espaco livre exigido acima para decolar
+	alturaMinPouso = 3, vPouso = 18, pousoInclinacaoMin = 0.72, pousoAlcance = 160,
+	-- rede
+	entradaHz = 15, entradaTimeout = 0.6,            -- sem entrada recente -> solta o acelerador
+	-- controles (teclado/mouse, gamepad, toque). Movimento vem do PlayerModule (WASD / analogico / joystick).
+	controles = {
+		decolar = {Enum.KeyCode.Space, Enum.KeyCode.ButtonA},          -- no chao: decola; no ar: sobe
+		descer = {Enum.KeyCode.LeftControl, Enum.KeyCode.ButtonL2},
+		correr = {Enum.KeyCode.LeftShift, Enum.KeyCode.ButtonL3},
+		planar = {Enum.KeyCode.G, Enum.KeyCode.ButtonY},
+		pousar = {Enum.KeyCode.F, Enum.KeyCode.ButtonB},
+		desmontar = {Enum.KeyCode.X, Enum.KeyCode.DPadDown},
+		elemento = {Enum.KeyCode.Z, Enum.KeyCode.DPadUp},
+		habilidades = {                                                   -- ordem oficial das 4 habilidades
+			{"Sopro", Enum.KeyCode.One, Enum.KeyCode.ButtonR2},
+			{"Arremetida", Enum.KeyCode.Two, Enum.KeyCode.ButtonR1},
+			{"Tempestade", Enum.KeyCode.Three, Enum.KeyCode.ButtonX},
+			{"Ruptura", Enum.KeyCode.Four, Enum.KeyCode.DPadRight},
+		},
+	},
+	-- alturaAlvo: ACIMA do dorso (o pivo fica no chao; o dorso esta a ~34). Antes era 14 = dentro do tronco, e a camera
+	-- de oclusao do Roblox colava no corpo. No ar soma alturaVoo (os clipes de voo erguem o corpo 14 acima do pivo).
+	camera = {distancia = 70, distMin = 45, distMax = 150, alturaAlvo = 42, alturaVoo = 14, suav = 6, fovBase = 70, fovVel = 10,
+		pitchNeutro = 0.28},                                       -- rad: camera olhando 16 graus para baixo = voo nivelado
+}

@@ -1,0 +1,3614 @@
+newmtl Folha57Mtl
+Material Color
+Ka 0.0545923 0.121986 0.0134734
+Kd 0.0545923 0.121986 0.0134734
+Ks 0.00149861 0.00334863 0.000369858 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Musgo1Mtl
+Material Color
+Ka 0.116576 0.311181 0.0231036
+Kd 0.116576 0.311181 0.0231036
+Ks 0.00320012 0.00854221 0.000634215 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Galho48Mtl
+Material Color
+Ka 0.12753 0.103634 0.0738278
+Kd 0.12753 0.103634 0.0738278
+Ks 0.00700164 0.00568972 0.00405329 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Madeiraexposta19Mtl
+Material Color
+Ka 0.284452 0.193972 0.108711
+Kd 0.284452 0.193972 0.108711
+Ks 0.015617 0.0106495 0.00596846 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho27Mtl
+Material Color
+Ka 0.12753 0.106156 0.0738278
+Kd 0.12753 0.106156 0.0738278
+Ks 0.00700164 0.00582818 0.00405329 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho9Mtl
+Material Color
+Ka 0.106156 0.0869013 0.0619075
+Kd 0.106156 0.0869013 0.0619075
+Ks 0.00582818 0.00477105 0.00339884 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Madeiraexposta1Mtl
+Material Color
+Ka 0.368591 0.238828 0.130352
+Kd 0.368591 0.238828 0.130352
+Ks 0.0202364 0.0131121 0.0071566 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho19Mtl
+Material Color
+Ka 0.101145 0.0846415 0.0600316
+Kd 0.101145 0.0846415 0.0600316
+Ks 0.00555307 0.00464699 0.00329585 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Lobo118Mtl
+Material Color
+Ka 0.0846415 0.0717615 0.0511221
+Kd 0.0846415 0.0717615 0.0511221
+Ks 0.00464699 0.00393984 0.0028067 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Musgo13Mtl
+Material Color
+Ka 0.190463 0.399293 0.0356144
+Kd 0.190463 0.399293 0.0356144
+Ks 0.00522839 0.010961 0.000977649 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Madeiraexposta6Mtl
+Material Color
+Ka 0.368591 0.242796 0.130352
+Kd 0.368591 0.242796 0.130352
+Ks 0.0202364 0.01333 0.0071566 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho36Mtl
+Material Color
+Ka 0.0962661 0.0802193 0.0581872
+Kd 0.0962661 0.0802193 0.0581872
+Ks 0.0052852 0.0044042 0.00319459 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Madeiraexposta11Mtl
+Material Color
+Ka 0.306635 0.20471 0.113921
+Kd 0.306635 0.20471 0.113921
+Ks 0.0168349 0.011239 0.00625448 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Madeiraexposta23Mtl
+Material Color
+Ka 0.363604 0.234895 0.12753
+Kd 0.363604 0.234895 0.12753
+Ks 0.0199626 0.0128962 0.00700164 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Musgo4Mtl
+Material Color
+Ka 0.0384727 0.12753 0.0118813
+Kd 0.0384727 0.12753 0.0118813
+Ks 0.00105611 0.00350082 0.000326154 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Madeiraexposta25Mtl
+Material Color
+Ka 0.358654 0.234895 0.12753
+Kd 0.358654 0.234895 0.12753
+Ks 0.0196908 0.0128962 0.00700164 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Raiz61Mtl
+Material Color
+Ka 0.160444 0.130352 0.0915184
+Kd 0.160444 0.130352 0.0915184
+Ks 0.00880866 0.0071566 0.00502454 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Musgo2Mtl
+Material Color
+Ka 0.0962661 0.190463 0.0277553
+Kd 0.0962661 0.190463 0.0277553
+Ks 0.0026426 0.00522839 0.00076191 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Galho14Mtl
+Material Color
+Ka 0.147998 0.119264 0.0846415
+Kd 0.147998 0.119264 0.0846415
+Ks 0.00812538 0.00654783 0.00464699 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Folha51Mtl
+Material Color
+Ka 0.0563741 0.12753 0.0134734
+Kd 0.0563741 0.12753 0.0134734
+Ks 0.00154752 0.00350082 0.000369858 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Madeiraexposta12Mtl
+Material Color
+Ka 0.302126 0.201096 0.111299
+Kd 0.302126 0.201096 0.111299
+Ks 0.0165873 0.0110406 0.00611056 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Madeiraexposta2Mtl
+Material Color
+Ka 0.302126 0.20471 0.113921
+Kd 0.302126 0.20471 0.113921
+Ks 0.0165873 0.011239 0.00625448 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Raiz73Mtl
+Material Color
+Ka 0.14198 0.116576 0.0802193
+Kd 0.14198 0.116576 0.0802193
+Ks 0.007795 0.00640024 0.0044042 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Madeiraexposta3Mtl
+Material Color
+Ka 0.259027 0.176774 0.101145
+Kd 0.259027 0.176774 0.101145
+Ks 0.0142211 0.00970526 0.00555307 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Madeiraexposta4Mtl
+Material Color
+Ka 0.280124 0.190463 0.106156
+Kd 0.280124 0.190463 0.106156
+Ks 0.0153794 0.0104568 0.00582818 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Madeiraexposta17Mtl
+Material Color
+Ka 0.373615 0.242796 0.130352
+Kd 0.373615 0.242796 0.130352
+Ks 0.0205122 0.01333 0.0071566 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Ramo1Mtl
+Material Color
+Ka 0.176774 0.144972 0.101145
+Kd 0.176774 0.144972 0.101145
+Ks 0.00970526 0.00795926 0.00555307 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho154Mtl
+Material Color
+Ka 0.0780566 0.0638149 0.0445526
+Kd 0.0780566 0.0638149 0.0445526
+Ks 0.00428546 0.00350356 0.00244603 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Madeiraexposta7Mtl
+Material Color
+Ka 0.271577 0.183549 0.103634
+Kd 0.271577 0.183549 0.103634
+Ks 0.0149101 0.0100772 0.00568972 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho42Mtl
+Material Color
+Ka 0.103634 0.0869013 0.0619075
+Kd 0.103634 0.0869013 0.0619075
+Ks 0.00568972 0.00477105 0.00339884 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Madeiraexposta8Mtl
+Material Color
+Ka 0.25084 0.170138 0.0986892
+Kd 0.25084 0.170138 0.0986892
+Ks 0.0137716 0.00934093 0.00541823 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Lobo14Mtl
+Material Color
+Ka 0.0824142 0.0677246 0.0494335
+Kd 0.0824142 0.0677246 0.0494335
+Ks 0.0045247 0.00371821 0.00271399 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Madeiraexposta10Mtl
+Material Color
+Ka 0.311181 0.20836 0.113921
+Kd 0.311181 0.20836 0.113921
+Ks 0.0170844 0.0114394 0.00625448 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Madeiraexposta22Mtl
+Material Color
+Ka 0.263175 0.180144 0.101145
+Kd 0.263175 0.180144 0.101145
+Ks 0.0144488 0.00989028 0.00555307 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho293Mtl
+Material Color
+Ka 0.0802193 0.0657539 0.0461488
+Kd 0.0802193 0.0657539 0.0461488
+Ks 0.0044042 0.00361002 0.00253366 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Musgo12Mtl
+Material Color
+Ka 0.0697271 0.227137 0.0169881
+Kd 0.0697271 0.227137 0.0169881
+Ks 0.00191408 0.00623512 0.000466339 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Galho85Mtl
+Material Color
+Ka 0.0824142 0.0677246 0.0477758
+Kd 0.0824142 0.0677246 0.0477758
+Ks 0.0045247 0.00371821 0.00262298 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Cogumelo1Mtl
+Material Color
+Ka 0.560499 0.399293 0.183549
+Kd 0.560499 0.399293 0.183549
+Ks 0.222002 0.158151 0.0726998 
+
+d 1
+
+Ns 0
+
+map_Ka Cogumelo1_diff.png
+map_Kd Cogumelo1_diff.png
+map_d Cogumelo1_diff.png
+
+map_Bump Cogumelo1_nmap.png
+
+newmtl Galho34Mtl
+Material Color
+Ka 0.103634 0.0846415 0.0600316
+Kd 0.103634 0.0846415 0.0600316
+Ks 0.00568972 0.00464699 0.00329585 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Madeiraexposta14Mtl
+Material Color
+Ka 0.238828 0.163641 0.0938759
+Kd 0.238828 0.163641 0.0938759
+Ks 0.0131121 0.00898419 0.00515397 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Cipo1Mtl
+Material Color
+Ka 0.0231036 0.0545923 0.0103978
+Kd 0.0231036 0.0545923 0.0103978
+Ks 0.000634215 0.00149861 0.00028543 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Madeiraexposta15Mtl
+Material Color
+Ka 0.242796 0.166872 0.0962661
+Kd 0.242796 0.166872 0.0962661
+Ks 0.01333 0.00916161 0.0052852 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Cogumelo4Mtl
+Material Color
+Ka 0.311181 0.121986 0.0445526
+Kd 0.311181 0.121986 0.0445526
+Ks 0.123252 0.0483159 0.0176463 
+
+d 1
+
+Ns 0
+
+map_Ka Cogumelo1_diff.png
+map_Kd Cogumelo1_diff.png
+map_d Cogumelo1_diff.png
+
+map_Bump Cogumelo1_nmap.png
+
+newmtl Raizcircular4Mtl
+Material Color
+Ka 0.227137 0.173439 0.106156
+Kd 0.227137 0.173439 0.106156
+Ks 0.0124702 0.00952214 0.00582818 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Madeiraexposta16Mtl
+Material Color
+Ka 0.325037 0.215764 0.119264
+Kd 0.325037 0.215764 0.119264
+Ks 0.0178452 0.0118459 0.00654783 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Madeiraexposta18Mtl
+Material Color
+Ka 0.288816 0.193972 0.108711
+Kd 0.288816 0.193972 0.108711
+Ks 0.0158566 0.0106495 0.00596846 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho26Mtl
+Material Color
+Ka 0.0891935 0.0759261 0.0528416
+Kd 0.0891935 0.0759261 0.0528416
+Ks 0.0048969 0.00416849 0.00290111 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Madeiraexposta24Mtl
+Material Color
+Ka 0.334458 0.22331 0.121986
+Kd 0.334458 0.22331 0.121986
+Ks 0.0183624 0.0122602 0.00669726 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Madeiraexposta20Mtl
+Material Color
+Ka 0.280124 0.186989 0.106156
+Kd 0.280124 0.186989 0.106156
+Ks 0.0153794 0.010266 0.00582818 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Folha61Mtl
+Material Color
+Ka 0.0528416 0.119264 0.0126637
+Kd 0.0528416 0.119264 0.0126637
+Ks 0.00145055 0.00327391 0.000347632 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Madeiraexposta28Mtl
+Material Color
+Ka 0.238828 0.163641 0.0962661
+Kd 0.238828 0.163641 0.0962661
+Ks 0.0131121 0.00898419 0.0052852 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho40Mtl
+Material Color
+Ka 0.0938759 0.0780566 0.0563741
+Kd 0.0938759 0.0780566 0.0563741
+Ks 0.00515397 0.00428546 0.00309505 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho1Mtl
+Material Color
+Ka 0.121986 0.101145 0.0697271
+Kd 0.121986 0.101145 0.0697271
+Ks 0.00669726 0.00555307 0.00382815 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho2Mtl
+Material Color
+Ka 0.139022 0.113921 0.0802193
+Kd 0.139022 0.113921 0.0802193
+Ks 0.00763261 0.00625448 0.0044042 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho93Mtl
+Material Color
+Ka 0.0802193 0.0657539 0.0445526
+Kd 0.0802193 0.0657539 0.0445526
+Ks 0.0044042 0.00361002 0.00244603 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho3Mtl
+Material Color
+Ka 0.14198 0.116576 0.0824142
+Kd 0.14198 0.116576 0.0824142
+Ks 0.007795 0.00640024 0.0045247 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho4Mtl
+Material Color
+Ka 0.0915184 0.0759261 0.0545923
+Kd 0.0915184 0.0759261 0.0545923
+Ks 0.00502454 0.00416849 0.00299722 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho5Mtl
+Material Color
+Ka 0.113921 0.0938759 0.0657539
+Kd 0.113921 0.0938759 0.0657539
+Ks 0.00625448 0.00515397 0.00361002 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho6Mtl
+Material Color
+Ka 0.130352 0.108711 0.0759261
+Kd 0.130352 0.108711 0.0759261
+Ks 0.0071566 0.00596846 0.00416849 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho10Mtl
+Material Color
+Ka 0.0986892 0.0824142 0.0581872
+Kd 0.0986892 0.0824142 0.0581872
+Ks 0.00541823 0.0045247 0.00319459 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Nucleo18Mtl
+Material Color
+Ka 0.173439 0.14198 0.0986892
+Kd 0.173439 0.14198 0.0986892
+Ks 0.00952214 0.007795 0.00541823 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho7Mtl
+Material Color
+Ka 0.133209 0.108711 0.0759261
+Kd 0.133209 0.108711 0.0759261
+Ks 0.00731341 0.00596846 0.00416849 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho46Mtl
+Material Color
+Ka 0.111299 0.0915184 0.0657539
+Kd 0.111299 0.0915184 0.0657539
+Ks 0.00611056 0.00502454 0.00361002 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho8Mtl
+Material Color
+Ka 0.147998 0.121986 0.0846415
+Kd 0.147998 0.121986 0.0846415
+Ks 0.00812538 0.00669726 0.00464699 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho69Mtl
+Material Color
+Ka 0.130352 0.108711 0.0738278
+Kd 0.130352 0.108711 0.0738278
+Ks 0.0071566 0.00596846 0.00405329 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Folha1Mtl
+Material Color
+Ka 0.0445526 0.116576 0.0134734
+Kd 0.0445526 0.116576 0.0134734
+Ks 0.00122301 0.00320012 0.000369858 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Galho11Mtl
+Material Color
+Ka 0.116576 0.0962661 0.0677246
+Kd 0.116576 0.0962661 0.0677246
+Ks 0.00640024 0.0052852 0.00371821 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho12Mtl
+Material Color
+Ka 0.144972 0.119264 0.0846415
+Kd 0.144972 0.119264 0.0846415
+Ks 0.00795926 0.00654783 0.00464699 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho43Mtl
+Material Color
+Ka 0.151058 0.124741 0.0869013
+Kd 0.151058 0.124741 0.0869013
+Ks 0.00829338 0.00684852 0.00477105 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Raiztrepadeira4Mtl
+Material Color
+Ka 0.267358 0.197516 0.116576
+Kd 0.267358 0.197516 0.116576
+Ks 0.0146785 0.010844 0.00640024 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Raizcircular1Mtl
+Material Color
+Ka 0.22331 0.170138 0.106156
+Kd 0.22331 0.170138 0.106156
+Ks 0.0122602 0.00934093 0.00582818 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho16Mtl
+Material Color
+Ka 0.121986 0.101145 0.0717615
+Kd 0.121986 0.101145 0.0717615
+Ks 0.00669726 0.00555307 0.00393984 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho22Mtl
+Material Color
+Ka 0.124741 0.101145 0.0717615
+Kd 0.124741 0.101145 0.0717615
+Ks 0.00684852 0.00555307 0.00393984 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Folha143Mtl
+Material Color
+Ka 0.0545923 0.124741 0.0134734
+Kd 0.0545923 0.124741 0.0134734
+Ks 0.00149861 0.00342426 0.000369858 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Galho28Mtl
+Material Color
+Ka 0.121986 0.0986892 0.0697271
+Kd 0.121986 0.0986892 0.0697271
+Ks 0.00669726 0.00541823 0.00382815 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho74Mtl
+Material Color
+Ka 0.106156 0.0869013 0.0600316
+Kd 0.106156 0.0869013 0.0600316
+Ks 0.00582818 0.00477105 0.00329585 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho31Mtl
+Material Color
+Ka 0.108711 0.0915184 0.0638149
+Kd 0.108711 0.0915184 0.0638149
+Ks 0.00596846 0.00502454 0.00350356 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho45Mtl
+Material Color
+Ka 0.14198 0.119264 0.0824142
+Kd 0.14198 0.119264 0.0824142
+Ks 0.007795 0.00654783 0.0045247 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho47Mtl
+Material Color
+Ka 0.119264 0.0986892 0.0697271
+Kd 0.119264 0.0986892 0.0697271
+Ks 0.00654783 0.00541823 0.00382815 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho90Mtl
+Material Color
+Ka 0.0802193 0.0677246 0.0461488
+Kd 0.0802193 0.0677246 0.0461488
+Ks 0.0044042 0.00371821 0.00253366 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho49Mtl
+Material Color
+Ka 0.0938759 0.0780566 0.0545923
+Kd 0.0938759 0.0780566 0.0545923
+Ks 0.00515397 0.00428546 0.00299722 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Raiz53Mtl
+Material Color
+Ka 0.136099 0.111299 0.0780566
+Kd 0.136099 0.111299 0.0780566
+Ks 0.00747208 0.00611056 0.00428546 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho50Mtl
+Material Color
+Ka 0.136099 0.113921 0.0780566
+Kd 0.136099 0.113921 0.0780566
+Ks 0.00747208 0.00625448 0.00428546 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Raiz1Mtl
+Material Color
+Ka 0.144972 0.119264 0.0824142
+Kd 0.144972 0.119264 0.0824142
+Ks 0.00795926 0.00654783 0.0045247 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Raiz6Mtl
+Material Color
+Ka 0.0915184 0.0780566 0.0545923
+Kd 0.0915184 0.0780566 0.0545923
+Ks 0.00502454 0.00428546 0.00299722 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Raiz9Mtl
+Material Color
+Ka 0.106156 0.0891935 0.0619075
+Kd 0.106156 0.0891935 0.0619075
+Ks 0.00582818 0.0048969 0.00339884 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Raiz10Mtl
+Material Color
+Ka 0.0915184 0.0759261 0.0528416
+Kd 0.0915184 0.0759261 0.0528416
+Ks 0.00502454 0.00416849 0.00290111 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Musgo80Mtl
+Material Color
+Ka 0.0328759 0.0962661 0.0103978
+Kd 0.0328759 0.0962661 0.0103978
+Ks 0.000902476 0.0026426 0.00028543 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Raiz14Mtl
+Material Color
+Ka 0.0986892 0.0802193 0.0581872
+Kd 0.0986892 0.0802193 0.0581872
+Ks 0.00541823 0.0044042 0.00319459 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Raiz16Mtl
+Material Color
+Ka 0.0962661 0.0802193 0.0563741
+Kd 0.0962661 0.0802193 0.0563741
+Ks 0.0052852 0.0044042 0.00309505 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Raiz17Mtl
+Material Color
+Ka 0.160444 0.133209 0.0915184
+Kd 0.160444 0.133209 0.0915184
+Ks 0.00880866 0.00731341 0.00502454 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Raiz18Mtl
+Material Color
+Ka 0.108711 0.0891935 0.0638149
+Kd 0.108711 0.0891935 0.0638149
+Ks 0.00596846 0.0048969 0.00350356 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Raiz20Mtl
+Material Color
+Ka 0.113921 0.0938759 0.0677246
+Kd 0.113921 0.0938759 0.0677246
+Ks 0.00625448 0.00515397 0.00371821 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Raiz22Mtl
+Material Color
+Ka 0.111299 0.0938759 0.0657539
+Kd 0.111299 0.0938759 0.0657539
+Ks 0.00611056 0.00515397 0.00361002 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Raiz24Mtl
+Material Color
+Ka 0.124741 0.103634 0.0738278
+Kd 0.124741 0.103634 0.0738278
+Ks 0.00684852 0.00568972 0.00405329 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Raiz30Mtl
+Material Color
+Ka 0.157281 0.12753 0.0891935
+Kd 0.157281 0.12753 0.0891935
+Ks 0.00863502 0.00700164 0.0048969 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Raiz40Mtl
+Material Color
+Ka 0.130352 0.106156 0.0759261
+Kd 0.130352 0.106156 0.0759261
+Ks 0.0071566 0.00582818 0.00416849 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Raiz48Mtl
+Material Color
+Ka 0.154152 0.12753 0.0891935
+Kd 0.154152 0.12753 0.0891935
+Ks 0.00846326 0.00700164 0.0048969 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Raiz50Mtl
+Material Color
+Ka 0.157281 0.130352 0.0891935
+Kd 0.157281 0.130352 0.0891935
+Ks 0.00863502 0.0071566 0.0048969 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Raiz54Mtl
+Material Color
+Ka 0.101145 0.0824142 0.0600316
+Kd 0.101145 0.0824142 0.0600316
+Ks 0.00555307 0.0045247 0.00329585 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Raiz85Mtl
+Material Color
+Ka 0.151058 0.121986 0.0869013
+Kd 0.151058 0.121986 0.0869013
+Ks 0.00829338 0.00669726 0.00477105 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Raiz87Mtl
+Material Color
+Ka 0.154152 0.124741 0.0869013
+Kd 0.154152 0.124741 0.0869013
+Ks 0.00846326 0.00684852 0.00477105 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Raiz109Mtl
+Material Color
+Ka 0.154152 0.124741 0.0891935
+Kd 0.154152 0.124741 0.0891935
+Ks 0.00846326 0.00684852 0.0048969 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Raiz115Mtl
+Material Color
+Ka 0.101145 0.0824142 0.0581872
+Kd 0.101145 0.0824142 0.0581872
+Ks 0.00555307 0.0045247 0.00319459 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Raiz135Mtl
+Material Color
+Ka 0.163641 0.133209 0.0938759
+Kd 0.163641 0.133209 0.0938759
+Ks 0.00898419 0.00731341 0.00515397 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Folha117Mtl
+Material Color
+Ka 0.0869013 0.170138 0.0179364
+Kd 0.0869013 0.170138 0.0179364
+Ks 0.00238552 0.00467047 0.000492373 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Raiztrepadeira7Mtl
+Material Color
+Ka 0.293216 0.212044 0.121986
+Kd 0.293216 0.212044 0.121986
+Ks 0.0160981 0.0116417 0.00669726 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho55Mtl
+Material Color
+Ka 0.0938759 0.0780566 0.0528416
+Kd 0.0938759 0.0780566 0.0528416
+Ks 0.00515397 0.00428546 0.00290111 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho56Mtl
+Material Color
+Ka 0.0824142 0.0677246 0.0461488
+Kd 0.0824142 0.0677246 0.0461488
+Ks 0.0045247 0.00371821 0.00253366 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho57Mtl
+Material Color
+Ka 0.0962661 0.0802193 0.0545923
+Kd 0.0962661 0.0802193 0.0545923
+Ks 0.0052852 0.0044042 0.00299722 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Folha115Mtl
+Material Color
+Ka 0.147998 0.259027 0.0289912
+Kd 0.147998 0.259027 0.0289912
+Ks 0.00406269 0.00711056 0.000795837 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Galho59Mtl
+Material Color
+Ka 0.116576 0.0962661 0.0657539
+Kd 0.116576 0.0962661 0.0657539
+Ks 0.00640024 0.0052852 0.00361002 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho60Mtl
+Material Color
+Ka 0.133209 0.111299 0.0759261
+Kd 0.133209 0.111299 0.0759261
+Ks 0.00731341 0.00611056 0.00416849 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho61Mtl
+Material Color
+Ka 0.113921 0.0962661 0.0657539
+Kd 0.113921 0.0962661 0.0657539
+Ks 0.00625448 0.0052852 0.00361002 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Raizcircular2Mtl
+Material Color
+Ka 0.242796 0.180144 0.108711
+Kd 0.242796 0.180144 0.108711
+Ks 0.01333 0.00989028 0.00596846 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Ramo38Mtl
+Material Color
+Ka 0.0619075 0.0511221 0.0342302
+Kd 0.0619075 0.0511221 0.0342302
+Ks 0.00339884 0.0028067 0.00187931 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Nucleo10Mtl
+Material Color
+Ka 0.166872 0.136099 0.0938759
+Kd 0.166872 0.136099 0.0938759
+Ks 0.00916161 0.00747208 0.00515397 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho62Mtl
+Material Color
+Ka 0.113921 0.0938759 0.0638149
+Kd 0.113921 0.0938759 0.0638149
+Ks 0.00625448 0.00515397 0.00350356 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho63Mtl
+Material Color
+Ka 0.0986892 0.0824142 0.0563741
+Kd 0.0986892 0.0824142 0.0563741
+Ks 0.00541823 0.0045247 0.00309505 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho64Mtl
+Material Color
+Ka 0.119264 0.0986892 0.0677246
+Kd 0.119264 0.0986892 0.0677246
+Ks 0.00654783 0.00541823 0.00371821 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho95Mtl
+Material Color
+Ka 0.108711 0.0891935 0.0619075
+Kd 0.108711 0.0891935 0.0619075
+Ks 0.00596846 0.0048969 0.00339884 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho65Mtl
+Material Color
+Ka 0.0891935 0.0738278 0.0511221
+Kd 0.0891935 0.0738278 0.0511221
+Ks 0.0048969 0.00405329 0.0028067 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho66Mtl
+Material Color
+Ka 0.0915184 0.0759261 0.0511221
+Kd 0.0915184 0.0759261 0.0511221
+Ks 0.00502454 0.00416849 0.0028067 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho67Mtl
+Material Color
+Ka 0.0780566 0.0657539 0.0445526
+Kd 0.0780566 0.0657539 0.0445526
+Ks 0.00428546 0.00361002 0.00244603 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho76Mtl
+Material Color
+Ka 0.0869013 0.0717615 0.0494335
+Kd 0.0869013 0.0717615 0.0494335
+Ks 0.00477105 0.00393984 0.00271399 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho77Mtl
+Material Color
+Ka 0.111299 0.0915184 0.0638149
+Kd 0.111299 0.0915184 0.0638149
+Ks 0.00611056 0.00502454 0.00350356 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho78Mtl
+Material Color
+Ka 0.108711 0.0915184 0.0619075
+Kd 0.108711 0.0915184 0.0619075
+Ks 0.00596846 0.00502454 0.00339884 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Lobo86Mtl
+Material Color
+Ka 0.0846415 0.0697271 0.0494335
+Kd 0.0846415 0.0697271 0.0494335
+Ks 0.00464699 0.00382815 0.00271399 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho81Mtl
+Material Color
+Ka 0.101145 0.0846415 0.0581872
+Kd 0.101145 0.0846415 0.0581872
+Ks 0.00555307 0.00464699 0.00319459 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho87Mtl
+Material Color
+Ka 0.0846415 0.0697271 0.0477758
+Kd 0.0846415 0.0697271 0.0477758
+Ks 0.00464699 0.00382815 0.00262298 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho88Mtl
+Material Color
+Ka 0.124741 0.103634 0.0717615
+Kd 0.124741 0.103634 0.0717615
+Ks 0.00684852 0.00568972 0.00393984 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho98Mtl
+Material Color
+Ka 0.0986892 0.0802193 0.0563741
+Kd 0.0986892 0.0802193 0.0563741
+Ks 0.00541823 0.0044042 0.00309505 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho99Mtl
+Material Color
+Ka 0.111299 0.0915184 0.0619075
+Kd 0.111299 0.0915184 0.0619075
+Ks 0.00611056 0.00502454 0.00339884 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho101Mtl
+Material Color
+Ka 0.116576 0.0986892 0.0677246
+Kd 0.116576 0.0986892 0.0677246
+Ks 0.00640024 0.00541823 0.00371821 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho109Mtl
+Material Color
+Ka 0.124741 0.103634 0.0697271
+Kd 0.124741 0.103634 0.0697271
+Ks 0.00684852 0.00568972 0.00382815 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho111Mtl
+Material Color
+Ka 0.111299 0.0938759 0.0638149
+Kd 0.111299 0.0938759 0.0638149
+Ks 0.00611056 0.00515397 0.00350356 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho267Mtl
+Material Color
+Ka 0.12753 0.103634 0.0717615
+Kd 0.12753 0.103634 0.0717615
+Ks 0.00700164 0.00568972 0.00393984 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho263Mtl
+Material Color
+Ka 0.101145 0.0824142 0.0563741
+Kd 0.101145 0.0824142 0.0563741
+Ks 0.00555307 0.0045247 0.00309505 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho120Mtl
+Material Color
+Ka 0.124741 0.101145 0.0697271
+Kd 0.124741 0.101145 0.0697271
+Ks 0.00684852 0.00555307 0.00382815 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho126Mtl
+Material Color
+Ka 0.121986 0.101145 0.0677246
+Kd 0.121986 0.101145 0.0677246
+Ks 0.00669726 0.00555307 0.00371821 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho145Mtl
+Material Color
+Ka 0.12753 0.106156 0.0717615
+Kd 0.12753 0.106156 0.0717615
+Ks 0.00700164 0.00582818 0.00393984 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho147Mtl
+Material Color
+Ka 0.0891935 0.0738278 0.0494335
+Kd 0.0891935 0.0738278 0.0494335
+Ks 0.0048969 0.00405329 0.00271399 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho153Mtl
+Material Color
+Ka 0.103634 0.0869013 0.0600316
+Kd 0.103634 0.0869013 0.0600316
+Ks 0.00568972 0.00477105 0.00329585 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho156Mtl
+Material Color
+Ka 0.103634 0.0846415 0.0581872
+Kd 0.103634 0.0846415 0.0581872
+Ks 0.00568972 0.00464699 0.00319459 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho158Mtl
+Material Color
+Ka 0.106156 0.0891935 0.0600316
+Kd 0.106156 0.0891935 0.0600316
+Ks 0.00582818 0.0048969 0.00329585 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho160Mtl
+Material Color
+Ka 0.103634 0.0869013 0.0581872
+Kd 0.103634 0.0869013 0.0581872
+Ks 0.00568972 0.00477105 0.00319459 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho169Mtl
+Material Color
+Ka 0.0869013 0.0738278 0.0494335
+Kd 0.0869013 0.0738278 0.0494335
+Ks 0.00477105 0.00405329 0.00271399 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho179Mtl
+Material Color
+Ka 0.119264 0.101145 0.0677246
+Kd 0.119264 0.101145 0.0677246
+Ks 0.00654783 0.00555307 0.00371821 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Raizcircular3Mtl
+Material Color
+Ka 0.212044 0.163641 0.103634
+Kd 0.212044 0.163641 0.103634
+Ks 0.0116417 0.00898419 0.00568972 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Raizcircular5Mtl
+Material Color
+Ka 0.215764 0.166872 0.103634
+Kd 0.215764 0.166872 0.103634
+Ks 0.0118459 0.00916161 0.00568972 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Raizcircular6Mtl
+Material Color
+Ka 0.230998 0.173439 0.106156
+Kd 0.230998 0.173439 0.106156
+Ks 0.0126823 0.00952214 0.00582818 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Raizcircular7Mtl
+Material Color
+Ka 0.20836 0.160444 0.101145
+Kd 0.20836 0.160444 0.101145
+Ks 0.0114394 0.00880866 0.00555307 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Raizanel1Mtl
+Material Color
+Ka 0.139022 0.113921 0.0780566
+Kd 0.139022 0.113921 0.0780566
+Ks 0.00763261 0.00625448 0.00428546 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Raizcircular8Mtl
+Material Color
+Ka 0.234895 0.176774 0.108711
+Kd 0.234895 0.176774 0.108711
+Ks 0.0128962 0.00970526 0.00596846 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Raiztrepadeira1Mtl
+Material Color
+Ka 0.297653 0.215764 0.121986
+Kd 0.297653 0.215764 0.121986
+Ks 0.0163417 0.0118459 0.00669726 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Raizcircular11Mtl
+Material Color
+Ka 0.238828 0.176774 0.108711
+Kd 0.238828 0.176774 0.108711
+Ks 0.0131121 0.00970526 0.00596846 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Raiztrepadeira2Mtl
+Material Color
+Ka 0.288816 0.20836 0.119264
+Kd 0.288816 0.20836 0.119264
+Ks 0.0158566 0.0114394 0.00654783 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Raiztrepadeira3Mtl
+Material Color
+Ka 0.275833 0.201096 0.116576
+Kd 0.275833 0.201096 0.116576
+Ks 0.0151438 0.0110406 0.00640024 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Raiztrepadeira5Mtl
+Material Color
+Ka 0.306635 0.215764 0.121986
+Kd 0.306635 0.215764 0.121986
+Ks 0.0168349 0.0118459 0.00669726 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Raiztrepadeira6Mtl
+Material Color
+Ka 0.302126 0.215764 0.121986
+Kd 0.302126 0.215764 0.121986
+Ks 0.0165873 0.0118459 0.00669726 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Raizanel2Mtl
+Material Color
+Ka 0.130352 0.106156 0.0738278
+Kd 0.130352 0.106156 0.0738278
+Ks 0.0071566 0.00582818 0.00405329 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Raiztrepadeira8Mtl
+Material Color
+Ka 0.25084 0.186989 0.111299
+Kd 0.25084 0.186989 0.111299
+Ks 0.0137716 0.010266 0.00611056 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Lobo7Mtl
+Material Color
+Ka 0.0824142 0.0697271 0.0494335
+Kd 0.0824142 0.0697271 0.0494335
+Ks 0.0045247 0.00382815 0.00271399 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Lobo10Mtl
+Material Color
+Ka 0.133209 0.111299 0.0780566
+Kd 0.133209 0.111299 0.0780566
+Ks 0.00731341 0.00611056 0.00428546 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Lobo15Mtl
+Material Color
+Ka 0.133209 0.108711 0.0780566
+Kd 0.133209 0.108711 0.0780566
+Ks 0.00731341 0.00596846 0.00428546 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Lobo22Mtl
+Material Color
+Ka 0.0891935 0.0738278 0.0528416
+Kd 0.0891935 0.0738278 0.0528416
+Ks 0.0048969 0.00405329 0.00290111 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Lobo68Mtl
+Material Color
+Ka 0.139022 0.116576 0.0802193
+Kd 0.139022 0.116576 0.0802193
+Ks 0.00763261 0.00640024 0.0044042 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Nucleo15Mtl
+Material Color
+Ka 0.166872 0.139022 0.0962661
+Kd 0.166872 0.139022 0.0962661
+Ks 0.00916161 0.00763261 0.0052852 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Nucleo17Mtl
+Material Color
+Ka 0.166872 0.136099 0.0962661
+Kd 0.166872 0.136099 0.0962661
+Ks 0.00916161 0.00747208 0.0052852 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Lobo122Mtl
+Material Color
+Ka 0.0869013 0.0717615 0.0511221
+Kd 0.0869013 0.0717615 0.0511221
+Ks 0.00477105 0.00393984 0.0028067 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Folha28Mtl
+Material Color
+Ka 0.106156 0.212044 0.0253713
+Kd 0.106156 0.212044 0.0253713
+Ks 0.00291409 0.00582083 0.000696466 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Ramito1Mtl
+Material Color
+Ka 0.0738278 0.0619075 0.0445526
+Kd 0.0738278 0.0619075 0.0445526
+Ks 0.00405329 0.00339884 0.00244603 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Folha29Mtl
+Material Color
+Ka 0.139022 0.2468 0.0277553
+Kd 0.139022 0.2468 0.0277553
+Ks 0.0038163 0.00677491 0.00076191 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Folha30Mtl
+Material Color
+Ka 0.0581872 0.130352 0.0143105
+Kd 0.0581872 0.130352 0.0143105
+Ks 0.0015973 0.0035783 0.000392838 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Folha31Mtl
+Material Color
+Ka 0.0677246 0.147998 0.0169881
+Kd 0.0677246 0.147998 0.0169881
+Ks 0.00185911 0.00406269 0.000466339 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Folha32Mtl
+Material Color
+Ka 0.0600316 0.133209 0.0143105
+Kd 0.0600316 0.133209 0.0143105
+Ks 0.00164793 0.0036567 0.000392838 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Folha33Mtl
+Material Color
+Ka 0.0414519 0.111299 0.0134734
+Kd 0.0414519 0.111299 0.0134734
+Ks 0.0011379 0.00305528 0.000369858 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Folha35Mtl
+Material Color
+Ka 0.20471 0.311181 0.0414519
+Kd 0.20471 0.311181 0.0414519
+Ks 0.00561949 0.00854221 0.0011379 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Folha36Mtl
+Material Color
+Ka 0.144972 0.267358 0.0328759
+Kd 0.144972 0.267358 0.0328759
+Ks 0.00397963 0.00733924 0.000902476 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Folha43Mtl
+Material Color
+Ka 0.0545923 0.12753 0.0134734
+Kd 0.0545923 0.12753 0.0134734
+Ks 0.00149861 0.00350082 0.000369858 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Folha44Mtl
+Material Color
+Ka 0.0759261 0.154152 0.0179364
+Kd 0.0759261 0.154152 0.0179364
+Ks 0.00208425 0.00423163 0.000492373 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Folha46Mtl
+Material Color
+Ka 0.0657539 0.151058 0.018913
+Kd 0.0657539 0.151058 0.018913
+Ks 0.00180501 0.00414669 0.00051918 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Folha53Mtl
+Material Color
+Ka 0.144972 0.230998 0.0277553
+Kd 0.144972 0.230998 0.0277553
+Ks 0.00397963 0.00634113 0.00076191 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Folha59Mtl
+Material Color
+Ka 0.267358 0.378676 0.0511221
+Kd 0.267358 0.378676 0.0511221
+Ks 0.00733924 0.010395 0.00140335 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Folha60Mtl
+Material Color
+Ka 0.0461488 0.103634 0.0103978
+Kd 0.0461488 0.103634 0.0103978
+Ks 0.00126683 0.00284486 0.00028543 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Folha78Mtl
+Material Color
+Ka 0.147998 0.234895 0.0277553
+Kd 0.147998 0.234895 0.0277553
+Ks 0.00406269 0.00644811 0.00076191 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Folha79Mtl
+Material Color
+Ka 0.106156 0.197516 0.022013
+Kd 0.106156 0.197516 0.022013
+Ks 0.00291409 0.00542202 0.000604278 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Folha81Mtl
+Material Color
+Ka 0.0717615 0.147998 0.0169881
+Kd 0.0717615 0.147998 0.0169881
+Ks 0.00196992 0.00406269 0.000466339 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Folha101Mtl
+Material Color
+Ka 0.124741 0.22331 0.0242229
+Kd 0.124741 0.22331 0.0242229
+Ks 0.00342426 0.00613009 0.000664944 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Folha102Mtl
+Material Color
+Ka 0.139022 0.21952 0.0265487
+Kd 0.139022 0.21952 0.0265487
+Ks 0.0038163 0.00602603 0.000728787 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Folha104Mtl
+Material Color
+Ka 0.0986892 0.186989 0.0199178
+Kd 0.0986892 0.186989 0.0199178
+Ks 0.00270912 0.00513302 0.000546764 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Folha113Mtl
+Material Color
+Ka 0.130352 0.20836 0.0242229
+Kd 0.130352 0.20836 0.0242229
+Ks 0.0035783 0.00571968 0.000664944 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Folha118Mtl
+Material Color
+Ka 0.108711 0.197516 0.022013
+Kd 0.108711 0.197516 0.022013
+Ks 0.00298423 0.00542202 0.000604278 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Folha119Mtl
+Material Color
+Ka 0.0846415 0.170138 0.0199178
+Kd 0.0846415 0.170138 0.0199178
+Ks 0.00232349 0.00467047 0.000546764 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Folha144Mtl
+Material Color
+Ka 0.166872 0.259027 0.0315514
+Kd 0.166872 0.259027 0.0315514
+Ks 0.00458081 0.00711056 0.000866117 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Musgo73Mtl
+Material Color
+Ka 0.0581872 0.139022 0.0169881
+Kd 0.0581872 0.139022 0.0169881
+Ks 0.0015973 0.0038163 0.000466339 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Musgo74Mtl
+Material Color
+Ka 0.106156 0.183549 0.0209511
+Kd 0.106156 0.183549 0.0209511
+Ks 0.00291409 0.0050386 0.000575129 
+
+d 1
+
+Ns 0
+
+map_Ka Musgo1_diff.png
+map_Kd Musgo1_diff.png
+map_d Musgo1_diff.png
+
+map_Bump Musgo1_nmap.png
+
+map_Ns Musgo1_spec.png
+
+newmtl Galho207Mtl
+Material Color
+Ka 0.0824142 0.0697271 0.0477758
+Kd 0.0824142 0.0697271 0.0477758
+Ks 0.0045247 0.00382815 0.00262298 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho213Mtl
+Material Color
+Ka 0.136099 0.111299 0.0759261
+Kd 0.136099 0.111299 0.0759261
+Ks 0.00747208 0.00611056 0.00416849 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho292Mtl
+Material Color
+Ka 0.101145 0.0846415 0.0563741
+Kd 0.101145 0.0846415 0.0563741
+Ks 0.00555307 0.00464699 0.00309505 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+
+newmtl Galho320Mtl
+Material Color
+Ka 0.0846415 0.0717615 0.0494335
+Kd 0.0846415 0.0717615 0.0494335
+Ks 0.00464699 0.00393984 0.00271399 
+
+d 1
+
+Ns 0
+
+map_Ka Madeiraexposta1_diff.png
+map_Kd Madeiraexposta1_diff.png
+map_d Madeiraexposta1_diff.png
+
+map_Bump Madeiraexposta1_nmap.png
+
+map_Ns Madeiraexposta1_spec.png
+

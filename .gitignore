@@ -1,0 +1,48 @@
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.token
+
+# Temp, backup and caches
+*.tmp
+*.temp
+*.bak
+*.log
+.DS_Store
+Thumbs.db
+__pycache__/
+.cache/
+.vscode/
+
+# Roblox local/autosave files — não versionar binários por padrão
+*.rbxl
+*.rbxlx
+*.rbxm
+*.rbxmx
+*.rbxl.lock
+
+# Rojo: o codigo do jogo vive em src/ (ver default.project.json); o place continua fora do git
+
+# Binarios pesados de arte (ficam so no disco; o git versiona os scripts que os geram)
+*.blend
+*.blend1
+*.glb
+*.gltf
+*.fbx
+*.obj
+*.mp4
+*.webp
+*.fbm/
+SCREENSHOTS/
+BLENDER/**/*.png
+BLENDER/**/*.jpg
+!BLENDER/**/ref/*.png
+BLENDER/**/review/
+BLENDER/**/saida*/
+BLENDER/**/low/
+BLENDER/**/anim_json/
+BLENDER/**/anim_json*/
+.claude/*.lock

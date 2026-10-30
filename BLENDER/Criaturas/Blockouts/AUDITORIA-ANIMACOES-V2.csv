@@ -1,0 +1,508 @@
+﻿especie;animacao;classe;esticamento_p99;pct_arestas_acima_1_8;erro_contato_chao
+Basilisco;Repouso;Aprovada;1.04;0.0;0.0
+Basilisco;Andar;Aprovada;1.23;0.09;0.023
+Basilisco;Corrida;Aprovada;1.36;0.21;0.0
+Basilisco;VirarEsquerda;Aprovada;1.29;0.18;0.025
+Basilisco;VirarDireita;Aprovada;1.29;0.19;0.025
+Basilisco;Arrancada;Pequenos ajustes;1.46;0.35;0.009
+Basilisco;Frenagem;Aprovada;1.26;0.15;0.005
+Basilisco;ReacaoGolpe;Aprovada;1.24;0.1;0.0
+Basilisco;AtaqueBasico;Aprovada;1.1;0.02;0.005
+Basilisco;Morte;Aprovada;1.34;0.12;0.0
+Basilisco;Comer;Aprovada;1.16;0.03;0.0
+Basilisco;DeitarDescanso;Aprovada;1.36;0.22;0.0
+Basilisco;Descanso;Aprovada;1.39;0.28;0.0
+Basilisco;LevantarDescanso;Aprovada;1.34;0.2;0.0
+Basilisco;Montar;Aprovada;1.17;0.03;0.007
+Basilisco;Desmontar;Aprovada;1.18;0.03;0.0
+Basilisco;MontadoRepouso;Aprovada;1.03;0.0;0.0
+Basilisco;MontadoAndar;Aprovada;1.23;0.09;0.023
+Basilisco;MontadoCorrida;Aprovada;1.36;0.21;0.0
+Basilisco;MontadoVirarE;Aprovada;1.29;0.18;0.025
+Basilisco;MontadoVirarD;Aprovada;1.29;0.19;0.025
+Basilisco;GuardarNinho;Aprovada;1.31;0.1;0.0
+Basilisco;Alerta;Aprovada;1.11;0.0;0.0
+Basilisco;Ameaca;Aprovada;1.23;0.06;0.0
+Basilisco;OlharAmeacador;Aprovada;1.1;0.0;0.0
+Basilisco;MordidaToxica;Aprovada;1.1;0.01;0.0
+Basilisco;EspiralDefensiva;Pequenos ajustes;1.54;0.49;0.0
+Basilisco;Emboscada;Pequenos ajustes;1.65;0.63;0.0
+Bufalo_Colossal;Repouso;Aprovada;1.09;0.0;0.0
+Bufalo_Colossal;Andar;Aprovada;1.29;0.11;0.002
+Bufalo_Colossal;Corrida;Pequenos ajustes;1.94;1.34;0.0
+Bufalo_Colossal;VirarEsquerda;Aprovada;1.52;0.25;0.002
+Bufalo_Colossal;VirarDireita;Aprovada;1.5;0.26;0.002
+Bufalo_Colossal;Arrancada;Pequenos ajustes;1.7;0.74;0.004
+Bufalo_Colossal;Frenagem;Pequenos ajustes;1.68;0.67;0.0
+Bufalo_Colossal;ReacaoGolpe;Pequenos ajustes;1.53;0.72;0.001
+Bufalo_Colossal;AtaqueBasico;Aprovada;1.4;0.24;0.009
+Bufalo_Colossal;Morte;Pequenos ajustes;1.65;0.72;0.0
+Bufalo_Colossal;Comer;Pequenos ajustes;1.63;0.57;0.0
+Bufalo_Colossal;DeitarDescanso;Refazer;2.41;2.7;0.0
+Bufalo_Colossal;Descanso;Refazer;2.56;3.06;0.0
+Bufalo_Colossal;LevantarDescanso;Refazer;2.34;2.38;0.0
+Bufalo_Colossal;Montar;Pequenos ajustes;1.6;0.49;0.0
+Bufalo_Colossal;Desmontar;Pequenos ajustes;1.62;0.52;0.0
+Bufalo_Colossal;MontadoRepouso;Aprovada;1.05;0.0;0.0
+Bufalo_Colossal;MontadoAndar;Aprovada;1.29;0.11;0.002
+Bufalo_Colossal;MontadoCorrida;Pequenos ajustes;1.94;1.34;0.0
+Bufalo_Colossal;MontadoVirarE;Aprovada;1.52;0.25;0.002
+Bufalo_Colossal;MontadoVirarD;Aprovada;1.5;0.26;0.002
+Bufalo_Colossal;GuardarNinho;Refazer;2.01;1.56;0.0
+Bufalo_Colossal;Alerta;Aprovada;1.3;0.11;0.0
+Bufalo_Colossal;Ameaca;Pequenos ajustes;1.75;0.89;0.0
+Bufalo_Colossal;CargaDeChifres;Refazer;2.47;2.48;0.0
+Bufalo_Colossal;PisoteioSismico;Refazer;2.2;2.0;0.0
+Bufalo_Colossal;GuardaDaManada;Pequenos ajustes;1.38;0.38;0.0
+Bufalo_Colossal;ImpetoSelvagem;Refazer;2.47;2.35;0.0
+Cerbero_Sombrio;Repouso;Aprovada;1.06;0.0;0.0
+Cerbero_Sombrio;Andar;Pequenos ajustes;1.61;0.7;0.018
+Cerbero_Sombrio;Corrida;Pequenos ajustes;1.91;1.23;0.0
+Cerbero_Sombrio;VirarEsquerda;Pequenos ajustes;1.59;0.61;0.006
+Cerbero_Sombrio;VirarDireita;Pequenos ajustes;1.61;0.65;0.006
+Cerbero_Sombrio;Arrancada;Pequenos ajustes;1.87;1.16;0.056
+Cerbero_Sombrio;Frenagem;Pequenos ajustes;1.54;0.55;0.005
+Cerbero_Sombrio;ReacaoGolpe;Aprovada;1.35;0.25;0.002
+Cerbero_Sombrio;AtaqueBasico;Aprovada;1.21;0.04;0.01
+Cerbero_Sombrio;Morte;Pequenos ajustes;1.61;0.63;0.0
+Cerbero_Sombrio;Comer;Pequenos ajustes;1.7;0.81;0.0
+Cerbero_Sombrio;DeitarDescanso;Refazer;2.29;2.06;0.0
+Cerbero_Sombrio;Descanso;Refazer;2.4;2.34;0.0
+Cerbero_Sombrio;LevantarDescanso;Refazer;2.18;1.86;0.0
+Cerbero_Sombrio;Montar;Pequenos ajustes;1.6;0.56;0.0
+Cerbero_Sombrio;Desmontar;Pequenos ajustes;1.6;0.59;0.0
+Cerbero_Sombrio;MontadoRepouso;Aprovada;1.04;0.0;0.0
+Cerbero_Sombrio;MontadoAndar;Pequenos ajustes;1.61;0.7;0.018
+Cerbero_Sombrio;MontadoCorrida;Pequenos ajustes;1.91;1.23;0.0
+Cerbero_Sombrio;MontadoVirarE;Pequenos ajustes;1.59;0.61;0.006
+Cerbero_Sombrio;MontadoVirarD;Pequenos ajustes;1.61;0.65;0.006
+Cerbero_Sombrio;GuardarNinho;Pequenos ajustes;1.93;1.3;0.0
+Cerbero_Sombrio;Alerta;Aprovada;1.38;0.22;0.0
+Cerbero_Sombrio;Ameaca;Pequenos ajustes;1.48;0.31;0.0
+Cerbero_Sombrio;MordidasTriplices;Aprovada;1.29;0.21;0.0
+Cerbero_Sombrio;RugidoInfernal;Aprovada;1.32;0.09;0.0
+Cerbero_Sombrio;InvestidaSombria;Refazer;2.14;1.72;0.0
+Cerbero_Sombrio;FuriaDasTresCabecas;Pequenos ajustes;1.65;0.62;0.0
+Crocodilo_Primordial;Repouso;Aprovada;1.03;0.0;0.0
+Crocodilo_Primordial;Andar;Aprovada;1.19;0.02;0.0
+Crocodilo_Primordial;Corrida;Aprovada;1.3;0.08;0.0
+Crocodilo_Primordial;VirarEsquerda;Aprovada;1.33;0.12;0.0
+Crocodilo_Primordial;VirarDireita;Aprovada;1.33;0.1;0.0
+Crocodilo_Primordial;Arrancada;Aprovada;1.37;0.16;0.026
+Crocodilo_Primordial;Frenagem;Aprovada;1.21;0.0;0.01
+Crocodilo_Primordial;ReacaoGolpe;Aprovada;1.34;0.06;0.0
+Crocodilo_Primordial;AtaqueBasico;Aprovada;1.13;0.0;0.003
+Crocodilo_Primordial;Morte;Aprovada;1.38;0.13;0.0
+Crocodilo_Primordial;Comer;Aprovada;1.21;0.01;0.0
+Crocodilo_Primordial;DeitarDescanso;Aprovada;1.29;0.01;0.0
+Crocodilo_Primordial;Descanso;Aprovada;1.32;0.02;0.0
+Crocodilo_Primordial;LevantarDescanso;Aprovada;1.27;0.0;0.0
+Crocodilo_Primordial;Montar;Aprovada;1.11;0.0;0.0
+Crocodilo_Primordial;Desmontar;Aprovada;1.17;0.01;0.0
+Crocodilo_Primordial;MontadoRepouso;Aprovada;1.02;0.0;0.0
+Crocodilo_Primordial;MontadoAndar;Aprovada;1.19;0.02;0.0
+Crocodilo_Primordial;MontadoCorrida;Aprovada;1.3;0.08;0.0
+Crocodilo_Primordial;MontadoVirarE;Aprovada;1.33;0.12;0.0
+Crocodilo_Primordial;MontadoVirarD;Aprovada;1.33;0.1;0.0
+Crocodilo_Primordial;GuardarNinho;Pequenos ajustes;1.43;0.41;0.0
+Crocodilo_Primordial;Alerta;Aprovada;1.18;0.0;0.0
+Crocodilo_Primordial;Ameaca;Aprovada;1.32;0.19;0.0
+Crocodilo_Primordial;NadoCruzeiro;Aprovada;1.0;0.0;0.0
+Crocodilo_Primordial;Mergulho;Aprovada;1.0;0.0;0.0
+Crocodilo_Primordial;Emersao;Aprovada;1.0;0.0;0.0
+Crocodilo_Primordial;MordidaDeAgarrao;Aprovada;1.2;0.07;0.0
+Crocodilo_Primordial;GiroPredatorio;Aprovada;1.28;0.28;0.0
+Crocodilo_Primordial;Submersao;Aprovada;1.07;0.0;0.0
+Crocodilo_Primordial;CaudaDeMare;Aprovada;1.41;0.16;0.0
+Dragao_das_Montanhas;Repouso;Pequenos ajustes;1.51;0.41;0.008
+Dragao_das_Montanhas;Andar;Pequenos ajustes;1.56;0.44;0.0
+Dragao_das_Montanhas;Corrida;Pequenos ajustes;1.64;0.59;0.0
+Dragao_das_Montanhas;VirarEsquerda;Pequenos ajustes;1.59;0.45;0.0
+Dragao_das_Montanhas;VirarDireita;Pequenos ajustes;1.58;0.49;0.0
+Dragao_das_Montanhas;Arrancada;Pequenos ajustes;1.62;0.58;0.047
+Dragao_das_Montanhas;Frenagem;Pequenos ajustes;1.55;0.46;0.004
+Dragao_das_Montanhas;ReacaoGolpe;Pequenos ajustes;1.55;0.43;0.001
+Dragao_das_Montanhas;AtaqueBasico;Pequenos ajustes;1.51;0.41;0.013
+Dragao_das_Montanhas;Morte;Pequenos ajustes;1.58;0.54;0.0
+Dragao_das_Montanhas;Comer;Pequenos ajustes;1.58;0.5;0.0
+Dragao_das_Montanhas;DeitarDescanso;Pequenos ajustes;1.9;1.24;0.0
+Dragao_das_Montanhas;Descanso;Pequenos ajustes;1.96;1.36;0.0
+Dragao_das_Montanhas;LevantarDescanso;Pequenos ajustes;1.87;1.15;0.0
+Dragao_das_Montanhas;Montar;Pequenos ajustes;1.64;0.63;0.014
+Dragao_das_Montanhas;Desmontar;Pequenos ajustes;1.65;0.62;0.0
+Dragao_das_Montanhas;MontadoRepouso;Pequenos ajustes;1.51;0.41;0.005
+Dragao_das_Montanhas;MontadoAndar;Pequenos ajustes;1.56;0.44;0.0
+Dragao_das_Montanhas;MontadoCorrida;Pequenos ajustes;1.64;0.59;0.0
+Dragao_das_Montanhas;MontadoVirarE;Pequenos ajustes;1.59;0.45;0.0
+Dragao_das_Montanhas;MontadoVirarD;Pequenos ajustes;1.58;0.49;0.0
+Dragao_das_Montanhas;GuardarNinho;Pequenos ajustes;1.77;0.95;0.0
+Dragao_das_Montanhas;Alerta;Pequenos ajustes;1.53;0.42;0.0
+Dragao_das_Montanhas;Ameaca;Aprovada;1.38;0.18;0.0
+Dragao_das_Montanhas;Decolagem;Pequenos ajustes;1.8;1.0;0.0
+Dragao_das_Montanhas;Pouso;Pequenos ajustes;1.75;0.85;0.0
+Dragao_das_Montanhas;Planeio;Pequenos ajustes;1.82;1.06;0.0
+Dragao_das_Montanhas;VooBatido;Pequenos ajustes;1.88;1.26;0.0
+Dragao_das_Montanhas;Pairar;Refazer;2.03;1.56;0.0
+Dragao_das_Montanhas;AtaqueAereo;Pequenos ajustes;1.87;1.23;0.0
+Dragao_das_Montanhas;Empoleirar;Refazer;2.11;1.76;0.0
+Dragao_das_Montanhas;CurvaAerea;Pequenos ajustes;1.85;1.13;0.0
+Dragao_das_Montanhas;AbrirAsas;Aprovada;1.41;0.26;0.0
+Dragao_das_Montanhas;RecolherAsas;Pequenos ajustes;1.46;0.3;0.026
+Dragao_das_Montanhas;SoproDraconico;Pequenos ajustes;1.55;0.48;0.0
+Dragao_das_Montanhas;ArremetidaDraconica;Pequenos ajustes;1.79;0.98;0.0
+Dragao_das_Montanhas;TempestadeDeAsas;Aprovada;1.2;0.05;0.0
+Dragao_das_Montanhas;DominioDraconico;Pequenos ajustes;1.46;0.31;0.0
+Dragao_Glacial;Repouso;Pequenos ajustes;1.49;0.38;0.0
+Dragao_Glacial;Andar;Pequenos ajustes;1.55;0.46;0.02
+Dragao_Glacial;Corrida;Pequenos ajustes;1.66;0.66;0.0
+Dragao_Glacial;VirarEsquerda;Pequenos ajustes;1.55;0.53;0.015
+Dragao_Glacial;VirarDireita;Pequenos ajustes;1.55;0.47;0.015
+Dragao_Glacial;Arrancada;Pequenos ajustes;1.64;0.62;0.058
+Dragao_Glacial;Frenagem;Pequenos ajustes;1.55;0.45;0.004
+Dragao_Glacial;ReacaoGolpe;Pequenos ajustes;1.53;0.4;0.002
+Dragao_Glacial;AtaqueBasico;Pequenos ajustes;1.48;0.37;0.013
+Dragao_Glacial;Morte;Pequenos ajustes;1.58;0.54;0.0
+Dragao_Glacial;Comer;Pequenos ajustes;1.53;0.45;0.0
+Dragao_Glacial;DeitarDescanso;Pequenos ajustes;1.87;1.2;0.0
+Dragao_Glacial;Descanso;Pequenos ajustes;1.92;1.37;0.0
+Dragao_Glacial;LevantarDescanso;Pequenos ajustes;1.84;1.12;0.0
+Dragao_Glacial;Montar;Pequenos ajustes;1.65;0.54;0.014
+Dragao_Glacial;Desmontar;Pequenos ajustes;1.65;0.57;0.0
+Dragao_Glacial;MontadoRepouso;Pequenos ajustes;1.49;0.38;0.0
+Dragao_Glacial;MontadoAndar;Pequenos ajustes;1.55;0.46;0.02
+Dragao_Glacial;MontadoCorrida;Pequenos ajustes;1.66;0.66;0.0
+Dragao_Glacial;MontadoVirarE;Pequenos ajustes;1.55;0.53;0.015
+Dragao_Glacial;MontadoVirarD;Pequenos ajustes;1.55;0.47;0.015
+Dragao_Glacial;GuardarNinho;Pequenos ajustes;1.75;0.85;0.0
+Dragao_Glacial;Alerta;Pequenos ajustes;1.5;0.4;0.0
+Dragao_Glacial;Ameaca;Aprovada;1.38;0.15;0.0
+Dragao_Glacial;Decolagem;Pequenos ajustes;1.79;0.99;0.0
+Dragao_Glacial;Pouso;Pequenos ajustes;1.76;0.88;0.0
+Dragao_Glacial;Planeio;Pequenos ajustes;1.82;1.04;0.0
+Dragao_Glacial;VooBatido;Pequenos ajustes;1.87;1.17;0.0
+Dragao_Glacial;Pairar;Pequenos ajustes;1.96;1.43;0.0
+Dragao_Glacial;AtaqueAereo;Pequenos ajustes;1.85;1.14;0.0
+Dragao_Glacial;Empoleirar;Pequenos ajustes;2.01;1.48;0.0
+Dragao_Glacial;CurvaAerea;Pequenos ajustes;1.82;1.06;0.0
+Dragao_Glacial;AbrirAsas;Aprovada;1.4;0.25;0.0
+Dragao_Glacial;RecolherAsas;Aprovada;1.43;0.3;0.026
+Dragao_Glacial;SoproDraconico;Pequenos ajustes;1.54;0.49;0.0
+Dragao_Glacial;ArremetidaDraconica;Pequenos ajustes;1.79;0.97;0.0
+Dragao_Glacial;TempestadeDeAsas;Aprovada;1.18;0.02;0.0
+Dragao_Glacial;DominioDraconico;Aprovada;1.44;0.28;0.0
+Dragao_Sombrio;Repouso;Pequenos ajustes;1.49;0.38;0.0
+Dragao_Sombrio;Andar;Pequenos ajustes;1.56;0.47;0.081
+Dragao_Sombrio;Corrida;Pequenos ajustes;1.65;0.6;0.0
+Dragao_Sombrio;VirarEsquerda;Pequenos ajustes;1.57;0.47;0.052
+Dragao_Sombrio;VirarDireita;Pequenos ajustes;1.56;0.45;0.052
+Dragao_Sombrio;Arrancada;Pequenos ajustes;1.62;0.58;0.071
+Dragao_Sombrio;Frenagem;Pequenos ajustes;1.56;0.44;0.004
+Dragao_Sombrio;ReacaoGolpe;Pequenos ajustes;1.53;0.39;0.001
+Dragao_Sombrio;AtaqueBasico;Pequenos ajustes;1.49;0.38;0.013
+Dragao_Sombrio;Morte;Pequenos ajustes;1.56;0.51;0.0
+Dragao_Sombrio;Comer;Pequenos ajustes;1.56;0.49;0.0
+Dragao_Sombrio;DeitarDescanso;Pequenos ajustes;1.89;1.23;0.0
+Dragao_Sombrio;Descanso;Pequenos ajustes;1.93;1.37;0.0
+Dragao_Sombrio;LevantarDescanso;Pequenos ajustes;1.84;1.14;0.0
+Dragao_Sombrio;Montar;Pequenos ajustes;1.65;0.63;0.014
+Dragao_Sombrio;Desmontar;Pequenos ajustes;1.67;0.64;0.0
+Dragao_Sombrio;MontadoRepouso;Pequenos ajustes;1.49;0.39;0.0
+Dragao_Sombrio;MontadoAndar;Pequenos ajustes;1.56;0.47;0.081
+Dragao_Sombrio;MontadoCorrida;Pequenos ajustes;1.65;0.6;0.0
+Dragao_Sombrio;MontadoVirarE;Pequenos ajustes;1.57;0.47;0.052
+Dragao_Sombrio;MontadoVirarD;Pequenos ajustes;1.56;0.45;0.052
+Dragao_Sombrio;GuardarNinho;Pequenos ajustes;1.78;0.94;0.0
+Dragao_Sombrio;Alerta;Pequenos ajustes;1.5;0.4;0.0
+Dragao_Sombrio;Ameaca;Aprovada;1.35;0.18;0.0
+Dragao_Sombrio;Decolagem;Pequenos ajustes;1.79;0.98;0.0
+Dragao_Sombrio;Pouso;Pequenos ajustes;1.78;0.95;0.0
+Dragao_Sombrio;Planeio;Pequenos ajustes;1.82;1.02;0.0
+Dragao_Sombrio;VooBatido;Pequenos ajustes;1.88;1.17;0.0
+Dragao_Sombrio;Pairar;Pequenos ajustes;1.98;1.45;0.0
+Dragao_Sombrio;AtaqueAereo;Pequenos ajustes;1.89;1.19;0.0
+Dragao_Sombrio;Empoleirar;Refazer;2.08;1.65;0.0
+Dragao_Sombrio;CurvaAerea;Pequenos ajustes;1.82;1.06;0.0
+Dragao_Sombrio;AbrirAsas;Aprovada;1.4;0.28;0.0
+Dragao_Sombrio;RecolherAsas;Pequenos ajustes;1.44;0.31;0.026
+Dragao_Sombrio;SoproDraconico;Pequenos ajustes;1.54;0.49;0.0
+Dragao_Sombrio;ArremetidaDraconica;Pequenos ajustes;1.77;0.94;0.0
+Dragao_Sombrio;TempestadeDeAsas;Aprovada;1.19;0.03;0.0
+Dragao_Sombrio;DominioDraconico;Aprovada;1.47;0.28;0.0
+Escorpiao_Colossal;Repouso;Aprovada;1.03;0.0;0.0
+Escorpiao_Colossal;Andar;Aprovada;1.24;0.01;0.013
+Escorpiao_Colossal;Corrida;Aprovada;1.32;0.07;0.0
+Escorpiao_Colossal;VirarEsquerda;Aprovada;1.24;0.01;0.013
+Escorpiao_Colossal;VirarDireita;Aprovada;1.24;0.01;0.013
+Escorpiao_Colossal;Arrancada;Pequenos ajustes;1.35;0.1;0.266
+Escorpiao_Colossal;Frenagem;Aprovada;1.16;0.0;0.025
+Escorpiao_Colossal;ReacaoGolpe;Aprovada;1.06;0.0;0.0
+Escorpiao_Colossal;AtaqueBasico;Aprovada;1.08;0.0;0.0
+Escorpiao_Colossal;Morte;Aprovada;1.23;0.1;0.0
+Escorpiao_Colossal;Comer;Aprovada;1.07;0.0;0.0
+Escorpiao_Colossal;DeitarDescanso;Aprovada;1.11;0.0;0.0
+Escorpiao_Colossal;Descanso;Aprovada;1.03;0.0;0.0
+Escorpiao_Colossal;LevantarDescanso;Aprovada;1.1;0.0;0.0
+Escorpiao_Colossal;Montar;Aprovada;1.07;0.0;0.0
+Escorpiao_Colossal;Desmontar;Aprovada;1.07;0.0;0.0
+Escorpiao_Colossal;MontadoRepouso;Aprovada;1.03;0.0;0.0
+Escorpiao_Colossal;MontadoAndar;Aprovada;1.24;0.01;0.013
+Escorpiao_Colossal;MontadoCorrida;Aprovada;1.32;0.07;0.0
+Escorpiao_Colossal;MontadoVirarE;Aprovada;1.24;0.01;0.013
+Escorpiao_Colossal;MontadoVirarD;Aprovada;1.24;0.01;0.013
+Escorpiao_Colossal;GuardarNinho;Aprovada;1.03;0.0;0.0
+Escorpiao_Colossal;Alerta;Aprovada;1.13;0.01;0.0
+Escorpiao_Colossal;Ameaca;Aprovada;1.13;0.01;0.0
+Escorpiao_Colossal;FerraoPerfurante;Aprovada;1.07;0.0;0.0
+Escorpiao_Colossal;PincasEsmagadoras;Aprovada;1.08;0.0;0.0
+Escorpiao_Colossal;EscavacaoDeAreia;Aprovada;1.27;0.03;0.0
+Escorpiao_Colossal;NuvemDeAreia;Aprovada;1.36;0.11;0.0
+Lagarto_Cristalino;Repouso;Aprovada;1.04;0.0;0.0
+Lagarto_Cristalino;Andar;Aprovada;1.23;0.08;0.006
+Lagarto_Cristalino;Corrida;Aprovada;1.37;0.25;0.0
+Lagarto_Cristalino;VirarEsquerda;Aprovada;1.35;0.2;0.002
+Lagarto_Cristalino;VirarDireita;Aprovada;1.36;0.26;0.002
+Lagarto_Cristalino;Arrancada;Pequenos ajustes;1.45;0.34;0.003
+Lagarto_Cristalino;Frenagem;Aprovada;1.26;0.07;0.008
+Lagarto_Cristalino;ReacaoGolpe;Aprovada;1.34;0.22;0.0
+Lagarto_Cristalino;AtaqueBasico;Aprovada;1.13;0.01;0.004
+Lagarto_Cristalino;Morte;Aprovada;1.36;0.13;0.0
+Lagarto_Cristalino;Comer;Aprovada;1.27;0.09;0.0
+Lagarto_Cristalino;DeitarDescanso;Aprovada;1.38;0.17;0.0
+Lagarto_Cristalino;Descanso;Aprovada;1.42;0.21;0.0
+Lagarto_Cristalino;LevantarDescanso;Aprovada;1.36;0.13;0.0
+Lagarto_Cristalino;Montar;Aprovada;1.15;0.01;0.007
+Lagarto_Cristalino;Desmontar;Aprovada;1.19;0.01;0.0
+Lagarto_Cristalino;MontadoRepouso;Aprovada;1.03;0.0;0.0
+Lagarto_Cristalino;MontadoAndar;Aprovada;1.23;0.08;0.006
+Lagarto_Cristalino;MontadoCorrida;Aprovada;1.37;0.25;0.0
+Lagarto_Cristalino;MontadoVirarE;Aprovada;1.35;0.2;0.002
+Lagarto_Cristalino;MontadoVirarD;Aprovada;1.36;0.26;0.002
+Lagarto_Cristalino;GuardarNinho;Aprovada;1.39;0.16;0.0
+Lagarto_Cristalino;Alerta;Aprovada;1.19;0.02;0.0
+Lagarto_Cristalino;Ameaca;Aprovada;1.27;0.05;0.0
+Lagarto_Cristalino;EscamasCristalinas;Aprovada;1.2;0.02;0.0
+Lagarto_Cristalino;GolpeDeCauda;Pequenos ajustes;1.5;0.48;0.0
+Lagarto_Cristalino;DisparoPrismatico;Aprovada;1.2;0.05;0.0
+Lagarto_Cristalino;Escalada;Pequenos ajustes;1.82;1.06;0.0
+Leao_Solar;Repouso;Aprovada;1.04;0.0;0.0
+Leao_Solar;Andar;Pequenos ajustes;1.69;0.84;0.008
+Leao_Solar;Corrida;Pequenos ajustes;1.82;1.06;0.0
+Leao_Solar;VirarEsquerda;Pequenos ajustes;1.71;0.82;0.001
+Leao_Solar;VirarDireita;Pequenos ajustes;1.74;0.88;0.001
+Leao_Solar;Arrancada;Pequenos ajustes;1.84;1.08;0.065
+Leao_Solar;Frenagem;Pequenos ajustes;1.56;0.43;0.006
+Leao_Solar;ReacaoGolpe;Pequenos ajustes;1.42;0.36;0.001
+Leao_Solar;AtaqueBasico;Pequenos ajustes;1.49;0.45;0.013
+Leao_Solar;Morte;Pequenos ajustes;1.62;0.57;0.0
+Leao_Solar;Comer;Pequenos ajustes;1.99;1.27;0.0
+Leao_Solar;DeitarDescanso;Refazer;2.43;2.48;0.0
+Leao_Solar;Descanso;Refazer;2.55;2.79;0.0
+Leao_Solar;LevantarDescanso;Refazer;2.38;2.23;0.0
+Leao_Solar;Montar;Pequenos ajustes;1.66;0.73;0.0
+Leao_Solar;Desmontar;Pequenos ajustes;1.74;0.87;0.0
+Leao_Solar;MontadoRepouso;Aprovada;1.03;0.0;0.0
+Leao_Solar;MontadoAndar;Pequenos ajustes;1.69;0.84;0.008
+Leao_Solar;MontadoCorrida;Pequenos ajustes;1.82;1.06;0.0
+Leao_Solar;MontadoVirarE;Pequenos ajustes;1.71;0.82;0.001
+Leao_Solar;MontadoVirarD;Pequenos ajustes;1.74;0.88;0.001
+Leao_Solar;GuardarNinho;Refazer;2.15;1.8;0.0
+Leao_Solar;Alerta;Pequenos ajustes;1.45;0.37;0.0
+Leao_Solar;Ameaca;Aprovada;1.49;0.28;0.0
+Leao_Solar;SaltoSolar;Refazer;2.0;1.63;0.0
+Leao_Solar;RugidoDeComando;Aprovada;1.32;0.16;0.0
+Leao_Solar;GarraCircular;Refazer;3.08;2.59;0.0
+Leao_Solar;FocoDoPredador;Pequenos ajustes;2.12;1.4;0.005
+Leviata_Jovem;Repouso;Aprovada;1.17;0.01;0.0
+Leviata_Jovem;Andar;Aprovada;1.2;0.02;0.0
+Leviata_Jovem;Corrida;Aprovada;1.21;0.02;0.0
+Leviata_Jovem;VirarEsquerda;Aprovada;1.42;0.28;0.0
+Leviata_Jovem;VirarDireita;Aprovada;1.45;0.3;0.0
+Leviata_Jovem;Arrancada;Aprovada;1.2;0.0;0.0
+Leviata_Jovem;Frenagem;Aprovada;1.12;0.0;0.0
+Leviata_Jovem;ReacaoGolpe;Aprovada;1.27;0.08;0.0
+Leviata_Jovem;AtaqueBasico;Pequenos ajustes;1.39;0.47;0.0
+Leviata_Jovem;Morte;Aprovada;1.12;0.0;0.0
+Leviata_Jovem;Comer;Pequenos ajustes;1.5;0.67;0.0
+Leviata_Jovem;DeitarDescanso;Pequenos ajustes;1.62;0.62;0.0
+Leviata_Jovem;Descanso;Pequenos ajustes;1.67;0.7;0.0
+Leviata_Jovem;LevantarDescanso;Pequenos ajustes;1.58;0.49;0.0
+Leviata_Jovem;Montar;Aprovada;1.13;0.0;0.0
+Leviata_Jovem;Desmontar;Aprovada;1.13;0.0;0.0
+Leviata_Jovem;MontadoRepouso;Aprovada;1.17;0.01;0.0
+Leviata_Jovem;MontadoAndar;Aprovada;1.19;0.02;0.0
+Leviata_Jovem;MontadoCorrida;Aprovada;1.2;0.02;0.0
+Leviata_Jovem;MontadoVirarE;Aprovada;1.42;0.28;0.0
+Leviata_Jovem;MontadoVirarD;Aprovada;1.45;0.3;0.0
+Leviata_Jovem;GuardarNinho;Pequenos ajustes;1.67;0.7;0.0
+Leviata_Jovem;Alerta;Aprovada;1.24;0.03;0.0
+Leviata_Jovem;Ameaca;Pequenos ajustes;1.43;0.54;0.0
+Leviata_Jovem;NadoParado;Aprovada;1.17;0.01;0.0
+Leviata_Jovem;NadoCruzeiro;Aprovada;1.2;0.02;0.0
+Leviata_Jovem;NadoRapido;Aprovada;1.22;0.02;0.0
+Leviata_Jovem;NadoSuperficie;Aprovada;1.22;0.03;0.0
+Leviata_Jovem;Mergulho;Aprovada;1.35;0.15;0.0
+Leviata_Jovem;Emersao;Aprovada;1.35;0.08;0.0
+Leviata_Jovem;AtaqueSubaquatico;Pequenos ajustes;1.64;0.74;0.0
+Leviata_Jovem;Desacelerar;Aprovada;1.11;0.0;0.0
+Leviata_Jovem;OndaTitanica;Aprovada;1.22;0.02;0.0
+Leviata_Jovem;MergulhoAbissal;Aprovada;1.35;0.15;0.0
+Leviata_Jovem;RugidoOceanico;Pequenos ajustes;1.57;0.67;0.0
+Leviata_Jovem;RupturaDasMares;Aprovada;1.35;0.08;0.0
+Lobo_Ancestral;Repouso;Aprovada;1.07;0.0;0.0
+Lobo_Ancestral;Andar;Pequenos ajustes;1.98;1.22;0.007
+Lobo_Ancestral;Corrida;Pequenos ajustes;1.99;1.39;0.0
+Lobo_Ancestral;VirarEsquerda;Pequenos ajustes;1.83;1.06;0.007
+Lobo_Ancestral;VirarDireita;Pequenos ajustes;1.83;1.07;0.007
+Lobo_Ancestral;Arrancada;Pequenos ajustes;1.97;1.49;0.02
+Lobo_Ancestral;Frenagem;Pequenos ajustes;1.67;0.75;0.001
+Lobo_Ancestral;ReacaoGolpe;Aprovada;1.25;0.09;0.001
+Lobo_Ancestral;AtaqueBasico;Aprovada;1.15;0.03;0.004
+Lobo_Ancestral;Morte;Pequenos ajustes;1.76;0.93;0.0
+Lobo_Ancestral;Comer;Pequenos ajustes;1.75;0.9;0.0
+Lobo_Ancestral;DeitarDescanso;Refazer;2.75;3.17;0.0
+Lobo_Ancestral;Descanso;Refazer;2.82;3.39;0.0
+Lobo_Ancestral;LevantarDescanso;Refazer;2.63;2.91;0.0
+Lobo_Ancestral;Montar;Pequenos ajustes;1.84;1.09;0.0
+Lobo_Ancestral;Desmontar;Pequenos ajustes;1.84;1.08;0.0
+Lobo_Ancestral;MontadoRepouso;Aprovada;1.05;0.0;0.0
+Lobo_Ancestral;MontadoAndar;Pequenos ajustes;1.98;1.22;0.007
+Lobo_Ancestral;MontadoCorrida;Pequenos ajustes;1.99;1.39;0.0
+Lobo_Ancestral;MontadoVirarE;Pequenos ajustes;1.83;1.06;0.007
+Lobo_Ancestral;MontadoVirarD;Pequenos ajustes;1.83;1.07;0.007
+Lobo_Ancestral;GuardarNinho;Refazer;2.16;1.81;0.0
+Lobo_Ancestral;Alerta;Pequenos ajustes;1.37;0.31;0.0
+Lobo_Ancestral;Ameaca;Aprovada;1.42;0.26;0.0
+Lobo_Ancestral;SaltoPredatorio;Refazer;2.16;1.92;0.0
+Lobo_Ancestral;Uivo;Pequenos ajustes;1.58;0.58;0.0
+Lobo_Ancestral;Investida;Refazer;2.16;1.92;0.0
+Lobo_Ancestral;InstintoDeCaca;Aprovada;1.4;0.28;0.0
+Lobo_Artico;Repouso;Aprovada;1.1;0.0;0.0
+Lobo_Artico;Andar;Pequenos ajustes;1.88;1.11;0.016
+Lobo_Artico;Corrida;Refazer;2.37;2.06;0.0
+Lobo_Artico;VirarEsquerda;Pequenos ajustes;1.76;0.96;0.013
+Lobo_Artico;VirarDireita;Pequenos ajustes;1.9;1.18;0.013
+Lobo_Artico;Arrancada;Refazer;2.25;1.81;0.025
+Lobo_Artico;Frenagem;Pequenos ajustes;1.83;1.09;0.002
+Lobo_Artico;ReacaoGolpe;Aprovada;1.35;0.15;0.001
+Lobo_Artico;AtaqueBasico;Aprovada;1.24;0.07;0.004
+Lobo_Artico;Morte;Pequenos ajustes;1.92;1.28;0.0
+Lobo_Artico;Comer;Pequenos ajustes;1.7;0.85;0.0
+Lobo_Artico;DeitarDescanso;Refazer;3.1;4.34;0.0
+Lobo_Artico;Descanso;Refazer;3.29;4.7;0.0
+Lobo_Artico;LevantarDescanso;Refazer;2.99;3.96;0.0
+Lobo_Artico;Montar;Pequenos ajustes;1.98;1.45;0.0
+Lobo_Artico;Desmontar;Pequenos ajustes;2.0;1.46;0.0
+Lobo_Artico;MontadoRepouso;Aprovada;1.07;0.0;0.0
+Lobo_Artico;MontadoAndar;Pequenos ajustes;1.88;1.11;0.016
+Lobo_Artico;MontadoCorrida;Refazer;2.37;2.06;0.0
+Lobo_Artico;MontadoVirarE;Pequenos ajustes;1.76;0.96;0.013
+Lobo_Artico;MontadoVirarD;Pequenos ajustes;1.9;1.18;0.013
+Lobo_Artico;GuardarNinho;Refazer;2.37;2.7;0.0
+Lobo_Artico;Alerta;Pequenos ajustes;1.51;0.44;0.0
+Lobo_Artico;Ameaca;Pequenos ajustes;1.63;0.63;0.0
+Lobo_Artico;SaltoPredatorio;Refazer;2.53;2.21;0.0
+Lobo_Artico;Uivo;Pequenos ajustes;1.7;0.76;0.0
+Lobo_Artico;Investida;Refazer;2.53;2.21;0.0
+Lobo_Artico;InstintoDeCaca;Pequenos ajustes;1.44;0.38;0.0
+Serpente_Marinha;Repouso;Aprovada;1.03;0.0;0.0
+Serpente_Marinha;Andar;Aprovada;1.16;0.0;0.0
+Serpente_Marinha;Corrida;Aprovada;1.22;0.0;0.0
+Serpente_Marinha;VirarEsquerda;Aprovada;1.29;0.01;0.0
+Serpente_Marinha;VirarDireita;Aprovada;1.29;0.0;0.0
+Serpente_Marinha;Arrancada;Aprovada;1.16;0.0;0.0
+Serpente_Marinha;Frenagem;Aprovada;1.11;0.0;0.0
+Serpente_Marinha;ReacaoGolpe;Aprovada;1.16;0.0;0.0
+Serpente_Marinha;AtaqueBasico;Aprovada;1.26;0.26;0.0
+Serpente_Marinha;Morte;Aprovada;1.07;0.0;0.0
+Serpente_Marinha;Comer;Pequenos ajustes;1.29;0.43;0.0
+Serpente_Marinha;DeitarDescanso;Aprovada;1.39;0.05;0.0
+Serpente_Marinha;Descanso;Aprovada;1.43;0.07;0.0
+Serpente_Marinha;LevantarDescanso;Aprovada;1.36;0.02;0.0
+Serpente_Marinha;Montar;Aprovada;1.11;0.0;0.0
+Serpente_Marinha;Desmontar;Aprovada;1.11;0.0;0.0
+Serpente_Marinha;MontadoRepouso;Aprovada;1.03;0.0;0.0
+Serpente_Marinha;MontadoAndar;Aprovada;1.09;0.0;0.0
+Serpente_Marinha;MontadoCorrida;Aprovada;1.16;0.0;0.0
+Serpente_Marinha;MontadoVirarE;Aprovada;1.29;0.01;0.0
+Serpente_Marinha;MontadoVirarD;Aprovada;1.29;0.0;0.0
+Serpente_Marinha;GuardarNinho;Aprovada;1.43;0.07;0.0
+Serpente_Marinha;Alerta;Aprovada;1.19;0.0;0.0
+Serpente_Marinha;Ameaca;Pequenos ajustes;1.29;0.31;0.0
+Serpente_Marinha;NadoParado;Aprovada;1.04;0.0;0.0
+Serpente_Marinha;NadoCruzeiro;Aprovada;1.12;0.0;0.0
+Serpente_Marinha;NadoRapido;Aprovada;1.19;0.0;0.0
+Serpente_Marinha;NadoSuperficie;Aprovada;1.11;0.0;0.0
+Serpente_Marinha;Mergulho;Aprovada;1.43;0.08;0.0
+Serpente_Marinha;Emersao;Aprovada;1.43;0.11;0.0
+Serpente_Marinha;AtaqueSubaquatico;Pequenos ajustes;1.36;0.44;0.0
+Serpente_Marinha;Desacelerar;Aprovada;1.11;0.0;0.0
+Serpente_Marinha;EspiralAquatica;Aprovada;1.43;0.07;0.0
+Serpente_Marinha;InvestidaSubmersa;Aprovada;1.16;0.0;0.0
+Serpente_Marinha;MordidaProfunda;Aprovada;1.1;0.12;0.0
+Serpente_Marinha;Correnteza;Aprovada;1.2;0.0;0.0
+Urso_Silvestre;Repouso;Aprovada;1.04;0.0;0.004
+Urso_Silvestre;Andar;Aprovada;1.28;0.14;0.0
+Urso_Silvestre;Corrida;Pequenos ajustes;1.5;0.52;0.0
+Urso_Silvestre;VirarEsquerda;Aprovada;1.39;0.16;0.0
+Urso_Silvestre;VirarDireita;Aprovada;1.41;0.21;0.0
+Urso_Silvestre;Arrancada;Pequenos ajustes;1.47;0.47;0.013
+Urso_Silvestre;Frenagem;Pequenos ajustes;1.4;0.38;0.001
+Urso_Silvestre;ReacaoGolpe;Aprovada;1.28;0.1;0.001
+Urso_Silvestre;AtaqueBasico;Aprovada;1.32;0.25;0.008
+Urso_Silvestre;Morte;Aprovada;1.43;0.24;0.0
+Urso_Silvestre;Comer;Pequenos ajustes;1.49;0.37;0.0
+Urso_Silvestre;DeitarDescanso;Pequenos ajustes;1.96;1.36;0.0
+Urso_Silvestre;Descanso;Pequenos ajustes;2.05;1.48;0.0
+Urso_Silvestre;LevantarDescanso;Pequenos ajustes;1.91;1.2;0.0
+Urso_Silvestre;Montar;Pequenos ajustes;1.44;0.37;0.0
+Urso_Silvestre;Desmontar;Pequenos ajustes;1.48;0.4;0.0
+Urso_Silvestre;MontadoRepouso;Aprovada;1.03;0.0;0.002
+Urso_Silvestre;MontadoAndar;Aprovada;1.28;0.14;0.0
+Urso_Silvestre;MontadoCorrida;Pequenos ajustes;1.5;0.52;0.0
+Urso_Silvestre;MontadoVirarE;Aprovada;1.39;0.16;0.0
+Urso_Silvestre;MontadoVirarD;Aprovada;1.41;0.21;0.0
+Urso_Silvestre;GuardarNinho;Pequenos ajustes;1.81;1.03;0.0
+Urso_Silvestre;Alerta;Aprovada;1.23;0.04;0.0
+Urso_Silvestre;Ameaca;Refazer;2.17;1.82;0.0
+Urso_Silvestre;GolpeColossal;Pequenos ajustes;1.95;1.28;0.0
+Urso_Silvestre;RugidoProtetor;Aprovada;1.23;0.09;0.0
+Urso_Silvestre;CargaSelvagem;Pequenos ajustes;1.79;0.99;0.0
+Urso_Silvestre;FortalezaViva;Aprovada;1.22;0.2;0.0
+Wyvern;Repouso;Pequenos ajustes;1.6;0.61;0.0
+Wyvern;Andar;Pequenos ajustes;1.63;0.69;0.053
+Wyvern;Corrida;Pequenos ajustes;1.72;0.83;0.0
+Wyvern;VirarEsquerda;Pequenos ajustes;1.66;0.69;0.023
+Wyvern;VirarDireita;Pequenos ajustes;1.66;0.67;0.023
+Wyvern;Arrancada;Pequenos ajustes;1.72;0.84;0.014
+Wyvern;Frenagem;Pequenos ajustes;1.65;0.72;0.009
+Wyvern;ReacaoGolpe;Pequenos ajustes;1.63;0.65;0.0
+Wyvern;AtaqueBasico;Pequenos ajustes;1.6;0.61;0.0
+Wyvern;Morte;Pequenos ajustes;1.63;0.67;0.0
+Wyvern;Comer;Pequenos ajustes;1.63;0.64;0.0
+Wyvern;DeitarDescanso;Pequenos ajustes;1.69;0.79;0.0
+Wyvern;Descanso;Pequenos ajustes;1.72;0.82;0.0
+Wyvern;LevantarDescanso;Pequenos ajustes;1.68;0.76;0.0
+Wyvern;Montar;Pequenos ajustes;1.63;0.69;0.0
+Wyvern;Desmontar;Pequenos ajustes;1.63;0.69;0.0
+Wyvern;MontadoRepouso;Pequenos ajustes;1.6;0.61;0.0
+Wyvern;MontadoAndar;Pequenos ajustes;1.63;0.69;0.053
+Wyvern;MontadoCorrida;Pequenos ajustes;1.72;0.83;0.0
+Wyvern;MontadoVirarE;Pequenos ajustes;1.66;0.69;0.023
+Wyvern;MontadoVirarD;Pequenos ajustes;1.66;0.67;0.023
+Wyvern;GuardarNinho;Pequenos ajustes;1.67;0.71;0.0
+Wyvern;Alerta;Pequenos ajustes;1.6;0.61;0.0
+Wyvern;Ameaca;Pequenos ajustes;1.48;0.32;0.0
+Wyvern;Decolagem;Pequenos ajustes;1.55;0.57;0.0
+Wyvern;Pouso;Pequenos ajustes;1.51;0.45;0.0
+Wyvern;Planeio;Pequenos ajustes;1.53;0.36;0.0
+Wyvern;VooBatido;Pequenos ajustes;1.62;0.64;0.0
+Wyvern;Pairar;Pequenos ajustes;1.99;1.37;0.0
+Wyvern;AtaqueAereo;Pequenos ajustes;1.77;0.96;0.0
+Wyvern;Empoleirar;Refazer;2.18;2.12;0.0
+Wyvern;CurvaAerea;Pequenos ajustes;1.58;0.49;0.0
+Wyvern;AbrirAsas;Pequenos ajustes;1.5;0.38;0.0
+Wyvern;RecolherAsas;Pequenos ajustes;1.55;0.49;0.0
+Wyvern;RasantePredatorio;Pequenos ajustes;1.77;0.96;0.0
+Wyvern;FerraoVenenoso;Pequenos ajustes;1.6;0.61;0.0
+Wyvern;GuinadaEvasiva;Pequenos ajustes;1.81;1.03;0.0
+Wyvern;CacadaDosCeus;Pequenos ajustes;1.77;0.96;0.0
