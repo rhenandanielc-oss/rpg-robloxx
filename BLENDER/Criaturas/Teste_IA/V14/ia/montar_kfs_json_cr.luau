@@ -16,6 +16,17 @@ local function arvoreMolde()
 	for _, c in ipairs(kf:GetChildren()) do table.insert(raizes, c:Clone()) end
 	return raizes
 end
+local PARCIAL = {Silverwing_Sopro_Inicio = "Pescoco2", Silverwing_Sopro_Loop = "Pescoco2", Silverwing_Sopro_Fim = "Pescoco2"}
+local function pesoParcial(kfs, raizViva)
+	for _, kf in ipairs(kfs:GetKeyframes()) do
+		for _, p in ipairs(kf:GetDescendants()) do
+			if p:IsA("Pose") then
+				local vivo = p.Name == raizViva or p:FindFirstAncestor(raizViva) ~= nil
+				p.Weight = vivo and 1 or 0
+			end
+		end
+	end
+end
 local function montar(nome, destino)
 	local js = H:JSONDecode(H:GetAsync("http://127.0.0.1:8766/anim_json_cr/" .. nome .. ".json"))
 	local kfs = Instance.new("KeyframeSequence"); kfs.Name = js.nome; kfs.Loop = js.loop
@@ -37,6 +48,9 @@ local function montar(nome, destino)
 		end
 		kf.Parent = kfs
 	end
+	-- clipes de CORPO SUPERIOR (o dragao pode andar enquanto tocam): so o pescoco/cabeca/boca tem peso; o resto fica
+	-- com peso 0 e as patas/tronco/asas/cauda seguem o clipe de locomocao por baixo (usuario 31/10: soprar andando)
+	if PARCIAL[js.nome] then pesoParcial(kfs, PARCIAL[js.nome]) end
 	if destino == "teste" then return kfs end
 	if velho then
 		local ant = anteriores:FindFirstChild(js.nome); if ant then ant:Destroy() end

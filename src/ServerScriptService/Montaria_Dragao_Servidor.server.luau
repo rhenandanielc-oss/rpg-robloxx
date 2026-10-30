@@ -282,7 +282,8 @@ local function passoChao(M, dt)
 	L.pitch = -math.clamp(math.atan2(gF - gT, 40), math.rad(-14), math.rad(14))
 	M.roll += (0 - M.roll) * math.min(1, 4 * dt)
 	aplicar(M, Vector3.new(np.X, g + L.alturaPivo, np.Z))
-	if ataque then return end
+	-- ataque que deixa andar (Sopro): as patas seguem o passo (Andar/Correr), o clipe do ataque so mexe pescoco/cabeca
+	if ataque and fixo then return end
 	if M.freando then return end
 	if math.abs(M.vel) < 0.4 then
 		if math.abs(yawRate) > 0.05 then clipe(M, yawRate > 0 and "Giro_E" or "Giro_D") else clipe(M, "Parado") end
