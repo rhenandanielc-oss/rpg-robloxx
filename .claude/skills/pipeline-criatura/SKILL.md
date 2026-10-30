@@ -28,7 +28,9 @@ Blender: `C:\Program Files\Blender Foundation\Blender 5.2\blender.exe`, sempre h
 - Velocidade de locomoção medida nos pés (pé apoiado não escorrega) — ver `meshy/video_demo.py` (`vel_passada`).
 
 ## 5. Studio
-- Importar GLB (Import 3D) → script de troca que preserva posição/atributos e guarda a versão anterior em `ServerStorage.Dragoes_Retirados`.
+- O Roblox liga a malha aos ossos PELO NOME: nunca renomear Bone no Studio (os vértices desse osso ficam parados no repouso). Exportar já com os nomes do jogo (`dragao_novo/exportar_cr.py`: head→Cabeca, mouth_lower→Mandibula...). Ossos sem peso somem na importação: garantir 1 vértice neles (ex.: `mouth_upper_tip`, usado pelo sopro).
+- Cada MeshPart ≤ 20k tris (separar corpo / asas / detalhes); texturas ≤ 1024.
+- Importar GLB (Import 3D, passo manual do usuário) → `V14/ia/studio_trocar_cr.luau`: copia a relação pivô→pés do modelo antigo (não usar a caixa envolvente: a RootPart importada é enorme), guarda o anterior em `ServerStorage.Dragoes_Retirados` com data e faz backup único dos clipes.
 - Clipes: `exportar_clipes_json.py` → JSON servido em `http://127.0.0.1:8766` → `montar_kfs_json.luau` (`montar("Silverwing_" .. nome)`).
 - KeyframeSequence só toca no Studio; para o jogo publicado o usuário precisa publicar os clipes como Animation.
 

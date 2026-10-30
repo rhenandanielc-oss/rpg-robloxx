@@ -41,10 +41,17 @@ local function trocar(nomeAntigo)
 	local m = novo:Clone(); preparar(m); m.Name = nomeAntigo
 	for k, v in pairs(velho:GetAttributes()) do if not k:find("^RBX_") then m:SetAttribute(k, v) end end
 	m:SetAttribute("Versao", "CR_Dragao v1 (Meshy texto + rosto refinado: olho, boca real, dobra das asas)")
-	local cfV, szV = velho:GetBoundingBox()
+	-- mesma relacao pivo -> pes do modelo antigo (IA e montaria movem por PivotTo contando com ela); a caixa
+	-- envolvente NAO serve: o importado tem uma RootPart 35x35x17,5 que erguia o dragao 17,5 studs
+	local function pes(mod)
+		local y = math.huge
+		for _, b in ipairs(mod:GetDescendants()) do if b:IsA("Bone") and b.Name:find("toes_tip") then y = math.min(y, b.WorldPosition.Y) end end
+		return y
+	end
+	local acima = velho:GetPivot().Position.Y - pes(velho)
+	local rp = m.PrimaryPart
+	rp.PivotOffset = CFrame.new(0, (pes(m) + acima) - rp.Position.Y, 0)
 	m:PivotTo(velho:GetPivot())
-	local cfN, szN = m:GetBoundingBox()
-	m:PivotTo(m:GetPivot() + Vector3.new(0, (cfV.Position.Y - szV.Y / 2) - (cfN.Position.Y - szN.Y / 2), 0))
 	local ver = tostring(velho:GetAttribute("Versao") or ""):find("^CR_Dragao") and "_CRv1_" or "_Drake4_"
 	velho.Name = nomeAntigo .. ver .. carimbo; velho.Parent = guard
 	m.Parent = workspace
