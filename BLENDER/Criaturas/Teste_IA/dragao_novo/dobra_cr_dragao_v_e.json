@@ -1,0 +1,108 @@
+{
+ "_nota": "Dobra classica (usuario 30/10: asa visivel, dobrada certinho): cotovelo alto, punho junto ao ombro, dedos quase paralelos pela LATERAL do corpo; hastes da membrana do corpo (feather_1/2) ALTAS e para tras, para a membrana recolher rente ao dorso em vez de cair como cortina.",
+ "wing_1": [
+  0.12,
+  0.6,
+  0.79
+ ],
+ "wing_2": [
+  0.04,
+  -0.86,
+  -0.51
+ ],
+ "wing_3": [
+  0.03,
+  0.97,
+  -0.22
+ ],
+ "wing_4": [
+  0.03,
+  0.97,
+  -0.22
+ ],
+ "wing_5": [
+  0.03,
+  0.965,
+  -0.24
+ ],
+ "wing_tip": [
+  0.03,
+  0.96,
+  -0.26
+ ],
+ "wing_feather_5_0": [
+  0.03,
+  0.965,
+  -0.25
+ ],
+ "wing_feather_5_1": [
+  0.03,
+  0.96,
+  -0.26
+ ],
+ "wing_feather_5_tip": [
+  0.03,
+  0.955,
+  -0.28
+ ],
+ "wing_feather_4_0": [
+  0.03,
+  0.96,
+  -0.27
+ ],
+ "wing_feather_4_1": [
+  0.03,
+  0.955,
+  -0.28
+ ],
+ "wing_feather_4_tip": [
+  0.03,
+  0.95,
+  -0.3
+ ],
+ "wing_feather_3_0": [
+  0.03,
+  0.955,
+  -0.29
+ ],
+ "wing_feather_3_1": [
+  0.03,
+  0.95,
+  -0.3
+ ],
+ "wing_feather_3_tip": [
+  0.03,
+  0.945,
+  -0.32
+ ],
+ "wing_feather_2_0": [
+  0.0,
+  0.97,
+  -0.24
+ ],
+ "wing_feather_2_1": [
+  0.0,
+  0.97,
+  -0.24
+ ],
+ "wing_feather_2_tip": [
+  0.0,
+  0.97,
+  -0.25
+ ],
+ "wing_feather_1_0": [
+  0.03,
+  0.98,
+  -0.18
+ ],
+ "wing_feather_1_1": [
+  0.03,
+  0.98,
+  -0.18
+ ],
+ "wing_feather_1_tip": [
+  0.03,
+  0.98,
+  -0.19
+ ]
+}

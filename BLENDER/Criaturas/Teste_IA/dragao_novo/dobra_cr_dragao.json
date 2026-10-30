@@ -1,108 +1,108 @@
 {
- "_nota": "Dobra classica (usuario 30/10: asa visivel, dobrada certinho): cotovelo alto, punho junto ao ombro, dedos quase paralelos pela LATERAL do corpo; hastes da membrana do corpo (feather_1/2) ALTAS e para tras, para a membrana recolher rente ao dorso em vez de cair como cortina.",
+ "_nota": "Dobra recolhida na LATERAL (usuario 31/10: no chao parecia amassado): umero deitado para tras ao longo do dorso, antebraco volta para frente (punho junto ao ombro), dedos paralelos pela lateral em pregas regulares (cada um um pouco mais baixo), hastes da membrana do corpo rentes ao flanco -> membrana quase plana, sem arco. Angulos do braco escolhidos por varredura (menos arestas esticadas: 184 na dobra anterior -> 88). Versao anterior em dobra_cr_dragao_v_e.json.",
  "wing_1": [
-  0.12,
-  0.6,
-  0.79
+  0.18,
+  0.93,
+  0.3
  ],
  "wing_2": [
-  0.04,
-  -0.86,
-  -0.51
+  0.12,
+  -0.95,
+  -0.28
  ],
  "wing_3": [
-  0.03,
-  0.97,
-  -0.22
+  0.06,
+  0.99,
+  -0.1
  ],
  "wing_4": [
-  0.03,
-  0.97,
-  -0.22
+  0.06,
+  0.99,
+  -0.1
  ],
  "wing_5": [
-  0.03,
-  0.965,
-  -0.24
+  0.06,
+  0.985,
+  -0.12
  ],
  "wing_tip": [
-  0.03,
-  0.96,
-  -0.26
+  0.06,
+  0.98,
+  -0.14
  ],
  "wing_feather_5_0": [
-  0.03,
+  0.06,
+  0.985,
+  -0.15
+ ],
+ "wing_feather_5_1": [
+  0.06,
+  0.985,
+  -0.15
+ ],
+ "wing_feather_5_tip": [
+  0.06,
+  0.98,
+  -0.17
+ ],
+ "wing_feather_4_0": [
+  0.06,
+  0.98,
+  -0.19
+ ],
+ "wing_feather_4_1": [
+  0.06,
+  0.98,
+  -0.19
+ ],
+ "wing_feather_4_tip": [
+  0.06,
+  0.975,
+  -0.21
+ ],
+ "wing_feather_3_0": [
+  0.06,
+  0.97,
+  -0.23
+ ],
+ "wing_feather_3_1": [
+  0.06,
+  0.97,
+  -0.23
+ ],
+ "wing_feather_3_tip": [
+  0.06,
   0.965,
   -0.25
  ],
- "wing_feather_5_1": [
-  0.03,
-  0.96,
-  -0.26
- ],
- "wing_feather_5_tip": [
-  0.03,
-  0.955,
-  -0.28
- ],
- "wing_feather_4_0": [
-  0.03,
-  0.96,
-  -0.27
- ],
- "wing_feather_4_1": [
-  0.03,
-  0.955,
-  -0.28
- ],
- "wing_feather_4_tip": [
-  0.03,
-  0.95,
-  -0.3
- ],
- "wing_feather_3_0": [
-  0.03,
-  0.955,
-  -0.29
- ],
- "wing_feather_3_1": [
-  0.03,
-  0.95,
-  -0.3
- ],
- "wing_feather_3_tip": [
-  0.03,
-  0.945,
-  -0.32
- ],
  "wing_feather_2_0": [
-  0.0,
-  0.97,
-  -0.24
+  0.04,
+  0.95,
+  -0.3
  ],
  "wing_feather_2_1": [
-  0.0,
+  0.04,
+  0.95,
+  -0.3
+ ],
+ "wing_feather_2_tip": [
+  0.04,
+  0.95,
+  -0.31
+ ],
+ "wing_feather_1_0": [
+  0.04,
   0.97,
   -0.24
  ],
- "wing_feather_2_tip": [
-  0.0,
-  0.97,
-  -0.25
- ],
- "wing_feather_1_0": [
-  0.03,
-  0.98,
-  -0.18
- ],
  "wing_feather_1_1": [
-  0.03,
-  0.98,
-  -0.18
+  0.04,
+  0.97,
+  -0.24
  ],
  "wing_feather_1_tip": [
-  0.03,
-  0.98,
-  -0.19
+  0.04,
+  0.97,
+  -0.25
  ]
 }
