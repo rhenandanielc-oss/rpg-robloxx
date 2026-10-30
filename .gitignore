@@ -47,3 +47,4 @@ BLENDER/**/anim_json/
 BLENDER/**/anim_json*/
 .claude/*.lock
 sourcemap.json
+.obsidian/

@@ -1,0 +1,826 @@
+# Dragão: testes de IA 3D, V12–V14, Silverwing, animações (até 29/10)
+
+Voltar ao índice: [[PROJECT-STATE]]
+
+## Teste de geração 3D por IA: Dragão das Montanhas (28/10/2026)
+- Pasta isolada `BLENDER/Criaturas/Teste_IA/` (relatório em `RELATORIO-TESTE-IA.md`).
+- **Local:** inviável (GPU AMD RX 7600, sem CUDA).
+- **Online:** a demo do Hunyuan3D-2 gerou 3 malhas a partir da prancha e do recorte, todas inutilizáveis (cenário fundido, disco, parede, chapa plana). O TRELLIS recusou (cota que exige login).
+- **Causa:** a entrada é uma ilustração com cenário; falta uma imagem isolada da criatura.
+- **Próximo passo depende do usuário:** recorte limpo ou vistas múltiplas, TRELLIS no navegador dele com login, GPU NVIDIA ou malha comprada/escultor.
+- V5, as outras criaturas, o Studio e os backups estão intactos.
+- **V6 experimental, teste híbrido da cabeça (28/10):**
+  - Cabeça isolada da prancha com máscara poligonal (sem cenário) e enviada ao Hunyuan3D-2 (demo) com a remoção de fundo desligada. Foram três tentativas.
+  - A tentativa 3 (cabeça + início do pescoço, máscara longe das bordas, octree 384) deu um crânio detalhado, simétrico (0,3%), com dentes, chifres e cristas.
+  - O bloco traseiro espúrio foi cortado no Blender, e a cabeça foi encaixada no osso `Cabeca` da V5 (escala 1,15×, cerca de 11,6 studs de comprimento).
+  - Arquivo: `BLENDER/Criaturas/Teste_IA/V6/Dragao_das_Montanhas_V6_experimental.blend`. Comparativo: `V6/Comparativo_V6_cabeca.png`. A V5 está intacta.
+  - **Pendências da cabeça:**
+    - transição para o pescoço (o encaixe é provisório);
+    - mandíbula a separar para articular (a boca está aberta na malha);
+    - retopologia de 200 mil para ~8 mil faces, com bake das escamas;
+    - materiais.
+- **V6, refino da cabeça (28/10):** `Teste_IA/v6_refinar_cabeca.py` sobre o arquivo V6 experimental.
+  - Focinho afinado e arredondado; narinas escavadas.
+  - Órbitas escavadas, com arcada e pálpebra inferior; olhos amendoados com pupila em fenda e brilho discreto.
+  - Nuca cortada atrás dos chifres (a=8,3), sem os restos do bloco.
+  - Osso `Mandibula` reposicionado na articulação medida por raios (a=7,0, u=−1,0), com pesos de transição suave. Abre e fecha; a rest pose é com a boca aberta, e o fechamento é de 48°.
+  - **Integração ao pescoço não aceita:** a nuca nova (~9×10 studs) é muito maior que o pescoço de primitivas da V5. Requer pescoço novo na fase pescoço/tronco.
+  - **Asas (diagnóstico):**
+    - ossos em tubo fundidos ao corpo;
+    - membrana em leque plano, com borda reta entre as pontas;
+    - sem polegar e sem patágio;
+    - pesos só nos ossos da asa;
+    - pose fixa aberta;
+    - escala menor que a referência.
+  - Comparativo: `Teste_IA/V6/Comparativo_V6_cabeca_refino.png`.
+- **V6, pescoço e asas (28/10):** script `Teste_IA/v6_pescoco_asas.py`.
+  - **Pescoço novo:** 36 anéis numa curva de Bézier em S. A base sai da superfície do tórax (raio médio 6,2) e o pescoço afina até a nuca (3,9). Fica costurado aos vértices reais da nuca do Hunyuan, numa superfície única.
+    - Tem crista óssea dorsal, relevo muscular e 259 entre placas e cristas que seguem a pele.
+    - Os ossos do pescoço foram reposicionados na curva, e o giro do pescoço foi testado.
+  - **Mandíbula:** o teste medido corrigiu o sentido de fechamento.
+    - A 48° os dentes se encaixam com cerca de 5% de penetração dos dentes inferiores.
+    - A 56° a penetração chega a 14%.
+    - O fechamento máximo recomendado é 48°.
+  - **Asas reconstruídas:**
+    - ossos orgânicos: úmero, antebraço, metacarpo, 4 dedos curvos e polegar com garra;
+    - membranas com barriga de tensão, borda de fuga em arco irregular, membrana do dedo 4 até o flanco e patágio do ombro ao pescoço;
+    - espessura de 0,14;
+    - envergadura proposta de 62 studs (provisória).
+  - **Interseção de membrana dentro do corpo:**
+    - asa direita: 0–0,5%;
+    - asa esquerda: 3–5%, porque a membrana do flanco nasce dentro do tronco nos dois lados (a medida da esquerda inclui essa base).
+  - **Limitações:**
+    - o tronco e as patas ainda são da V5 (primitivas);
+    - na pose recolhida, a asa ainda abre para cima (o rig precisa de mais rotação no úmero);
+    - asas com 164 mil tris cada (antes da retopologia);
+    - sem materiais.
+  - Comparativo: `Teste_IA/V6/Comparativo_V6_pescoco_asas.png`.
+- **Dragão V7 experimental (28/10):** `Teste_IA/v7_dragao.py`, gerado a partir da V6 (intacta). Arquivo: `Teste_IA/V7/Dragao_das_Montanhas_V7_experimental.blend`.
+  - **Tronco e patas novos:**
+    - volumes musculares alongados unidos por voxel e suavização Laplaciana;
+    - peito com quilha e peitorais de voo;
+    - pata dianteira com o cotovelo para trás; pata traseira com joelho para a frente e jarrete;
+    - 4 dedos com garras em cada pata.
+  - **Costura:** o tronco foi costurado ao pescoço V6 (laços de 208 e 324 vértices, 532 faces), formando uma superfície única.
+  - **Escamas:** 6.467 escamas de tamanho e forma variados (maiores no dorso, menores nas articulações), 416 escudos ventrais e 47 cristas contínuas do pescoço à cauda.
+  - **Asas:**
+    - corda maior;
+    - membrana presa ao quadril;
+    - envergadura de 63;
+    - recolhimento deitado no dorso.
+  - **Testes:**
+    - passo: p99 de 1,76 e 0,94% das arestas acima de 1,8×;
+    - pescoço e cauda: p99 de 1,21;
+    - batida e recolhimento das asas não deformam o corpo;
+    - membrana dentro do corpo: cerca de 7%, constante em todas as poses (é a raiz embutida no tronco, não colisão);
+    - apoio no chão: mãos em 0,011 e pés em −0,01.
+  - **Limitações:**
+    - a silhueta oficial é ereta (tórax alto, pescoço vertical, asas para cima), e a V7 está em postura horizontal: é diferença de pose, a ajustar no rig;
+    - corpo com 287 mil tris e escamas com 83 mil, antes da retopologia;
+    - a superfície do tronco ainda é lisa e procedural, sem escultura;
+    - nada foi testado no Roblox.
+- **Dragão V8 experimental (28/10):** `Teste_IA/v8_dragao.py`, a partir da V7, que continua intacta. Arquivo: `Teste_IA/V8/Dragao_das_Montanhas_V8_experimental.blend`.
+  - **Postura ereta só pelo rig** (a malha neutra não muda):
+    - raiz recua e desce;
+    - coluna ergue o tórax (6° e 2°);
+    - pescoço em S vertical, com a cabeça nivelada;
+    - cauda curva;
+    - as quatro patas são assentadas por IK temporário com correção de altura e depois gravadas na pose.
+  - **Asas:** envergadura de 99,8 studs (escala de 1,69 a partir do ombro). Ossos e articulações 30% mais grossos, mais divisões na membrana, curvatura e espessura de 0,2.
+  - **Três poses de asa:** imponente (erguidas e parcialmente abertas), voo (estendidas) e repouso (recolhidas no dorso).
+  - **Testes:**
+    - apoio na postura ereta: mãos a +0,06, pés a −0,03;
+    - esticamento: ereta p99 1,51; cauda e pescoço virados p99 1,55; corpo baixo p99 1,65 (patas apoiadas);
+    - membrana dentro do corpo: cerca de 4,5–5% e constante em todas as poses, ou seja, é a raiz embutida, não colisão.
+  - **Limitações:**
+    - asas com 132 mil tris cada, antes da retopologia;
+    - no repouso, as asas recolhidas passam da cauda (são compridas);
+    - a membrana não tem veios (fica para o material);
+    - nada foi testado no Roblox.
+- **Dragão V9, produção (28/10):** retopologia, UVs, bake e PBR sobre a V8 aprovada, que continua intacta.
+  - Arquivos: `Teste_IA/V9/Dragao_das_Montanhas_V9.blend` e `Dragao_das_Montanhas_V9.glb` (4,1 MB). Scripts: `v9_dragao.py`, `v9_fix.py`, `v9_fix2.py`, `v9_render.py`.
+  - **Corpo:** voxel → Quadriflow → shrinkwrap, com 17.456 tris (antes 374 mil). Pesos transferidos da malha alta.
+  - **Asas:** 9.500 tris cada. Cristas com 6.000, garras com 3.000. Total de 47.568 tris; nenhuma malha passa de 20 mil.
+  - **Mapas do corpo:** normal assado só da pele alta (cabeça Hunyuan e musculatura), somado ao relevo de escamas procedural de tamanho variável, mais AO, cor, rugosidade e emissão (fissuras só nas juntas, em manchas, no peito, ventre e flancos), todos em 2048. A casca de escamas de geometria contaminava o bake (AO preto, normais tortas) e saiu do bake. A malha alta fica na coleção oculta `V9_ALTA_bake`.
+  - **Asas:** nervuras, espessura (mais fina e quente longe dos ossos), desgaste e rugosidade, em 1024.
+  - **Recolhimento:** em leque (dedos dobram no meio). A ponta máxima ficou em y = 45,4, e a membrana estica no repouso (p99 2,5).
+  - **Deformação na malha leve:**
+    - corpo ereto p99 1,52; pescoço 1,62; cauda 1,55; mandíbula fechada 1,57;
+    - asas: imponente p99 1,75, voo 1,0, batida 1,05.
+  - **Apoio:** −0,02 a −0,06.
+  - **GLB:** reimportado no Blender com 11 malhas, 48 ossos e 13 imagens. As ações antigas do rig V5 foram removidas.
+  - **Limitações:**
+    - as escamas parecem rocha rachada, não escamas sobrepostas;
+    - as nervuras da membrana formam uma rede poligonal, não nervuras radiais;
+    - o recolhimento ainda é longo;
+    - a cabeça leve perde volume dos dentes (o detalhe vem só do mapa normal);
+    - o SurfaceAppearance do Roblox não tem emissão (as fissuras ficam como cor clara);
+    - nada foi testado no Roblox.
+- **Dragão V10 (28/10):** `Teste_IA/v10_dragao.py` + `v10_split.py` + `v10_render.py` + `v10_poses.py`, a partir da V9 (intacta). Arquivos: `Teste_IA/V10/Dragao_das_Montanhas_V10.blend` e `.glb` (12,7 MB).
+  - **Cabeça:** malha própria tirada da cabeça alta do Hunyuan e reduzida para 16 mil tris. Tem dentes, chifres, narinas, órbitas e bordas da mandíbula em geometria. No corpo, o pescoço recua 0,08 na faixa de sobreposição para evitar z-fighting.
+  - **Escamas 3D:**
+    - 4 malhas de placas sobrepostas nas regiões de destaque, com tamanho, orientação e espessura variados, entre 10,3 e 13,8 mil tris cada;
+    - relevo em "telha" (borda de trás levantada) e microdetalhe no mapa normal;
+    - fissuras só nas juntas, em manchas.
+  - **Asas:** nervuras radiais a partir do pulso, com ramos longe dele; membrana escura, avermelhada nas áreas finas; sem emissão.
+  - **Recolhimento novo:** antebraço para a frente e dedo distal dobrado. A ponta foi de 45,4 para 24,5 studs para trás, e a tração da membrana caiu de p99 2,5 para 2,09/1,94.
+  - **Testes:**
+    - corpo ereto p99 1,54; cabeça 1,33;
+    - **mandíbula fechada na cabeça nova: p99 2,12 (1,6% das arestas) — precisa ajuste de pesos;**
+    - asa imponente 1,64–1,67, voo 1,0;
+    - apoio de −0,01 a −0,06.
+  - **Malhas:** 15, a maior com 16.294 tris; 111 mil tris no total. O GLB reimporta no Blender com 48 ossos e 20 imagens. Cristas e garras não têm UV (cor sólida).
+  - **Pendências:**
+    - fissuras quase invisíveis (menos que na referência);
+    - GLB grande por causa das texturas de 2048 (o Roblox reduz para 1024);
+    - pesos da mandíbula;
+    - nada foi testado no Roblox.
+- **V10, correções antes do Roblox (28/10):** `Teste_IA/v10_fix.py`.
+  - **Mandíbula:** a suavização da proporção Mandíbula/Cabeça mudou pouco (p99 de 2,19 para 2,10; cerca de 1,9% das arestas). A causa é a boca esculpida aberta, que comprime os cantos ao fechar; os pesos não resolvem. Correção real: pose de descanso com a boca fechada ou ângulo máximo menor.
+  - **Fissuras:** reforçadas (juntas mais largas, mais regiões, emissão 4). Visíveis no peito, pescoço e base da cauda.
+  - **GLB:** reexportado com texturas de 1024 (10,7 MB). Reimportação no Blender: 15 malhas, máximo de 16.294 tris, 48 ossos, 20 imagens. O `.blend` mantém 2048.
+  - Instruções de importação: `Teste_IA/V10/PILOTO-ROBLOX-DRAGAO-V10.md`.
+  - **Studio:** aguarda a importação manual do usuário num place vazio.
+- **V10, boca fechada em repouso (28/10):** `Teste_IA/v10_boca.py`.
+  - A forma fechada (48°) virou a geometria de descanso das malhas com peso na mandíbula. O osso `Mandibula` girou junto no rig, e 1.250 vértices dos cantos foram relaxados.
+  - **Abrir:** a 24° p99 1,41 (0% das arestas acima de 1,8×); a 40° p99 1,87 (1,2%); a 48°, igual à boca original, p99 2,17.
+  - Recomendação: abertura máxima de cerca de 35–40° nas animações.
+  - Renders em `Teste_IA/V10/Boca_V10_fechada_aberta.png`. GLB reexportado com texturas de 1024 (10,7 MB).
+  - **Pendente:** a cabeça está brilhante demais (rugosidade baixa) sob luz neutra; nada foi testado no Roblox.
+- **V10, brilho da cabeça (28/10):** `Teste_IA/v10_brilho.py`.
+  - Rugosidade da cabeça remapeada para 0,68–0,9 (mediana de 0,67 para 0,83) e especular reduzido para 0,3: o aspecto de plástico sumiu.
+  - Cor da cabeça clareada 1,42× (cabeça e corpo já tinham o mesmo tom de base) para se aproximar das placas.
+  - Normais e mapa normal conferidos e corretos.
+  - Sob luz neutra, a cabeça ainda parece mais escura e lisa que o corpo, porque não tem placas 3D. A referência também mostra a cabeça negra.
+  - GLB reexportado com texturas de 1024 (10,6 MB). Pronto para o teste no Roblox.
+- **Teste no Roblox Studio, Place1 descartável (28/10).** Inspeção só em leitura; o rpg_roblox não foi tocado.
+  - Envergadura de 100 studs, frente em −Z, 48 Bones, AnimationController, 14 MeshParts aceitas, SurfaceAppearance com cor, normal e rugosidade no corpo, cabeça, placas e asas.
+  - **Problemas:**
+    - garras, cristas e olhos ficaram brancos (o Import 3D ignora cor sólida sem textura);
+    - nomes internos nas peças;
+    - origem 6,6 studs acima do baseplate;
+    - peças não ancoradas;
+    - FPS não medido.
+  - **Correção (`Teste_IA/v10_roblox_fix.py`):** UV e textura de 128 px para garras, cristas, olhos e pupilas; malhas com o mesmo nome dos objetos; armature renomeada para "Dragao_das_Montanhas". GLB reexportado (11 MB).
+  - **Pendente:** o usuário reimporta no Place1 para conferência.
+- **Place1 (descartável), arrumação e desempenho (28/10), com autorização do usuário:**
+  - modelo antigo apagado; o novo foi renomeado para `Dragao_V10`, encostado no chão (minY = 0) e com RootPart ancorado;
+  - 2 cópias para o teste.
+  - **FPS em Play (RenderStepped, 5 s, mesmo PC):**
+    - 1 dragão: 60;
+    - 3 dragões: 60, sem quadros abaixo de 40.
+    - O Studio limita a 60 FPS, então o resultado mostra que não há queda, não o FPS máximo real.
+  - Captura com o avatar mostra escala colossal correta e pés no chão.
+  - **Não medido:** celular nem o mapa completo.
+  - O Place1 não foi salvo pelo assistente e continua com 3 dragões.
+- **Dragão V11 (28/10):** `Teste_IA/v11_dragao.py`, a partir da V10 (intacta). Arquivos: `Teste_IA/V11/Dragao_das_Montanhas_V11.blend` e `.glb` (33 MB, PNG com alfa).
+  - **Corpo dividido em 5 peças** (pescoço, tronco, patas dianteiras, patas traseiras, cauda), cada uma com UV e mapas próprios. A densidade de textura no Roblox fica cerca de 5× maior.
+  - **Escamas:** grandes, com fendas entre elas de 8 a 16% da área. As fendas são transparentes (alfa) e têm borda em brasa.
+  - **Núcleo de lava:** 6 malhas recolhidas com material `NEON_Lava`, que viram Neon no Roblox.
+  - Cristas em basalto escuro com ponta em brasa; garras escuras.
+  - **Total:** 24 malhas, a maior com 16 mil tris; 122,7 mil tris no total.
+  - **Roblox:** script de configuração em `Teste_IA/V11/configurar_roblox_v11.luau` (Neon nos núcleos, AlphaMode Transparency nas peles, Bloom só no place de teste). Aguarda o usuário importar no Place1.
+
+## Dragão das Montanhas V12 (2026-10-28) — Blender, ainda não testado no Roblox
+- Origem: a V11, que permanece intacta. Script: `BLENDER/Criaturas/Teste_IA/v12_dragao.py` (+ `v12_mascara.py`, `v12_render.py`).
+- Corpo: 15% mais estreito no eixo X; as asas acompanham.
+- Cabeça: 35% maior e 20% mais alta, com transição suave na nuca; o rig acompanha. O núcleo Neon da cabeça foi refeito com recuo de 0,4 (o antigo atravessava a pele).
+- Defeito encontrado na V11: as texturas de cor foram criadas sem canal alfa (`img()` usa `alpha=False`), então as fendas transparentes nunca existiram de fato.
+  - Na V12 a máscara foi reassada do shader procedural da V11, e a cor foi gravada com alfa real (32 bits).
+  - As fendas foram alargadas (cabeça 10→23%, corpo 12–16→18–39%), com halo de brasa.
+- GLB: `V12/Dragao_das_Montanhas_V12.glb` (34,6 MB). Comparativo: `V12/Comparativo_V11_V12.png`.
+- Limitação: no render do Blender (AgX) o núcleo aparece quase branco. O resultado real precisa ser verificado no Roblox (Neon laranja + Bloom).
+- Pendente: importar no Place1, rodar `V12/configurar_roblox_v12.luau`, fazer capturas e medir FPS.
+- Ajuste (mesma data): fendas da cabeça afinadas (só o miolo da máscara, 7,3% da área; halo curto). As escamas da cabeça agora ficam legíveis. Pendência visível: os dentes brilham, porque o núcleo aparece pela boca.
+- Suavização (mesma data), a pedido ("parece blocos"):
+  - corpo com 1 nível de subdivisão (7k–18,6k tris por peça, abaixo de 20k);
+  - cabeça com Laplacian 12× preservando volume;
+  - **placas 3D de escamas removidas** (≈49k tris), que eram a causa da silhueta em blocos;
+  - relevo dos mapas normais reduzido a 45%, gravado na própria imagem;
+  - núcleos Neon refeitos a partir das peças suavizadas.
+  - GLB: 22,1 MB. Imagem: `V12/V12_suave.png`.
+- Pendente: boca/dentes ainda com fragmentos irregulares e brilhantes; teste no Roblox (Place1) ainda não feito.
+
+## Dragão V13 — etapa 1, proporções (2026-10-28), só Blender
+- Script `v13_proporcoes.py` (a partir da V12): pescoço em S, tronco a 74%, pernas 1,3× mais longas e mais finas, cauda 1,3× mais longa e afinando. A postura foi gravada como pose de descanso. Arquivo: `V13/Dragao_das_Montanhas_V13.blend`; painel `V13/b_painel.png`.
+- Avaliação honesta: a silhueta melhorou, mas segue longe da referência (dragão de fogo esguio). A base V7 (quadrúpede robusto) e a cabeça da IA arredondada limitam o que se consegue por deformação.
+- Proposta: nova malha-base gerada a partir de uma imagem limpa da referência (dragão inteiro, fundo liso), por imagem-para-3D; depois retopologia, rig, lava e Roblox no pipeline atual. Aguarda decisão e material do usuário.
+- Não exportado para GLB; Roblox não alterado.
+
+## Dragão V14 — malha do Meshy (2026-10-28)
+- O usuário gerou no Meshy 7.1 (multivista, licença Private) a partir de 3 imagens do ChatGPT (perfil, frente, costas), salvas em `V14/ref_*.webp`. GLB original: `V14/Meshy_Dragao_original.glb`.
+- Inspeção (`v14_inspecionar.py`): 1 malha fechada, 1,08 M tris, **sem UV e sem textura**.
+  - A forma está fiel: cabeça com chifres, pescoço em S, pernas finas, asas com dedos.
+  - Diferença: no perfil o tronco ficou mais curto e o dragão mais erguido que na imagem; a cauda faz curva.
+- Próximo: textura (no Meshy ou pela pele de lava própria), separar asas/corpo, retopologia abaixo de 20k por peça, rig, Roblox.
+- V14 texturizado (Meshy, `V14/Meshy_AI_Inferno_Dragon_1028195138_texture.glb`): cor, metal/rugosidade e normal em 2048; fiel às imagens de referência.
+- `v14_roblox.py`:
+  - soldou as costuras;
+  - escala de envergadura 100 studs (comprimento 53, altura 52), pés em z=0, cabeça para −Y;
+  - reduziu para 95k tris mantendo as UVs do Meshy;
+  - normal assado da malha alta;
+  - 7 peças (11,4k–16,2k tris cada).
+  - Saída: `V14/roblox/Dragao_das_Montanhas_V14.glb` (3,0 MB, texturas 1024) e `.blend`.
+- Renders do GLB reimportado no Blender conferem (`V14/roblox/render/painel_v14_roblox.png`). Isso não é validação no Roblox.
+- Pendente:
+  - importar no Place1 e rodar `V14/roblox/configurar_roblox_v14.luau`, com capturas e FPS;
+  - rig e animação (o modelo ainda é estático);
+  - brilho extra (Neon/Bloom).
+- V14 alongado (mesma data, pedido "esticar para trás"): o tronco ganhou +9 studs na faixa y −12…2 (comprimento total 53→62 studs).
+  - Asas e cauda foram identificadas por conectividade da malha (inundação a partir das pontas, barreira em |x|<11). As asas ficam presas ao ombro; a cauda anda inteira com o quadril.
+  - Duas tentativas por posição foram descartadas porque rasgavam a membrana e a cauda.
+- GLB atualizado em `V14/roblox/`; a versão sem alongamento ficou em `V14/roblox_v1/`. Comparativo: `V14/roblox/Comparativo_alongamento.png`.
+- **Teste no Place1 (2026-10-28), feito com o Studio MCP:**
+  - O usuário importou o V14 alongado. Chegaram 7 MeshParts, todas com SurfaceAppearance (cor, normal e rugosidade).
+  - O modelo foi renomeado para `Dragao_V14`, ancorado, com CanCollide desligado, assentado no chão (base y=0) e centralizado em (0, −45), longe dos V10. Tamanho no Roblox: 100 × 52,3 × 62,4 studs.
+  - Capturas: `V14/roblox/capturas/`.
+  - FPS no Play (cliente, RenderStepped, 5 s): **60** com 1 V14 (+3 V10 na cena) e **60** com 3 V14 (as 2 cópias eram temporárias, só durante o Play). O Studio limita a 60, então não é medida em celular.
+- Pendente: rig e animação (o modelo é estático), Bloom opcional e teste em celular.
+- Brilho leve no V14 (mesma data):
+  - faces de fogo detectadas pela cor da textura (27% das faces, filtro de maioria) e copiadas 0,06 stud para fora como película `V14_Brilho_a/b` (25,8k tris, 2 peças);
+  - GLB atualizado em `V14/roblox/` (3,5 MB); a versão anterior ficou em `V14/roblox_v2_sem_brilho/`;
+  - `configurar_roblox_v14.luau` transforma a película em Neon (255,110,25) com Transparency 0,72 e Bloom suave (0,5 / 24 / 0,95), e substitui o Dragao_V14 antigo.
+  - Aguarda reimportação no Place1.
+- Película refeita por pedido ("falhado"): nota de fogo por vértice, suavizada pela malha (6 passadas), furos fechados e ilhas com menos de 120 faces removidas. Agora contínua: 31% das faces, 29,8k tris. GLB atualizado em `V14/roblox/`; prévia em `V14/roblox/render/painel_brilho.png`.
+- Película v3: nas asas (identificadas por conectividade na malha baixa) entra toda a membrana que não seja osso/borda preta (lum > 0,075). Ficou contínua, sem as manchas escuras: 44% das faces, 41,9k tris, 3 peças. GLB atualizado em `V14/roblox/`.
+- Película v4 (pedido "por cima do preto"): só o fogo vivo da textura (asas r>0,72 e g>0,3; corpo laranja), sempre fora das faces escuras, com suavização leve. Cobre 26% das faces (25k tris) e segue o desenho da textura. GLB atualizado em `V14/roblox/`.
+- **Brilho aplicado no Place1 (Studio MCP):** o usuário reimportou; o script substituiu o Dragao_V14 antigo, deixou 9 peças ancoradas e transformou 2 películas em Neon (255,110,25) com Transparency **0,8** (0,72 ficava forte demais e achatava a textura do ventre), além do Bloom_Dragao suave. Captura: `V14/roblox/capturas/place1_v14_brilho.jpg`. O FPS não foi medido de novo (a película somou 25k tris).
+- **FPS com brilho (Place1):** a medição deu 15 FPS, mas o valor foi o mesmo **sem o dragão e sem Bloom/película**. Era o Studio em segundo plano (limitado), então a medida é inválida. Refazer com a janela do Studio em foco.
+- **Rig V14** (`v14_rig.py`, executado dentro do `v14_roblox.py` antes de dividir em peças):
+  - 40 ossos medidos na própria malha: Raiz, Quadril, Coluna1–3, Pescoço1–4, Cabeça, Cauda1–8, 4 patas × 3, 2 asas × (Asa_1, Asa_2, Dedo1–3);
+  - pesos por região (asa, pata, cauda solta, corpo) por distância ao osso, 3 influências, normalizados; a película herda a região do vértice mais próximo;
+  - GLB com skin: `V14/roblox/Dragao_das_Montanhas_V14.glb` (5,0 MB).
+  - Teste de poses no Blender (`v14_teste_rig.py`, `V14/roblox/rig_teste/painel_rig.png`): asas para cima e para baixo, pescoço, cauda e pata deformam sem rasgos visíveis nessa escala.
+  - Sem mandíbula (boca não abre) e sem animações ainda. Não testado no Roblox.
+- A versão anterior sem rig ficou em `V14/roblox_v3_sem_rig/`.
+- **V14 com rig no Place1 (Studio MCP):**
+  - Reimportado: 10 peças e **40 Bones**. A configuração substituiu o Dragao_V14 anterior (Neon 0,8 e Bloom mantidos, chão y=0).
+  - Skin verificado no Edit com Bone.Transform (asas, pescoço, cauda): a malha e a película deformam juntas. Pose desfeita depois. Captura: `V14/roblox/capturas/place1_v14_rig_pose.jpg`.
+  - **FPS com o Studio em foco:** 60 com 1 V14, 60 sem ele, e **60 com 3 V14 batendo as asas** (Transform procedural a cada quadro). As cópias foram temporárias, só durante o Play. O Studio limita a 60; o celular não foi testado.
+- Pendente: mandíbula, animações reais (voo, andar, rugido, ataque), teste em celular e decidir se os 3 Dragões V10 saem do Place1.
+- **Animações do V14 (Place1, Studio MCP):** 4 KeyframeSequences em `Workspace.Dragao_V14.Animacoes`, geradas por Luau.
+  - Os eixos são do modelo (arfagem, guinada, batida das asas), convertidos para o espaço local de cada osso; a hierarquia de Poses é RootPart > Raiz > …
+  - **Parado** (4 s, laço): respiração, pescoço e cauda ondulando.
+  - **Andar** (1,6 s, laço): passada diagonal, tronco sobe, cauda balança.
+  - **Voo** (1,2 s, laço): batida ±38°, antebraço e dedos defasados, patas recolhidas, corpo oscila.
+  - **Rugido** (3 s): recolhe, avança com asas abertas e cabeça erguida.
+- Tocadas no Play com AnimationClipProvider:RegisterAnimationClip + Animator e conferidas por captura (`V14/roblox/capturas/anim_*.jpg`) e pela posição dos ossos (a ponta da asa oscila de 36 a 52 no Voo).
+- Correção: no Andar a ponta da asa atravessava o chão; agora a asa sobe +8°.
+- FPS com Animator: 15, mas inválido (Studio fora de foco). Com o Studio em foco já havia dado 60 com 3 dragões e asas animadas.
+- Limitações:
+  - sem mandíbula (o rugido não abre a boca);
+  - o Voo foi feito para o dragão no ar (no chão a asa desce abaixo do piso);
+  - para o jogo real é preciso publicar as animações (AnimationId) e salvar o Place1 no Studio;
+  - nada foi levado ao place principal.
+- **Mandíbula (rig V14, mesma data):**
+  - O osso da Cabeça foi corrigido: antes apontava para a ponta do chifre (ponto geodésico mais distante); agora vai da nuca ao focinho.
+  - Novo osso `Mandibula` (filho de Cabeça), com a dobradiça atrás do canto da boca. A linha da boca foi medida em vista ortográfica: do focinho a +6,4 Y / +1,7 Z.
+  - A malha do Meshy tem os lábios fundidos: `cortar_boca` separa as arestas na linha da boca (106 na pele, 75 na película). O lábio inferior vai para a Mandíbula com transição na dobradiça.
+  - Cavidade `V14_Boca` (elipsoide vermelho-escuro, 528 tris) com metade na Cabeça e metade na Mandíbula.
+  - Teste no Blender com 22° (`rig_teste/painel_boca.png`): a boca abre e mostra a cavidade, sem bolsa esticada.
+  - 41 ossos; GLB atualizado.
+  - O script do Roblox agora move a pasta Animacoes do modelo antigo para o novo.
+  - Pendente: reimportar e incluir a Mandíbula no Rugido (no Studio).
+- **Dentes (V14, mesma data):** objeto `V14_Dentes` com 360 tris: 2 fileiras × 2 lados de cones ao longo da linha da boca, recuados da borda do lábio, com presas maiores na frente e textura degradê marfim. Os de cima estão na Cabeça e os de baixo na Mandíbula. Teste no Blender (`rig_teste/painel_boca.png`): com a boca aberta aparecem as duas fileiras e a cavidade escura; fechada, as pontas ficam à mostra sobre os lábios, como na referência. GLB atualizado; falta reimportar.
+- **Gengivas (mesma data, pedido "dentes fora da gengiva"):** prismas vermelho-escuros ao longo de cada lábio, no mesmo objeto `V14_Dentes` (coluna 0 da textura). Os dentes foram encaixados com a raiz 0,4 dentro da gengiva, a 0,35 da borda do lábio. Total de 864 tris. Teste no Blender: os dentes saem da gengiva com a boca aberta. GLB atualizado; falta reimportar.
+- Correção dos dentes: os cones estavam invertidos (ponta dentro da gengiva). Agora `rotation_difference(dirv)` deixa a base na gengiva e a ponta para fora. Conferido no Blender (`rig_teste/painel_boca.png`); GLB atualizado.
+- Dentes v3 (pedido "sem gengiva aparente, dentes enfiados"): gengiva desligada (`GENGIVA = False`). Os dentes ficam na borda do lábio (0,15 para dentro), com a raiz só 0,15 dentro do lábio. Com a boca fechada as pontas se cruzam por fora, como em crocodilo. 360 tris. GLB atualizado; falta reimportar.
+- Dentes v4 (pedido "não parecem ser dele"): dentes orgânicos feitos à mão com bmesh, em seção de lâmina achatada (0,6), curvados para trás e para dentro, com tamanho e espaçamento variados (semente 14) e presas na frente. Cor em degradê da raiz escura e chamuscada até a ponta osso amarelado, no tom dos chifres. 34 dentes, 1564 tris. Conferido no Blender; GLB atualizado; falta reimportar.
+- **Mandíbula e dentes no Place1 (Studio MCP):**
+  - Reimportado: 12 peças, 41 Bones, com `V14_Dentes` e `V14_Boca`. A configuração moveu a pasta Animacoes para o modelo novo e reaplicou Neon 0,8 e Bloom.
+  - As 4 KeyframeSequences foram **regeradas no rig novo**, porque o osso da Cabeça e o pescoço mudaram:
+    - Rugido com a boca abrindo até 26° (pico entre 1,0 e 2,2 s);
+    - Parado com a boca entreabrindo 1,5° na respiração.
+  - Conferido no Play com o Rugido congelado em 1,55 s: a boca abre, com dentes de cima e de baixo e cavidade escura. Capturas: `V14/roblox/capturas/anim_rugido_boca_aberta.jpg` e `anim_rugido_geral.jpg`.
+  - Pendente: salvar o Place1 (Ctrl+S) e publicar as animações para obter AnimationIds no jogo real.
+
+## Boca, Fase 1 de animações e VFX das asas — V14 (2026-10-28)
+**Boca (Blender, `v14_rig.py`)**
+- Interior refeito (`V14_Boca`): cavidade com palato (sulcos), garganta escurecendo e textura com ruído orgânico; língua no assoalho; gengivas internas que ficam escondidas com a boca fechada.
+- Dentes: a fileira de baixo vai por dentro da de cima e intercalada, para não se cruzarem.
+- Comparativos (fechada, meia, aberta × lado, frente, 3/4, close): `V14/roblox/boca_comparativo/comparativo_boca.png`.
+- A versão anterior ficou em `V14/roblox_v4_boca_anterior.glb`.
+- Pendente: a boca nova **ainda não foi reimportada no Roblox**. O Place1 está com a versão anterior; os ossos são os mesmos.
+
+**Conversão Blender→Roblox validada:** os eixos de todos os ossos conferidos são M·Blender, com M: (x,y,z)→(−x,z,y). A rotação local é idêntica.
+- No Play, o pé dianteiro esquerdo subiu 1,59 e percorreu 4,24 studs, contra 1,60 e 4,24 no Blender.
+
+**Fase 1 (`v14_anim_lib.py`, `v14_fase1.py`, `v14_anim_render.py`)**
+- 13 clipes, com pés por IK assados em FK e pernas com folga para não sair do chão:
+  - Idle_Neutro 6 s; Idle_Alerta 3 s; Idle_Alerta_Mantido 4 s; Idle_Imponente 6 s;
+  - Andar 2 s (3,2 studs/s); Andar_Lento 2,8 s (1,6 studs/s); Andar_Inicio 2 s; Andar_Parada 2 s;
+  - Correr 0,93 s (13 studs/s); Curva_E/D 2 s (±14°/s); Giro_E/D 2,4 s (±22°/s).
+- Asas recolhidas por giros espelhados. As versões anteriores (apontar o osso) ficavam assimétricas por causa da torção dos ossos do rig.
+- Pés medidos no Blender:
+  - idles: ±0,02;
+  - andar: sobe 1,60, apoio a 3,2 studs/s;
+  - correr: sobe 3,0;
+  - afundamento máximo 0,04.
+- No Play do Place1, com o dragão andando a 3,2 studs/s, o deslize do pé de apoio ficou em 0,20–0,26 studs por passada (inclui replicação).
+- Prévias: `V14/anim/fase1/previas/` (MP4 3/4, quadros lado e 3/4, pranchas). JSON: `V14/anim/fase1/json/`.
+- Os KeyframeSequences estão em `Workspace.Dragao_V14.Animacoes` no Place1. Importador: `V14/anim/importar_clipe.luau`, via HttpService em 127.0.0.1; **HttpEnabled foi ligado no Place1**.
+- Limitações:
+  - sem pálpebras (não há piscar);
+  - curvas e giro são clipes no lugar: o controlador do jogo aplica a rotação/translação informada nos atributos do clipe;
+  - Fases 2–5 não feitas.
+
+**VFX das asas (Place1)**
+- Arquivos: `V14/vfx/ConfigAsas.luau` (por forma), `EfeitosAsas.luau` (lógica) e `EfeitosAsas_Cliente.client.luau`.
+- Instalados com o ScriptEditorService em `ReplicatedStorage.VFX_Dragoes` e `StarterPlayerScripts`. Atribuir `.Source` direto deixava o LocalScript sem rodar no Play.
+- Funcionamento:
+  - emissores pré-criados em ossos de ponta e meio dos dedos (Bones sem peso), mais poeira nos pés;
+  - disparo por marcadores (WingDownstrokeStart/Peak, WingUpstroke, WingGlide, WingFold, TakeoffImpulse, LandingImpact), com o estado no Value do marcador;
+  - pulso no brilho da película;
+  - LOD por distância e qualidade gráfica, teto de 90 partículas/s por dragão;
+  - poeira só em materiais de solo adequados.
+- Demonstração com marcadores no clipe de voo antigo (Dragao_V14_Voo):
+  - Montanhas no V14;
+  - Glacial e Sombrio em cópias temporárias do V14 dentro do Play, porque **não existem modelos desses dragões** (no place principal há só pastas de território do Glacial).
+  - Capturas: `V14/vfx/capturas/`.
+- **FPS 59,6** com 3 dragões batendo asas e 96 emissores, com o Studio em foco.
+- Pendentes:
+  - decolagem, pouso, planeio e batida forte dependem dos clipes da Fase 2;
+  - o efeito do Glacial ficou muito sutil contra o céu claro;
+  - teste com montaria e em celular não feito.
+
+**Place1:** precisa ser salvo no Studio (Ctrl+S). Nada foi alterado no place principal; nele houve só leitura.
+- **Cauda (pedido "mexer mais, para trás", mesma data):**
+  - Nova pose-base `cauda_para_tras` em todos os 13 clipes: desce saindo do quadril (inclinação 0,25) e nivela até a ponta, preservando 15% da curva original.
+  - Balanço aumentado: andar 7→13, lento 5→10, correr 4→8, idles 3→6,5; onda vertical 1,2→2,2.
+  - Corrigido o sinal de "cauda_ergue" (antes abaixava).
+  - Medido no Blender: ponta da cauda sempre acima do chão (mín. 1,5 studs em Giro_E) e alcance de ~77 studs para trás.
+  - Clipes reimportados no Place1 e conferidos no Play (`V14/anim/fase1/capturas_roblox/cauda_para_tras_andar.jpg`).
+
+## Fase 2 (voo) e corrida melhorada — V14 (2026-10-28)
+- `v14_fase2.py`: 9 clipes.
+  - Clipes: Voo 1,2 s; Voo_Rapido 0,9 s; Planeio 4 s; Curva_Aerea_E/D 2,4 s (±35°/s); Subida 1,2 s; Descida 1,2 s; Decolagem 3 s; Pouso 3 s.
+  - Altura de voo: 14 studs (atributo `altura_voo`).
+  - Batida das asas: descida mais rápida que a subida; úmero conduz, antebraço e dedos atrasados; dedos dobram na subida e abrem na descida.
+  - Corpo reage à batida (tórax, pescoço que compensa, cauda ondulando). Patas recolhidas em voo.
+  - Curvas: inclinação do corpo e asas assimétricas.
+  - Decolagem: agacha, abre as asas, impulso e 1ª batida forte, recolhe as patas. Pouso: batidas de frenagem, patas estendem, impacto e compressão, asas recolhem.
+- Marcadores gravados no JSON e criados como KeyframeMarker na importação (Value = estado, ex. "Decolagem|forte"): Voo 3, Curvas 6, Decolagem 7, Pouso 7.
+- Testado no Play do Place1:
+  - Decolagem → Voo: os marcadores chegaram ao cliente nos tempos certos e as brasas foram emitidas;
+  - Pouso → Idle_Neutro: pés exatamente no chão (0,00).
+  - Capturas: `V14/anim/fase2/capturas_roblox/`. Prévias e MP4: `V14/anim/fase2/previas/`.
+- Corrida:
+  - novo galope de corpo inteiro: gangorra do tronco, coluna enrola e estende, fase de suspensão, pescoço/cabeça contrabalançando, cauda com atraso;
+  - novo clipe Correr_Frenagem (2 s): o corpo comprime e joga o peso para trás, a cauda sobe.
+  - Pés no Blender: apoio a 0,00, sobem até 3,18.
+  - No Play, movendo a 13 studs/s: deslize de 0,35–0,59 stud por apoio. Os dois clipes já estão no Place1.
+- Limitações:
+  - decolagem de precipício, mergulho e voo montado não foram feitos;
+  - root motion fica com o controlador do jogo (altura e velocidade nos atributos dos clipes);
+  - o Place1 precisa ser salvo (Ctrl+S).
+
+## Fase 3 — comportamentos naturais V14 (2026-10-28)
+- `v14_fase3.py`: motor de poses-chave (chaves herdadas, interpoladas com suavização) com camadas secundárias de respiração, olhar com ruído, cauda com atraso, farejar, mastigar e engolir.
+- Alturas calibradas na própria malha por busca binária:
+  - focinho no chão para comer (2,6) e beber (1,0);
+  - focinho na altura do jogador (6) para o dono;
+  - barriga no chão ao deitar (baixa 10,5).
+  - As patas avançam (dianteiras) e recuam (traseiras) automaticamente conforme o corpo desce, e levantam ao se reposicionar.
+- 25 clipes: Comer 8 s, Comer_Mastigar 2,4 s (laço), Beber 9 s, Beber_Loop 2,4 s, Deitar 4,5 s, Deitado_Acordado 8 s, Dormir 8 s, Adormecer 3 s, Acordar 4,5 s, Espreguicar 4,5 s, Observar 6 s, Observar_Farejar 5 s, Reagir_Estimulo 2,5 s, Ninho_Inspecionar 6 s, Ninho_Acomodar 4,5 s, Ninho_Repouso 9 s, Ninho_Alerta 3 s, Ninho_Ameaca 4,5 s, Preparar_Combate 3 s, Dono_Reconhecer 3,5 s, Dono_Carinho 6 s, Dono_Receber_Alimento 4,5 s, Montaria_Abaixar 3 s, Montaria_Aguardar 4 s, Montaria_Levantar 2,6 s.
+- Marcadores: Farejar, Mordida, Mastigar, Engolir, AguaToque, AguaSai, ContatoChao, Levantar, Bocejo, Sobressalto, Alerta, Rugido, Reconhecer, MontariaPronta, MontariaImpulso.
+- Validação automática por quadro (`V14/anim/fase3/relatorio_fase3.json`): joelhos sempre acima do chão (mín. 1,09); barriga 0,0–0,7 nos deitados; focinho 0,3 ao beber e 1,5 ao comer.
+- Erros corrigidos:
+  - joelhos atravessando o chão (−5): resolvido com as patas automáticas;
+  - "lança" na perna direita: escala/translação residual do IK que se acumulava sem ser gravada. Corrigido em `v14_anim_lib.resolve_pernas` (só a rotação é aplicada; escala e posição zeradas) e em `zera()`.
+- Pranchas limpas: `V14/anim/fase3/previas/prancha3_a.png` e `prancha3_b.png`; MP4 por clipe.
+- Roblox (Place1):
+  - 25 KeyframeSequences importadas com marcadores em `Dragao_V14.Animacoes` (50 clipes no total);
+  - módulo `ReplicatedStorage.Comportamento_Dragoes.EstadosDragao` instalado: 18 estados, posturas pe/deitado/abaixado, inserção automática de levantar/deitar e variações sorteadas.
+  - **Teste no Play não concluído:** ao iniciar o Play, o Studio do Place1 parou de responder ao MCP (timeout; processo do Studio com ~20 GB de memória).
+- Limitações: sem pálpebras (não há olhos fechados nem piscar, porque o modelo não tem geometria de pálpebra); a IA territorial não foi feita (fora do escopo).
+- **Teste de estados (2026-10-28, à noite):**
+  - O usuário reabriu o Studio com `Teste-animacoes.rbxl`. A cópia salva tinha só as 25 animações das Fases 1 e 2; a Fase 3 e o módulo não tinham sido salvos.
+  - Reimportado: 50 clipes movidos para `ServerStorage.Animacoes_Dragao_V14` (assim não replicam para o cliente) e módulo de estados instalado. Play iniciou normalmente.
+  - **Causa dos travamentos achada:** em `EstadosDragao._esperar`, o `AnimationTrack.Length` vale 0 logo após o LoadAnimation. A espera retornava na hora e o laço de variações do Idle girava sem ceder, travando o Studio duas vezes.
+  - Corrigido: espera o clipe carregar (até 5 s) e o laço sempre cede (`task.wait`).
+  - O módulo corrigido está em `V14/comportamento/EstadosDragao.luau`, **ainda não reinstalado**. No arquivo aberto ficou a versão com o defeito.
+  - A sequência de estados ainda não foi validada no Play.
+- **Fase 3 validada no Play (`Teste-animacoes.rbxl`, Studio MCP):**
+  - Os clipes ficam em `ReplicatedStorage.Animacoes_Dragao_V14` (50). No ServerStorage a animação tocava no servidor mas não aparecia no cliente.
+  - Módulo `ReplicatedStorage.Comportamento_Dragoes.EstadosDragao` corrigido (espera o clipe carregar; o laço sempre cede).
+  - Sequência testada sem erros: Idle → Alimentação → (auto) Idle → Sono [Deitar → Adormecer → Dormir] → Alimentação [Acordar automático] → MontariaEspera → ProtecaoNinho [Montaria_Levantar automático] → AmeacaNinho → InteracaoAmigavel [Reconhecer → Carinho].
+  - Ajuste: do ninho, ameaça e alerta sobem com Ninho_Alerta (não com "Acordar"). Testado de novo.
+  - Capturas no Roblox: `V14/anim/fase3/capturas_roblox/` (comer, dormir, ameaça).
+  - FPS medido 14,9 com o Studio fora de foco: inválido (com foco já havia dado 60).
+- **O arquivo `Teste-animacoes.rbxl` precisa ser salvo (Ctrl+S)**; a importação anterior se perdeu por falta de salvamento.
+- **Erro gráfico na raiz da asa (relatado pelo usuário):**
+  - Diagnóstico: por raycast e renders isolados, é a **aba que liga a membrana ao flanco/quadril** (faces de `V14_Asa_E_b`/`Asa_D` em |x| 10–15, z 25–28).
+  - Ela tem paredes laterais e fundo com UV esticado (listras claras). Já existe no modelo original do Meshy (render da malha alta confirma) e a dobra das asas a deixa mais exposta.
+  - Correções no `v14_roblox.py`:
+    - 4a: 831 faces com UV muito esticado (>12×) recebem o UV do próprio centro;
+    - aba: 1905 faces da raiz (|x|<15, laterais, fundo ou UV >3×) recebem a cor das faces escuras (borda/osso) mais próximas da membrana.
+  - `v14_rig.py`: o corpo só herda peso de AsaE_1/AsaD_1 do próprio lado, com rampa suave |x| 6→13 e z 22→28 (antes o dorso e a base do pescoço puxavam a asa oposta). Esticamento máximo do corpo com asas dobradas: 24× → 13×.
+  - Resultado: `V14/roblox/correcao_aba_ombro.png`. A aba agora fica escura, como borda, sem listras. A geometria em degrau continua, porque é do modelo.
+  - GLB atualizado em `V14/roblox/` (anterior em `V14/roblox_v5_antes_pesos/`). **Falta reimportar no Studio.**
+
+## Retargeting de animações do afk.ai → Dragão das Montanhas (2026-10-29) — VERSÃO DE TESTE, NÃO INTEGRADA
+**Fonte:** `Teste_IA/icy-dragon-animated.glb`
+- glTF gerado pelo THREE.GLTFExporter, sem licença embutida.
+- Esqueleto: 99 ossos (asas com 5 "penas", pernas digitígradas de 5 segmentos, pescoço curto, cauda de 6).
+- Clipes: Fly Flap, Fly Glide, Fly Glide Left/Right, Fly Hover, Walk. **Não há corrida.**
+
+**Licença** (site afk.ai, verificado em 2026-10-29):
+- "skeleton templates and animation library are CC0", uso comercial sem atribuição.
+- O modelo "icy dragon" (malha) é de chengzijieczj, no Sketchfab, sob CC BY 4.0. **Não foi usado**: só o movimento.
+- Os Termos de Uso (afk.ai/terms) não tratam de licença de exportações.
+
+**Método** (`Teste_IA/afk/retarget_afk.py`; nada do V14 é sobrescrito):
+- Saída em `afk/saida`: `.blend` de teste, JSON e prévias; clipes com sufixo `_AFK`.
+- Coluna, pescoço, cabeça e mandíbula: delta de rotação no mundo em relação ao repouso; cadeias de tamanhos diferentes interpoladas.
+- Asas: direção dos segmentos (úmero, antebraço, 3 dedos ← wing_5 e penas 4/5). No planeio e nas curvas a componente vertical é achatada (×0,45) para as asas ficarem abertas na lateral.
+- Pernas e cauda (o repouso dos rigs difere: a fonte tem patas já dobradas e joelho invertido; o nosso repouso tem cauda enrolada de lado): NOSSA postura do estado (patas recolhidas no voo, `cauda_para_tras`) + variação da fonte em torno da média do clipe.
+- Andar: pés por IK com a trajetória do tornozelo da fonte, limitada a 5 studs de passada e 2,6/2,2 de elevação.
+- Tempo esticado ×1,3–1,6 para o porte colossal.
+
+**Bugs encontrados e corrigidos no processo:**
+- O importador deixa os 6 clipes em trilhas NLA; sem mutar, a amostragem misturava todos e o movimento se anulava.
+- Delta puro deixava as pernas "em pé" no voo e levantava a cauda.
+
+**Roblox:** 6 KeyframeSequences novas (`Dragao_V14_*_AFK`, atributo `Teste_AFK`) em `Animacoes_Dragao_V14`. Os clipes atuais não foram tocados.
+- Testado no Play: carregam e tocam com a duração certa (1,3 / 1,6 / 4,0 / 4,0 / 4,0 / 2,0 s).
+- Capturas: `afk/saida/studio_*.jpg`; comparação: `afk/saida/comparacao_antigo_x_afk.png`.
+
+**Pendentes:**
+- **Não estão ligados à montaria nem à IA:** aguardam aprovação visual.
+- Medida de velocidade do Andar_AFK não confiável (17,8 studs/s): calibrar o ritmo no Studio antes de usar.
+- Sem corrida na fonte: a corrida continua a nossa (galope novo).
+- Ainda não transferidos: decolagem, pouso e combate (a fonte não tem).
+
+## Voo montado guiado pelo mouse + misturador de animações afk.ai (2026-10-29) — Teste-animacoes.rbxl
+**Verificação do GLB:**
+- Clipes: Fly Flap, Fly Glide, Fly Glide Left/Right, Fly Hover, Walk. Não há idle, corrida, subida, descida nem mergulho.
+- Ossos que se movem nos clipes transferidos: Voo 20, Pairar 21, Andar 23, Planeio 9, Curvas 9 (o planeio da fonte é quase estático).
+
+**Criados no Blender** (`afk/retarget_afk.py`):
+- `Mergulho_AFK`: asas recolhidas para trás, pescoço alinhado, patas recolhidas.
+- Movimento secundário do planeio, das curvas e do mergulho, dependente de fase (loop perfeito): dedos alares, curvatura da membrana, respiração, cauda com atraso progressivo, pernas e pescoço.
+- Camadas `Olhar_Cima/Baixo/E/D_AFK`: só Pescoço1–4, Cabeça e Coluna3 (peso 0 nos demais, prioridade Action).
+
+**Controlador** (`Montaria_Dragao_Servidor`, função `passoVoo`, arcade assistido; a autoridade é do servidor):
+- O rumo segue o yaw da câmera, com taxa limitada (42–58°/s conforme a velocidade) e aceleração de giro limitada (140°/s²).
+- A inclinação da trajetória segue o pitch da câmera: zona morta de 5°, até +40° / −60°, 70°/s.
+- W acelera; S desacelera até 14 studs/s (sustentação, nunca para trás); sem tecla mantém a velocidade.
+- Gravidade na trajetória: subir custa velocidade, mergulhar ganha (até 80).
+- G: planeio (não sobe; acima de 30 studs/s troca velocidade por altura). W ou Espaço apertados de novo voltam a bater asas.
+- Corpo: inclina até 32° pela taxa de curva e o nariz segue a trajetória (85%, até 40°).
+- Assistências: sobe diante de parede; nivela rente ao chão; fora do mapa vale o último chão conhecido.
+- **Misturador:** Voo/Pairar/Planeio/Curvas/Mergulho tocam juntos em laço e mudam só de PESO (fade 0,25 s), conforme velocidade, curva, gama, planeio e mergulho.
+  - As camadas de cabeça entram por cima.
+  - O ritmo das batidas sobe acelerando e subindo.
+  - Decolagem → mistura com fade 0,45 s; mistura → descida de pouso com fade 0,5 s.
+
+**Câmera** (`Montaria_Cliente`):
+- Órbita própria com o mouse preso no centro (sem segurar botão; Alt solta o mouse); gamepad pelo analógico direito; toque mantém a câmera padrão.
+- Rotação imediata; posição do alvo suavizada no pivô (as batidas não sacodem a imagem).
+- Distância 70 + 0,45 × velocidade; colisão por raio (entra antes de montanha ou árvore).
+- `pitchNeutro` 0,28 rad: a câmera olhando 16° para baixo = voo nivelado.
+
+**Bugs encontrados e corrigidos:**
+- Comentário no meio da linha da config anulou `acelVoo`/`freioVoo`: W/S sem efeito e erro a cada quadro (achado via LogService).
+- Dragão descia no vazio fora do mapa.
+- G anulado por W ainda no último pacote.
+- Câmera olhando para baixo fazia descer.
+
+**Testes no Play** (ângulos de câmera e W/S injetados pelo mesmo caminho do servidor + teclas reais):
+- decolar (Espaço);
+- subir com mouse para cima (+44 studs, camada olhar-cima);
+- horizontal estável;
+- curvas esquerda (+96°, corpo −7°) e direita (−95°);
+- subida com curva e descida com curva;
+- W até 55; S até 14 com Pairar;
+- planeio reto (G real) e em curva (inclinação −28°, Curva_Aerea_E_AFK + Olhar_E);
+- mergulho (−57°, vel 59, Mergulho_AFK);
+- recuperação, retorno ao voo ativo;
+- pouso (recusado acima de 160 studs com aviso; aceito em 3,1 s).
+- Desempenho em voo: cliente 60 FPS (pior quadro 19 ms) com 10 trilhas; servidor 60 Hz; 0 erros no log.
+
+**Pendentes:**
+- **Não testado:**
+  - movimento FÍSICO do mouse (a ferramenta não move o mouse: os ângulos foram injetados);
+  - segundo jogador observando (só 1 cliente disponível);
+  - gamepad e toque reais.
+- Ritmo do Andar_AFK não calibrado (o andar no chão continua o nosso).
+- Todos os números de voo continuam NAO_APROVADO.
+- **Salvar o place (Ctrl+S).**
+
+## 2026-10-29 — Silverwing Wyrm (Meshy) no esqueleto Mesh2Motion (TESTE, fora do Studio)
+- **Fonte:**
+  - `Downloads\Meshy_AI_Silverwing_Wyrm_1029143906_texture.glb` (intocado);
+  - cópia leve `BLENDER\Criaturas\Teste_IA\meshy\Silverwing_20k.glb` (20 mil triângulos).
+- **Esqueleto e animações:** `rig-dragon.glb` e `dragon-animations.glb` do Mesh2Motion. Licença CC0, verificada em `meshy\m2m_fonte\LICENSE-CC0.MD`.
+- **Encaixe no site:** inviável pela ferramenta (cerca de 100 juntas, captura de 800 px). Feito no Blender com `meshy\encaixe_silverwing.py`, medido em vistas ortogonais com grade e fatias.
+- **Montagem (`meshy\montar_silverwing.py`):**
+  - pesos por distância, separados por região;
+  - pontes fundidas do Meshy entre asa, cauda e patas removidas (221 faces);
+  - suavização das arestas esticadas;
+  - modelo reposicionado na pose base do molde. A mão da asa mantém o leque original e as rotações dela são convertidas.
+- **Saída:**
+  - `meshy\saida_m2m\Silverwing_M2M.glb` (4,3 MB; 19.779 triângulos; 100 ossos; até 4 influências);
+  - animações Fly_Flap, Fly_Glide, Idle, Walk, Rest_Pose;
+  - vídeos MP4 de cada animação.
+- **Verificado:** reimportação do GLB, renderizações de descanso e de 3 quadros por animação.
+- **Não testado:**
+  - Roblox Studio (nada foi importado);
+  - upload em "Use Your Rigged Model" do Mesh2Motion;
+  - qualidade de pele detalhada (restam cerca de 300 vértices com estiramento leve, perto dos ombros e do quadril).
+- **Revisão de deformação (29/10, depois):** os 151 quadros das 5 animações foram medidos com `meshy\qa_silverwing.py`.
+  - **Correções aplicadas:**
+    - a mão da asa agora é reassada por deslocamento de posição a partir do pulso (`assar_mao.py`);
+    - o osso do ombro deixou de definir a região do dorso;
+    - os cruzamentos entre as raízes das asas foram transferidos para a coluna (`corrigir_cruzamentos.py`);
+    - os pesos foram polidos com base nas animações (`polir_pesos.py`).
+  - **Resultado:**
+    - cruzamento entre as asas: 0 em todos os quadros;
+    - asa dentro do corpo: 0, exceto Fly_Flap quadros 8, 10 e 11 (até 10 vértices na raiz da asa, profundidade máxima de 0,02);
+    - planeio: estiramento máximo de 2,9x em até 86 arestas.
+  - **Limitação restante:** em Idle e Walk o molde dobra as asas rente ao corpo. As asas do Silverwing são proporcionalmente bem maiores e em leque, então ficam meio dobradas, com membrana enrugada nas pontas externas (até cerca de 500 arestas de 30 mil esticadas mais de 1,6x).
+  - **Fidelidade do GLB:** ossos idênticos ao `.blend` no quadro testado. Pés até 1,2 cm abaixo do chão no Walk.
+- **Dobra própria das asas (29/10, `meshy\dobra_asa.py`):**
+  - Idle e Walk usam uma dobra criada para o Silverwing, em vez da dobra do Mesh2Motion.
+  - Toda a dobra é relativa à asa aberta:
+    - no plano da asa, o cotovelo dobra 30°, o pulso 35° e o leque fecha 40%;
+    - a asa inteira varre 35° para trás e cai 35°;
+    - o braço só acompanha 40% da varredura e 30% da queda;
+    - o dedo 2 dobra para fora.
+  - Movimento secundário cíclico: respiração no Idle e balanço do passo no Walk.
+  - Parâmetros finais: `35 35 30 35 0.6 -0.3 0.3 0.4`.
+  - Testadas e descartadas:
+    - dobra fechada com o pulso à frente (estica até 27x, cerca de 2.300 arestas);
+    - direções absolutas.
+- **Penetração restante:** zerada com `corrigir_penetracao.py`, que passa peso de wing_2 e dos dedos 2 e 3 para wing_1.
+- **QA final (151 quadros):**
+  - asa x asa: 0 em todos;
+  - asa dentro do corpo: 0 em todos;
+  - arestas >1,6x: Idle até 368 e Walk até 453 (das quais cerca de 80 na barriga e nas patas, vindas do Walk do molde), Glide até 89, Flap até 310;
+  - pés até 1,2 cm abaixo do chão no Walk.
+- **Arquivos:**
+  - GLB reexportado em `saida_m2m\Silverwing_M2M.glb`;
+  - backups `Silverwing_M2M_antes_assar.blend` e `Silverwing_M2M_antes_dobra.blend`.
+- **Não testado:** Roblox Studio e Mesh2Motion "Use Your Rigged Model".
+- **Importação no Studio (29/10, Teste-animacoes.rbxl):**
+  - O usuário importou `Silverwing_M2M.glb` pelo Import 3D. Chegou como `Scene`/`Mesh_0`, com 1 unidade = 1 stud (1,95 × 0,57 × 1,92), 99 ossos, um AnimationController e 5 KeyframeSequences em `ServerStorage.RBX_ANIMSAVES.Scene`.
+  - Ajustes feitos:
+    - renomeado para `Workspace.Silverwing` (malha `Silverwing_Malha`);
+    - `ScaleTo(7)`, que dá **13,6 × 4,0 × 13,4 studs** (pedido: 12-15 studs);
+    - ancorado e apoiado no chão em (575, 2, 500), com o atributo `Origem`;
+    - animações copiadas para `ReplicatedStorage.Animacoes_Silverwing`.
+  - **Play:** Idle, Walk, Fly_Flap e Fly_Glide tocaram via `AnimationClipProvider:RegisterAnimationClip` no Animator do AnimationController. Capturas conferidas, e nenhum erro dos nossos scripts (só avisos internos de UIBlox do Roblox). Nas animações de voo o modelo foi erguido 6 studs só na sessão de teste.
+  - **Pendente:**
+    - salvar o place (Ctrl+S);
+    - os clipes de voo do molde deixam as patas abaixo do pivô: em voo real, o controlador precisa erguer o modelo;
+    - integrar à montaria/IA e testar em mais jogadores, o que não foi feito;
+    - `AuxScene` (artefato do importador) continua no Workspace.
+- **Silverwing na montaria e na IA (29/10, Teste-animacoes.rbxl):**
+  - **Modelo:**
+    - escala 17,5 (2,5x), resultando em **34,1 × 10 × 33,6 studs**;
+    - 9 ossos renomeados para os nomes do V14 (Cabeca, Quadril, Coluna2, Mandibula, Pescoco2/4, Cauda3, AsaE_2, AsaD_2), junto com as Poses das KeyframeSequences.
+  - **Dragões:**
+    - `Dragao_V14` e `Dragao_Montanhas_Jogador` foram movidos para `ServerStorage.Dragoes_Retirados` (reversível);
+    - `Workspace.Silverwing` é a montaria do jogador de teste;
+    - `Workspace.Silverwing_Guardiao` é um clone com os atributos do guardião V14 (Ninho_Pico).
+  - **Scripts (opcionais por atributo; o V14 continua igual):**
+    - `EstadosDragao:_kfs` com apelidos e o novo módulo `Animacoes_Silverwing.Apelidos` (4 clipes cobrem todos os estados; as camadas Olhar_* ficam desligadas);
+    - `Montaria_Dragao_Servidor`: atributos AssentoAcima/AssentoFrente e RitmoAndarBase/RitmoCorrerBase; `temMix` funciona via apelidos;
+    - `Locomotor`: RitmoAndarBase/RitmoCorrerBase;
+    - `Montaria_Cliente`: atributos Camera_* por dragão (distância 30, alvo 6, voo 0);
+    - `Teste_Montaria_Dono` passa a dar o Silverwing ao jogador.
+  - **Testado em Play (montaria via Montaria_Debug, mesmo caminho do servidor):**
+    - montar e sentar no dorso;
+    - andar a 4,8 studs/s com Walk no ritmo 1,09;
+    - decolar e voar, com o misturador de voo (Fly_Flap + Glide nas curvas);
+    - pousar em 3,6 s, com os pés no chão;
+    - câmera a 32 studs.
+  - **IA:** o guardião ficou em Observation; ao sobrevoo do jogador, detectou ameaça nível 2, defendeu o ninho e voltou para o Recover.
+  - **Erros:** 0 dos nossos scripts.
+  - **Incidente:** a conexão MCP caiu num teste longo de voo, mas o usuário salvou e nada se perdeu.
+- **Limitações:**
+  - sem clipe de corrida (usa o Walk acelerado, com pés deslizando);
+  - comer, dormir, ninho e montar usam o Idle;
+  - o combate não tem animações próprias do Silverwing;
+  - não testados: mouse físico, segundo jogador, combate com o Silverwing;
+  - o Ninho_Pico continua dimensionado para o V14.
+
+## 2026-10-29 — Dragão Glacial (Silverwing): correção anatômica + voo livre (TESTE, em andamento)
+- **Diagnóstico** (`meshy\diag_anatomia.py`):
+  - as patas dianteiras convergiam para a linha média: pés a ±3,5 cm, ombros a ±6,8 cm, por causa do reposicionamento no repouso do molde Mesh2Motion;
+  - os pés traseiros ficavam suspensos 7 a 11 cm (1,2 a 1,9 studs), porque a perna é curta para a altura do quadril do molde;
+  - o Idle e o Walk do molde dobravam a base da cauda em 20°;
+  - no voo, as pernas pendiam esticadas (+25 a 35%) e juntas.
+- **Correção** (`meshy\anim_silverwing.py`): 17 animações próprias, sem alterar malha nem esqueleto.
+  - Patas: IK de 2 ossos + metacarpo/metatarso + dedos, com o chão travado; dianteiras a ±8,2 cm e traseiras a ±10,8 cm.
+  - Andar: sequência lateral. Correr: galope rotativo. A passada traseira é 15% menor, com apoio proporcional, para não patinar.
+  - Cauda: segmentada, com atraso, apoiada no chão.
+  - Asas: amostradas das ações validadas.
+  - Clipes: Parado, Andar, Correr, Parada, Abaixar, Abaixado, Levantar, Voo, Pairar (voo estacionário), Subida, Descida, Planeio, Curva_E, Curva_D, Mergulho, Decolagem, Pouso.
+  - Bug corrigido durante o trabalho: o IK era aplicado depois de posicionar o osso superior.
+- **Pesos:**
+  - `polir_pesos.py` (modo corpo) reduziu o estiramento em 23%;
+  - `corrigir_penetracao.py` e `corrigir_cruzamentos.py` zeraram a penetração e os cruzamentos.
+- **QA final (todos os quadros):**
+  - asa x asa: 0; asa dentro do corpo: 0;
+  - garras até 0,14 stud abaixo do chão parado e 0,29 andando;
+  - arestas acima de 1,6x: 266 a 570 por quadro (de cerca de 30 mil).
+- **Saída:** `saida_m2m\Silverwing_Glacial_v2.glb` (17 animações), vídeos `v2_*.mp4`.
+- **Studio (editado, não salvo pelo Claude):**
+  - **Voo livre** (`Montaria_Dragao_Servidor`, função `passoVooLivre`), só com o atributo `VooLivre`; o Dragão das Montanhas continua com o controle antigo:
+    - W acelera; S não tem função no ar; soltar W freia até parar no ar;
+    - Espaço/Ctrl sobem e descem parado;
+    - pouso automático abaixo de `AlturaPouso`, devagar e com intenção de descer;
+    - Subida e Descida entram no misturador;
+    - Config `vooLivre`.
+  - **Câmera:** zoom pela roda do mouse dentro de `Camera_distMin` (13) a `Camera_distMax` (55); padrão 30.
+  - **Atributos do Silverwing:** VooLivre, CorpoAltura/CorpoRaio, FolgaChao 3, AlturaPouso 7, Ritmo 4,46/18,9, `TesteScriptsMontanhas` (TEMPORÁRIO: usa FormaRegional=Montanhas e as habilidades das Montanhas; o Glacial não tem configuração de combate).
+  - **Apelidos** atualizados para os clipes v2.
+  - **Testado em Play** (via Montaria_Debug, com as animações antigas ainda no Studio):
+    - decolar; W até 34; mouse para cima subiu 38 studs;
+    - S no ar sem efeito; parada completa no ar com altitude mantida;
+    - curvas E/D com inclinação de 27 a 32°;
+    - passagem rápida rente ao chão sem pousar;
+    - Ctrl parado pousou em 2,0 s; aproximação lenta pousou;
+    - 0 erros.
+- **Pendente:**
+  - importar o GLB v2 no Studio (manual) e rodar `meshy\studio_trocar_silverwing.luau`, depois retestar no Play;
+  - mouse físico e segundo cliente não testados;
+  - tamanho: hoje os ombros têm cerca de 6,9 studs (o pedido cita 12-15 nos ombros): confirmar com o usuário.
+- **Correção do usuário (29/10):** não é o "Dragão Glacial", é o **Silverwing** ajustado (único). O Glacial fica para depois.
+- **v2 importado no Studio** com `studio_trocar_silverwing` (adaptado: havia duas pastas "Scene" em RBX_ANIMSAVES).
+  - Silverwing e Silverwing_Guardiao trocados; as versões v1 estão em `ServerStorage.Dragoes_Retirados`.
+  - 17 clipes em `Animacoes_Silverwing`; os do molde estão em `Animacoes_Silverwing.Antigas_M2M`.
+  - Atributo `TesteScriptsMontanhas` (TEMPORÁRIO).
+- **Bugs encontrados e corrigidos no Play:**
+  - o voo livre subia com o nariz para baixo, porque em `aplicar()` um pitch positivo ergue o focinho;
+    - **atenção:** o controle antigo do Dragão das Montanhas (`passoVoo`) e o `Locomotor` usam o mesmo sinal negativo e podem estar invertidos. Não foram alterados (preservação); verificar;
+  - o zoom pela roda não funcionava (`camCfg` era usado antes de ser definido);
+  - o mergulho com W não ganhava velocidade;
+  - o planeio não descia com Ctrl e não pousava.
+- **Testado em Play com o v2 (via Montaria_Debug + mouse/teclado do MCP):**
+  - parado: patas apoiadas e cauda no chão; andar com o clipe próprio (ritmo 1,08);
+  - decolar; subida com a cabeça 8 studs acima do quadril; mergulho com a cabeça 6 studs abaixo, 34 → 45 studs/s;
+  - recuperação; soltar W leva à parada no ar em cerca de 4-7 s (Pairar w 0,98);
+  - planeio (Planeio w 0,98); planeio + Ctrl pousou em 10,9 s; passagem rápida rente ao chão sem pousar;
+  - zoom da câmera: mínimo 13 e máximo limitado (55), roda do mouse real;
+  - guardião com IA patrulhando em voo com os clipes novos;
+  - 0 erros.
+- **Pendente:**
+  - mouse físico pelo usuário e segundo cliente;
+  - sincronizar os scripts editados no Studio com `V14/montaria/*.luau` (não feito);
+  - salvar o place.
+- **v3 (29/10): cauda, asas, corpo e Mordida Aérea**
+  - **Diagnóstico** (`diag_cauda.py`, `comparar_malhas.py`, `soldar_costuras.py -- medir`):
+    - a malha do Meshy estava partida em **771 ilhas**, porque a decimação moveu cada lado das costuras de UV de forma independente;
+    - durante as animações, as costuras **abriam até 3,3 studs**, e isso aparecia como rasgos e lascas na cauda, nas asas e no corpo;
+    - a base da cauda dobrava toda a queda em um só segmento.
+  - **Correções:**
+    - `soldar_costuras.py` soldou as bordas (≤ 7 mm, nunca dentro da mesma ilha, pesos médios): de 771 para 5 ilhas, de 19.247 para 11.088 vértices, textura/UV preservada; backup em `Silverwing_M2M_v2_antes_solda.blend`;
+    - curva da cauda contínua: a queda se distribui pelos 4 primeiros segmentos e a subida de apoio começa no meio;
+    - penetração e cruzamentos corrigidos de novo.
+  - **QA (todos os quadros, 18 clipes):** asa x asa 0; asa dentro do corpo 0. Arestas acima de 1,6x: 450 a 790 por quadro. Agora a pele estica onde antes rasgava.
+  - **Mordida Aérea:**
+    - clipe `Silverwing_Mordida_Aerea` (1,0 s): preparo com pescoço em S, bote com pescoço projetado e asas varridas, mandíbula abre e fecha com tranco, garras à frente, recuperação até o Voo;
+    - servidor (`Montaria_Dragao_Servidor`: `iniciarMordida` / `passoMordida` / `mordidaAcertos`, só com VooLivre): avanço real a 78 studs/s na mira da câmera, para diante de parede, hitbox só na cabeça (raio 5,5), dano 40 + empurrão em NPCs com Humanoid (jogadores excluídos até haver regra de PvP), recarga 4 s, `EmAtaque=MordidaAerea`;
+    - Combate_Dragao_Servidor recusa pedidos durante a mordida;
+    - Config `mordidaAerea` e controle Q / clique / L1;
+    - cliente: slot extra "Mordida" com recarga, tranco de câmera ao acertar.
+  - **Status:** `saida_m2m\Silverwing_v3.glb` exportado. **NÃO importado nem testado no Studio ainda** (importação manual + `studio_trocar_silverwing.luau`).
+- **v3 importado e testado no Studio (29/10):**
+  - `studio_trocar_silverwing` trocou Silverwing e Guardião: 34,1 × 10 × 33,6 studs, base no chão, 18 clipes; as versões anteriores estão em `Dragoes_Retirados.*_anterior` e em `Animacoes_Silverwing.Anteriores`.
+  - **Testado em Play:**
+    - montar; HUD com o 5º slot "Mordida";
+    - mordida no chão é recusada;
+    - mordida no ar contra `NPC_Alvo1`: clipe tocado, avanço de 56 studs, velocidade máxima 76, 40 de dano (500 → 460), `EmAtaque` limpo no fim;
+    - repetir durante a recarga é recusado;
+    - depois do ataque, W volta a acelerar (34 studs/s, subida);
+    - **tecla Q real** dispara (HUD mostra "MordidaAerea, 76" e a recarga de 3,5 s no slot);
+    - 0 erros.
+  - **Não testado:** captura de tela no instante do bote no Studio (a captura saiu antes; o bote só foi visto nas renderizações do Blender e nos números), clique do mouse real, gamepad, empurrão em NPC não ancorado, segundo cliente.
+- **v4 (29/10): verificação completa como o Roblox desenha** (`diag_faces.py`, backface culling)
+  - **Causas encontradas:**
+    - (1) a v1 reduziu a malha antes de soldar as costuras de UV, gerando 771 pedaços;
+    - (2) faces com a normal para dentro (base da cauda, membranas): o Roblox só desenha a frente, então sumiam ("cauda faltando um pedaço");
+    - (3) pontes da pose do Meshy (asa x cauda, pata x barriga, ponta da asa x flanco) eram APAGADAS, deixando buraco, ou esticavam (lascas);
+    - (4) regiões pelo "osso mais próximo em linha reta" faziam a base da cauda virar asa.
+  - **Correções:**
+    - `reduzir_meshy_v2.py`: solda no original (1M) antes de reduzir, resultando em 1 ilha, 0 bordas abertas e 24 mil triângulos (`Silverwing_24k_v2.glb`);
+    - `montar_silverwing.py`: regiões **geodésicas** (Dijkstra na malha); pontes **rasgadas sem apagar faces** (membro x membro, e membro x tronco longe da articulação);
+    - `DoubleSided = true` na MeshPart.
+  - **Cauda com mais movimento:** onda lateral do quadril à ponta no andar e na corrida, com chicote vertical; ondulação puxada pela batida no voo, subida, descida e planeio.
+  - **QA final (19 clipes, todos os quadros):** asa x asa 0; asa dentro do corpo 0 (1 vértice em Pairar e Subida); malha com 1 ilha e orientação consistente.
+    - **Resta:** cerca de 400 a 700 arestas acima de 1,6x por quadro, principalmente no dorso (`spine_0`) e na membrana perto do cotovelo da asa esquerda.
+    - O polimento automático de pesos piorou a penetração e foi desfeito.
+  - **Mordida no M1** (clique esquerdo) / L1; Q removido.
+  - **Studio:**
+    - v4 trocado (34,1 × 10,1 × 33,7), 18 clipes;
+    - anteriores em `Dragoes_Retirados.*_anterior` / `Animacoes_Silverwing.Anteriores`;
+    - importações usadas renomeadas para `Scene_usada`.
+  - **Play:**
+    - montado: corpo e asa fechados;
+    - voo visto por trás: asas inteiras;
+    - **M1 real** dispara a mordida; diante da montanha o bote parou antes da parede;
+    - recarga no HUD; voo normal depois do ataque; 0 erros.
+- **Rodada 29/10 (lascas, sons, ataques)**
+  - **Diagnóstico das lascas (comprovado com renderizações):**
+    - a malha leve na pose do Meshy fica limpa (`malha_v5`, remesh + bake de cor/normal, 19,5 mil triângulos, 1 ilha);
+    - as lascas nascem no **repose** (asas erguidas → asas abertas do molde), por skin linear na raiz das asas e no dorso.
+  - **Tentativas sem sucesso** (não entregues):
+    - Corrective Smooth no repose;
+    - pesos suavizados para o repose;
+    - reposar o original de 1M (Surface Deform explodiu; Data Transfer esticou a membrana em "paredes").
+  - **Correção real recomendada:** um modelo do Meshy já em pose neutra (asas abertas, quatro patas apoiadas, sem asas encostando na cauda), para eliminar o repose; ou pintura manual de pesos no Blender.
+  - **Exportado:** `saida_v5/Silverwing_v5.glb` (malha remesh + bake). **Não importado.**
+- **Studio (testado em Play):**
+  - **prompt "Montar"** mostra "Silverwing" (atributo `NomeExibicao`).
+  - **Ataques no Silverwing** (`Nucleo`):
+    - pés e boca pelos ossos do rig Mesh2Motion;
+    - clipes por apelido;
+    - espera mínima dos marcadores.
+  - **Ataques em NPCs, todos sem erro:**
+    - Sopro: 48 de dano;
+    - Arremetida: 26;
+    - Tempestade: 48 em área;
+    - Ruptura: 48, com 20 pilares.
+  - **Sons** (`SonsConfig` + `SonsDragao_Cliente`):
+    - origem: só a biblioteca Pro Sound Effects (Roblox) e sons do motor;
+    - 12 sons carregados com sucesso;
+    - batidas de asa sincronizadas pela fase da animação (11 em cerca de 4 s de voo);
+    - passos de andar e correr (10 em 3 s e 15 em 3 s);
+    - mordida (avanço + dentes);
+    - sons das habilidades via `Combate_Dragoes.FX`;
+    - `EstadosDragao` publica `MapaTrilhas` (o nome da trilha não replica).
+
+## 2026-10-29 — Silverwing Drake3 (modelo Meshy em pose neutra, sem lascas nas pernas)
+- **Fonte:** `Meshy_AI_Silverwing_Drake_1029194148_texture.glb` → `meshy\drake2\Drake2_lo.glb` (remesh + bake, 19.132 vértices). Cadeia: `meshy\cadeia_drake3.ps1` → `meshy\saida_drake3\Silverwing_Drake3.glb` (18 clipes).
+- **Erro relatado (lascas/rachaduras quando as patas se mexem) — causas reais encontradas:**
+  - **Costuras de UV:** o glTF separa o vértice onde a UV corta (5.066 pontos duplicados); 1.945 tinham pesos diferentes em cada cópia e a costura abria ao posar. Correções: regiões geodésicas e suavizações tratam as cópias como vizinhas (`montar_silverwing.py`, `costura_regioes.py`, `suavizar_esticadas.py`) e `unificar_costuras_uv.py` iguala os pesos (2 passagens na cadeia).
+  - **Peito sob o pescoço com peso de `shoulder_l`:** girava junto com a asa no repose (rachadura gravada no descanso). `ASA_X_MIN=0.09` manda esses vértices para o tronco.
+  - Fronteiras 1/0 entre regiões: faixa macia (`costura_regioes.py`, 5 anéis) e `COSTURA_RAIZ=0.08` no repose.
+  - Patas de voo giravam 30° no quadril/ombro: agora 12° (`ANG_QUADRIL_VOO`) e a dobra vai para joelho/tornozelo.
+- **Verificação no Blender:** interseções entre partes em todos os quadros de 37,9 mil → 19,2 mil; renders (Voo, Pairar, Parado, Andar) com pernas, coxa, peito e ventre limpos. QA_OK, PEN_OK, CRUZ_OK. Velocidades do clipe iguais (andar 4,46; correr 18,94 studs/s).
+- **Pendência visual:** ainda há lascas pequenas na raiz da asa (atrás do ombro) com a asa erguida/dobrada (giro de 18° do repose da asa).
+- **Studio (Teste-animacoes.rbxl):** `Silverwing` e `Silverwing_Guardiao` trocados (33,4 × 12,1 × 26,1 studs, ScaleTo 17,5); anteriores em `ServerStorage.Dragoes_Retirados.*_anterior`; 18 KeyframeSequences em `Animacoes_Silverwing` (antigas em `Anteriores`).
+- **Testado em Play (via `Montaria_Debug`, jogador montou com E real):** montar → Parado; andar 4,8 studs/s com clipe Andar; decolar → Pairar_AFK; W → Voo_AFK 34 studs/s; soltar W → para no ar (Pairar); mordida → `EmAtaque=MordidaAerea`, 71,6 studs/s, clipe Mordida_Aerea; pousar → chão/Parado; desmontar ok; guardião voando com animação. Sem erros de script do jogo (os erros `abs(nil)` no console vieram da minha injeção de teste sem o campo `t`, o cliente real sempre envia).
+- **Não retestado nesta versão:** ataques 1–4 em NPCs, sons, câmera/zoom, segundo cliente, gamepad. O usuário precisa salvar o place (Ctrl+S).
+- **Drake3b — raiz da asa (29/10):** a asa gira como bloco a partir de `wing_1` e a fronteira asa/coluna era uma linha de 1–2 arestas; no bater a raiz do braço atravessava o dorso (lascas). `meshy\dobradica_asa.py` cria um gradiente de pesos na dobradiça (fração da asa sobe de 0 a 1 entre -0,03 e +0,08 ao longo do braço; raio 0,13; some na borda), seguido de penetração/cruzamentos/costuras UV (etapas incluídas em `cadeia_drake3.ps1`). Resultado no Blender: dorso limpo no Voo; QA_OK (sem asa no corpo, LxR 0); interseções 19,2 mil → 15,2 mil. Resta uma fresta pequena no topo do ombro com a asa dobrada (Parado).
+  - Studio: `Silverwing_Drake3b.glb` importado pelo usuário e trocado (Silverwing e Guardião; anteriores em `Dragoes_Retirados`). Play: montar (E real), andar 4,8 studs/s (Andar), decolar, voo com W 30 studs/s (Voo_AFK), soltar W → pairar, mordida M1 (MordidaAerea, 69,7 studs/s), pousar, desmontar; **0 erros de script** no log. Place ainda não salvo pelo usuário.
+
+## 2026-10-29 — Silverwing Drake3c: cauda viva, garra/mordida e clipes próprios de combate; curvas mais fluidas
+- **Escala preservada (sem novo aumento):** 33,4 × 12,1 × 26,1 studs (envergadura × altura × comprimento), ScaleTo 17,5; ombros ≈ 7 studs. Divergência registrada: o RPG_02 [OFICIAL] diz adulto 18–24 studs até os ombros; o usuário mandou manter a escala atual.
+- **Configuração:** FormaRegional=Montanhas (TEMPORÁRIO, teste), Fogo/Terra/Ar; habilidades Sopro, Arremetida, Tempestade, Ruptura. Ataque básico: RPG_02 [OFICIAL] "cada espécie-base possui ataque básico"; valores do Dragão não definidos → `ConfigCombate.basicos` segue NAO_APROVADO (Mordida 18, Garra 14, Cauda 20).
+- **Cauda (anim_silverwing.py):** `onda_cauda` = ondas que nascem na base e correm para a ponta (atraso 0,8–1,6 rad/segmento, peso crescente para a ponta, harmônicos inteiros + envelope com momentos quase parados). Parado agora tem 8 s (respiração ×3, olhar que varre, troca de apoio, cauda em S contrária ao olhar); Andar/Correr com 2º harmônico; voo com 4 batidas por clipe (Voo 3,2 s, Pairar 4 s, Subida 2,8 s; Planeio/Descida/Curvas 4 s; Mergulho 2 s) para a cauda e as patas (`patas_vivas`) mexerem devagar. Curvas: quadril inclina, patas assimétricas, cauda compensa com atraso. Vistas de cima confirmam curvas em S parado e voando.
+- **Clipes de combate próprios (antes eram apelidos: Sopro→Parado etc.):** Ataque_Mordida (1,4 s), Ataque_Garra_E/D (1,5 s), Ataque_Cauda, Rugido_Combate (+_Camada), Sopro_Inicio/Loop/Fim (+_Camada no ar), Arremetida (+_Camada), Tempestade_Asas (3,4 s), Tempestade_Asas_Ar, Ruptura_Vulcanica (3,6 s) — tempos casados com os marcadores de reserva do Nucleo. Blender: PEN_OK, CRUZ_OK, costuras UV 0 diferentes, QA_OK. GLB `meshy\saida_drake3\Silverwing_Drake3c.glb` (35 clipes).
+- **Studio (`meshy\studio_combate_silverwing.luau`, tudo-ou-nada; originais em `ServerStorage.Backup_Scripts_Combate_Silverwing`):** Nucleo procura clipe `_Camada` próprio no ar; FX com `acertou`; montaria freia durante garra/mordida/cauda; **M1 no chão = mordida terrestre** (no ar continua a Mordida Aérea), **R = garra** (gamepad DPadLeft — R1 já era a Arremetida); sons: respiração grave em intervalos irregulares (mais frequente após correr/voar), whoosh/esforço da garra, impacto forte só com acerto, máx. 6 sons simultâneos por dragão, batidas casadas com os clipes de 4 batidas. Áudios novos, todos "Courtesy of Pro Sound Effects": 9113971531 (respiro), 9125467848 (esforço), 9119228132 (whoosh) — carregaram no cliente.
+- **Curvas (referência de fluidez: vídeo do usuário jogando Dragon Adventures; só princípios, nada copiado):** ConfigMontaria giroVoo 42→52, giroVooRapido 28→36, inclinacaoMax 32→46, suavRoll 2,5→4, acelGiro 140→200 (valores antigos anotados no próprio arquivo). Medido em Play: antes inclinação 32° em ~1,8 s e 124° de giro em 3,1 s; depois 46° em ~0,8 s e 158° em 3,2 s.
+- **Testado em Play (montado, teclas reais E/R/M1/1/2/3/4):** garra acertou NPC (−14), mordida terrestre tocou Ataque_Mordida e acertou (−18); Sopro tocou Sopro_Inicio→Loop→Fim, Tempestade_Asas, Ruptura_Vulcanica, Arremetida (avançou 85 studs) — todos com clipe próprio; voo, curva, pouso; 0 erros/avisos de script (servidor e cliente).
+- **Não testado:** volumes por percepção (não há como ouvir), segundo jogador observando, PvP, versões _Camada no ar em combate, gamepad, desempenho com vários dragões. Pendência visual: pequenas frestas na raiz da asa dobrada. O usuário precisa salvar o place (Ctrl+S).
+
+## 2026-10-29 — Drake3d: amplitude do corpo em voo/andar (referência Dragon Adventures)
+- **Queixa do usuário:** no voo pés, corpo, cabeça e pescoço "estáticos". **Medido em Play (cliente):** as trilhas avançam, mas a cabeça oscilava só ±0,15 stud por batida → estático na escala do dragão.
+- **Pesquisa:** busca web não achou vídeo de voo (resultados de guias); DevForum (equipe de How to Train Your Dragon no Roblox): voo com molas/suavização exponencial, foco em "sensação" e não física real. YouTube: longplay público de Dragon Adventures aberto no navegador, resolução baixa demais para medir patas. Medição feita no vídeo do próprio usuário (quadros a cada 0,125 s): corpo inteiro muda de atitude a cada batida, hover quase vertical com patas/cauda pendentes, andando o pescoço vai à frente e baixo.
+- **anim_silverwing.py (PENDULO=1; 0 = antigo):** Voo — corpo sobe/desce ~0,9 stud com atraso da batida, arfa 5°, rola/guina lentamente, tórax flexiona, pescoço reage com atraso e cabeça estabiliza só em parte, patas em pêndulo (quadril/tornozelo/dedos com atraso), chicote vertical da cauda maior. Pairar — tronco a ~50°, plano da batida quase horizontal, patas pendentes balançando, cauda caída em S. Subida/Descida/Planeio com corpo flutuando, rolando e corrigindo rumo. Andar/Correr — pescoço à frente e baixo (−30°/−44°) com balanço atrasado, mais bob/rolagem/guinada do tronco; passada e velocidade iguais (4,46/18,94 studs/s, sem patinar).
+- **Blender:** PEN_OK, CRUZ_OK, costuras 0, QA_OK; interseções por quadro 51–80 (repouso 39). Vídeos antes/depois em `meshy\saida_drake3\comp_antes` e `comp_depois`. GLB `meshy\saida_drake3\Silverwing_Drake3d.glb` — **ainda não importado/testado no Studio.** Backup do .blend anterior: `Silverwing_M2M_antes_movimento.blend`.
+
+## 2026-10-29 — Camada dinâmica "MovimentoVivo" (reação ao movimento real) + inclinação 60°
+- **Vídeo do usuário revisto inteiro (48 quadros, 1/s):** solto/parado o dragão gira para o jogador, olha em volta, estica as asas; no chão o corpo inteiro curva na curva; no voo inclina 60–80° em curvas fechadas, aponta o tronco na subida/mergulho; hover vertical; cauda segue a trajetória. Isso depende do movimento do jogador — clipe fixo não consegue.
+- **Novo (só visual, cliente):** `StarterPlayerScripts.MovimentoVivo_Cliente` + `ReplicatedStorage.MovimentoVivo.Perfis` (fontes em `BLENDER\Criaturas\Teste_IA\V14\MovimentoVivo_*.luau`). A cada quadro (PreSimulation — medido: o Animator escreve entre PreAnimation e PreSimulation e o valor chega ao desenho) soma ao Transform dos ossos, com molas: pescoço/cabeça entram na curva, coluna dobra, cauda segue o arco com atraso crescente por segmento, pescoço acompanha subida/descida, cauda compensa, patas reagem à aceleração/freada, asa interna da curva baixa, cabeça segue a câmera do cavaleiro, e solto/parado olha jogadores próximos (70 studs). Pivô replicado chega a ~30 Hz: grandezas recalculadas só quando o pivô muda, com tempo acumulado. Genérico: qualquer criatura com atributo `PerfilMovimento` (Silverwing e Silverwing_Guardiao = "Silverwing").
+- ConfigMontaria `inclinacaoMax` 46 → 60.
+- **Testado em Play (montado, entradas injetadas pelo Montaria_Debug):** curva no chão giro 0,71 rad/s → coluna 9,8°, cauda no arco; curva no voo 0,93 rad/s → inclinação 60°, pescoço 16,5° (no jogo real ~37°: no teste a câmera não acompanhava e o "olhar" puxava ao contrário), coluna 12,7°, asa 12,7°; mergulho trajetória −46° com tronco para baixo e cauda subindo; 0 erros no cliente, ~61 FPS.
+- **Pendente:** importar o Drake3d (clipes com corpo vivo) — a camada soma por cima de qualquer clipe; validação do usuário com mouse real; sinal da asa (`sinalAsa`) conferido só numericamente.
+
+## 2026-10-29 — "Não mudou nada": causas e correção (clipes sem importação manual, corpo inteiro orientado)
+- **Causas:** (1) os clipes Drake3d dependiam da importação 3D manual e não estavam no jogo; (2) ganhos da camada pequenos para o tamanho do dragão; (3) o controlador limitava o pitch do corpo a 40° (subida máx. 40°, nariz 0,85).
+- **Ponte Blender → Studio sem importação:** `meshy\exportar_clipes_json.py` (JSON em `V14\ia\anim_json`, servido em 127.0.0.1:8766) + `V14\montar_kfs_json.luau`. Conferido: Pose.CFrame do importador = matrix_basis do Blender (diferença 0,0000° em 98 ossos). **Armadilha encontrada e corrigida:** o keyframe importado tem duas raízes irmãs (DRV_root vazia + root com os 98 ossos); copiar só a primeira gerou clipes que tocavam sem mexer nenhum osso.
+- Instalados no Studio (versão Drake3d): Voo, Pairar, Andar, Correr, Subida, Descida, Planeio (98 ossos/quadro).
+- **Controlador:** pitch do corpo configurável (`voo.pitchMax` 65, `pitchResp` 5,5), subida máx. 60°, descida 70°, gamaTaxa 95, narizSegue 1,0. **Camada MovimentoVivo:** pescoço 70°/(rad/s) até 55°, coluna 24 até 22°, cauda 15/segmento até 17°, trajetória 0,55 até 32°, patas 1,6 até 28°, asa 24 até 22°.
+- **Medido em Play (cliente, montado):** hover — tronco (Quadril) 47–51°, pescoço 35–37°, cauda/patas oscilando; subida — corpo 52° nariz para cima, cauda pendente; mergulho — corpo −57°; curva — inclinação 60°, pescoço 40° para dentro, coluna e asa 22°, cauda em arco; 0 erros no cliente. Capturas da câmera do jogador conferidas.
+- **Não testado:** controle com mouse real pelo usuário; curva no chão nesta rodada (o teste não chegou a pousar a tempo); Correr/Andar novos em Play.
+
+## 2026-10-29 — Gravação do usuário analisada (19:01): câmera, chão e velocidade
+- **Achados na gravação (24 quadros):** no voo a câmera ficava longe (dragão pequeno, detalhes ilegíveis: a distância crescia com a velocidade); no chão as asas ficavam meio abertas/assimétricas (Andar/Correr usavam as asas do Walk do molde); andar muito lento (4,8 studs/s); pescoço ereto escondia a cabeça.
+- **Feito:** Andar/Correr com asas dobradas (Idle) e pescoço à frente; Andar mais vivo (T 0,9 s, passada 0,26, apoio 0,64 → 7,9 studs/s no ritmo 1); Parado com pescoço 14° mais baixo. Clipes levados ao Studio pela ponte JSON. Montaria lê `VelAndar`/`VelCorrer` por modelo (Silverwing 10/22; antes 4,8/17 globais), `RitmoAndarBase` 7,9. Câmera do Silverwing: distância 26, porVel 0,06, máx. 42, alvo 7.
+- **Play:** andando a 10 studs/s com corpo e cauda em arco na curva; voo com o dragão grande na tela, inclinação 36° numa curva de subida, pescoço para dentro, cauda em curva longa. 0 erros.
+- **Limite atual:** a dobra própria das asas deste modelo (membrana enorme) não fica rente como na referência e uma asa sobe ao andar — exige refazer a pose de dobra (dobra_asa.py) e repassar penetração/cruzamentos.
+
+## 2026-10-29 — "Só asa e rabo se mexem": amplitude ×2,5 em corpo/cabeça/patas (AMP)
+- **Medição que confirmou a queixa:** no cliente do usuário, pairando, tronco 46–51° e pescoço 35–37° (±2°), cabeça ~0,8 stud — parado na escala do dragão; asas ±60° e cauda ±17° eram as únicas partes amplas.
+- **anim_silverwing.py:** `AMP` (padrão 2,5; `AC` = 1,825 no chão) multiplica no Voo/Pairar o sobe-desce, arfagem, rolagem, guinada, tórax, pescoço/cabeça e o pêndulo das patas/dedos; no Andar/Correr o bob, rolagem/guinada do tronco e o aceno da cabeça; no Parado respiração, troca de apoio e olhar. QA_OK, PEN_OK, CRUZ_OK; interseções por quadro no voo 53–70 (repouso 39); andar/correr/parado 115–140 (contato asa dobrada × corpo). Levado ao Studio pela ponte JSON (Parado, Andar, Correr, Voo, Pairar). Backup: `Silverwing_M2M_antes_amp.blend`.
+- **Medido em Play (variação real na tela):** andando — cabeça 2,5 studs de lado a lado, pata dianteira 4,1 studs de passada; voo nivelado — quadril sobe/desce 2,7 studs e gira 9,6°, patas traseiras 3,2 studs, dianteiras 1,3–2,0, cabeça 1,7 lateral.
+
+## 2026-10-29 — Câmera/mouse livre/mira/E-Q (Studio) + anatomia localizada e patas recolhidas (Drake4)
+- **Studio (`V14\patch_mira_camera.luau`, tudo-ou-nada, 26 trocas; originais em `ServerStorage.Backup_Scripts_MiraCamera`):** E sobe / Q desce (prioridade sobre o pitch da câmera; com W ±35°, sem W vertical no lugar 16 studs/s); cursor livre (sem LockCenter) com retícula pequena (vermelha sobre Humanoid); câmera gira só com botão direito (sem girar volta para trás do dragão; o rumo do voo só segue a câmera enquanto ela gira); zoom Silverwing 12/25/45; habilidades miram pelo cursor (raio da câmera, direção da boca até o ponto); Sopro segurado: emissão contínua até 6 s, 8 energia/s além de 1,8 s, mira viva validada no cone do pescoço (servidor) e efeito seguindo a mira (VFX fase "mira"); cabeça do dragão olha a mira (MovimentoVivo). Gamepad: subir/descer mantêm A/L2 (bug do table.unpack corrigido com `juntar`).
+- **Testado em Play (teclas reais):** E decolou e subiu no lugar (vel 0, y 48,9); Q desceu 20 studs no lugar; W+E subiu 32 studs avançando 86, corpo 34°, sem girar; mouse livre (MouseBehavior Default), retícula visível; Sopro (Fogo) segurado ~4,5 s — ataque durou 0,5→7,3 s, chama saindo da boca para o cursor à direita; 0 erros cliente/servidor. Não testado: multiplayer, gamepad, toque.
+- **Anatomia (Drake4, `meshy\ajuste_anatomico.py`):** escala de pose aplicada como novo repouso só em tail_1 (comp. 1,20 / esp. 1,35), wing_1 (1,22) e front_leg_collar/back_leg_hip (esp. 1,10 / comp. 1,03); modelo subiu 0,031 para os pés tocarem o chão. Envergadura 2,23 (era ~1,83). Cabeça, pescoço e tronco intocados.
+- **Clipes (Drake4):** todos regenerados no novo esqueleto; voo com patas RECOLHIDAS (`ENCOLHE` 0,62: alvo do punho/tornozelo perto do corpo → IK dobra cotovelo/joelho); mergulho com asas varridas e parcialmente fechadas (mistura 0,66, ombros −18°) — primeira versão (0,78/−22°) dava 196 interseções asa×corpo, corrigida para 78–83. QA_OK, PEN_OK, CRUZ_OK, costuras 0. GLB `meshy\saida_drake4\Silverwing_Drake4.glb` — **aguarda importação do usuário** (a malha mudou).
+- **Patas de voo contraídas PARA TRÁS (pedido do usuário):** bug corrigido — o giro "para trás" usava o eixo −X do corpo e levava as patas para FRENTE (dianteiras pareciam agarrar o ar); agora +X. Valores: traseiras 48°, dianteiras 32°, `ENCOLHE` 0,74 / `ENCOLHE_FRENTE` 0,8, pêndulo leve mantido (no hover voltam a ficar mais abaixo). Testes: 55°/38° → interseções 350–500 e pele esticando no quadril; 50°/55° → dianteiras entrando no peito; 48°/32° → 73–95 (normal). **Variáveis de ambiente para regenerar os clipes de voo:** PERNA_VOO_REL=1 ANG_QUADRIL_VOO=12 NECK_BASE=0 PESC_VOO=-40 PENDULO=1 AMP=2.5 ENCOLHE=0.74 ENCOLHE_FRENTE=0.8 ANG_VOO_TRAS=48 ANG_VOO_FRENTE=32.
+- **Troca no Studio (Drake4) + teste em Play (2026-10-29):** Silverwing e Silverwing_Guardiao trocados pelo Drake4 (33,4×12,1×26,1 → 39,9×12,65×29,4 studs; anteriores em `ServerStorage.Dragoes_Retirados`). Os 18 clipes de ar com patas para trás foram instalados pela ponte JSON. **Verificado em Play:**
+  - cavaleiro sentado no lugar certo e asas dobradas simétricas no chão;
+  - E decola e sobe;
+  - voo para frente a 33–34 studs/s, com vista lateral capturada: patas traseiras dobradas para trás junto à barriga e dianteiras dobradas perto do peito;
+  - pairar com tronco erguido e patas mais penduradas, como esperado;
+  - console sem erros do jogo (só avisos internos do CorePackages/UIBlox).
+
+  **Não testado:** mergulho com asas fechando no Drake4, mira/Sopro com o modelo novo, multiplayer, gamepad e toque. As dianteiras ainda apontam um pouco para baixo; se quiser mais para trás, o limite é ~32–38° antes de entrar no peito. Salvar o place com Ctrl+S.
+
