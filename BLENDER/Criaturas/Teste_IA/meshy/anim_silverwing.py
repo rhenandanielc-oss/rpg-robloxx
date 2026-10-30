@@ -174,7 +174,8 @@ def _giro_em(p, R): return Matrix.Translation(p) @ R.to_4x4() @ Matrix.Translati
 # parametros (graus): ergue = sobe a asa inteira no ombro; recua = varre para tras; cotovelo/punho = meia dobra
 # (antebraco para frente, dedos para tras), fecha os dedos em leque. ARMADA (andar/parado) e ERGUIDA (sentado)
 P_ARMADA = dict(ergue=38, recua=18, cotovelo=-14, punho=30, leque=0.25)
-P_ERGUIDA = dict(ergue=72, recua=26, cotovelo=-22, punho=44, leque=0.35)
+# sentado (usuario 31/10: de frente parecia borboleta): menos vertical, mais para tras e com leve dobra para o lado
+P_ERGUIDA = dict(ergue=58, recua=48, cotovelo=-34, punho=58, leque=0.5)
 def asas_armadas(ergue=0.0, resp=0.0):
     """Asas ARMADAS a partir do PLANEIO (pose validada, membrana sem lascas): giros RIGIDOS de subarvores (punho,
     cotovelo, ombro) em vez de direcoes osso a osso -> a membrana entre os dedos nao torce. ergue 0 = armada,
