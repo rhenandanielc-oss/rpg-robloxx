@@ -52,6 +52,8 @@ function N:elementos()
 	-- filtra pela forma ANTES de aplicar o limite (dado antigo "Raio,Terra,Ar" nao pode esconder o Ar)
 	local permitidos = {}
 	for _, e in ipairs(Cfg.elementosForma[self.forma] or {}) do permitidos[e] = true end
+	local daForma = Cfg.elementosForma[self.forma] or {}
+	if #daForma == 1 then return {daForma[1]} end                -- forma de elemento unico (Montanhas = Fogo): e o proprio
 	local validos = {}
 	local function add(e) if permitidos[e] and not table.find(validos, e) and #validos < Cfg.maxElementos then table.insert(validos, e) end end
 	add(self.m:GetAttribute("ElementoNato"))

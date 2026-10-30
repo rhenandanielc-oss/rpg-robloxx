@@ -34,6 +34,10 @@ local function preparar(m)
 		if d:IsA("BasePart") then d.Anchored = true end
 		if d:IsA("MeshPart") then d.DoubleSided = true end      -- membranas sem espessura e interior da boca
 	end
+	-- a RootPart importada (35x35x17,5, invisivel) colidia e bloqueava raios: parede invisivel em volta do dragao
+	local rp = m:FindFirstChild("RootPart")
+	if rp then rp.CanCollide = false; rp.CanQuery = false; rp.CanTouch = false; rp.CastShadow = false end
+	m.ModelStreamingMode = Enum.ModelStreamingMode.Atomic       -- ossos e malhas chegam/saem juntos no cliente
 end
 local carimbo = os.date("!%Y%m%d_%H%M%S")
 local function trocar(nomeAntigo)

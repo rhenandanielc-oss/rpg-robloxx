@@ -11,7 +11,9 @@ local NAO_APROVADO = true
 return {
 	NAO_APROVADO = NAO_APROVADO,
 	elementosGlobais = {"Fogo", "Terra", "Ar", "Raio", "Gelo", "Agua", "Luz", "Sombra"},  -- referencia; cada forma restringe abaixo
-	elementosForma = {Montanhas = {"Fogo", "Terra", "Ar"}},       -- Glacial/Sombrio: definir quando os documentos/modelos existirem
+	-- decisao do usuario 2026-10-30: poderes do Dragao das Montanhas SOMENTE de fogo (Terra/Ar saem desta forma;
+	-- dados antigos ficam marcados em MigracaoPendente, nada e apagado)
+	elementosForma = {Montanhas = {"Fogo"}},                      -- Glacial/Sombrio: definir quando os documentos/modelos existirem
 	habilidadesForma = {Montanhas = {"Sopro", "Arremetida", "Tempestade", "Ruptura"}},
 	maxElementos = 3,
 	energiaMax = 100, energiaRegen = 6,                         -- por segundo
