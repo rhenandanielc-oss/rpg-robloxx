@@ -29,10 +29,14 @@ ENCOLHE = float(os.environ.get("ENCOLHE", "0.62")); ENCOLHE_EXTRA = {"v": 1.0}
 # giro das patas no voo (graus, para TRAS): traseiras / dianteiras; 0 = usa ANG_QUADRIL_VOO nas duas
 ANG_VOO_TRAS = float(os.environ.get("ANG_VOO_TRAS", "0")); ANG_VOO_FRENTE = float(os.environ.get("ANG_VOO_FRENTE", "0"))
 ENCOLHE_FRENTE = float(os.environ.get("ENCOLHE_FRENTE", str(ENCOLHE)))   # dianteiras: menos encolhidas, deitadas para tras
-PLANEIO_ABAIXA = float(os.environ.get("PLANEIO_ABAIXA", "0"))
+PLANEIO_ABAIXA = float(os.environ.get("PLANEIO_ABAIXA", "0"))   # graus: baixa as pontas das asas no planeio
 # fator da queda da base da cauda (1 = Silverwing). Caudas que ja descem no repouso (CR_Dragao) usam ~0: senao a
 # cauda encosta no chao e o apoio a dobra para cima em gancho
-CAUDA_BASE_K = float(os.environ.get("CAUDA_BASE_K", "1"))   # graus: baixa as pontas das asas no planeio
+CAUDA_BASE_K = float(os.environ.get("CAUDA_BASE_K", "1"))
+# PASSO_PESADO=1 (CR_Dragao, usuario 31/10, referencia "quadrupede pesado"): tronco inclinado a frente, dianteira sobe
+# mais com os dedos curvados, quique quase zero trocado por ABSORCAO nos ombros quando a dianteira pisa e IMPULSO do
+# quadril quando a traseira empurra. Passada, apoio e ciclo nao mudam (velocidades calibradas da montaria/IA).
+PASSO_PESADO = os.environ.get("PASSO_PESADO") == "1"
 sc = bpy.context.scene; sc.render.fps = FPS
 A = bpy.data.objects["Silverwing_Rig"]; M = bpy.data.objects["Silverwing"]
 for m in M.modifiers: m.show_viewport = False
@@ -325,7 +329,9 @@ def f_parado(u):
 def andadura(T_ciclo, duty, S, fases, alt_pd, alt_pt, bob, rol, guin, arf_osc=0.0, flex=0.0, nome_asa="Silverwing_Idle", corrida=False):
     def fn(u):
         p = Pose(); em_pe(p)
-        p.off += Vector((0, 0, -bob * math.cos(4 * math.pi * u) - 0.014 - (0.01 if corrida else 0)))   # em marcha o corpo baixa (alcance da traseira)
+        bob_ = bob * (0.35 if PASSO_PESADO else 1.0)                    # sem quicar: o peso aparece nos apoios
+        if PASSO_PESADO: p.arf -= 6 if corrida else 4                    # tronco inclinado para frente
+        p.off += Vector((0, 0, -bob_ * math.cos(4 * math.pi * u) - 0.014 - (0.01 if corrida else 0)))   # em marcha o corpo baixa (alcance da traseira)
         p.rol = rol * math.sin(2 * math.pi * u); p.gui = 0
         p.arf += arf_osc * math.sin(2 * math.pi * u + 1.2)
         p.curva["spine_0"] = (flex * math.sin(2 * math.pi * u + 1.2), guin * math.sin(2 * math.pi * u))
@@ -343,15 +349,28 @@ def andadura(T_ciclo, duty, S, fases, alt_pd, alt_pt, bob, rol, guin, arf_osc=0.
                 v = (fase - dp) / (1 - dp); K.y = PE[c].y + Sp * (0.5 - smooth(v))
                 K.z += (alt_pd if not pg["tras"] else alt_pt) * math.sin(math.pi * v)
                 bet += 22 * math.sin(math.pi * v); dedos = -32 * math.sin(math.pi * v)
+            if PASSO_PESADO:
+                if fase < dp:
+                    v = fase / dp
+                    amort = math.exp(-((v - 0.06) / 0.09) ** 2)               # logo apos pisar
+                    if not pg["tras"]:                                     # dianteira recebe o peso: ombro cede
+                        p.off.z -= 0.010 * amort * (1.3 if corrida else 1.0); p.arf -= 1.6 * amort
+                    elif v > 0.7:                                          # traseira empurra: quadril sobe e avanca
+                        emp = math.sin(math.pi * (v - 0.7) / 0.3)
+                        p.off.z += 0.006 * emp; p.arf -= 1.2 * emp
+                else:
+                    v = (fase - dp) / (1 - dp)
+                    if not pg["tras"]:                                     # dianteira alta e dedos curvados (referencia)
+                        K.z += 0.030 * math.sin(math.pi * v); dedos -= 16 * math.sin(math.pi * v); bet += 8 * math.sin(math.pi * v)
             p.pata[c] = dict(modo="chao", K=K, beta=bet, dedos=dedos)
         # referencia: andando o pescoco vai para FRENTE e mais baixo (nao ereto), balanca a cada passo com atraso e a
         # cabeca acompanha o olhar; correndo estica ainda mais
         if corrida:
             # corrida: pescoco esticado a frente balancando pouco e com atraso; a cabeca COMPENSA 75% (olhar estavel)
             osc = 3.0 * math.cos(4 * math.pi * u - 0.7)
-            pescoco_alto(p, cima=-44 * PENDULO + osc, esq=-guin * 0.8 * math.sin(2 * math.pi * u - 0.3), cab=-0.75 * osc)
+            pescoco_alto(p, cima=(-50 if PASSO_PESADO else -44) * PENDULO + osc, esq=-guin * 0.8 * math.sin(2 * math.pi * u - 0.3), cab=-0.75 * osc)
         else:
-            pescoco_alto(p, cima=-30 * PENDULO + 3 * AC * 1.6 * math.cos(4 * math.pi * u - 0.7),
+            pescoco_alto(p, cima=(-38 if PASSO_PESADO else -30) * PENDULO + 3 * AC * 1.6 * math.cos(4 * math.pi * u - 0.7),
                          esq=-guin * 1.2 * math.sin(2 * math.pi * u - 0.3), cab=-2.5 * AC * math.cos(4 * math.pi * u - 1.2))
         p.asas = asas(nome_asa, u)
         # cauda: onda lateral que nasce no quadril (contrapeso do passo) e cresce com atraso para a ponta; na corrida
@@ -387,6 +406,55 @@ def f_parada(u):                       # frenagem curta: dianteiras firmam a fre
     cauda(p, -12 + 6 * k, 4.5, onda_cauda(u, [(3.0, 1, 0.5, 0.9)]),
           onda=[(5 + 4 * k_) * math.sin(math.pi * min(1, max(0, u * 1.5 - 0.08 * k_))) for k_ in range(7)])
     return p
+
+# SENTADO (usuario 31/10, referencia do dragao verde): traseiras dobradas sob o corpo com o metatarso no chao, quadril
+# baixo, peito e pescoco erguidos, cabeca altiva e nivelada, dianteiras retas apoiando, asas recolhidas, cauda em
+# curva suave pelo lado no chao. a = 0 (em pe) .. 1 (sentado); r = respiracao; olhar = giro da cabeca
+def pose_sentado(p, a, r=0.0, olhar=0.0, ponta=None):
+    em_pe(p)
+    p.arf += 30 * a                                                     # peito sobe, quadril desce (giro no centro)
+    p.off += Vector((0, 0.03 * a, -0.105 * a + 0.004 * r * a))          # ombros quase na altura de pe
+    for c in ("PT_E", "PT_D"):                                          # traseiras sob o corpo, pe deitado no chao
+        p.pata[c]["K"].y -= 0.07 * a; p.pata[c]["beta"] = lerp(BETA[c], 6, a)
+    for c in ("PD_E", "PD_D"):                                          # dianteiras retas, um pouco a frente
+        p.pata[c]["K"].y -= 0.03 * a; p.pata[c]["beta"] = lerp(BETA[c], 64, a)
+    p.curva["spine_1"] = (1.2 * r * a, 0); p.curva["spine_0"] = (-0.6 * r * a, -2.0 * olhar * a)
+    pescoco_alto(p, cima=-14 * (1 - a) - 8 * a + 1.5 * r, esq=12 * olhar, cab=4 * a)
+    lado = -1                                                           # cauda curva para a direita do dragao
+    lat = [lado * (1.0 + 1.4 * k) * a for k in range(7)]                # curva suave (~35 graus no total)
+    if ponta: lat = somar(lat, ponta)
+    # tronco inclinado 30 graus: o apoio automatico da cauda no chao empilhava angulos para CIMA (cauda no ar).
+    # Sentado: curva definida por segmento -- a base desce ate o chao, o meio fica rente ao piso e a curva e lateral;
+    # nas transicoes mistura com a cauda de em pe
+    cauda(p, -14, 3.0, [0] * 7, chao=True)
+    CIMA_SENTADO = [16, 9, 5, 2, 1, 0.5, 0]                            # graus locais (compensam os 30 do tronco)
+    for k, n in enumerate(CAUDA):
+        c, e = p.curva[n]
+        p.curva[n] = (lerp(c, CIMA_SENTADO[k], a), lat[k] if k < len(lat) else 0)
+    # deita a cauda NO chao: cada segmento (a partir do 2o) corrige o angulo para a ponta ficar logo acima do piso
+    # (sobe ou desce), entao a curva lateral fica rente ao chao em vez de subir ou atravessar
+    for it in range(6):
+        W, _ = resolver(p)
+        for k, n in enumerate(CAUDA):
+            if k == 0: continue
+            Lb = A.data.bones[n].length
+            tz = (W[n].translation + rot(W[n]) @ Vector((0, Lb, 0))).z
+            alvo = 0.03 + 0.004 * k
+            corr = math.degrees(math.asin(max(-1, min(1, (alvo - tz) / Lb)))) * 0.9 * a
+            c, e = p.curva[n]; p.curva[n] = (c + corr, e)
+    p.asas = asas("Silverwing_Idle", 0.0)
+    return p
+def f_sentar(u):                    # em pe -> sentado: o quadril desce primeiro, o peito sobe no fim
+    return pose_sentado(Pose(), smooth(u))
+def f_levantar_sentado(u):          # sentado -> em pe
+    return pose_sentado(Pose(), 1 - smooth(u))
+def f_sentado(u):
+    """8 s: 3 respiracoes, olhar lento (ida e volta + desvio), ajustes de cauda com momentos quase parados"""
+    r = math.sin(2 * math.pi * 3 * u)
+    olhar = 0.75 * math.sin(2 * math.pi * u) + 0.25 * math.sin(2 * math.pi * 3 * u + 0.8)
+    env = 0.4 + 0.6 * (0.5 - 0.5 * math.cos(2 * math.pi * 2 * u + 0.4)) ** 1.5
+    ponta = onda_cauda(u, [(4.0, 1, 0.6, 0.9), (2.0, 3, 1.4, 1.3)], env)
+    return pose_sentado(Pose(), 1.0, r, olhar, ponta)
 
 def f_agachar(ini, fim):
     def fn(u):
@@ -1233,6 +1301,9 @@ gerar("Correr", n(T_CORRER), f_correr)
 gerar("Parada", n(0.6), f_parada, loop=False)
 gerar("Abaixar", n(0.7), f_agachar(0, 1), loop=False)
 gerar("Abaixado", n(3.0), f_agachar(1, 1))
+gerar("Sentar", n(1.6), f_sentar, loop=False)
+gerar("Sentado", n(8.0), f_sentado)
+gerar("Levantar_Sentado", n(1.2), f_levantar_sentado, loop=False)
 gerar("Levantar", n(0.7), f_agachar(1, 0), loop=False)
 # voo: 4 batidas por clipe (mesmo ritmo de antes) para a cauda/patas terem movimento LENTO e nao repetitivo
 gerar("Voo", n(3.2), lambda u: f_voo(u, 4, u))

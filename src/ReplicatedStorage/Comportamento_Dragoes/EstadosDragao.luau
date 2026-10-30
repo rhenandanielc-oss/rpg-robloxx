@@ -5,7 +5,7 @@
 local M = {}
 M.__index = M
 
--- postura: "pe" | "deitado" | "abaixado" ; loop pode ser lista (variacoes sorteadas para evitar repeticao)
+-- postura: "pe" | "deitado" | "abaixado" | "sentado" ; loop pode ser lista (variacoes sorteadas para evitar repeticao)
 M.ESTADOS = {
 	Idle        = {postura = "pe", loop = {"Idle_Neutro", "Idle_Neutro", "Observar"}},
 	Observacao  = {postura = "pe", entrada = "Observar_Farejar", loop = {"Observar", "Idle_Neutro"}},
@@ -25,9 +25,11 @@ M.ESTADOS = {
 	InteracaoAmigavel = {postura = "pe", entrada = "Dono_Reconhecer", loop = {"Dono_Carinho"}},
 	ReceberAlimento = {postura = "pe", entrada = "Dono_Receber_Alimento", depois = "InteracaoAmigavel"},
 	MontariaEspera  = {postura = "abaixado", entrada = "Montaria_Abaixar", loop = {"Montaria_Aguardar"}},
+	-- usuario 31/10: sentado nobre (peito alto, traseiras dobradas, cauda curva no chao), descanso acordado em pe de guarda
+	Sentado     = {postura = "sentado", entrada = "Sentar", loop = {"Sentado"}},
 }
 -- como sair de cada postura para ficar em pe (inserido automaticamente)
-M.LEVANTAR = {deitado = "Acordar", abaixado = "Montaria_Levantar"}
+M.LEVANTAR = {deitado = "Acordar", abaixado = "Montaria_Levantar", sentado = "Levantar_Sentado"}
 -- estados que so podem comecar a partir de certas posturas (o resto passa por "pe" primeiro)
 M.EXIGE = {Sono = {deitado = true}}
 M.FADE = 0.35

@@ -359,7 +359,8 @@ function C:_Rest(vivo)
 		local ok = self:irAoNinho(false, vivo, 40); if not ok or not vivo() then return end
 		self:definir("Rest"); self:comportamento("ProtecaoNinho", 25 + math.random() * 15, vivo)
 	else
-		self:comportamento("Descanso", 20 + math.random() * 10, vivo)
+		-- descanso acordado: senta (nobre, atento) ou deita, alternando para nao repetir sempre o mesmo
+		self:comportamento(math.random() < 0.5 and "Sentado" or "Descanso", 20 + math.random() * 10, vivo)
 	end
 end
 function C:_Sleep(vivo)
