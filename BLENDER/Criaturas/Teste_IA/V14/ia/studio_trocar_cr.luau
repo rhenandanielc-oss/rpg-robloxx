@@ -44,7 +44,7 @@ local function trocar(nomeAntigo)
 	local velho = workspace:FindFirstChild(nomeAntigo); if not velho then return end
 	local m = novo:Clone(); preparar(m); m.Name = nomeAntigo
 	for k, v in pairs(velho:GetAttributes()) do if not k:find("^RBX_") then m:SetAttribute(k, v) end end
-	m:SetAttribute("Versao", "CR_Dragao v1 (Meshy texto + rosto refinado: olho, boca real, dobra das asas)")
+	m:SetAttribute("Versao", "CR_Dragao v2 (garras nas asas, espinhos no antebraco, borda de ataque presa; asas armadas no chao)")
 	-- mesma relacao pivo -> pes do modelo antigo (IA e montaria movem por PivotTo contando com ela); a caixa
 	-- envolvente NAO serve: o importado tem uma RootPart 35x35x17,5 que erguia o dragao 17,5 studs
 	local function pes(mod)
