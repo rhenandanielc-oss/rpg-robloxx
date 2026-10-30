@@ -777,6 +777,56 @@ local function fragmentosSolo(centro, raio, f, escala)
 	end
 end
 
+-- ===== Tempestade: asas em brasa (pedido do usuario 31/10) =====================================================
+-- As membranas ACENDEM como fogo enquanto o dragao sobe e batem as asas (Highlight so na malha das asas + chamas e
+-- brasas saindo dos dedos e da borda de ataque + luz), e APAGAM devagar na descida (brilho, chamas e luz caem juntos).
+local asasAcesas = {}                                                 -- [modelo] = {hl, emis, luz, ficha}
+local OSSOS_ASA = {"wing_tip_", "wing_3_", "wing_feather_5_tip_", "wing_feather_4_tip_", "wing_feather_3_tip_", "wing_feather_2_tip_"}
+local function acenderAsas(m, subida, f)
+	local s = asasAcesas[m]
+	if not s then
+		s = {emis = {}, ficha = 0}; asasAcesas[m] = s
+		local malha = m:FindFirstChild("Silverwing_Asas", true)
+		local hl = Instance.new("Highlight"); hl.FillColor = C3(255, 110, 20); hl.OutlineColor = C3(255, 190, 90)
+		hl.FillTransparency = 1; hl.OutlineTransparency = 1; hl.DepthMode = Enum.HighlightDepthMode.Occluded
+		hl.Adornee = malha or m; hl.Parent = malha or m; s.hl = hl
+		for _, lado in ipairs({"l", "r"}) do
+			for i, base in ipairs(OSSOS_ASA) do
+				local b = osso(m, base .. lado)
+				if b then
+					local e = emissor(b, flip({Color = BRANCO, LightEmission = 0.6, LightInfluence = 0, Size = ns(0, 2.5, 0.4, 5.5, 1, 1.5), Transparency = ns(0, 0.15, 1, 1),
+						Lifetime = NumberRange.new(0.35, 0.6), Speed = NumberRange.new(2, 7), SpreadAngle = Vector2.new(60, 60), Acceleration = Vector3.new(0, 9, 0),
+						Rotation = NumberRange.new(0, 360), RotSpeed = NumberRange.new(-60, 60), Rate = 0}, FB.fogo))
+					table.insert(s.emis, {e = e, alvo = (i <= 2 and 28 or 18) * f})
+					if i % 2 == 1 then
+						local e2 = emissor(b, {Texture = TEX.faisca, Color = seq({C3(255, 235, 160), C3(255, 100, 20)}), LightEmission = 1, Size = ns(0, 0.5, 1, 0),
+							Lifetime = NumberRange.new(0.6, 1.2), Speed = NumberRange.new(4, 12), SpreadAngle = Vector2.new(90, 90), Acceleration = Vector3.new(0, -18, 0), Rate = 0})
+						table.insert(s.emis, {e = e2, alvo = 14 * f})
+					end
+				end
+			end
+		end
+		local ombro = osso(m, "wing_3_l")
+		s.luz = ombro and luz(m.PrimaryPart or ombro, C3(255, 120, 35), 0, 45)
+	end
+	s.ficha += 1
+	TweenService:Create(s.hl, TweenInfo.new(subida, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {FillTransparency = 0.3, OutlineTransparency = 0.5}):Play()
+	for _, x in ipairs(s.emis) do TweenService:Create(x.e, TweenInfo.new(subida), {Rate = x.alvo}):Play() end
+	if s.luz then TweenService:Create(s.luz, TweenInfo.new(subida), {Brightness = 3}):Play() end
+end
+local function apagarAsas(m, dur)
+	local s = asasAcesas[m]; if not s then return end
+	local ficha = s.ficha
+	TweenService:Create(s.hl, TweenInfo.new(dur, Enum.EasingStyle.Sine, Enum.EasingDirection.In), {FillTransparency = 1, OutlineTransparency = 1}):Play()
+	for _, x in ipairs(s.emis) do TweenService:Create(x.e, TweenInfo.new(dur * 0.85, Enum.EasingStyle.Sine, Enum.EasingDirection.In), {Rate = 0}):Play() end
+	if s.luz then TweenService:Create(s.luz, TweenInfo.new(dur, Enum.EasingStyle.Sine, Enum.EasingDirection.In), {Brightness = 0}):Play() end
+	task.delay(dur + 1.2, function()                                   -- some de vez (se nao reacendeu nesse meio-tempo)
+		if asasAcesas[m] ~= s or s.ficha ~= ficha then return end
+		asasAcesas[m] = nil
+		s.hl:Destroy(); for _, x in ipairs(s.emis) do x.e:Destroy() end; liberarLuz(s.luz)
+	end)
+end
+
 -- ===== despacho ==================================================================================================
 local trilhasArr = {}
 function M.evento(d)
@@ -863,6 +913,10 @@ function M.evento(d)
 		elseif d.fase == "impacto" then rajada(d.pos, el, 1.0, f)
 		elseif d.fase == "fim" then local tr = trilhasArr[m]; if tr and tr.Parent then tr.Enabled = false end end
 	elseif d.hab == "Tempestade" then
+		-- asas em brasa: no ar acendem ja no preparo e apagam depois da ultima batida; no solo acendem no impulso (subida)
+		-- e apagam devagar a partir da descida do corpo (~1,35 s apos o impulso) ate depois do pouso
+		if d.fase == "preparo" and d.noAr then acenderAsas(m, 0.9, math.max(f, 0.3)); task.delay(2.0, function() apagarAsas(m, 1.8) end)
+		elseif d.fase == "impulso" then acenderAsas(m, 0.45, math.max(f, 0.3)); task.delay(1.35, function() apagarAsas(m, 2.2) end) end
 		if d.fase == "preparo" then                                        -- ar comeca a ser puxado para as asas
 			local c = m:GetPivot().Position; local a = ancora(c + Vector3.new(0, 2, 0)); Debris:AddItem(a, 2)
 			local e = emissor(a, flip({Shape = Enum.ParticleEmitterShape.Sphere, ShapeInOut = Enum.ParticleEmitterShapeInOut.Inward, Color = seq({C3(150, 130, 110), C3(110, 98, 86)}),
