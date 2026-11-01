@@ -36,8 +36,8 @@ ESPINHA = [(y + OFF.y, z + OFF.z, rx, ry) for y, z, rx, ry in CAB_PTS] + [
            # refinado: S de cisne (base avanca, meio recua, topo volta a frente sob a cabeca), mais fundo que largo e
            # engrossando ate o peito (sustenta a cabeca; transicao continua pescoco -> peito)
            (-0.625, 1.080, 0.050, 0.057), (-0.578, 1.000, 0.054, 0.063), (-0.582, 0.900, 0.060, 0.071),
-           (-0.572, 0.795, 0.071, 0.086), (-0.510, 0.680, 0.094, 0.114),                                   # base do pescoco
-           (-0.27, 0.512, 0.132, 0.162), (-0.10, 0.497, 0.118, 0.136), (0.05, 0.490, 0.100, 0.110),         # peito com presenca, cintura fina
+           (-0.572, 0.795, 0.072, 0.088), (-0.512, 0.680, 0.100, 0.122),                                   # base do pescoco
+           (-0.27, 0.514, 0.138, 0.168), (-0.10, 0.497, 0.118, 0.136), (0.05, 0.490, 0.100, 0.110),         # peito com presenca, cintura fina
            (0.18, 0.475, 0.108, 0.112), (0.30, 0.458, 0.106, 0.104),                                       # quadril
            (0.46, 0.430, 0.092, 0.086), (0.68, 0.400, 0.075, 0.070), (0.92, 0.364, 0.059, 0.055), (1.18, 0.328, 0.046, 0.043),
            (1.45, 0.296, 0.035, 0.033), (1.72, 0.272, 0.025, 0.024), (2.00, 0.258, 0.016, 0.015), (2.30, 0.256, 0.006, 0.006)]   # cauda: base cheia, afina em chicote
@@ -114,12 +114,32 @@ for v in ob.data.vertices:
     k = math.exp(-((y + 0.28) / 0.11) ** 2) * math.exp(-((z - 0.50) / 0.13) ** 2); p.x *= 1 + 0.11 * k      # ombros (refinado: mais presenca)
     k = math.exp(-((y - 0.20) / 0.11) ** 2) * math.exp(-((z - 0.42) / 0.11) ** 2); p.x *= 1 + 0.06 * k      # quadris
     if -0.30 < y < 0.20 and z < 0.42: p.z -= 0.022 * math.exp(-((y + 0.05) / 0.17) ** 2) * suave((0.42 - z) / 0.08)
-    if -0.40 < y < -0.16 and z < 0.56 and abs(x) < 0.13:                                                    # peito projetado (quilha)
-        p.y -= 0.036 * suave((0.56 - z) / 0.12) * (1 - abs(x) / 0.13) ** 1.5 * suave((z - 0.36) / 0.08)
+    if -0.44 < y < -0.16 and z < 0.64 and abs(x) < 0.14:                                                    # peito projetado (quilha)
+        p.y -= 0.046 * suave((0.64 - z) / 0.16) * (1 - abs(x) / 0.14) ** 1.5 * suave((z - 0.36) / 0.08)      # r2: sobe ate a base do pescoco
     # raiz da asa: massa do ombro sobe ate o braco da asa (a asa nasce do corpo, nao fica espetada nele)
     for s_ in (1, -1):
         d = (V((x, y, z)) - V((0.085 * s_, -0.31, 0.585))).length
-        if d < 0.13 and x * s_ > 0.03: p.z += 0.020 * math.exp(-(d / 0.07) ** 2); p.x += s_ * 0.012 * math.exp(-(d / 0.07) ** 2)
+        if d < 0.16 and x * s_ > 0.03: p.z += 0.028 * math.exp(-(d / 0.08) ** 2); p.x += s_ * 0.014 * math.exp(-(d / 0.08) ** 2)   # r2: raiz mais cheia
+# r2: pescoco menos cilindrico -- secao oval (laterais um pouco achatadas), crista dorsal baixa, quilha ventral e
+# feixe muscular lateral que desce da nuca a frente do peito (liga pescoco -> torax)
+PESC = [(y, z) for y, z, _, _ in ESPINHA[7:13]]                      # (y, z) do eixo do pescoco, de cima para baixo
+def centro_pesc(z):
+    for (ya, za), (yb, zb) in zip(PESC, PESC[1:]):
+        if zb <= z <= za: return lerp(ya, yb, (za - z) / (za - zb))
+    return None
+for v in ob.data.vertices:
+    p, nrm = v.co, v.normal; x, y, z = p
+    if not (0.64 < z < 1.07) or y > -0.40: continue
+    cy = centro_pesc(z)
+    if cy is None: continue
+    w = suave((z - 0.64) / 0.06) * suave((1.07 - z) / 0.05)
+    p.x *= 1 - 0.07 * w * suave((abs(x) - 0.01) / 0.03)
+    if y > cy and abs(x) < 0.022: p.y += 0.006 * w * (1 - abs(x) / 0.022) ** 1.5                     # crista dorsal
+    if y < cy and abs(x) < 0.030: p.y -= 0.004 * w * (1 - abs(x) / 0.030)                            # quilha ventral
+    if abs(nrm.x) > 0.4:                                                                             # feixe lateral
+        yl = lerp(cy + 0.03, cy - 0.05, suave((1.05 - z) / 0.40))
+        p += nrm * 0.0055 * w * math.exp(-((y - yl) / 0.028) ** 2)
+ob.data.update()
 rm = ob.modifiers.new("Remesh", "REMESH"); rm.mode = "VOXEL"; rm.voxel_size = 0.0048; rm.use_smooth_shade = True
 bpy.ops.object.modifier_apply(modifier=rm.name)
 sm = ob.modifiers.new("Liso", "SMOOTH"); sm.factor = 0.5; sm.iterations = 4
@@ -136,6 +156,8 @@ for v in ob.data.vertices:                                          # cranio lar
     # refinado: focinho afilado (estreita a frente do olho, mais na ponta) e testa -> focinho em linha continua
     if y < -0.83: p.x *= 1 - 0.13 * suave((-0.83 - y) / 0.11)
     if y < -0.80 and z > 0.735 and abs(p.x) < 0.03: p.z += 0.004 * suave((-0.80 - y) / 0.05) * suave((y + 0.97) / 0.04)
+    if y < -0.89 and z > 0.722: p.z -= 0.005 * suave((-0.89 - y) / 0.06) * suave((z - 0.722) / 0.02)        # r2: ponta fina e elegante
+    if y < -0.86 and z < 0.700: p.z += 0.003 * suave((-0.86 - y) / 0.08) * suave((0.700 - z) / 0.015)        # r2: queixo afinado
 ok_, hit, nrm_h, _ = ob.ray_cast(V((0.3, -0.806, 0.775)), V((-1, 0, 0)))
 OLHO = hit - nrm_h * 0.0025 if ok_ else V((0.052, -0.815, 0.762))
 print("DRAGAO_OLHO", tuple(round(c, 3) for c in OLHO))
@@ -250,7 +272,7 @@ def membrana(s):
         def P(u, t, a=a, b=b):
             pa, pb = dedo(a, t), dedo(b, t); p = lerp(pa, pb, u); corda = (pb - pa).length
             p += (pul - p).normalized() * 0.56 * corda * math.sin(math.pi * u) ** 1.3 * t ** 2.4   # refinado: recorte mais fundo e elegante
-            p.z -= 0.035 * math.sin(math.pi * u) * t
+            p.z -= 0.050 * math.sin(math.pi * u) * t ** 0.8                                    # r2: barriga de vela mais viva
             p.z -= 0.004 * math.sin(math.pi * 2 * u) ** 2 * t * (1 - t) * 4                     # prega suave no meio do setor
             p.z -= 0.003 * (math.exp(-(u / 0.10) ** 2) + math.exp(-((1 - u) / 0.10) ** 2)) * t * (1 - t) * 4   # tensao junto aos dedos
             return p
@@ -260,9 +282,9 @@ def membrana(s):
         if u < 0.55: return lerp(pul, cot, u / 0.55)
         return lerp(cot, raiz + V((0.0, 0.07, -0.02)), (u - 0.55) / 0.45)
     def borda(u):
-        p = lerp(dedos[3][2], flanco, u); p += (cot - p).normalized() * 0.30 * math.sin(math.pi * u); return p
+        p = lerp(dedos[3][2], flanco, u); p += (cot - p).normalized() * 0.40 * math.sin(math.pi * u) ** 1.2; return p   # r2: recorte interno
     def Pc(u, t):
-        p = lerp(braco(u), borda(u), t); p.z -= 0.04 * math.sin(math.pi * u) * math.sin(math.pi * t)
+        p = lerp(braco(u), borda(u), t); p.z -= 0.05 * math.sin(math.pi * u) * math.sin(math.pi * t)
         return lerp(p, dedo(dedos[3], t), (1 - u) ** 3)
     grade(Pc, 14, 18); regiao[0] += 1
     # membrana da frente (propatagio), refino final: antes era uma fita reta solta do ombro ao punho com um vao ate o
@@ -316,15 +338,20 @@ for s in (1, -1):
             pts_.append(p_.copy())
         return pts_
     CHIFRES.append(tubo(arco(V((0.030 * s, -0.745, 0.830)), (0.18 * s, 0.62, 1.0), (0.10 * s, 1.0, 0.18), 0.27), 0.0165, "Chifre", 1.25))
-    for k, (comp, r0) in enumerate(((0.175, 0.0115), (0.145, 0.0100), (0.115, 0.0088), (0.085, 0.0072))):
-        b0 = V(((0.046 + 0.009 * k) * s, -0.727 + 0.019 * k, 0.818 - 0.021 * k))
-        d0, d1 = ((0.28 + 0.13 * k) * s, 0.75, 0.95 - 0.30 * k), ((0.22 + 0.10 * k) * s, 1.0, 0.25 - 0.20 * k)
-        CHIFRES.append(tubo(arco(b0, d0, d1, comp, 5), r0, "Chifre_Coroa", 1.3))
+    # r2: coroa de gelo lendaria -- 6 pontas finas por lado em leque continuo (de cima para o lado) e 3 pontas baixas
+    # na linha media do cranio; todas em arco, finas na ponta
+    for k, (comp, r0) in enumerate(((0.200, 0.0105), (0.175, 0.0095), (0.150, 0.0086), (0.125, 0.0078), (0.100, 0.0068), (0.075, 0.0058))):
+        b0 = V(((0.044 + 0.007 * k) * s, -0.730 + 0.013 * k, 0.820 - 0.016 * k))
+        d0, d1 = ((0.20 + 0.11 * k) * s, 0.70, 1.0 - 0.22 * k), ((0.16 + 0.08 * k) * s, 1.0, 0.32 - 0.14 * k)
+        CHIFRES.append(tubo(arco(b0, d0, d1, comp, 6), r0, "Chifre_Coroa", 1.45))
+for yy, comp in ((-0.770, 0.040), (-0.735, 0.060), (-0.700, 0.050)):                     # crista media do cranio
+    CHIFRES.append(tubo(arco(V((0.0, yy, 0.825)), (0, 0.55, 1.0), (0, 1.0, 0.30), comp, 4), 0.0060, "Chifre_Coroa", 1.5))
+for s in (1, -1):
     # babado de espinhos finos ao longo da mandibula e da bochecha, abrindo para tras (referencia); refinado: curvos
-    for k in range(5):
-        base = V((0.048 * s, -0.800 + 0.022 * k, 0.722 - 0.004 * k)); comp = 0.074 - 0.007 * k
+    for k in range(7):                                                                # r2: babado longo, 7 espinhos
+        base = V((0.048 * s, -0.805 + 0.020 * k, 0.722 - 0.004 * k)); comp = 0.092 - 0.008 * k
         ESPINHOS.append(tubo(arco(base, (0.55 * s, 1.0, 0.10 - 0.05 * k), (0.30 * s, 1.0, 0.16 - 0.03 * k), comp, 4),
-                             0.0070 - 0.0006 * k, "Espinho_Bochecha", 1.35))
+                             0.0068 - 0.0005 * k, "Espinho_Bochecha", 1.45))
 def eixo_em(y):
     for a, b in zip(ESPINHA, ESPINHA[1:]):
         if a[0] <= y <= b[0]:
@@ -362,6 +389,7 @@ while True:
     if c.y > 2.22: break
     up = V((0, -tg.z, tg.y))                                         # lado dorsal (perpendicular ao eixo)
     alt = 0.020 + 0.016 * math.exp(-((c.y + 0.25) / 0.40) ** 2) + 0.006 * math.exp(-((c.y - 0.30) / 0.4) ** 2)
+    if c.y < -0.45: alt += 0.014 * math.exp(-((c.z - 0.90) / 0.20) ** 2)                 # r2: crista do pescoco (silhueta)
     alt *= 1 - 0.55 * suave((c.y - 0.5) / 1.6)
     e = espinho_dorsal(c + up * r * 0.93, alt, 0.010 + alt * 0.22, 0.0, "Espinho_Dorsal_%02d" % i)
     e.rotation_euler = (math.atan2(-up.y, up.z) - 0.20, 0, 0); ESPINHOS.append(e); ENC_DORSAL[e.name] = -up
@@ -568,7 +596,7 @@ def mat_membrana():
     cor0 = rampa(nt, L, grao.outputs["Fac"], [(0.35, (0.50, 0.70, 0.90, 1)), (0.65, (0.66, 0.82, 0.96, 1))])
     c1 = n(nt, "ShaderNodeMix", data_type="RGBA"); L.new(op("MULTIPLY", base_, v=0.6), c1.inputs["Factor"])
     L.new(cor0.outputs["Color"], c1.inputs[6]); c1.inputs[7].default_value = (0.26, 0.44, 0.70, 1)
-    c2 = n(nt, "ShaderNodeMix", data_type="RGBA"); L.new(op("MULTIPLY", veios, v=0.75), c2.inputs["Factor"])
+    c2 = n(nt, "ShaderNodeMix", data_type="RGBA"); L.new(op("MULTIPLY", veios, v=0.88), c2.inputs["Factor"])
     L.new(c1.outputs[2], c2.inputs[6]); c2.inputs[7].default_value = (0.30, 0.48, 0.74, 1)
     c3 = n(nt, "ShaderNodeMix", data_type="RGBA"); L.new(op("MULTIPLY", borda, v=0.55), c3.inputs["Factor"])
     L.new(c2.outputs[2], c3.inputs[6]); c3.inputs[7].default_value = (0.86, 0.94, 1.0, 1)
@@ -639,7 +667,7 @@ def mat_olho():
     for k, v in (("Coat Weight", 1.0), ("Coat Roughness", 0.02)):
         if k in b.inputs: b.inputs[k].default_value = v
     b.inputs["Emission Color"].default_value = (0.30, 0.72, 1.0, 1)
-    L.new(op("MULTIPLY", op("MULTIPLY", pup2, mr(r, 0.45, 0.15)), v=0.6), b.inputs["Emission Strength"])
+    L.new(op("MULTIPLY", op("MULTIPLY", pup2, mr(r, 0.45, 0.15)), v=1.1), b.inputs["Emission Strength"])   # r2: brilho glacial
     return m
 MC, MM, ME, MO = mat_corpo(), mat_membrana(), mat_espinho(), mat_olho()
 MH = mat_cristal("M_Dragao_Chifre", (0.32, 0.47, 0.68, 1), (0.90, 0.97, 1.0, 1), 0.22)   # chifre: azul profundo -> branco de gelo
