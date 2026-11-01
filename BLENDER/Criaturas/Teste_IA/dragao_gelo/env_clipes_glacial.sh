@@ -8,3 +8,4 @@ export P_ERGUIDA='{"recua": 30, "ergue": 54}'
 # personalidade (sistema universal 01/11): movimentos mais calculados (corpo/cabeca menos amplos que o Fogo, 2,5) e
 # batidas de asa amplas e cadenciadas (3 por clipe no voo e no pairar em vez de 4); velocidades da montaria iguais
 export AMP=2.0 NB_VOO=3 NB_PAIRAR=3
+export ROAR_ESTILO=gelo                    # rugido padrao v2 no estilo frio/controlado

@@ -119,6 +119,15 @@ def mandibula(o, wmap):
     """maxilar inferior: o peso de GL_Mandibula vai para mouth_lower, o resto dos ossos e escalado por (1-w); o que
     nao e maxilar na cabeca fica no head (o calor espalha pescoco/boca pelo cranio)"""
     ml = o.vertex_groups.get("mouth_lower") or o.vertex_groups.new(name="mouth_lower")
+    # o calor espalha mouth_lower pelo labio de CIMA/ceu da boca (osso proximo): fora do grupo GL_Mandibula ele sai e o
+    # peso vai para o head (r8: senao o labio superior descia junto ao abrir = boca "rasgada")
+    gh = o.vertex_groups.get("head") or o.vertex_groups.new(name="head"); tirados = 0
+    for v in o.data.vertices:
+        if v.index in wmap: continue
+        for x in v.groups:
+            if x.group == ml.index and x.weight > 0:
+                gh.add([v.index], x.weight, "ADD"); x.weight = 0.0; tirados += 1
+    print("RIG mouth_lower removido de", tirados, "vertices fora da mandibula")
     for vi, w in wmap.items():
         v = o.data.vertices[vi]
         for x in v.groups:

@@ -5,7 +5,7 @@ TAG_* (cabeca / mandibula) para o rig saber a que osso pertence depois do join; 
 GL_Mandibula. Membranas sem espessura (DoubleSided no Roblox). UV unica e bake HIGH->LOW (cor, normal, rugosidade).
 Uso: blender -b GL_Dragao_master.blend -P low_glacial.py -- <saida_dir> [res]"""
 import bpy, sys, os, math
-args = sys.argv[sys.argv.index("--") + 1:]; OUT = os.path.abspath(args[0]); RES = int(args[1]) if len(args) > 1 else 1024
+args = sys.argv[sys.argv.index("--") + 1:]; OUT = os.path.abspath(args[0]); RES = int(args[1]) if len(args) > 1 else 2048     # r8: assa em 2048 (o export reduz para 1024)
 os.makedirs(OUT, exist_ok=True)
 sc = bpy.context.scene; dg = bpy.context.evaluated_depsgraph_get()
 col = bpy.data.collections["GL_Dragao"]; HIGH = [o for o in col.objects if o.type == "MESH"]
@@ -21,8 +21,16 @@ def copia(o, nome):
 def tris(o): return sum(len(p.vertices) - 2 for p in o.data.polygons)
 partes = []
 lc = copia(corpo, "LOW_Corpo"); ativo(lc)
-d = lc.modifiers.new("D", "DECIMATE"); d.ratio = 11000 / tris(lc); d.use_symmetry = True; d.symmetry_axis = "X"
-bpy.ops.object.modifier_apply(modifier="D"); print("LOW corpo tris", tris(lc), "GL_Mandibula", "GL_Mandibula" in lc.vertex_groups)
+# r8: a CABECA (rosto, boca, olhos) fica mais densa que o resto: o peso do grupo DECIMAR controla quanto cada parte
+# reduz (1 = reduz muito, ~0 = preserva). Antes o rosto ficava facetado e o bake deixava triangulos pretos
+gd = lc.vertex_groups.new(name="DECIMAR")
+for v in lc.data.vertices:
+    y = (lc.matrix_world @ v.co).y
+    gd.add([v.index], 0.08 + 0.92 * max(0.0, min(1.0, (y + 0.66) / 0.10)), "REPLACE")
+d = lc.modifiers.new("D", "DECIMATE"); d.ratio = 15500 / tris(lc); d.use_symmetry = True; d.symmetry_axis = "X"
+d.vertex_group = "DECIMAR"; d.vertex_group_factor = 2.0
+bpy.ops.object.modifier_apply(modifier="D"); lc.vertex_groups.remove(lc.vertex_groups["DECIMAR"])
+print("LOW corpo tris", tris(lc), "cabeca", sum(1 for p in lc.data.polygons if (lc.matrix_world @ p.center).y < -0.66), "GL_Mandibula", "GL_Mandibula" in lc.vertex_groups)
 partes.append(lc)
 for o in HIGH:
     if o.name.startswith("GL_Dragao_Membrana"):
@@ -35,8 +43,8 @@ MAND = ("Dente_Inf", "GL_Dragao_Boca_Inf")
 for o in HIGH:
     if o is corpo or o.name.startswith("GL_Dragao_Membrana"): continue
     c = copia(o, "LOW_" + o.name); n = tris(c)
-    alvo = (24 if o.name.startswith("Dente") else 60 if o.name.startswith(("Garra", "Espinho")) else 110 if o.name.startswith("Chifre")
-            else 400 if o.name.startswith("GL_Dragao_Boca") else 80)
+    alvo = (48 if o.name.startswith("Dente") else 120 if o.name.startswith("Garra") else 70 if o.name.startswith("Espinho") else 150 if o.name.startswith("Chifre")
+            else 400 if o.name.startswith("GL_Dragao_Boca") else 160)       # r8: garras/chifres/dentes/olhos com mais faces
     if n > alvo:
         ativo(c); dm = c.modifiers.new("D", "DECIMATE"); dm.ratio = alvo / n; bpy.ops.object.modifier_apply(modifier="D")
     tag = "TAG_cabeca" if o.name.startswith(CABECA) else "TAG_mandibula" if o.name.startswith(MAND) else None
@@ -51,7 +59,7 @@ bpy.context.view_layer.objects.active = lc; bpy.ops.object.join(); low = lc; low
 ativo(low); bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
 low.data.materials.clear()
 bpy.ops.object.mode_set(mode="EDIT"); bpy.ops.mesh.select_all(action="SELECT")
-bpy.ops.uv.smart_project(angle_limit=math.radians(55), island_margin=0.004, area_weight=0.6)
+bpy.ops.uv.smart_project(angle_limit=math.radians(72), island_margin=0.003, area_weight=0.6)   # r8: menos ilhas minusculas
 bpy.ops.uv.pack_islands(margin=0.004)
 bpy.ops.object.mode_set(mode="OBJECT")
 bpy.ops.object.modifier_add(type="TRIANGULATE"); bpy.ops.object.modifier_apply(modifier=low.modifiers[-1].name)
@@ -62,11 +70,13 @@ nt = mat.node_tree; bsdf = nt.nodes["Principled BSDF"]; low.data.materials.appen
 imgs = {}
 for k, cs in (("cor", "sRGB"), ("normal", "Non-Color"), ("rugosidade", "Non-Color")):
     im = bpy.data.images.new("GL_Dragao_" + k, RES, RES, alpha=False); im.colorspace_settings.name = cs
+    # fundo = cor media da pele / normal neutra: pixel que o bake nao alcanca (triangulo menor que 1 px) nao vira preto
+    im.generated_color = {"cor": (0.42, 0.56, 0.76, 1), "normal": (0.5, 0.5, 1.0, 1), "rugosidade": (0.62, 0.62, 0.62, 1)}[k]
     t = nt.nodes.new("ShaderNodeTexImage"); t.image = im; t.name = k; imgs[k] = (im, t)
 sc.render.engine = "CYCLES"; sc.cycles.samples = 8
 try: sc.cycles.device = "GPU"
 except Exception: pass
-bk = sc.render.bake; bk.use_selected_to_active = True; bk.cage_extrusion = 0.010; bk.max_ray_distance = 0.03; bk.margin = 8
+bk = sc.render.bake; bk.use_selected_to_active = True; bk.cage_extrusion = 0.012; bk.max_ray_distance = 0.05; bk.use_clear = False   # mantem o fundo (cor media) onde o bake nao alcanca; bk.margin = 8
 for o in sc.objects: o.hide_render = False
 bpy.ops.object.select_all(action="DESELECT")
 for o in HIGH: o.select_set(True)

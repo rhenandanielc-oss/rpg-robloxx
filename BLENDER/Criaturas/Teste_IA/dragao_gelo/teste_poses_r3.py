@@ -13,7 +13,8 @@ sc = bpy.context.scene; dg = bpy.context.evaluated_depsgraph_get()
 def suave(x): x = max(0.0, min(1.0, x)); return x * x * (3 - 2 * x)
 CORPO = bpy.data.objects["GL_Dragao_Corpo"]; me = CORPO.data
 BASE_CO = [v.co.copy() for v in me.vertices]
-LIG = bpy.data.objects["GL_Dragao_Boca_Ligacao"]; LIG_CO = [v.co.copy() for v in LIG.data.vertices]
+LIG = bpy.data.objects.get("GL_Dragao_Boca_Ligacao")              # r3-r7; no r8 a boca e uma bolsa do proprio corpo
+LIG_CO = [v.co.copy() for v in LIG.data.vertices] if LIG else []
 PECAS = [o for o in bpy.data.collections["GL_Dragao"].objects if o != CORPO and o.type == "MESH" and not o.name.startswith("GL_Dragao_Membrana")]
 BASE_M = {o.name: o.matrix_world.copy() for o in PECAS}
 # referencia de cada peca rigida = centro da caixa (a cavidade da boca tem origem longe dela)
@@ -43,8 +44,9 @@ def mat_pescoco(s, ang, eixo):
 def resetar():
     for v, c in zip(me.vertices, BASE_CO): v.co = c
     for o in PECAS: o.matrix_world = BASE_M[o.name]
-    for v, c in zip(LIG.data.vertices, LIG_CO): v.co = c
-    LIG.data.update()
+    if LIG:
+        for v, c in zip(LIG.data.vertices, LIG_CO): v.co = c
+        LIG.data.update()
 def pose_pescoco(ang, eixo):
     for v, c in zip(me.vertices, BASE_CO):
         s = param(c)
@@ -61,6 +63,7 @@ def pose_boca(ang):
         if w > 0: v.co = c.lerp(R @ c, w)
     for o in PECAS:
         if o.name.startswith(("Dente_Inf", "GL_Dragao_Boca_Inf")): o.matrix_world = R @ BASE_M[o.name]
+    if not LIG: me.update(); return
     gl = LIG.vertex_groups["GL_Mandibula"].index; Mw = LIG.matrix_world; Mi = Mw.inverted()
     for v, c in zip(LIG.data.vertices, LIG_CO):                 # pele interna estica entre palato e assoalho
         w = next((g.weight for g in v.groups if g.group == gl), 0.0)

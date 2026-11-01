@@ -1266,24 +1266,39 @@ def f_ataque_cauda(u):
     cauda(p, -10, 5.0, lat, onda=[4 * pulso(u, 0.3, 0.45, 0.6, 0.9) * PESO_CAUDA[k] for k in range(7)])
     return p
 
+ROAR_ESTILO = os.environ.get("ROAR_ESTILO", "fogo")       # personalidade do rugido: fogo (energico) | gelo (frio)
 def f_rugido(base_ar=False):
-    """Rugido de combate 2,6 s (emissao 0,365): inspira (pescoco sobe/recua, torax expande), projeta a cabeca e
-    abre a boca ao maximo, sacode levemente, meia-abertura de asas (intimidacao), recupera."""
+    """RUGIDO PADRAO v2 (01/11, todos os dragoes; personalidade por ROAR_ESTILO), 2,6 s, emissao em 0,365 (marcador
+    RugidoInicio do Nucleo): ANTECIPACAO (peso para tras, pescoco recolhe e sobe, peito enche, boca entreabre) ->
+    INVESTIDA curta em direcao ao alvo (patas dianteiras firmam, corpo avanca, pescoco projeta, cabeca desce e a boca
+    abre ao maximo no quadro da emissao) -> SUSTENTACAO com tensao no pescoco/garganta, varredura lenta da cabeca,
+    asas em exibicao, cauda em contrapeso -> RECUPERACAO. A direcao do alvo vem do corpo (a IA vira antes) e do foco
+    AlvoOlhar (MovimentoVivo). 'gelo': frio e controlado (pouco tremor, cabeca baixa e estavel, asas amplas)."""
+    gelo = ROAR_ESTILO == "gelo"
+    trem_f, trem_a = (7, 1.0) if gelo else (20, 3.0)
     def fn(u):
-        insp = pulso(u, 0.0, 0.33, 0.36, 0.5); rug = pulso(u, 0.34, 0.42, 0.78, 0.95)
+        ant = pulso(u, 0.0, 0.28, 0.30, 0.38)
+        inv = pulso(u, 0.30, 0.37, 0.80, 0.97)
+        sus = pulso(u, 0.37, 0.45, 0.78, 0.92)
+        trem = math.sin(2 * math.pi * trem_f * u) * sus * trem_a
+        varre = math.sin(2 * math.pi * (u - 0.4)) * sus * (3 if gelo else 5)
         if base_ar:
             p = f_pairar(u * 3 % 1.0)
-            pescoco_voo(p, cima=-30 + 10 * insp - 6 * rug, esq=3 * math.sin(2 * math.pi * 6 * u) * rug, cab=-p.arf * 0.2 - 6 * rug)
+            pescoco_voo(p, cima=-30 + 12 * ant - 8 * inv, esq=0.5 * varre + 0.3 * trem, cab=-p.arf * 0.2 - 8 * inv)
         else:
             p = Pose(); em_pe(p)
-            p.off += Vector((0, 0.01 * insp - 0.02 * rug, 0.006 * insp))
-            p.arf += 3 * insp - 3 * rug
-            pescoco_alto(p, cima=12 * insp - 8 * rug, esq=3 * math.sin(2 * math.pi * 6 * u) * rug, cab=-8 * rug)
-            p.asas = asas_ameaca(0.4 * rug)
-            cauda(p, -14 + 6 * rug, 5.0, onda_cauda(u, [(4.0, 1, 0.0, 1.0), (2.0, 3, 1.0, 1.3)]),
-                  onda=[6 * rug * PESO_CAUDA[k] for k in range(7)])
-        p.curva["spine_1"] = (p.curva.get("spine_1", (0, 0))[0] + 5 * insp, 0)
-        boca_abre(p, 0.15 * insp + 1.05 * rug)
+            for c in PERNAS: p.pata[c]["beta"] += (6 if c.startswith("PD") else 3) * inv
+            avan = 0.022 if gelo else 0.032
+            p.off += Vector((0, 0.016 * ant - avan * inv, 0.008 * ant - 0.006 * inv))
+            p.arf += 4 * ant - (5 if gelo else 4) * inv
+            pescoco_alto(p, cima=12 * ant - (16 if gelo else 12) * inv + 0.4 * trem, esq=varre + 0.5 * trem,
+                         cab=6 * ant - (12 if gelo else 8) * inv)
+            p.asas = asas_ameaca(0.25 * ant + (0.62 if gelo else 0.5) * inv)
+            lat = somar(onda_cauda(u, [(4.0, 1, 0.0, 1.0), (2.0, 3, 1.0, 1.3)]), [-0.4 * varre * PESO_CAUDA[k] for k in range(7)])
+            cauda(p, -14 - 4 * ant + 10 * inv, 5.0, lat, onda=[7 * inv * PESO_CAUDA[k] for k in range(7)])
+        p.curva["spine_1"] = (p.curva.get("spine_1", (0, 0))[0] + 7 * ant + 3 * inv, 0)
+        p.curva["spine_0"] = (p.curva.get("spine_0", (0, 0))[0] - 2 * ant, p.curva.get("spine_0", (0, 0))[1])
+        boca_abre(p, 0.18 * ant + 1.12 * inv, tranco=0.3 * trem)
         return p
     return fn
 
