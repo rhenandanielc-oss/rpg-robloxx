@@ -177,6 +177,8 @@ def _giro_em(p, R): return Matrix.Translation(p) @ R.to_4x4() @ Matrix.Translati
 P_ARMADA = dict(ergue=18, recua=14, cotovelo=-8, punho=24, leque=0.2)
 # sentado (usuario 31/10: de frente parecia borboleta): menos vertical, mais para tras e com leve dobra para o lado
 P_ERGUIDA = dict(ergue=58, recua=48, cotovelo=-34, punho=58, leque=0.5)
+if os.environ.get("P_ERGUIDA"):                       # outro dragao (ex.: Glacial) ajusta o sentado sem mudar o CR
+    import json as _js; P_ERGUIDA.update(_js.loads(os.environ["P_ERGUIDA"]))
 def asas_armadas(ergue=0.0, resp=0.0):
     """Asas ARMADAS a partir do PLANEIO (pose validada, membrana sem lascas): giros RIGIDOS de subarvores (punho,
     cotovelo, ombro) em vez de direcoes osso a osso -> a membrana entre os dedos nao torce. ergue 0 = armada,
