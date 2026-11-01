@@ -99,6 +99,9 @@ local function passo(e, dt)
 	local oYaw, oPitch = 0, 0
 	local alvoDir
 	if cav and eu and cav == eu.UserId then alvoDir = m:GetAttribute("MiraLocal") or cam.CFrame.LookVector
+	elseif not cav and m:GetAttribute("AlvoOlhar") and e.cabeca then
+		-- IA (sistema universal 01/11): rugido direcionado, intimidacao e curiosidade encaram o alvo (tambem andando)
+		alvoDir = (m:GetAttribute("AlvoOlhar") - e.cabeca.TransformedWorldCFrame.Position).Unit
 	elseif not cav and horiz < 2 then
 		local h = jogadorProximo(m, P.olharDist)
 		local cab = e.cabeca

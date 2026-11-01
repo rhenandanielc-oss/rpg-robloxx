@@ -18,8 +18,11 @@ EstadosDragao.ESTADOS.PosturaCombate = EstadosDragao.ESTADOS.PosturaCombate or {
 -- PATCH_IA_DERROTA_AR: derrotavel (Vida/Incapacitado) e combate no ar (decisao do usuario 30/10)
 local function zonaSegura(pos) return okN and type(Nucleo) == "table" and Nucleo.emZonaSegura and Nucleo.emZonaSegura(pos) or false end
 
+-- PATCH_ANIM_UNIVERSAL (01/11): foco do olhar, intimidacao, curiosidade, rugido territorial e reacao a dano
+local raizDe
 local C = {}
 C.__index = C
+local INTERVALO_RUGIDO_TERRITORIAL = 240
 local PRIO = {Incapacitated = 100, DefendNest = 90, ReturnToNest = 90, ChaseIntruder = 90, Attack = 90, Alert = 60,
 	Investigate = 55, Recover = 50, SearchWater = 40, SearchFood = 40, Sleep = 30, ReturnHome = 22, Observation = 18,
 	Rest = 15, Patrol = 15, Wander = 15, Idle = 5}
@@ -49,11 +52,28 @@ function C.novo(modelo, ninho, pois, cfg)
 	self.cxAtacado = Territorio.Eventos.GuardiaoAtacado.Event:Connect(function(guardiao, atacante)
 		if guardiao == modelo and atacante then self:ameaca(atacante, 2, "ataque"); self.urgente = true end
 	end)
+	-- reacao a dano por cima do estado (peso proporcional ao golpe), nunca no meio de um ataque proprio
+	self.vidaAnt = modelo:GetAttribute("Vida")
+	self.cxVida = modelo:GetAttributeChangedSignal("Vida"):Connect(function()
+		local v, vmax = modelo:GetAttribute("Vida"), modelo:GetAttribute("VidaMax") or 1
+		local antes = self.vidaAnt; self.vidaAnt = v
+		if not (v and antes) or v >= antes or modelo:GetAttribute("EmAtaque") or modelo:GetAttribute("Incapacitado") then return end
+		if os.clock() - (self.ultDano or 0) < 0.7 then return end
+		self.ultDano = os.clock()
+		local frac = (antes - v) / vmax; local forte = frac >= 0.06
+		local nome = (forte and "Dano_Forte" or "Dano_Leve") .. (self.L.noAr and "_Ar" or "")
+		self.E:Pontual(nome, math.clamp(0.45 + frac * 6, 0.45, 1))
+	end)
 	self:registrar("criado; ninho=" .. self.T.id)
 	task.spawn(function() self:_laco() end)
 	return self
 end
 
+-- foco do olhar (MovimentoVivo_Cliente): posicao da cabeca do alvo, ou nil para soltar
+function C:focar(alvo)
+	local r = alvo and raizDe and raizDe(alvo)
+	self.m:SetAttribute("AlvoOlhar", r and (r.Position + Vector3.new(0, 2, 0)) or nil)
+end
 function C:registrar(msg)
 	table.insert(self.log, string.format("%7.1f %-14s %s", os.clock(), self.estado or "-", msg))
 	if #self.log > 300 then table.remove(self.log, 1) end
@@ -64,7 +84,7 @@ function C:definir(estado, vivo)
 end
 
 -- ===== percepcao ==============================================================================================
-local function raizDe(m) return m and (m:FindFirstChild("HumanoidRootPart") or m.PrimaryPart) end
+function raizDe(m) return m and (m:FindFirstChild("HumanoidRootPart") or m.PrimaryPart) end
 function C:alvos()
 	local l = {}
 	for _, p in ipairs(Players:GetPlayers()) do
@@ -242,6 +262,7 @@ function C:_laco()
 	end
 	self.T:liberar(self.id)
 	if self.cxAlerta then self.cxAlerta:Disconnect() end; if self.cxAtacado then self.cxAtacado:Disconnect() end
+	if self.cxVida then self.cxVida:Disconnect() end
 	self.ameacas, self.proximoDesde = {}, {}
 end
 
@@ -348,11 +369,19 @@ function C:_Investigate(vivo)
 		if not ok or not vivo() then return end
 	end
 	self:encarar(inv.pos, vivo)
-	self:definir("Investigate"); self:comportamento("Observacao", self.cfg.investigarTempo, vivo)   -- fareja e olha em volta
+	self:definir("Investigate"); self:comportamento("Curiosidade", self.cfg.investigarTempo, vivo)   -- fareja, inclina a cabeca
 end
 
 -- ===== tarefas ================================================================================================
-function C:_Idle(vivo) self:emPe(vivo); self:comportamento("Idle", 6 + math.random() * 6, vivo) end
+function C:_Idle(vivo)
+	self:emPe(vivo)
+	local semAmeaca = not self:maiorAmeaca()
+	if semAmeaca and not self.dormente and self.observado and os.clock() - (self.ultRugidoT or -1e9) > INTERVALO_RUGIDO_TERRITORIAL
+		and plano(self.L:pos() - self.casa).Magnitude < self.cfg.territorio * 0.6 then
+		self.ultRugidoT = os.clock(); self:comportamento("RugidoTerritorial", 4.6, vivo); return     -- alguem observa de longe
+	end
+	self:comportamento("Idle", 6 + math.random() * 6, vivo)
+end
 function C:_Rest(vivo)
 	if not self:emPe(vivo) then return end
 	if self.T:ovoPresente() then
@@ -386,7 +415,10 @@ function C:_Observation(vivo)
 	local r = raizDe(alvo); if not r then return end
 	if not self:emPe(vivo) then return end
 	if not self.L.noAr then self.L:virarPara(r.Position, vivo) end
-	self:comportamento("Observacao", 6, vivo)
+	self:focar(alvo)
+	self.nObs = (self.nObs or 0) + 1
+	self:comportamento(self.nObs % 2 == 0 and "Curiosidade" or "Observacao", 6, vivo)
+	self:focar(nil)
 end
 function C:_Patrol(vivo)
 	if not self:emPe(vivo) then return end
@@ -468,16 +500,19 @@ function C:_Alert(vivo)
 		else self:irAoNinho(false, vivo, 60); return end
 	end
 	self.L:virarPara(a.ultimaPos, vivo)
-	self:comportamento("Alerta", 3, vivo)
+	self:focar(alvo)
+	local estadoAlerta = a.pessoal and "Intimidacao" or "Alerta"
+	self:comportamento(estadoAlerta, a.pessoal and 3.6 or 3, vivo)
 	-- longe do ninho: aproxima-se andando para estar pronto (sem abandonar o alerta)
 	-- alerta PESSOAL (alguem perto do dragao, fora do ninho): fica onde esta, encarando
 	if not a.pessoal and plano(self.L:pos() - self.casa).Magnitude > self.cfg.vigilancia then
 		if vivo() then self:definir("ReturnHome"); self:irAoNinho(false, vivo, 60) end
 	end
 	while vivo() and self:maiorAmeaca() do
-		local _, a2 = self:maiorAmeaca(); if a2 and a2.ultimaPos then self:encarar(a2.ultimaPos, vivo) end
-		self:comportamento("Alerta", 2, vivo)
+		local alvo2, a2 = self:maiorAmeaca(); if a2 and a2.ultimaPos then self:encarar(a2.ultimaPos, vivo); self:focar(alvo2) end
+		self:comportamento((a2 and a2.pessoal) and "Intimidacao" or "Alerta", 2, vivo)
 	end
+	self:focar(nil)
 end
 function C:_Recover(vivo)
 	self.recuperado = true
@@ -486,6 +521,7 @@ function C:_Recover(vivo)
 	if self.T:ovoPresente() then self:comportamento("InspecaoNinho", 6.5, vivo)
 	else self:comportamento("Observacao", 6, vivo) end              -- ovo coletado: nao finge que continua la
 	self:comportamento("Alerta", 4, vivo)
+	self:comportamento("RugidoTerritorial", 4.6, vivo); self.ultRugidoT = os.clock()      -- reafirma o territorio
 	self:comportamento("Espreguicar", 5, vivo)
 	self.aposConfronto = nil; self.recuperado = false
 end
@@ -577,6 +613,7 @@ function C:_DefendNest(vivo)
 				self:emPe(vivo); self.L:passoChao(guarda, true, function() return vivo() and plano(self.L:pos() - guarda).Magnitude > 8 end, 8)
 			end
 			self.L:virarPara(pI, function() return vivo() end)
+			self:focar(alvo)
 			if not ameacou then ameacou = true; self:comportamento("AmeacaNinho", 4.6, vivo)
 			else self:comportamento("PosturaCombate", 1.0, vivo) end
 			if self:podeAtacar(alvo) and os.clock() - ultimoAtaque > self.cfg.intervaloAtaque then
@@ -586,5 +623,6 @@ function C:_DefendNest(vivo)
 		task.wait()
 	end
 	self.aposConfronto = os.clock(); self.recuperado = false
+	self:focar(nil)
 end
 return C

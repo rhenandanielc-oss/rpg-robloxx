@@ -37,6 +37,9 @@ CAUDA_BASE_K = float(os.environ.get("CAUDA_BASE_K", "1"))
 # mais com os dedos curvados, quique quase zero trocado por ABSORCAO nos ombros quando a dianteira pisa e IMPULSO do
 # quadril quando a traseira empurra. Passada, apoio e ciclo nao mudam (velocidades calibradas da montaria/IA).
 PASSO_PESADO = os.environ.get("PASSO_PESADO") == "1"
+# PERSONALIDADE (sistema universal 01/11): batidas por clipe no voo e no pairar. Glacial = menos batidas, mais amplas e
+# cadenciadas (o controlador da montaria segue com as mesmas velocidades: so a cadencia da asa muda)
+NB_VOO = int(os.environ.get("NB_VOO", "4")); NB_PAIRAR = int(os.environ.get("NB_PAIRAR", "4"))
 sc = bpy.context.scene; sc.render.fps = FPS
 A = bpy.data.objects["Silverwing_Rig"]; M = bpy.data.objects["Silverwing"]
 for m in M.modifiers: m.show_viewport = False
@@ -258,6 +261,7 @@ def resolver(p):
             dirb = rot(Mc) @ Y
             sinal = 1 if dirb.dot(ey) > 0 else -1             # osso para tras (cauda) ou para frente (pescoco)
             R = Rax(ez, esq * (-sinal)) @ Rax(ex, cima * sinal)
+            if n in p.extra: R = p.extra[n] @ R                  # giro extra em mundo (ex.: cabeca inclinada de lado)
             Md = Matrix.Translation(Mc.translation) @ (R @ rot(Mc)).to_4x4()
         else:
             Md = Mc
@@ -983,6 +987,86 @@ def f_mergulho(u):
     cauda_ar(p, 0, onda_cauda(u, [(2.0, 2, 0.0, 0.8), (1.0, 4, 1.0, 1.2)]), [1.5 * PESO_CAUDA[k] for k in range(7)])
     return p
 
+
+# ---------------------------------------------------------------- sistema universal de animacoes (01/11): comportamento
+# Toda forma regional usa as MESMAS funcoes (proporcoes vem do esqueleto encaixado; personalidade por variaveis de
+# ambiente). Antecipacao -> acao -> reacao do corpo -> movimento secundario (cauda/asas) -> recuperacao.
+def f_rugido_territorial(u):
+    """Rugido territorial 4,2 s: firma as patas, ergue o pescoco ao alto, enche o peito, abre as asas pela metade e
+    solta um rugido LONGO para o ceu (cabeca sobe), tremor da garganta, cauda erguida varrendo; recupera devagar."""
+    firma = janela(u, 0.0, 0.15); insp = pulso(u, 0.08, 0.28, 0.30, 0.38); rug = pulso(u, 0.30, 0.40, 0.82, 0.95)
+    p = Pose(); em_pe(p)
+    for c in PERNAS: p.pata[c]["beta"] += 4 * firma
+    trem = math.sin(2 * math.pi * 22 * u) * rug
+    p.off += Vector((0, 0.012 * insp - 0.006 * rug, 0.010 * insp + 0.004 * rug)); p.arf += 4 * insp + 6 * rug
+    p.curva["spine_1"] = (6 * insp + 3 * rug, 0); p.curva["spine_0"] = (-2 * insp, 0)
+    pescoco_alto(p, cima=14 * firma + 6 * insp + 4 * rug, esq=2 * trem, cab=4 * insp + 14 * rug + 1.5 * trem)
+    boca_abre(p, 0.10 * insp + 1.0 * rug, tranco=trem)
+    p.asas = asas_ameaca(0.5 * firma + 0.1 * rug)
+    lat = onda_cauda(u, [(8.0, 1, 0.3, 0.9), (3.0, 3, 1.1, 1.2)])
+    cauda(p, -12 + 8 * rug, 5.0, lat, onda=[6 * rug * PESO_CAUDA[k] for k in range(7)])
+    return p
+
+def f_intimidar(u):
+    """Intimidacao 3,6 s (laco): encara o adversario de cabeca BAIXA, mostra os dentes (labio entreaberto), dois
+    grunhidos curtos, asas tensas meio abertas tremendo, peso a frente, cauda chicoteando de lado."""
+    p = Pose(); base_pe(p, 0.35)
+    gr = max(0.0, math.sin(2 * math.pi * 2 * u)) ** 3                         # 2 grunhidos por ciclo
+    lado = math.sin(2 * math.pi * u)
+    p.off += Vector((0.004 * lado, -0.006 * gr, -0.004 + 0.003 * math.sin(2 * math.pi * 4 * u)))
+    p.arf += 1.5 * gr; p.rol = 1.2 * lado
+    pescoco_alto(p, cima=-20 - 3 * gr, esq=-4 * lado, cab=6 + 2 * gr)
+    boca_abre(p, 0.16 + 0.22 * gr, tranco=gr)
+    p.asas = asas_ameaca(0.40 + 0.03 * math.sin(2 * math.pi * 6 * u))
+    lat = onda_cauda(u, [(12.0, 1, 0.0, 0.9), (4.0, 3, 0.7, 1.2)])
+    cauda(p, -8, 5.0, lat, onda=[3 * PESO_CAUDA[k] for k in range(7)])
+    return p
+
+def f_curiosidade(u):
+    """Curiosidade 5 s: nota algo (vira e ergue a cabeca), INCLINA a cabeca de lado, aproxima o focinho baixo
+    farejando, inclina para o outro lado, recua e volta a postura."""
+    nota = pulso(u, 0.0, 0.12, 0.85, 1.0); inc1 = pulso(u, 0.15, 0.25, 0.32, 0.4); aprox = pulso(u, 0.38, 0.5, 0.62, 0.72)
+    inc2 = pulso(u, 0.68, 0.76, 0.84, 0.9)
+    fare = max(0.0, math.sin(2 * math.pi * 14 * u)) * aprox
+    p = Pose(); em_pe(p)
+    p.off += Vector((0, -0.02 * aprox, -0.006 * aprox)); p.arf += -3 * aprox
+    pescoco_alto(p, cima=-10 + 6 * nota - 16 * aprox + 0.6 * fare, esq=14 * nota - 6 * inc2, cab=-2 * nota + 8 * aprox)
+    frente_, _, _ = eixos(p)
+    p.extra["head"] = Rax(frente_, 22 * inc1 - 18 * inc2)                  # inclina a cabeca (eixo do focinho)
+    boca_abre(p, 0.06 * fare)
+    p.asas = asas("Silverwing_Idle", u)
+    cauda(p, -14, 5.0, onda_cauda(u, [(5.0, 1, 0.4, 0.95), (2.5, 3, 0.9, 1.3)]), onda=[3 * nota * PESO_CAUDA[k] for k in range(7)])
+    return p
+
+def f_dano(forte=False, ar=False):
+    """Reacao a dano (leve 0,6 s / forte 1,1 s): tranco proporcional (corpo recua e rola para o lado do golpe), pescoco
+    encolhe, olhos/boca reagem, asas dao um espasmo, cauda contrai; recupera sem travar o controle."""
+    k = 1.0 if forte else 0.45
+    def fn(u):
+        hit = pulso(u, 0.0, 0.10, 0.18, 0.75 if forte else 0.6)
+        if ar:
+            p = f_pairar(u * 2 % 1.0)
+            pescoco_voo(p, cima=-30 + 10 * k * hit, cab=-p.arf * 0.2 - 8 * k * hit)
+            p.arf += 8 * k * hit
+        else:
+            p = Pose(); em_pe(p)
+            p.off += Vector((0.010 * k * hit, 0.025 * k * hit, -0.008 * k * hit)); p.arf += 6 * k * hit; p.rol = -6 * k * hit
+            pescoco_alto(p, cima=-10 + 12 * k * hit, esq=-8 * k * hit, cab=-10 * k * hit)
+            p.asas = asas_ameaca(0.25 * k * hit)
+            cauda(p, -15 + 10 * k * hit, 5.0, onda_cauda(u, [(3.0, 1, 0.0, 1.0)]), onda=[8 * k * hit * PESO_CAUDA[i] for i in range(7)])
+        p.curva["spine_1"] = (p.curva.get("spine_1", (0, 0))[0] - 5 * k * hit, 0)
+        boca_abre(p, 0.35 * k * hit)
+        return p
+    return fn
+
+def f_mergulho_saida(u):
+    """Recuperacao do mergulho 1,2 s: abre as asas (frenagem do ar), ergue o peito e o pescoco e passa a bater asas
+    (Voo); patas descem um pouco com a desaceleracao."""
+    t = smooth(u); flare = pulso(u, 0.1, 0.35, 0.55, 0.95)
+    p = mistura_pose(f_mergulho(u), f_voo(u, 1, u), t)
+    p.arf += 14 * flare
+    return p
+
 # ---------------------------------------------------------------- transicoes
 def mistura_pose(a, b, t):
     """mistura duas Poses (corpo, curvas, asas, patas)"""
@@ -1424,9 +1508,9 @@ gerar("Sentado", n(8.0), f_sentado)
 gerar("Levantar_Sentado", n(1.2), f_levantar_sentado, loop=False)
 gerar("Levantar", n(0.7), f_agachar(1, 0), loop=False)
 # voo: 4 batidas por clipe (mesmo ritmo de antes) para a cauda/patas terem movimento LENTO e nao repetitivo
-gerar("Voo", n(3.2), lambda u: f_voo(u, 4, u))
+gerar("Voo", n(3.2), lambda u: f_voo(u, NB_VOO, u))
 gerar("Voo_Rapido", n(3.2), lambda u: f_voo_rapido(u, 5, u))
-gerar("Pairar", n(4.0), lambda u: f_pairar(u, 4, u))
+gerar("Pairar", n(4.0), lambda u: f_pairar(u, NB_PAIRAR, u))
 gerar("Subida", n(2.8), lambda u: f_subida(u, 4, u))
 gerar("Descida", n(4.0), f_descida)
 gerar("Planeio", n(4.0), f_planeio)
@@ -1466,6 +1550,15 @@ gerar("Adormecer", n(2.5), f_adormecer, loop=False)
 gerar("Dormir", n(8.0), f_dormir)
 gerar("Acordar", n(2.0), f_acordar, loop=False)
 gerar("Ninho_Alerta", n(1.2), f_ninho_alerta, loop=False)
+# sistema universal (01/11): comportamento, dano e recuperacao do mergulho
+gerar("Rugido_Territorial", n(4.2), f_rugido_territorial, loop=False)
+gerar("Intimidar", n(3.6), f_intimidar)
+gerar("Curiosidade", n(5.0), f_curiosidade, loop=False)
+gerar("Dano_Leve", n(0.6), f_dano(False), loop=False)
+gerar("Dano_Forte", n(1.1), f_dano(True), loop=False)
+gerar("Dano_Leve_Ar", n(0.6), f_dano(False, True), loop=False)
+gerar("Dano_Forte_Ar", n(1.1), f_dano(True, True), loop=False)
+gerar("Mergulho_Saida", n(1.2), f_mergulho_saida, loop=False)
 print("VEL_ANDAR studs/s", round(S_ANDAR / (D_ANDAR * T_ANDAR) * 17.5, 2), "VEL_CORRER", round(S_CORRER / (D_CORRER * T_CORRER) * 17.5, 2))
 for m in M.modifiers: m.show_viewport = True
 bpy.ops.wm.save_mainfile()

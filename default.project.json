@@ -10,6 +10,10 @@
         "$path": "src/ReplicatedStorage/Animacoes_Silverwing",
         "$ignoreUnknownInstances": true
       },
+      "Animacoes_Glacial": {
+        "$path": "src/ReplicatedStorage/Animacoes_Glacial",
+        "$ignoreUnknownInstances": true
+      },
       "Combate_Dragoes": {
         "$path": "src/ReplicatedStorage/Combate_Dragoes",
         "$ignoreUnknownInstances": true

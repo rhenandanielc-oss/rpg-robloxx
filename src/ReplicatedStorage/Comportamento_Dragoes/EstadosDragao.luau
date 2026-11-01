@@ -27,6 +27,10 @@ M.ESTADOS = {
 	MontariaEspera  = {postura = "abaixado", entrada = "Montaria_Abaixar", loop = {"Montaria_Aguardar"}},
 	-- usuario 31/10: sentado nobre (peito alto, traseiras dobradas, cauda curva no chao), descanso acordado em pe de guarda
 	Sentado     = {postura = "sentado", entrada = "Sentar", loop = {"Sentado"}},
+	-- sistema universal de animacoes (01/11): comportamentos expressivos compartilhados por todas as formas regionais
+	RugidoTerritorial = {postura = "pe", entrada = "Rugido_Territorial", depois = "Idle"},          -- dominio do territorio
+	Intimidacao = {postura = "pe", entrada = "Reagir_Estimulo", loop = {"Intimidar"}},              -- encara, dentes, grunhidos
+	Curiosidade = {postura = "pe", entrada = "Curiosidade", depois = "Observacao"},                 -- inclina a cabeca, fareja
 }
 -- como sair de cada postura para ficar em pe (inserido automaticamente)
 M.LEVANTAR = {deitado = "Acordar", abaixado = "Montaria_Levantar", sentado = "Levantar_Sentado"}
@@ -156,6 +160,16 @@ function M:_executar(estado, def, g, semLaco)
 		return
 	end
 	self:_laco(def, g)
+end
+
+-- REACAO PONTUAL por cima do estado atual (ex.: dano): toca uma vez com prioridade Action e peso proporcional
+-- (golpe fraco = reacao menor), sem trocar estado/postura nem interromper o laco; clipe ausente = ignora
+function M:Pontual(nome, peso, fade)
+	local ok, t = pcall(function() return self:_trilha(nome) end)
+	if not ok or not t then return nil end
+	t.Priority = Enum.AnimationPriority.Action; t.Looped = false
+	t:Play(fade or 0.08, math.clamp(peso or 1, 0.05, 1))
+	return t
 end
 
 function M:Estado() return self.estado, self.postura end
