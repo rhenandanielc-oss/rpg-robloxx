@@ -91,17 +91,34 @@ local INTERVALO_VOZ = {rugido = 12, esforco = 7, mordida = 0.5, intimidar = 8, g
 	mastigar = 0.5, beber = 1.5, respiroSono = 4, despertar = 10, dano = 1.2, danoLeve = 0.8,
 	rugidoTerritorial = 8, rugidoCorpo = 2, rugidoAmeaca = 4, rugidoAmeacaCorpo = 2, rugidoVitoria = 20, rosnado = 2.5, bafo = 3, inspira = 2}
 local CORTE_VOZ = {esforco = 1.2, grunhido = 1.5, alerta = 1.2, farejar = 1.4, mastigar = 1.1, beber = 1.3, respiroSono = 4.5, respiro = 1.8,
-	rugidoTerritorial = 3.0, rugidoCorpo = 2.6, rugidoAmeaca = 1.4, rugidoAmeacaCorpo = 1.3, rugidoVitoria = 2.2, rosnado = 1.1, bafo = 1.2,
-	inspira = 1.1, dano = 0.9, despertar = 1.0, intimidar = 1.1}
+	rugidoTerritorial = 3.8, rugidoCorpo = 3.2, rugidoAmeaca = 2.2, rugidoAmeacaCorpo = 2.0, rugidoVitoria = 2.9, rosnado = 1.1, bafo = 1.2,
+	inspira = 1.1, dano = 0.9, despertar = 1.4, intimidar = 1.8, rugido = 3.4}
 local LONGE = {rugido = true, intimidar = true, rugidoCombate = true, dano = true, rugidoTerritorial = true, rugidoCorpo = true,
 	rugidoAmeaca = true, rugidoAmeacaCorpo = true, rugidoVitoria = true}
 local RUGIDOS = {rugido = true, rugidoTerritorial = true, rugidoAmeaca = true, rugidoVitoria = true, rugidoCombate = true}
+-- vocalizacoes com envelope natural (rugidos e camadas de corpo; rosnados/intimidacao longos tambem)
+local ENVELOPE = {rugido = true, rugidoTerritorial = true, rugidoAmeaca = true, rugidoVitoria = true, rugidoCombate = true,
+	rugidoCorpo = true, rugidoAmeacaCorpo = true, intimidar = true, despertar = true}
 local ultimoRugidoGlobal, donoUltimoRugido = -99, nil      -- dois dragoes nao rugem por cima um do outro
 local PERTO = {respiro = true, farejar = true, beber = true, mastigar = true, respiroSono = true, bafo = true, inspira = true}
 local ultimaVoz = {}
 
 local ativos = {}
-local function tocar(pai, sid, vol, tom, corte, dist)
+-- PATCH_RUGIDO_NATURAL (02/11): rugido COMECA (entrada ~0,2 s, tom um pouco abaixo), MUDA DE TOM (sobe ate o pico
+-- aos 35% e cai no fim) e TERMINA diminuindo (saida ~40% do tempo em Sine Out); o corte so remove o som ja em silencio
+local function envelopeRugido(s, vol, tom, dur)
+	s.Volume = 0; s.PlaybackSpeed = tom * 0.93
+	TweenService:Create(s, TweenInfo.new(math.min(0.22, dur * 0.12), Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {Volume = vol}):Play()
+	TweenService:Create(s, TweenInfo.new(dur * 0.35, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {PlaybackSpeed = tom * 1.04}):Play()
+	task.delay(dur * 0.35, function()
+		if s.Parent then TweenService:Create(s, TweenInfo.new(dur * 0.65, Enum.EasingStyle.Sine, Enum.EasingDirection.In), {PlaybackSpeed = tom * 0.86}):Play() end
+	end)
+	local saida = math.max(0.6, dur * 0.4)
+	task.delay(dur - saida, function()
+		if s.Parent then TweenService:Create(s, TweenInfo.new(saida - 0.03, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {Volume = 0}):Play() end
+	end)
+end
+local function tocar(pai, sid, vol, tom, corte, dist, rugido)
 	if not (pai and pai.Parent and sid) then return end
 	if (ativos[pai] or 0) >= (Cfg.maxSimultaneos or 6) then return end
 	local d = dist or Cfg.distMax
@@ -111,6 +128,7 @@ local function tocar(pai, sid, vol, tom, corte, dist)
 	local s = Instance.new("Sound"); s.SoundId = sid; s.Volume = vol or 1; s.PlaybackSpeed = tom or 1
 	s.RollOffMode = Enum.RollOffMode.InverseTapered; s.RollOffMinDistance = 12; s.RollOffMaxDistance = d
 	s.Parent = pai; s:Play()
+	if rugido then envelopeRugido(s, vol or 1, tom or 1, corte or 3) end
 	if corte then task.delay(corte, function() if s.Parent then s:Stop(); s:Destroy() end end)
 	else s.Ended:Once(function() s:Destroy() end); task.delay(12, function() if s.Parent then s:Destroy() end end) end
 end
@@ -131,7 +149,7 @@ local function tocarVoz(m, pp, nome, fase)
 					if donoUltimoRugido ~= m and os.clock() - ultimoRugidoGlobal < 1.6 then vol *= 0.35 end
 					ultimoRugidoGlobal, donoUltimoRugido = os.clock(), m
 				end
-				tocar(pp, sorteia(C[k]), vol, ev[5] * (0.95 + math.random() * 0.1) * tomVoz(pp), CORTE_VOZ[k], dist)
+				tocar(pp, sorteia(C[k]), vol, ev[5] * (0.95 + math.random() * 0.1) * tomVoz(pp), CORTE_VOZ[k], dist, ENVELOPE[k])
 			end
 		end
 	end
@@ -328,6 +346,6 @@ if FX then
 			task.delay(0.45, function() tocar(pp, C.garra, C.garraVolume, 0.85 + math.random() * 0.1) end)
 		elseif h == "Garra" and f == "impacto" and e.acertou then tocar(pp, C.impacto, 0.8, 0.9, C.impactoCorte)
 		elseif h == "Cauda" and f == "impacto" then tocar(pp, C.garra, 1.0, 0.7)
-		elseif h == "Rugido" and f == "emissao" then tocar(pp, C.rugidoCombate or C.rugido, 1.5, 0.95 * tomVoz(pp), nil, C.distVoz) end
+		elseif h == "Rugido" and f == "emissao" then tocar(pp, C.rugidoCombate or C.rugido, 1.5, 0.95 * tomVoz(pp), 1.9, C.distVoz, true) end
 	end)
 end

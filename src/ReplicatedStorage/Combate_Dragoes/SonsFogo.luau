@@ -250,11 +250,11 @@ local function rugido(m, d)
 		tocar(cab, sorteia(B.rosnado), {vol = 0.55, tom = var(0.75, 0.04), corte = 0.6, fadeOut = 0.2, dist = 160, prio = 3})
 	elseif d.fase == "emissao" then
 		if d.tipo == "aereo" then
-			tocar(cab, B.rugAereo, {vol = 1.1, tom = var(0.74, 0.03), corte = 2.0, fadeOut = 0.6, dist = 360, min = 25, prio = 5})
-			tocar(cab, B.rugAereoCorpo, {vol = 0.5, tom = var(0.7, 0.03), corte = 1.8, fadeOut = 0.6, dist = 300, min = 25, prio = 4})
+			tocar(cab, B.rugAereo, {vol = 1.1, tom = var(0.74, 0.03), corte = 2.6, rugido = true, dist = 360, min = 25, prio = 5})
+			tocar(cab, B.rugAereoCorpo, {vol = 0.5, tom = var(0.7, 0.03), corte = 2.4, rugido = true, dist = 300, min = 25, prio = 4})
 		else
-			tocar(cab, B.rugCombate, {vol = 1.05, tom = var(0.82, 0.04), corte = 1.2, fadeOut = 0.45, dist = 340, min = 22, prio = 5})
-			tocar(cab, B.rugCombateB, {vol = 0.55, tom = var(0.9, 0.04), corte = 1.0, fadeOut = 0.4, dist = 300, min = 22, prio = 4})
+			tocar(cab, B.rugCombate, {vol = 1.05, tom = var(0.82, 0.04), corte = 1.8, rugido = true, dist = 340, min = 22, prio = 5})
+			tocar(cab, B.rugCombateB, {vol = 0.55, tom = var(0.9, 0.04), corte = 1.5, rugido = true, dist = 300, min = 22, prio = 4})
 		end
 		task.delay(d.tipo == "aereo" and 1.6 or 1.0, function()
 			if vivo(m) then tocar(bocaO(m), B.arQuente, {vol = 0.18, tom = 0.85, corte = 1.0, fadeIn = 0.1, fadeOut = 0.5, dist = 90}) end

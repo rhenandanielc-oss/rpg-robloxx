@@ -55,12 +55,15 @@ local function remover(reg)
 	for i, r in ipairs(ativos) do if r == reg then table.remove(ativos, i); break end end
 	if reg.pai then porPai[reg.pai] = math.max(0, (porPai[reg.pai] or 1) - 1) end
 end
-local function desligar(reg, fade)
+local function desligar(reg, fade, suave)
 	if reg.morto then return end
 	reg.morto = true; remover(reg)
 	local s = reg.s
 	if vivo(s) then
-		if fade and fade > 0 then TweenService:Create(s, TweenInfo.new(fade, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Volume = 0}):Play(); Debris:AddItem(s, fade + 0.05)
+		-- rugido: saida em Sine Out (cai devagar e se apaga), nao em Quad In (que segura e despenca no fim)
+		local estilo = suave and Enum.EasingStyle.Sine or Enum.EasingStyle.Quad
+		local dir = suave and Enum.EasingDirection.Out or Enum.EasingDirection.In
+		if fade and fade > 0 then TweenService:Create(s, TweenInfo.new(fade, estilo, dir), {Volume = 0}):Play(); Debris:AddItem(s, fade + 0.05)
 		else s:Stop(); s:Destroy() end
 	end
 end
@@ -69,8 +72,23 @@ local function posDe(pai)
 end
 -- o = {vol, tom, corte (s), dist (alcance max), prio (1 baixo .. 5 rugido), fadeIn, fadeOut, laco, ini (TimePosition),
 --      pos (posicao para o corte por distancia, quando o pai ainda nao foi posicionado)}
+-- PATCH_RUGIDO_NATURAL (02/11): envelope de rugido - COMECA (entrada de ~0,2 s, tom um pouco abaixo), MUDA DE TOM
+-- (sobe ate o pico aos 35% e cai no fim, como o folego acabando) e TERMINA diminuindo (saida longa, ~40% do tempo):
+-- nada de cortar seco. Uso: o.rugido = true (o.corte = duracao total).
+local function envelopeRugido(s, tom, dur)
+	s.PlaybackSpeed = tom * 0.93
+	TweenService:Create(s, TweenInfo.new(dur * 0.35, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {PlaybackSpeed = tom * 1.04}):Play()
+	task.delay(dur * 0.35, function()
+		if s.Parent then TweenService:Create(s, TweenInfo.new(dur * 0.65, Enum.EasingStyle.Sine, Enum.EasingDirection.In), {PlaybackSpeed = tom * 0.86}):Play() end
+	end)
+end
 local function tocar(pai, sid, o)
 	o = o or {}
+	if o.rugido then                                                    -- entrada e saida do envelope (ver acima)
+		local dur = o.corte or 3
+		o.fadeIn = o.fadeIn or math.min(0.22, dur * 0.12)
+		o.fadeOut = math.max(o.fadeOut or 0, dur * 0.4, 0.6)
+	end
 	if not (vivo(pai) and sid) then return end
 	cam = workspace.CurrentCamera
 	local dist = o.dist or 240
@@ -90,13 +108,14 @@ local function tocar(pai, sid, o)
 	if o.ini then s.TimePosition = o.ini end
 	s.Parent = pai; s:Play()
 	if o.fadeIn and o.fadeIn > 0 then TweenService:Create(s, TweenInfo.new(o.fadeIn, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {Volume = vol}):Play() end
+	if o.rugido then envelopeRugido(s, o.tom or 1, o.corte or 3) end
 	local reg = {s = s, prio = prio, pai = pai, laco = o.laco, vol = vol, tom = o.tom or 1}
 	table.insert(ativos, reg); porPai[pai] = (porPai[pai] or 0) + 1
 	if o.laco then
 		if o.corte then task.delay(o.corte, function() desligar(reg, o.fadeOut or 0.4) end) end   -- trava de seguranca
 	else
 		local fim = o.corte or 6
-		task.delay(math.max(0.05, fim - (o.fadeOut or 0.2)), function() desligar(reg, o.fadeOut or 0.2) end)
+		task.delay(math.max(0.05, fim - (o.fadeOut or 0.2)), function() desligar(reg, o.fadeOut or 0.2, o.rugido) end)
 		s.Ended:Once(function() desligar(reg, 0) end)
 	end
 	s.AncestryChanged:Connect(function() if not s:IsDescendantOf(game) then desligar(reg, 0) end end)
@@ -379,8 +398,8 @@ local function nevasca(m, d)
 		end)
 		-- 2) rugido ancestral, preso a cabeca (sai da boca), maior alcance do kit mas nao o mapa inteiro
 		depois(m, "Nevasca", t, rug, function()
-			tocar(cab, B.rugidoAncestral, {vol = 2.0, tom = var(0.78, 0.02) * tomVoz(m), corte = 3.2, fadeOut = 0.9, dist = 420, min = 30, prio = 5})
-			tocar(cab, B.rugidoCorpo, {vol = 1.0, tom = var(0.7, 0.02) * tomVoz(m), corte = 2.6, fadeOut = 0.8, dist = 360, min = 30, prio = 5})
+			tocar(cab, B.rugidoAncestral, {vol = 2.0, tom = var(0.78, 0.02) * tomVoz(m), corte = 4.2, rugido = true, dist = 420, min = 30, prio = 5})
+			tocar(cab, B.rugidoCorpo, {vol = 1.0, tom = var(0.7, 0.02) * tomVoz(m), corte = 3.4, rugido = true, dist = 360, min = 30, prio = 5})
 			tocar(cab, B.sopro, {vol = 0.5, tom = 0.6, corte = 2.4, fadeIn = 0.3, fadeOut = 0.8, dist = 200})
 			ajustarLaco(m, "nevVento", 1.3, 1.15, 0.6)
 		end)
