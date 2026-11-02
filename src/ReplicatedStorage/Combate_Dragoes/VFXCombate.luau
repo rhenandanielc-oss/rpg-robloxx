@@ -23,6 +23,8 @@ local PERFIL = {
 	Terra = {cor = C3(150, 110, 75), luz = C3(255, 190, 120), nucleo = {C3(200, 170, 130), C3(140, 105, 75), C3(90, 70, 55), C3(60, 50, 45)}},
 	Raio = {cor = C3(150, 200, 255), luz = C3(170, 210, 255), nucleo = {C3(255, 255, 255), C3(170, 215, 255), C3(90, 140, 255), C3(40, 60, 160)}},
 	Ar = {cor = C3(215, 235, 245), luz = C3(220, 240, 255), nucleo = {C3(255, 255, 255), C3(220, 240, 250), C3(190, 215, 230), C3(160, 185, 200)}},
+	-- PATCH_VFX_NEUTRO (02/11): impacto fisico sem elemento (dragao cujo kit ainda nao existe): poeira/estilhaco claro
+	Neutro = {cor = C3(225, 232, 240), luz = C3(225, 235, 250), nucleo = {C3(248, 250, 255), C3(215, 224, 235), C3(178, 188, 202), C3(140, 150, 165)}},
 }
 local function seq(cs) local k = {}; for i, c in ipairs(cs) do table.insert(k, ColorSequenceKeypoint.new((i - 1) / (#cs - 1), c)) end; return ColorSequence.new(k) end
 local function ns(...) local a = {...}; local k = {}; for i = 1, #a, 2 do table.insert(k, NumberSequenceKeypoint.new(a[i], a[i + 1])) end; return NumberSequence.new(k) end
@@ -831,7 +833,9 @@ end
 local trilhasArr = {}
 function M.evento(d)
 	local m = d.d; if not m or not m.Parent then return end
-	local f = fatorLOD(m:GetPivot().Position); local el = d.el or "Fogo"; local P = PERFIL[el]
+	-- sem elemento: Montanhas segue no Fogo; outras formas (Glacial com kit pendente) usam o impacto Neutro
+	local semEl = (m:GetAttribute("FormaRegional") ~= "Montanhas") and "Neutro" or "Fogo"
+	local f = fatorLOD(m:GetPivot().Position); local el = d.el or semEl; local P = PERFIL[el] or PERFIL.Neutro
 	if d.fase == "reacao" then reacao(d.alvo, el, d.intensidade); return end
 	if d.fase == "lancamento" then lancamento(d); return end              -- empurrao (Tempestade/Ruptura): so o personagem atingido
 	if f <= 0 then return end

@@ -19,6 +19,9 @@ local VOZ = {
 	Ninho_Ameaca = {{0.36, "rugido", 1, 1.0, 0.9}}, Reagir_Estimulo = {{0.12, "esforco", 0.8, 0.7, 0.9}},
 	Idle_Alerta_Mantido = {{0.5, "esforco", 0.35, 0.55, 0.85}}, Preparar_Combate = {{0.3, "esforco", 0.4, 0.65, 0.8}},
 	Comer = {{0.1, "mordida", 1, 0.7, 0.8}, {0.433, "mordida", 1, 0.7, 0.8}, {0.766, "mordida", 1, 0.7, 0.8}},
+	-- PATCH_VOZ_FORMA (01/11): clipes do sistema universal
+	Rugido_Territorial = {{0.3, "rugido", 1, 1.2, 0.85}}, Intimidar = {{0.2, "esforco", 0.6, 0.7, 0.75}, {0.7, "esforco", 0.6, 0.7, 0.75}},
+	Curiosidade = {{0.45, "respiro", 0.8, 0.5, 0.9}}, Dano_Forte = {{0.05, "esforco", 1, 0.8, 0.95}}, Dano_Forte_Ar = {{0.05, "esforco", 1, 0.8, 0.95}},
 }
 local VOZF = {}; for n, l in pairs(VOZ) do VOZF[n] = {}; for _, e in ipairs(l) do table.insert(VOZF[n], e[1]) end end
 local INTERVALO_VOZ = {rugido = 12, esforco = 7, mordida = 0.5}
@@ -37,6 +40,8 @@ local function tocar(pai, sid, vol, tom, corte)
 	else s.Ended:Once(function() s:Destroy() end); task.delay(12, function() if s.Parent then s:Destroy() end end) end
 end
 local function sorteia(t) return type(t) == "table" and t[math.random(#t)] or t end
+-- PATCH_VOZ_FORMA: tom de voz da forma regional (atributo TomVoz no modelo; 1 = padrao)
+local function tomVoz(pai) local mm = pai and pai:FindFirstAncestorWhichIsA("Model"); return (mm and mm:GetAttribute("TomVoz")) or 1 end
 local function faixa(f) return f and (f[1] + (f[2] - f[1]) * math.random()) or 1 end
 local function tocarVoz(m, pp, nome, fase)
 	for _, ev in ipairs(VOZ[nome]) do
@@ -44,7 +49,7 @@ local function tocarVoz(m, pp, nome, fase)
 			local k = ev[2]; ultimaVoz[m] = ultimaVoz[m] or {}
 			if os.clock() - (ultimaVoz[m][k] or -99) >= (INTERVALO_VOZ[k] or 5) then
 				ultimaVoz[m][k] = os.clock()
-				tocar(pp, sorteia(Cfg[k]), ev[4], ev[5] * (0.95 + math.random() * 0.1), k == "esforco" and 1.2 or nil)
+				tocar(pp, sorteia(Cfg[k]), ev[4], ev[5] * (0.95 + math.random() * 0.1) * tomVoz(pp), k == "esforco" and 1.2 or nil)
 			end
 		end
 	end
@@ -126,7 +131,7 @@ task.spawn(function()
 				proxRespiro[m] = os.clock() + (cansado and a * 0.5 or a) + math.random() * (b - a)
 			elseif os.clock() >= prox then
 				proxRespiro[m] = nil
-				tocar(pp, Cfg.respiro, Cfg.respiroVolume * (cansado and 1.4 or 1), faixa(Cfg.respiroTom), 1.8)
+				tocar(pp, Cfg.respiro, Cfg.respiroVolume * (cansado and 1.4 or 1), faixa(Cfg.respiroTom) * tomVoz(pp), 1.8)
 			end
 		end
 	end
@@ -193,6 +198,6 @@ if FX then
 			task.delay(0.45, function() tocar(pp, Cfg.garra, Cfg.garraVolume, 0.85 + math.random() * 0.1) end)
 		elseif h == "Garra" and f == "impacto" and e.acertou then tocar(pp, Cfg.impacto, 0.8, 0.9, Cfg.impactoCorte)
 		elseif h == "Cauda" and f == "impacto" then tocar(pp, Cfg.garra, 1.0, 0.7)
-		elseif h == "Rugido" and f == "emissao" then tocar(pp, Cfg.rugido, 1.5, 0.95) end
+		elseif h == "Rugido" and f == "emissao" then tocar(pp, Cfg.rugido, 1.5, 0.95 * tomVoz(pp)) end
 	end)
 end
