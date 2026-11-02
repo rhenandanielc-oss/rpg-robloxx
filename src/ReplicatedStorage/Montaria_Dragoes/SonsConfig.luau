@@ -28,9 +28,12 @@ return {
 		-- PATCH_RUGIDOS_FOGO (02/11): voz do Dragao das Montanhas — agressiva, rouca e dominante (familia Creature Roar /
 		-- Giant Crab Monster / Pit Bull snarl); NADA da familia Lion usada no Glacial. So as chaves de VOZ; o resto herda.
 		Montanhas = {
-			-- usuario 02/11: UM rugido so (sem camadas) e o MESMO tom em todos -> um unico arquivo para todo rugido do Fogo
-			rugidoTerritorial = id(9113985451),          -- Creature Roar Constant Deep Throaty Growls 1
-			rugidoAmeaca = id(9113985451), rugidoVitoria = id(9113985451),
+			-- usuario 02/11: UM som por rugido, mesmo tom em todos, mas cada tipo com a SUA tomada; o arquivo anterior (Deep
+			-- Throaty Growls, rebaixado) soava "engasgado" -> familia Thunder With Lion Roar (Growl, Low Rumble, Roar), limpa,
+			-- grave e com ronco por baixo (sem as variantes com estalo eletrico)
+			rugidoTerritorial = id(9126100903),          -- Thunder With Lion Roar Growl Low Rumble Roar 14 (4,2 s)
+			rugidoAmeaca = id(9126100484),               -- idem 8 (3,1 s)
+			rugidoVitoria = id(9126100708),              -- idem 13 (3,8 s)
 			rosnado = {id(9113973520), id(9113973748), id(9113973436)},   -- Creature Growls Pit Bull 4 / 3 / 1: snarl agressivo
 			bafo = id(9114431819),                       -- Fire Burst 6: ascending air release (calor na expiracao, baixo)
 			esforco = {id(9125467833), id(9125467848)}, grunhido = {id(9125467833), id(9125467848)}, alerta = id(9125467848),

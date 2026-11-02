@@ -43,7 +43,7 @@ local VOZ = {
 -- PATCH_RUGIDOS_FOGO (02/11): Dragao das Montanhas — fases = momentos reais dos clipes novos (preparo/inspiracao,
 -- emissao com a boca abrindo, bafo quente no fim); rugidos em CAMADAS (voz + corpo grave), grunhidos discretos
 -- usuario 02/11: UM rugido so (sem camadas nem rosnado separado) e o MESMO tom (TOM_RUGIDO_FOGO) em todos
-local TOM_RUGIDO_FOGO = 0.85
+local TOM_RUGIDO_FOGO = 0.92                                    -- pouco rebaixado: rebaixar muito deixava o som engasgado
 local VOZ_MONTANHAS = {
 	Rugido_Territorial = {{0.12, "inspira", 1, 0.55, 0.62}, {0.30, "rugidoTerritorial", 1, 1.15, TOM_RUGIDO_FOGO}, {0.86, "bafo", 0.8, 0.22, 0.8}},
 	Rugido_Ameaca = {{0.56, "rugidoAmeaca", 1, 1.05, TOM_RUGIDO_FOGO}},
@@ -91,7 +91,7 @@ local INTERVALO_VOZ = {rugido = 12, esforco = 7, mordida = 0.5, intimidar = 8, g
 	mastigar = 0.5, beber = 1.5, respiroSono = 4, despertar = 10, dano = 1.2, danoLeve = 0.8,
 	rugidoTerritorial = 8, rugidoCorpo = 2, rugidoAmeaca = 4, rugidoAmeacaCorpo = 2, rugidoVitoria = 20, rosnado = 2.5, bafo = 3, inspira = 2}
 local CORTE_VOZ = {esforco = 1.2, grunhido = 1.5, alerta = 1.2, farejar = 1.4, mastigar = 1.1, beber = 1.3, respiroSono = 4.5, respiro = 1.8,
-	rugidoTerritorial = 3.8, rugidoCorpo = 3.2, rugidoAmeaca = 2.2, rugidoAmeacaCorpo = 2.0, rugidoVitoria = 2.9, rosnado = 1.1, bafo = 1.2,
+	rugidoTerritorial = 3.9, rugidoCorpo = 3.2, rugidoAmeaca = 2.7, rugidoAmeacaCorpo = 2.0, rugidoVitoria = 3.3, rosnado = 1.1, bafo = 1.2,
 	inspira = 1.1, dano = 0.9, despertar = 1.4, intimidar = 1.8, rugido = 3.4}
 local LONGE = {rugido = true, intimidar = true, rugidoCombate = true, dano = true, rugidoTerritorial = true, rugidoCorpo = true,
 	rugidoAmeaca = true, rugidoAmeacaCorpo = true, rugidoVitoria = true}

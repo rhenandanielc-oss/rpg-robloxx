@@ -37,8 +37,9 @@ local B = {
 	mordida = {id(9125467298), id(9125466463)},                             -- Creature Bite Pterodactyl Crunch
 	asa = {id(9120771864), id(9120776877)},                                 -- Wing Flaps: Large Flying Creature
 	-- rugidos (PATCH_RUGIDOS_FOGO): combate curto e feroz / aereo poderoso; rosnado de preparo
-	-- usuario 02/11: UM rugido so e o MESMO tom em todos os rugidos do Fogo (mesmo arquivo dos comportamentos)
-	rugido = id(9113985451),                                                -- Creature Roar Constant Deep Throaty Growls 1
+	-- usuario 02/11: UM som por rugido e o MESMO tom (0,92); cada tipo com a sua tomada (familia limpa, ver SonsConfig)
+	rugCombate = id(9126100408),                                            -- Thunder With Lion Roar Growl Low Rumble Roar 5 (2,2 s)
+	rugAereo = id(9126100618),                                              -- idem 10 (3,5 s)
 	rosnado = {id(9113973520), id(9113973748)},                             -- Creature Growls Pit Bull 4 / 3
 }
 S.BANCO = B
@@ -249,9 +250,9 @@ local function rugido(m, d)
 		novoTok(m, "Rug")
 	elseif d.fase == "emissao" then
 		if d.tipo == "aereo" then
-			tocar(cab, B.rugido, {vol = 1.1, tom = 0.85, corte = 2.6, rugido = true, dist = 360, min = 25, prio = 5})
+			tocar(cab, B.rugAereo, {vol = 1.1, tom = 0.92, corte = 3.0, rugido = true, dist = 360, min = 25, prio = 5})
 		else
-			tocar(cab, B.rugido, {vol = 1.05, tom = 0.85, corte = 2.0, rugido = true, dist = 340, min = 22, prio = 5})
+			tocar(cab, B.rugCombate, {vol = 1.05, tom = 0.92, corte = 2.1, rugido = true, dist = 340, min = 22, prio = 5})
 		end
 		task.delay(d.tipo == "aereo" and 1.6 or 1.0, function()
 			if vivo(m) then tocar(bocaO(m), B.arQuente, {vol = 0.18, tom = 0.85, corte = 1.0, fadeIn = 0.1, fadeOut = 0.5, dist = 90}) end
