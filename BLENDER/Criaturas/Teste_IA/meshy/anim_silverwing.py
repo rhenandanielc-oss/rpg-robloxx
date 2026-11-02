@@ -214,11 +214,18 @@ P_ARMADA = dict(ergue=18, recua=14, cotovelo=-8, punho=24, leque=0.2)
 P_ERGUIDA = dict(ergue=58, recua=48, cotovelo=-34, punho=58, leque=0.5)
 if os.environ.get("P_ERGUIDA"):                       # outro dragao (ex.: Glacial) ajusta o sentado sem mudar o CR
     import json as _js; P_ERGUIDA.update(_js.loads(os.environ["P_ERGUIDA"]))
-def asas_armadas(ergue=0.0, resp=0.0):
+# ASAS DE DESCANSO (usuario 02/11, Glacial: "deitado ou descansando, asas mais baixas, quase no chao com uma leve dobra
+# para encostar no chao"): mesma montagem rigida das armadas com outros angulos (umero baixo, leve dobra no cotovelo e
+# no punho) e depois o ombro rola a asa ate a ponta ficar rente ao piso (asas_rente_chao). Sem P_DESCANSO: como antes.
+P_DESCANSO = None
+if os.environ.get("P_DESCANSO"):
+    import json as _js2; P_DESCANSO = dict(P_ARMADA); P_DESCANSO.update(_js2.loads(os.environ["P_DESCANSO"]))
+ALVO_DESCANSO = float(os.environ.get("ALVO_DESCANSO", "0.062"))     # altura da ponta da asa no descanso (unid. do rig)
+def asas_armadas(ergue=0.0, resp=0.0, Pfix=None):
     """Asas ARMADAS a partir do PLANEIO (pose validada, membrana sem lascas): giros RIGIDOS de subarvores (punho,
     cotovelo, ombro) em vez de direcoes osso a osso -> a membrana entre os dedos nao torce. ergue 0 = armada,
     1 = erguida acima do corpo (sentado); resp = respiracao (pequena variacao)"""
-    P = {k: lerp(P_ARMADA[k], P_ERGUIDA[k], ergue) for k in P_ARMADA}
+    P = Pfix or {k: lerp(P_ARMADA[k], P_ERGUIDA[k], ergue) for k in P_ARMADA}
     G = asas("Silverwing_Fly_Glide", 0.2); W = {}
     for n in ORD:                                                   # planeio com o corpo em repouso
         pai = PAI[n]; Mc = (W[pai] @ REL[n]) if pai else REL[n].copy()
@@ -343,7 +350,7 @@ def gerar(nome, n_quadros, fn, loop=True):
         p = fn(u)
         # certificacao 02/11: em clipe de chao (alguma pata apoiada) nenhuma ponta de asa entra no piso (asas dobradas
         # com o tronco inclinado / meia abertura de exibicao passando por baixo): sobe so o necessario
-        if p.asas and any(sp.get("modo") == "chao" for sp in p.pata.values()):
+        if p.asas and not getattr(p, "descanso", False) and any(sp.get("modo") == "chao" for sp in p.pata.values()):
             asas_acima_do_chao(p, asas("Silverwing_Fly_Flap", FA))
         W, B = resolver(p)
         chave(act, k + 1, B)
@@ -594,6 +601,38 @@ def f_sentado(u):
     ponta = onda_cauda(u, [(4.0, 1, 0.6, 0.9), (2.0, 3, 1.4, 1.3)], env)
     return pose_sentado(Pose(), 1.0, r, olhar, ponta)
 
+def asas_descanso(a=1.0, resp=0.0):
+    """basis das asas de descanso misturadas com as armadas (a = 0 armadas .. 1 descanso)"""
+    if not P_DESCANSO: return asas("Silverwing_Idle", 0.0)
+    return asas_armadas(0.0, resp, {k: lerp(P_ARMADA[k], P_DESCANSO[k], a) for k in P_ARMADA})
+def _min_lado(p, lado):
+    W, _ = resolver(p)
+    return min((W[n].translation + rot(W[n]) @ Vector((0, A.data.bones[n].length, 0))).z for n in ASA if n.endswith("_" + lado))
+def asas_rente_chao(p, a=1.0):
+    """rola cada asa no ombro (eixo frente-tras do corpo) ate a ponta ficar em ALVO_DESCANSO; peso a (transicoes)"""
+    if not P_DESCANSO or a <= 0.001: return
+    p.descanso = True                      # gerar() nao ergue estas asas (a ponta encosta no chao de proposito)
+    Rb = p.Rb()
+    for lado, sg in (("l", 1), ("r", -1)):
+        n = "shoulder_" + lado; base = p.extra.get(n)
+        def poe(ang): p.extra[n] = Rax(Rb @ Y, sg * ang) @ base if base is not None else Rax(Rb @ Y, sg * ang)
+        # MENOR giro a partir da pose de descanso: descobre o sentido que SOBE a ponta (derivada local) e busca entre 0 e
+        # o limite nesse sentido (subir, se a ponta esta abaixo do alvo) ou no oposto (descer, se esta acima)
+        poe(0.0); z0 = _min_lado(p, lado)
+        poe(6.0); sobe = 1.0 if _min_lado(p, lado) > z0 else -1.0
+        lim = sobe * 22.0 if z0 < ALVO_DESCANSO else -sobe * 35.0
+        poe(lim)
+        if (z0 < ALVO_DESCANSO) == (_min_lado(p, lado) < ALVO_DESCANSO): ang = lim      # nao cruza o alvo: vai ao limite
+        else:
+            lo, hi = 0.0, lim                                                  # lo do lado de z0
+            for _ in range(12):
+                mid = (lo + hi) / 2; poe(mid)
+                if (_min_lado(p, lado) < ALVO_DESCANSO) == (z0 < ALVO_DESCANSO): lo = mid
+                else: hi = mid
+            ang = (lo + hi) / 2
+        poe(ang * a)
+        if os.environ.get("DBG_DESC"): print("DESC", lado, "z0=%.3f lim=%.0f ang=%.1f zf=%.3f" % (z0, lim, ang, _min_lado(p, lado)))
+
 def f_agachar(ini, fim, ag=0.09):
     def fn(u):
         a = lerp(ini, fim, smooth(u)) if ini != fim else ini
@@ -601,11 +640,12 @@ def f_agachar(ini, fim, ag=0.09):
         r = math.sin(2 * math.pi * u) if ini == fim else 0
         p.off += Vector((0, 0, 0.003 * r))
         pescoco_alto(p, cima=-8 * a + 2 * r)
-        p.asas = asas("Silverwing_Idle", u)
+        p.asas = asas_descanso(a, r) if P_DESCANSO else asas("Silverwing_Idle", u)
         # deitado: cauda enrola devagar para um lado (descanso) e a ponta mexe pouco; transicoes levam a curva junto
         enrola = [6.0 * a * PESO_CAUDA[k_] for k_ in range(7)]
         viva = onda_cauda(u, [(2.5, 1, 0.3, 0.9), (1.0, 2, 1.7, 1.3)]) if ini == fim else [0] * 7
         cauda(p, -16, 5.0, somar(enrola, viva))
+        asas_rente_chao(p, a)
         return p
     return fn
 
@@ -770,9 +810,10 @@ def pose_dormir(u, a=1.0):
     p.curva["spine_1"] = (1.2 * r * a, 0)
     tique = 3 * pulso(u, 0.62, 0.64, 0.66, 0.7) * a                                  # pequeno movimento ocasional
     pescoco_ao_chao(p, lerp(0.26, 0.045, a) + 0.003 * r * a, esq=34 * a, cab_extra=tique)
-    p.asas = asas("Silverwing_Idle", 0.0)
+    p.asas = asas_descanso(1.0, r * a)
     enrola = [(6.0 + 6.0 * a) * PESO_CAUDA[k_] for k_ in range(7)]
     cauda(p, -16, 5.0, somar(enrola, onda_cauda(u, [(1.2 * a, 1, 0.3, 0.9)])))
+    asas_rente_chao(p, 1.0)
     return p
 def f_dormir(u): return pose_dormir(u, 1.0)
 def f_adormecer(u): return pose_dormir(u, smooth(u))
@@ -783,6 +824,7 @@ def f_acordar(u):
 def f_ninho_alerta(u):
     """Ninho_Alerta 1,2 s: do deitado direto para alerta (levanta ja de cabeca erguida e asas meio abertas)"""
     p = f_agachar(1, 0)(smooth(min(1, u * 1.25)))
+    for n_ in ("shoulder_l", "shoulder_r"): p.extra.pop(n_, None)        # asas vao para a exibicao (sem o rolamento do descanso)
     s_ = janela(u, 0.0, 0.5)
     pescoco_alto(p, cima=-8 + 14 * s_, cab=-5 * s_)
     p.asas = asas_ameaca(0.25 * s_)
@@ -1601,9 +1643,10 @@ def pose_deitado(u, a=1.0, olhar=0.0, cima=0.0):
     r = math.sin(2 * math.pi * 2 * u)
     p.off += Vector((0, 0, 0.003 * r * a)); p.curva["spine_1"] = (1.0 * r * a, 0)
     pescoco_alto(p, cima=-14 * (1 - a) - 26 * a + cima + 1.2 * r, esq=olhar, cab=3 * a)
-    p.asas = asas("Silverwing_Idle", 0.0)
+    p.asas = asas_descanso(a, r * a)
     enrola = [(8.0 * a) * PESO_CAUDA[k_] for k_ in range(7)]
     cauda(p, -16, 5.0, somar(enrola, onda_cauda(u, [(1.6 * a, 1, 0.3, 0.9), (0.8 * a, 3, 1.2, 1.2)])))
+    asas_rente_chao(p, a)
     return p
 def f_deitar(u):
     """em pe -> deitado 2,2 s: dianteiras flexionam primeiro e o torax desce, depois o quadril acomoda, a cauda curva

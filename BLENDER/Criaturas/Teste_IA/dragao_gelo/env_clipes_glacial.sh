@@ -15,4 +15,8 @@ export ROAR_ESTILO=gelo                    # rugido padrao v2 no estilo frio/con
 # - deitado/dormindo com a barriga no chao (agachamento 0,235; antes 0,09 deixava o quadril ~2 studs acima do piso);
 # - voo: batida mais profunda (ombro/umero x1,18) e com golpe forte (descida mais rapida, subida mais lenta) e mais
 #   lenta (3 batidas em 3,6 s = 1,2 s por batida; o Fogo faz 0,8 s). A subida continua com 4 batidas (esforco).
-export ASAS_ARMADAS=0 AG_DEITADO=0.235 AMP_ASA=1.18 ASA_GOLPE=0.35 T_VOO=3.6
+export ASAS_ARMADAS=1 AG_DEITADO=0.235 AMP_ASA=1.18 ASA_GOLPE=0.35 T_VOO=3.6
+# (usuario 02/11, depois da certificacao: "nao quero ele em nenhuma animacao com as asas dobradas, fica feio") -> asas
+#   ARMADAS em todas as posturas de chao (parado, andar, sentado, deitado...); a dobra lateral nao e mais usada no Glacial
+# (usuario 02/11) deitado/descansando: asas BAIXAS, leve dobra, pontas rentes ao chao (asas_descanso + asas_rente_chao)
+export P_DESCANSO='{"ergue": -8, "recua": 6, "cotovelo": -26, "punho": 46, "leque": 0.4}' ALVO_DESCANSO=0.062

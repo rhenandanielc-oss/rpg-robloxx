@@ -3,7 +3,7 @@
 -- VooDesbloqueado vem do salvamento da criatura e da missao de voo (nao deste script).
 local Players = game:GetService("Players")
 local function dar(plr)
-	for _, nome in ipairs({"Silverwing", "Dragao_Montanhas_Jogador"}) do
+	for _, nome in ipairs({"Silverwing", "Dragao_Montanhas_Jogador", "Glacial"}) do
 		local m = workspace:FindFirstChild(nome)
 		if m and not m:GetAttribute("DonoUserId") then m:SetAttribute("DonoUserId", plr.UserId) end
 	end
