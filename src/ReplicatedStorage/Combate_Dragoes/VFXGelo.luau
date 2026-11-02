@@ -627,16 +627,29 @@ end
 -- em cada onda: muitos fragmentos de gelo reais (pecas) e lascas em alta velocidade + PULSOS BRANCOS (esferas e aneis)
 -- saindo do corpo; pulsos menores continuos durante a descarga.
 local nevascas = {}
+-- (usuario 02/11: "fragmentos mais visiveis") lascas GRANDES (5-14 studs), quase opacas, com miolo luminoso e rastro
+-- frio; saem rapido e DESACELERAM (ficam no ar o bastante para o olho acompanhar), giram e so entao desbotam
 local function fragmentos(c, raio, f, n)
 	for i = 1, math.floor(n * f) do
 		local dir = Vector3.new(math.random() - 0.5, (math.random() - 0.3) * 0.9, math.random() - 0.5).Unit
-		local s = 0.6 + math.random() * 1.6
-		local p = peca({Size = Vector3.new(s * 0.5, s * 0.32, s * 3.4), Material = math.random() < 0.5 and Enum.Material.Glass or Enum.Material.Ice,
-			Color = AZUL_CLARO:Lerp(BRANCO_GELO, math.random()), Transparency = 0.1, Reflectance = 0.12, CFrame = CFrame.lookAt(c + dir * 6, c + dir * 7)}, "WedgePart")
-		local alvo = c + dir * raio * (0.7 + math.random() * 0.4)
-		local dur = 0.3 + math.random() * 0.2
-		TweenService:Create(p, TweenInfo.new(dur, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {CFrame = CFrame.lookAt(alvo, alvo + dir), Transparency = 0.55}):Play()
-		Debris:AddItem(p, dur + 0.05)
+		local s = 1.5 + math.random() * 2.6
+		local cf0 = CFrame.lookAt(c + dir * 7, c + dir * 8)
+		local p = peca({Size = Vector3.new(s * 0.55, s * 0.36, s * 3.2), Material = Enum.Material.Ice, Color = AZUL_CLARO:Lerp(BRANCO_GELO, 0.35 + math.random() * 0.65),
+			Transparency = 0, Reflectance = 0.1, CFrame = cf0}, "WedgePart")
+		local nucleo = peca({Size = Vector3.new(s * 0.18, s * 0.12, s * 2.6), Material = Enum.Material.Neon, Color = C3(200, 238, 255), Transparency = 0.1, CFrame = cf0})
+		local a0 = Instance.new("Attachment", p); a0.Position = Vector3.new(0, 0, s * 1.4); local a1 = Instance.new("Attachment", p); a1.Position = Vector3.new(0, s * 0.3, s * 1.4)
+		local tr = Instance.new("Trail"); tr.Attachment0 = a0; tr.Attachment1 = a1; tr.Texture = TEX.rastro_h; tr.TextureMode = Enum.TextureMode.Stretch; tr.Lifetime = 0.22
+		tr.LightEmission = 0.8; tr.FaceCamera = true; tr.Color = seq({C3(255, 255, 255), AZUL_CLARO}); tr.Transparency = ns(0, 0.2, 1, 1); tr.WidthScale = ns(0, 2.2, 1, 0.3); tr.Parent = p
+		local alvo = c + dir * raio * (0.6 + math.random() * 0.45)
+		local dur = 0.55 + math.random() * 0.35
+		local giro = CFrame.Angles(0, 0, math.random() * 6) * CFrame.Angles(math.random() - 0.5, math.random() - 0.5, 0)
+		local fim = CFrame.lookAt(alvo, alvo + dir) * giro
+		TweenService:Create(p, TweenInfo.new(dur, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {CFrame = fim}):Play()
+		TweenService:Create(nucleo, TweenInfo.new(dur, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {CFrame = fim}):Play()
+		task.delay(dur * 0.75, function()
+			if p.Parent then TweenService:Create(p, TweenInfo.new(0.35), {Transparency = 1}):Play(); TweenService:Create(nucleo, TweenInfo.new(0.35), {Transparency = 1}):Play() end
+		end)
+		Debris:AddItem(p, dur + 0.15); Debris:AddItem(nucleo, dur + 0.15)
 	end
 end
 local function pulso(c, raio, transp, dur)                            -- casca de energia fria se expandindo
@@ -674,7 +687,7 @@ local function nevasca(m, d, f)
 			-- tempestade: fragmentos continuos em alta velocidade + riscos de vento + nevoa e neve girando em volta
 			local ac = ancora(centro(m)); table.insert(reg.itens, ac)
 			table.insert(reg.itens, emissor(ac, {Texture = TEX.lasca, Orientation = Enum.ParticleOrientation.VelocityParallel, Color = seq({C3(255, 255, 255), AZUL_CLARO}),
-				LightEmission = 0.7, Size = ns(0, 1.8, 1, 0.8), Lifetime = NumberRange.new(0.45, 0.7), Speed = NumberRange.new(150, 230), SpreadAngle = Vector2.new(180, 70), Rate = 90 * f2}))
+				LightEmission = 1, Size = ns(0, 3, 1, 1.4), Lifetime = NumberRange.new(0.55, 0.8), Speed = NumberRange.new(150, 230), SpreadAngle = Vector2.new(180, 70), Rate = 90 * f2}))
 			table.insert(reg.itens, emissor(ac, {Texture = TEX.rastro, Orientation = Enum.ParticleOrientation.VelocityParallel, Color = ColorSequence.new(C3(240, 250, 255)),
 				LightEmission = 0.8, Size = ns(0, 2.5, 1, 1), Transparency = ns(0, 0.2, 1, 1), Lifetime = NumberRange.new(0.3, 0.5), Speed = NumberRange.new(160, 240),
 				SpreadAngle = Vector2.new(180, 60), Rate = 60 * f2}))
@@ -703,8 +716,12 @@ local function nevasca(m, d, f)
 			-- pulsos brancos menores e continuos acompanhando a descarga
 			task.spawn(function()
 				local fim = os.clock() + (d.duracao or 5.6) - (d.rugido or 1.75) - 1.0
+				local k = 0
 				while os.clock() < fim and nevascas[m] == reg and m.Parent do
-					pulso(centro(m), 26 + math.random() * 10, 0.35, 0.4); task.wait(0.38)
+					k += 1
+					if k % 2 == 0 then pulso(centro(m), 26 + math.random() * 10, 0.35, 0.4) end
+					fragmentos(centro(m), (d.raio or 95) * 0.8, f2, 9)
+					task.wait(0.19)
 				end
 			end)
 			som(pp, SOM.tempestade, 1.4, 1.0, (d.duracao or 5.6) - (d.rugido or 1.75), 400)
@@ -728,10 +745,10 @@ local function nevasca(m, d, f)
 	elseif d.fase == "onda" then
 		local c = d.pos or centro(m); local i = d.indice or 1; local R = d.raio or 95
 		local f2 = math.max(f, 0.35)
-		fragmentos(c, R, f2, i == 1 and 80 or 50)
+		fragmentos(c, R, f2, i == 1 and 70 or 45)
 		local a = ancora(c); Debris:AddItem(a, 1.5)
 		emissor(a, {Texture = TEX.lasca, Orientation = Enum.ParticleOrientation.VelocityParallel, Color = seq({C3(255, 255, 255), AZUL_CLARO}), LightEmission = 0.8,
-			Size = ns(0, 2.2, 1, 1), Lifetime = NumberRange.new(0.4, 0.6), Speed = NumberRange.new(180, 260), SpreadAngle = Vector2.new(180, 180), Rate = 0}):Emit(math.floor(160 * f2))
+			Size = ns(0, 3.4, 1, 1.6), Lifetime = NumberRange.new(0.5, 0.75), Speed = NumberRange.new(180, 260), SpreadAngle = Vector2.new(180, 180), Rate = 0}):Emit(math.floor(160 * f2))
 		emissor(a, {Texture = TEX.rastro, Orientation = Enum.ParticleOrientation.VelocityParallel, Color = ColorSequence.new(C3(245, 252, 255)), LightEmission = 0.9,
 			Size = ns(0, 3, 1, 1.5), Transparency = ns(0, 0.1, 1, 1), Lifetime = NumberRange.new(0.3, 0.45), Speed = NumberRange.new(200, 280), SpreadAngle = Vector2.new(180, 180), Rate = 0}):Emit(math.floor(80 * f2))
 		emissor(a, {Texture = TEX.brilho, Color = ColorSequence.new(C3(255, 255, 255)), LightEmission = 1, Size = ns(0, 22, 1, 0), Lifetime = NumberRange.new(0.2, 0.25), Speed = NumberRange.new(0, 0), Rate = 0}):Emit(1)
