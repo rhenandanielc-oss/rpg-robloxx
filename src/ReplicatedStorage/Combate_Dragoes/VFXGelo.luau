@@ -11,7 +11,11 @@ local G = {}
 
 local C3 = Color3.fromRGB
 local BRANCO_GELO, AZUL_CLARO, AZUL, AZUL_FUNDO = C3(240, 250, 255), C3(170, 225, 255), C3(110, 185, 245), C3(55, 120, 200)
-local TEX = {fumaca = "rbxasset://textures/particles/smoke_main.dds", faisca = "rbxasset://textures/particles/sparkles_main.dds"}
+local TEX = {fumaca = "rbxasset://textures/particles/smoke_main.dds", faisca = "rbxasset://textures/particles/sparkles_main.dds",
+	-- texturas PROPRIAS do gelo (V14/vfx/gerar_texturas_gelo.py, geradas por codigo e enviadas ao Roblox em 02/11)
+	lasca = "rbxassetid://107866612076518", rastro = "rbxassetid://83955969231267", rastro_h = "rbxassetid://81993670555810",
+	nevoa = "rbxassetid://105424368956403", jato = "rbxassetid://129300151490629", jato_h = "rbxassetid://114995351681928",
+	brilho = "rbxassetid://139365298148840", floco = "rbxassetid://94651834263686", geada = "rbxassetid://91218303362945"}
 local function id(n) return "rbxassetid://" .. n end
 local SOM = {
 	jato = id(9114437277), jatoCurto = id(9114437231),             -- Fire Extinguisher 2 / 1 (SFX): pressao fria
@@ -123,27 +127,51 @@ local function cristal(base, up, altura, largura, vida)
 	end)
 	return m
 end
--- estilhaco contido: lascas de vidro-gelo, vapor frio e brilho curto
-local function estilhaco(pos, escala, fator, normal)
+-- geada no chao: decal proprio (veios ramificados) num disco fino que cresce a partir do ponto e depois desbota
+local function base(up)
+	up = (up or Vector3.yAxis).Unit
+	local x = up:Cross(Vector3.zAxis); if x.Magnitude < 0.1 then x = up:Cross(Vector3.xAxis) end
+	return x.Unit, up
+end
+local function geadaChao(pos, normal, raio, vida, cresce)
+	local x, up = base(normal)
+	local cf = CFrame.fromMatrix(pos + up * 0.06, x, up) * CFrame.Angles(0, math.random() * 6.28, 0)
+	local p = peca({Size = Vector3.new(0.4, 0.05, 0.4), Transparency = 1, CFrame = cf})
+	local d = Instance.new("Decal"); d.Texture = TEX.geada; d.Face = Enum.NormalId.Top; d.Color3 = C3(225, 242, 255); d.Transparency = 0.05; d.Parent = p
+	TweenService:Create(p, TweenInfo.new(cresce or 0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = Vector3.new(raio * 2, 0.05, raio * 2)}):Play()
+	task.delay(vida, function() if d.Parent then TweenService:Create(d, TweenInfo.new(1.2), {Transparency = 1}):Play() end; Debris:AddItem(p, 1.3) end)
+	return p, d
+end
+-- estilhaco de gelo: lascas (textura propria, alinhadas a velocidade), po de gelo, vapor frio, brilho cristalino,
+-- estilhacos reais girando e, em superficie, uma mancha de geada que cresce
+local function estilhaco(pos, escala, fator, normal, superficie)
 	if fator <= 0 then return end
-	local a = ancora(pos); Debris:AddItem(a, 2.5)
-	emissor(a, {Texture = TEX.fumaca, Color = seq({BRANCO_GELO, AZUL_CLARO}), LightInfluence = 0.6, LightEmission = 0.2, Size = ns(0, 2 * escala, 1, 9 * escala),
-		Transparency = ns(0, 0.35, 1, 1), Lifetime = NumberRange.new(0.6, 1.1), Speed = NumberRange.new(6, 18), SpreadAngle = Vector2.new(180, 180), Drag = 3,
-		Rotation = NumberRange.new(0, 360), RotSpeed = NumberRange.new(-40, 40), Rate = 0}):Emit(math.floor(14 * escala * fator))
-	emissor(a, {Texture = TEX.faisca, Color = seq({C3(255, 255, 255), AZUL_CLARO}), LightEmission = 1, Size = ns(0, 0.5 * escala, 1, 0), Lifetime = NumberRange.new(0.4, 0.9),
-		Speed = NumberRange.new(25, 60), SpreadAngle = Vector2.new(180, 180), Acceleration = Vector3.new(0, -40, 0), Drag = 1.2, Rate = 0}):Emit(math.floor(24 * escala * fator))
-	for i = 1, math.floor(7 * escala * fator) do
-		local s = 0.4 + math.random() * 0.9 * escala
-		local l = peca({Size = Vector3.new(s, s * 1.6, s * 0.4), Material = Enum.Material.Glass, Color = AZUL_CLARO:Lerp(BRANCO_GELO, math.random()), Transparency = 0.25,
-			CFrame = CFrame.new(pos) * CFrame.Angles(math.random() * 6, math.random() * 6, 0)}, "WedgePart")
-		local dir = (Vector3.new(math.random() - 0.5, math.random() * 0.8, math.random() - 0.5) + (normal or Vector3.zero) * 0.6).Unit
-		local alvo = pos + dir * (5 + math.random() * 9) * escala
-		TweenService:Create(l, TweenInfo.new(0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Position = alvo, Orientation = l.Orientation + Vector3.new(math.random(-200, 200), math.random(-200, 200), 0)}):Play()
-		task.delay(0.35, function() if l.Parent then TweenService:Create(l, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Position = alvo - Vector3.new(0, 6 * escala, 0), Transparency = 1}):Play() end end)
-		Debris:AddItem(l, 0.9)
+	local a = ancora(pos); Debris:AddItem(a, 3)
+	emissor(a, {Texture = TEX.lasca, Color = seq({BRANCO_GELO, AZUL_CLARO}), LightEmission = 0.5, LightInfluence = 0.4, Orientation = Enum.ParticleOrientation.VelocityParallel,
+		Size = ns(0, 1.1 * escala, 1, 0.5 * escala), Transparency = ns(0, 0, 0.8, 0.2, 1, 1), Lifetime = NumberRange.new(0.35, 0.7),
+		Speed = NumberRange.new(30 * escala, 70 * escala), SpreadAngle = Vector2.new(180, 180), Drag = 2.5, Acceleration = Vector3.new(0, -35, 0), Rate = 0}):Emit(math.floor(26 * escala * fator))
+	emissor(a, {Texture = TEX.floco, Color = ColorSequence.new(BRANCO_GELO), LightEmission = 0.6, Size = ns(0, 0.35 * escala, 1, 0.1), Lifetime = NumberRange.new(0.6, 1.2),
+		Speed = NumberRange.new(8, 26), SpreadAngle = Vector2.new(180, 180), Drag = 2, Acceleration = Vector3.new(0, -6, 0), Rotation = NumberRange.new(0, 360),
+		RotSpeed = NumberRange.new(-200, 200), Rate = 0}):Emit(math.floor(30 * escala * fator))
+	emissor(a, {Texture = TEX.nevoa, Color = seq({BRANCO_GELO, C3(200, 225, 245)}), LightInfluence = 0.8, LightEmission = 0.15, Size = ns(0, 2.5 * escala, 1, 10 * escala),
+		Transparency = ns(0, 0.45, 1, 1), Lifetime = NumberRange.new(0.7, 1.3), Speed = NumberRange.new(4, 14), SpreadAngle = Vector2.new(180, 180), Drag = 3,
+		Rotation = NumberRange.new(0, 360), RotSpeed = NumberRange.new(-30, 30), Rate = 0}):Emit(math.floor(10 * escala * fator))
+	emissor(a, {Texture = TEX.brilho, Color = ColorSequence.new(C3(255, 255, 255)), LightEmission = 1, Size = ns(0, 5 * escala, 1, 0), Lifetime = NumberRange.new(0.18, 0.28),
+		Speed = NumberRange.new(0, 0), Rotation = NumberRange.new(0, 90), Rate = 0}):Emit(1)
+	for i = 1, math.floor(10 * escala * fator) do
+		local s = 0.35 + math.random() * 0.8 * escala
+		local l = peca({Size = Vector3.new(s * 0.5, s * 0.3, s * 1.8), Material = math.random() < 0.6 and Enum.Material.Glass or Enum.Material.Ice,
+			Color = AZUL_CLARO:Lerp(BRANCO_GELO, math.random()), Transparency = 0.2, Reflectance = 0.1, CFrame = CFrame.new(pos)}, "WedgePart")
+		local dir = (Vector3.new(math.random() - 0.5, math.random() * 0.9, math.random() - 0.5) + (normal or Vector3.zero) * 0.7).Unit
+		local alvo = pos + dir * (6 + math.random() * 10) * escala
+		l.CFrame = CFrame.lookAt(pos, alvo)
+		TweenService:Create(l, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {CFrame = CFrame.lookAt(alvo, alvo + dir) * CFrame.Angles(math.random() * 3, math.random() * 3, 0)}):Play()
+		task.delay(0.3, function() if l.Parent then TweenService:Create(l, TweenInfo.new(0.45, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Position = alvo - Vector3.new(0, 7 * escala, 0), Transparency = 1}):Play() end end)
+		Debris:AddItem(l, 0.8)
 	end
-	luz(a, AZUL_CLARO, 3, 26 * escala, 0.35)
-	anel(pos, 9 * escala, AZUL_CLARO, 0.35, 0.3, 0.45, normal)
+	luz(a, AZUL_CLARO, 2.5, 24 * escala, 0.3)
+	anel(pos, 8 * escala, BRANCO_GELO, 0.3, 0.25, 0.5, normal)
+	if superficie and normal and normal.Y > 0.45 then geadaChao(pos, normal, 5 * escala, 2.5) end
 end
 -- brilho frio no corpo inteiro (Highlight) — fill 0..1 (1 = apagado)
 local brilhos = {}
@@ -256,48 +284,69 @@ task.spawn(function()
 	end
 end)
 
--- ===== SOPRO GLACIAL: jato continuo (emissores reaproveitados por dragao, seguem a boca e a mira) =================
+-- ===== SOPRO GLACIAL: jato congelante em camadas (v2, 02/11) =======================================================
+-- Feixe continuo da boca ate o alcance (miolo brilhante + corpo do jato com textura de fios correndo) para dar DIRECAO
+-- e CONTINUIDADE; por cima: fluxo frio (nevoa densa), nevoa gelada que cai, po de gelo fino, cristais (lascas) carregados
+-- pelo jato e cintilacoes. No ponto de impacto: estilhaco, geada crescendo no chao e cristais.
 local sopro = {}
 local function velPara(alc, frac, drag, vida) local d = alc * frac; if drag <= 0.01 then return d / vida end; return d * drag / (1 - math.exp(-drag * vida)) end
 local function emissoresSopro(m)
 	local s = sopro[m]; if s and s.anc and s.anc.Parent then return s end
-	s = {anc = ancora(m:GetPivot().Position), e = {}}; sopro[m] = s
-	-- nucleo: jato concentrado branco-azulado (alcance casado com a hitbox)
-	s.e.nucleo = emissor(s.anc, {Texture = TEX.fumaca, Color = seq({C3(245, 252, 255), AZUL_CLARO, C3(140, 200, 245)}), LightEmission = 0.25, LightInfluence = 0.35,
-		Size = ns(0, 1.0, 0.25, 4.5, 1, 11), Transparency = ns(0, 0.3, 0.7, 0.55, 1, 1), Rotation = NumberRange.new(0, 360), RotSpeed = NumberRange.new(-60, 60),
-		SpreadAngle = Vector2.new(4, 4), EmissionDirection = Enum.NormalId.Front, Rate = 0, ZOffset = 1})
-	-- nevoa fria envolvendo o jato (recebe luz da cena: branca, pesada, cai um pouco)
-	s.e.nevoa = emissor(s.anc, {Texture = TEX.fumaca, Color = seq({C3(225, 238, 248), C3(185, 212, 235)}), LightEmission = 0, LightInfluence = 1,
-		Size = ns(0, 3, 1, 18), Transparency = ns(0, 0.62, 0.6, 0.78, 1, 1), Rotation = NumberRange.new(0, 360), RotSpeed = NumberRange.new(-25, 25),
-		SpreadAngle = Vector2.new(9, 9), Acceleration = Vector3.new(0, -4, 0), EmissionDirection = Enum.NormalId.Front, Rate = 0, ZOffset = -1})
-	-- cristais finos cintilando no fluxo
-	s.e.cristais = emissor(s.anc, {Texture = TEX.faisca, Color = seq({C3(255, 255, 255), AZUL_CLARO}), LightEmission = 1, Size = ns(0, 0.45, 0.7, 0.3, 1, 0),
+	s = {anc = ancora(m:GetPivot().Position), fim = ancora(m:GetPivot().Position), e = {}}; sopro[m] = s
+	local VP = Enum.ParticleOrientation.VelocityParallel
+	s.e.nucleo = emissor(s.anc, {Texture = TEX.jato, Orientation = VP, Color = seq({C3(250, 254, 255), AZUL_CLARO, C3(150, 205, 245)}), LightEmission = 0.35, LightInfluence = 0.3,
+		Size = ns(0, 1.2, 0.3, 4, 1, 8), Transparency = ns(0, 0.3, 0.7, 0.55, 1, 1), SpreadAngle = Vector2.new(4, 4), EmissionDirection = Enum.NormalId.Front, Rate = 0, ZOffset = 1})
+	s.e.fluxo = emissor(s.anc, {Texture = TEX.nevoa, Color = seq({C3(235, 246, 255), C3(190, 220, 245)}), LightEmission = 0.1, LightInfluence = 0.9,
+		Size = ns(0, 2.2, 1, 14), Transparency = ns(0, 0.35, 0.6, 0.62, 1, 1), Rotation = NumberRange.new(0, 360), RotSpeed = NumberRange.new(-40, 40),
 		SpreadAngle = Vector2.new(7, 7), EmissionDirection = Enum.NormalId.Front, Rate = 0})
-	-- lancas de pressao junto a boca (curtas, muito claras)
-	s.e.jato = emissor(s.anc, {Texture = TEX.fumaca, Color = ColorSequence.new(C3(225, 245, 255)), LightEmission = 0.6, LightInfluence = 0, Size = ns(0, 0.8, 1, 3.5),
-		Transparency = ns(0, 0.2, 1, 1), Lifetime = NumberRange.new(0.12, 0.18), Speed = NumberRange.new(120, 140), SpreadAngle = Vector2.new(2, 2),
+	s.e.nevoa = emissor(s.anc, {Texture = TEX.nevoa, Color = seq({C3(228, 240, 250), C3(195, 218, 238)}), LightEmission = 0, LightInfluence = 1,
+		Size = ns(0, 4, 1, 22), Transparency = ns(0, 0.6, 0.6, 0.75, 1, 1), Rotation = NumberRange.new(0, 360), RotSpeed = NumberRange.new(-20, 20),
+		SpreadAngle = Vector2.new(12, 12), Acceleration = Vector3.new(0, -5, 0), EmissionDirection = Enum.NormalId.Front, Rate = 0, ZOffset = -1})
+	s.e.po = emissor(s.anc, {Texture = TEX.floco, Color = ColorSequence.new(C3(240, 250, 255)), LightEmission = 0.7, Size = ns(0, 0.5, 1, 0.25),
+		Rotation = NumberRange.new(0, 360), RotSpeed = NumberRange.new(-300, 300), SpreadAngle = Vector2.new(9, 9), EmissionDirection = Enum.NormalId.Front, Rate = 0})
+	s.e.cristais = emissor(s.anc, {Texture = TEX.lasca, Orientation = VP, Color = seq({C3(255, 255, 255), AZUL_CLARO}), LightEmission = 0.6, Size = ns(0, 1.2, 1, 0.6),
+		SpreadAngle = Vector2.new(6, 6), EmissionDirection = Enum.NormalId.Front, Rate = 0})
+	s.e.brilhos = emissor(s.anc, {Texture = TEX.brilho, Color = ColorSequence.new(C3(255, 255, 255)), LightEmission = 1, Size = ns(0, 1.4, 1, 0),
+		Rotation = NumberRange.new(0, 90), SpreadAngle = Vector2.new(8, 8), EmissionDirection = Enum.NormalId.Front, Rate = 0})
+	s.e.boca = emissor(s.anc, {Texture = TEX.rastro, Orientation = VP, Color = ColorSequence.new(C3(230, 247, 255)), LightEmission = 0.6, Size = ns(0, 1.5, 1, 3),
+		Transparency = ns(0, 0.2, 1, 1), Lifetime = NumberRange.new(0.12, 0.2), Speed = NumberRange.new(130, 150), SpreadAngle = Vector2.new(2, 2),
 		EmissionDirection = Enum.NormalId.Front, Rate = 0, ZOffset = 2})
+	-- feixes: corpo do jato e miolo, com a textura de fios correndo da boca para fora
+	local function feixe(w0, w1, tl, vel, tr, le)
+		local b = Instance.new("Beam"); b.Attachment0 = s.anc; b.Attachment1 = s.fim; b.Texture = TEX.jato_h; b.TextureMode = Enum.TextureMode.Wrap
+		b.TextureLength = tl; b.TextureSpeed = vel; b.Width0 = w0; b.Width1 = w1; b.FaceCamera = true; b.Segments = 12; b.LightEmission = le; b.LightInfluence = 0.25
+		b.Color = seq({C3(225, 243, 255), C3(165, 212, 245)}); b.Transparency = tr; b.Enabled = false; b.Parent = s.anc; return b
+	end
+	-- (teste no jogo 02/11: opaco e brilhante parecia um laser) feixes translucidos: so dao direcao e continuidade ao fluxo
+	s.feixe = feixe(2.2, 13, 26, 2.0, ns(0, 0.62, 0.5, 0.8, 1, 1), 0.12)
+	s.miolo = feixe(0.8, 3.2, 12, 3.2, ns(0, 0.45, 0.45, 0.72, 1, 1), 0.3)
 	return s
 end
-local PERF = {nucleo = {1.0, 0.7, 0.95, 140}, nevoa = {0.9, 1.5, 1.7, 30}, cristais = {1.05, 0.9, 1.0, 120}, jato = {nil, nil, nil, 70}}
+-- {fracao do alcance, arrasto, vida, taxa}
+local PERF = {nucleo = {1.0, 0.7, 0.95, 120}, fluxo = {0.95, 1.1, 1.2, 55}, nevoa = {0.85, 1.6, 1.8, 22}, po = {1.05, 0.9, 1.1, 170},
+	cristais = {1.05, 0.8, 1.0, 60}, brilhos = {1.0, 0.8, 0.9, 25}, boca = {nil, nil, nil, 60}}
 local function ligarSopro(m, ligado, f, alvo, alcance)
 	local s = emissoresSopro(m); s.alvo = alvo
 	if ligado then
 		if s.con then s.con:Disconnect() end
+		local rp = RaycastParams.new(); rp.FilterType = Enum.RaycastFilterType.Exclude; rp.FilterDescendantsInstances = {m, pastaFX()}
+		local alc = alcance or 100
 		s.con = RunService.RenderStepped:Connect(function()
 			local b, d = boca(m)
 			if s.alvo then local v = s.alvo - b; if v.Magnitude > 5 then d = (d * 0.3 + v.Unit * 0.7).Unit end end
 			s.anc.WorldCFrame = CFrame.lookAt(b, b + d)
+			local h = workspace:Raycast(b, d * alc * 0.85, rp)                     -- o feixe para na superficie
+			s.fim.WorldPosition = h and h.Position or (b + d * alc * 0.85)
 		end)
 		for k, e in pairs(s.e) do
 			local p = PERF[k]; e.Rate = p[4] * f
-			if p[1] and alcance then
-				local v = velPara(alcance, p[1], p[2], p[3]); e.Drag = p[2]; e.Lifetime = NumberRange.new(p[3] * 0.9, p[3]); e.Speed = NumberRange.new(v * 0.92, v * 1.04)
-			end
+			if p[1] then local v = velPara(alc, p[1], p[2], p[3]); e.Drag = p[2]; e.Lifetime = NumberRange.new(p[3] * 0.9, p[3]); e.Speed = NumberRange.new(v * 0.92, v * 1.04) end
 		end
+		s.feixe.Enabled = true; s.miolo.Enabled = true
 		if not s.luz then s.luz = luz(s.anc, C3(160, 215, 255), 1.8, 34) end
 	else
 		for _, e in pairs(s.e) do e.Rate = 0 end
+		s.feixe.Enabled = false; s.miolo.Enabled = false
 		liberarLuz(s.luz); s.luz = nil
 		task.delay(1.8, function() if s.con and s.e.nucleo.Rate == 0 then s.con:Disconnect(); s.con = nil end end)
 	end
@@ -305,39 +354,39 @@ end
 local soproTok, soproMira, soproSom = {}, {}, {}
 local function soproEvento(m, d, f)
 	local pp = m.PrimaryPart
-	if d.fase == "preparo" then                                       -- frio se acumulando na boca, peito brilha de leve
+	if d.fase == "preparo" then                                       -- frio acumulando na boca: cristais e nevoa sugados para dentro
 		local b = boca(m); local a = ancora(b); Debris:AddItem(a, 1.3)
-		emissor(a, {Texture = TEX.fumaca, Color = seq({BRANCO_GELO, AZUL_CLARO}), LightEmission = 0.4, Size = ns(0, 3, 1, 0.5), Transparency = ns(0, 0.5, 1, 1),
-			Lifetime = NumberRange.new(0.35, 0.6), Speed = NumberRange.new(-14, -8), SpreadAngle = Vector2.new(180, 180), Rate = 60 * f})
-		emissor(a, {Texture = TEX.faisca, Color = ColorSequence.new(AZUL_CLARO), LightEmission = 1, Size = ns(0, 0.5, 1, 0), Lifetime = NumberRange.new(0.3, 0.5),
-			Speed = NumberRange.new(-16, -10), SpreadAngle = Vector2.new(180, 180), Rate = 50 * f})
+		emissor(a, {Texture = TEX.nevoa, Color = seq({BRANCO_GELO, AZUL_CLARO}), LightEmission = 0.3, Size = ns(0, 3, 1, 0.5), Transparency = ns(0, 0.55, 1, 1),
+			Lifetime = NumberRange.new(0.35, 0.6), Speed = NumberRange.new(-14, -8), SpreadAngle = Vector2.new(180, 180), Rate = 50 * f})
+		emissor(a, {Texture = TEX.lasca, Orientation = Enum.ParticleOrientation.VelocityParallel, Color = ColorSequence.new(AZUL_CLARO), LightEmission = 0.8,
+			Size = ns(0, 0.7, 1, 0.2), Lifetime = NumberRange.new(0.3, 0.5), Speed = NumberRange.new(-18, -12), SpreadAngle = Vector2.new(180, 180), Rate = 50 * f})
 		luz(a, C3(160, 215, 255), 2, 22, 1.2)
 		brilhoCorpo(m, 0.95, 0.93, 0.5)
 		som(pp, SOM.jatoCurto, 0.45, 0.55, 1.0)
 	elseif d.fase == "emissao" then
 		soproTok[m] = (soproTok[m] or 0) + 1; local tok = soproTok[m]; soproMira[m] = d.alvoPos
 		ligarSopro(m, true, f, d.alvoPos, d.alcance)
-		-- som: pressao fria comprimida (extintor grave) em camadas + vento fino, sem estourar
 		task.spawn(function()
 			local lim = os.clock() + 7
-			while soproTok[m] == tok and os.clock() < lim and m.Parent do
-				som(pp, SOM.jato, 0.8, 0.62 + math.random() * 0.06, 2.0)
-				task.wait(1.15)
-			end
+			while soproTok[m] == tok and os.clock() < lim and m.Parent do som(pp, SOM.jato, 0.8, 0.62 + math.random() * 0.06, 2.0); task.wait(1.15) end
 		end)
 		soproSom[m] = som(pp, SOM.vento, 0.55, 1.25, 7)
-		-- impacto continuo onde o jato toca o mundo: vapor frio, lascas e cristais pequenos que crescem e somem
+		-- impacto continuo: estilhaco frio, geada que cresce onde o jato bate e cristais que brotam
 		task.spawn(function()
 			local rp = RaycastParams.new(); rp.FilterType = Enum.RaycastFilterType.Exclude; rp.FilterDescendantsInstances = {m, pastaFX()}
-			local lim, ultCristal = os.clock() + 7, 0
+			local lim, ultG, ultC = os.clock() + 7, 0, 0
 			while soproTok[m] == tok and os.clock() < lim and m.Parent do
 				local b, dr = boca(m); local ap = soproMira[m]; if ap then dr = (ap - b).Unit end
 				local h = workspace:Raycast(b, dr * (d.alcance or 100), rp)
 				if h then
-					estilhaco(h.Position, 0.45, f, h.Normal)
-					if os.clock() - ultCristal > 0.5 and h.Normal.Y > 0.5 then ultCristal = os.clock(); cristal(h.Position, h.Normal, 2.5 + math.random() * 2, 1.2, 2.2) end
+					estilhaco(h.Position, 0.45, f, h.Normal, false)
+					if h.Normal.Y > 0.45 and os.clock() - ultG > 0.35 then ultG = os.clock(); geadaChao(h.Position, h.Normal, 6 + math.random() * 3, 3, 0.6) end
+					if h.Normal.Y > 0.45 and os.clock() - ultC > 0.4 then
+						ultC = os.clock()
+						for i = 1, 2 do cristal(h.Position + Vector3.new(math.random(-30, 30) / 10, 0, math.random(-30, 30) / 10), h.Normal, 2.5 + math.random() * 2.5, 0.9, 2.6) end
+					end
 				end
-				task.wait(0.25)
+				task.wait(0.22)
 			end
 		end)
 	elseif d.fase == "mira" then soproMira[m] = d.alvoPos; local s = emissoresSopro(m); s.alvo = d.alvoPos
@@ -346,203 +395,300 @@ local function soproEvento(m, d, f)
 		ligarSopro(m, false, f)
 		brilhoCorpo(m, 1, 1, 0.8)
 		local s = soproSom[m]; if s and s.Parent then TweenService:Create(s, TweenInfo.new(0.5), {Volume = 0}):Play(); Debris:AddItem(s, 0.6) end
-		local b = boca(m); local a = ancora(b); Debris:AddItem(a, 2)               -- ultimo sopro de nevoa saindo da boca
-		emissor(a, {Texture = TEX.fumaca, Color = seq({BRANCO_GELO, AZUL_CLARO}), LightInfluence = 0.8, Size = ns(0, 2, 1, 8), Transparency = ns(0, 0.5, 1, 1),
+		local b = boca(m); local a = ancora(b); Debris:AddItem(a, 2)
+		emissor(a, {Texture = TEX.nevoa, Color = seq({BRANCO_GELO, AZUL_CLARO}), LightInfluence = 0.8, Size = ns(0, 2, 1, 8), Transparency = ns(0, 0.55, 1, 1),
 			Lifetime = NumberRange.new(0.9, 1.4), Speed = NumberRange.new(3, 8), Acceleration = Vector3.new(0, -3, 0), SpreadAngle = Vector2.new(40, 40), Rate = 0}):Emit(math.floor(14 * f))
 	end
 end
 
--- ===== RAJADAS DE GELO: lancas de gelo com nucleo luminoso, rastro frio e cristais na trajetoria ==================
+-- ===== RAJADAS DE GELO: lancas solidas de gelo (v2, 02/11) =========================================================
+-- Haste de gelo translucido com miolo luminoso, ponta afiada em cinzel e cauda curta, girando no proprio eixo; rastro
+-- frio, lascas e po de gelo soltando da cauda. Impacto: estilhaco forte + geada; erro no chao: cristais.
 local lancas = {}
 local function rajadas(m, d, f)
 	local pp = m.PrimaryPart
 	if d.fase == "preparo" then
 		brilhoCorpo(m, 0.95, 0.93, 0.3)
 		local b = boca(m); local a = ancora(b); Debris:AddItem(a, 0.8)
-		emissor(a, {Texture = TEX.faisca, Color = ColorSequence.new(AZUL_CLARO), LightEmission = 1, Size = ns(0, 0.6, 1, 0), Lifetime = NumberRange.new(0.25, 0.45),
-			Speed = NumberRange.new(-14, -8), SpreadAngle = Vector2.new(180, 180), Rate = 70 * f})
+		emissor(a, {Texture = TEX.lasca, Orientation = Enum.ParticleOrientation.VelocityParallel, Color = ColorSequence.new(AZUL_CLARO), LightEmission = 0.9,
+			Size = ns(0, 0.8, 1, 0.2), Lifetime = NumberRange.new(0.25, 0.45), Speed = NumberRange.new(-16, -10), SpreadAngle = Vector2.new(180, 180), Rate = 60 * f})
 		task.delay(2.3, function() brilhoCorpo(m, 1, 1, 0.6) end)
 	elseif d.fase == "disparo" then
 		local de, dir = d.de, d.dir
 		som(pp, sorteia(SOM.disparo), 0.85, 1.25 + math.random() * 0.15, 1.2)
 		som(pp, SOM.jatoCurto, 0.35, 1.4, 0.5)
-		-- clarao/anel de pressao na boca e um pouco de nevoa
 		anel(de + dir * 3, 6, BRANCO_GELO, 0.22, 0.25, 0.35, dir)
 		local am = ancora(de); Debris:AddItem(am, 1.2)
-		emissor(am, {Texture = TEX.fumaca, Color = seq({BRANCO_GELO, AZUL_CLARO}), LightInfluence = 0.7, Size = ns(0, 1.5, 1, 6), Transparency = ns(0, 0.5, 1, 1),
+		emissor(am, {Texture = TEX.nevoa, Color = seq({BRANCO_GELO, AZUL_CLARO}), LightInfluence = 0.7, Size = ns(0, 1.5, 1, 6), Transparency = ns(0, 0.5, 1, 1),
 			Lifetime = NumberRange.new(0.4, 0.7), Speed = NumberRange.new(4, 10), SpreadAngle = Vector2.new(35, 35), Rate = 0}):Emit(math.floor(8 * f))
-		-- lanca: haste de gelo translucido facetada + nucleo luminoso + ponta afiada
-		local cf0 = CFrame.lookAt(de, de + dir)
-		local corpo = peca({Size = Vector3.new(1.1, 1.1, 7), Material = Enum.Material.Glass, Color = C3(205, 238, 255), Transparency = 0.2, Reflectance = 0.1, CFrame = cf0})
-		local nucleo = peca({Size = Vector3.new(0.45, 0.45, 6), Material = Enum.Material.Neon, Color = AZUL_CLARO, Transparency = 0.15, CFrame = cf0})
-		local ponta = peca({Size = Vector3.new(1.1, 1.1, 2.6), Material = Enum.Material.Ice, Color = BRANCO_GELO, Transparency = 0.1, CFrame = cf0}, "WedgePart")
-		local a0 = Instance.new("Attachment", corpo); a0.Position = Vector3.new(0, 0.5, 2.5); local a1 = Instance.new("Attachment", corpo); a1.Position = Vector3.new(0, -0.5, 2.5)
-		local tr = Instance.new("Trail"); tr.Attachment0 = a0; tr.Attachment1 = a1; tr.Lifetime = 0.35; tr.LightEmission = 0.7; tr.FaceCamera = true
-		tr.Color = seq({C3(255, 255, 255), AZUL_CLARO, AZUL}); tr.Transparency = ns(0, 0.15, 1, 1); tr.WidthScale = ns(0, 1, 1, 0.1); tr.Parent = corpo
-		local ac = Instance.new("Attachment", corpo); ac.Position = Vector3.new(0, 0, 2)
-		emissor(ac, {Texture = TEX.faisca, Color = ColorSequence.new(C3(225, 245, 255)), LightEmission = 1, Size = ns(0, 0.35, 1, 0), Lifetime = NumberRange.new(0.3, 0.6),
-			Speed = NumberRange.new(2, 6), SpreadAngle = Vector2.new(180, 180), Rate = 45 * f})
-		emissor(ac, {Texture = TEX.fumaca, Color = ColorSequence.new(BRANCO_GELO), LightInfluence = 0.8, Size = ns(0, 0.8, 1, 3), Transparency = ns(0, 0.65, 1, 1),
-			Lifetime = NumberRange.new(0.4, 0.7), Speed = NumberRange.new(0.5, 2), Rate = 25 * f})
-		local l = luz(nucleo, C3(160, 215, 255), 2, 16)
+		emissor(am, {Texture = TEX.brilho, Color = ColorSequence.new(C3(255, 255, 255)), LightEmission = 1, Size = ns(0, 6, 1, 0), Lifetime = NumberRange.new(0.15, 0.2),
+			Speed = NumberRange.new(0, 0), Rate = 0}):Emit(1)
+		-- lanca montada em pecas: haste, miolo, ponta (2 cunhas = cinzel), cauda; offsets relativos ao eixo
+		local L = 7
+		local partes = {
+			{peca({Size = Vector3.new(1.0, 1.0, L), Material = Enum.Material.Glass, Color = C3(205, 238, 255), Transparency = 0.12, Reflectance = 0.15}), CFrame.new()},
+			{peca({Size = Vector3.new(0.38, 0.38, L * 0.92), Material = Enum.Material.Neon, Color = AZUL_CLARO, Transparency = 0.15}), CFrame.new()},
+			{peca({Size = Vector3.new(1.0, 0.5, 3.2), Material = Enum.Material.Ice, Color = BRANCO_GELO, Transparency = 0.05}, "WedgePart"), CFrame.new(0, 0.25, -L / 2 - 1.6)},
+			{peca({Size = Vector3.new(1.0, 0.5, 3.2), Material = Enum.Material.Ice, Color = BRANCO_GELO, Transparency = 0.05}, "WedgePart"), CFrame.new(0, -0.25, -L / 2 - 1.6) * CFrame.Angles(0, 0, math.pi)},
+			{peca({Size = Vector3.new(1.0, 0.5, 1.4), Material = Enum.Material.Glass, Color = C3(190, 228, 250), Transparency = 0.2}, "WedgePart"), CFrame.new(0, 0.25, L / 2 + 0.7) * CFrame.Angles(0, math.pi, 0)},
+			{peca({Size = Vector3.new(1.0, 0.5, 1.4), Material = Enum.Material.Glass, Color = C3(190, 228, 250), Transparency = 0.2}, "WedgePart"), CFrame.new(0, -0.25, L / 2 + 0.7) * CFrame.Angles(0, math.pi, math.pi)},
+		}
+		local corpo = partes[1][1]
+		local a0 = Instance.new("Attachment", corpo); a0.Position = Vector3.new(0.5, 0, 3); local a1 = Instance.new("Attachment", corpo); a1.Position = Vector3.new(-0.5, 0, 3)
+		local tr = Instance.new("Trail"); tr.Attachment0 = a0; tr.Attachment1 = a1; tr.Texture = TEX.rastro_h; tr.TextureMode = Enum.TextureMode.Stretch; tr.Lifetime = 0.32
+		tr.LightEmission = 0.75; tr.FaceCamera = true; tr.Color = seq({C3(255, 255, 255), AZUL_CLARO, AZUL}); tr.Transparency = ns(0, 0.1, 1, 1); tr.WidthScale = ns(0, 1.6, 1, 0.2); tr.Parent = corpo
+		local ac = Instance.new("Attachment", corpo); ac.Position = Vector3.new(0, 0, L / 2)
+		emissor(ac, {Texture = TEX.lasca, Orientation = Enum.ParticleOrientation.VelocityParallel, Color = ColorSequence.new(C3(225, 245, 255)), LightEmission = 0.7,
+			Size = ns(0, 0.5, 1, 0.2), Lifetime = NumberRange.new(0.3, 0.55), Speed = NumberRange.new(3, 9), SpreadAngle = Vector2.new(60, 60), Rate = 45 * f})
+		emissor(ac, {Texture = TEX.floco, Color = ColorSequence.new(BRANCO_GELO), LightEmission = 0.6, Size = ns(0, 0.3, 1, 0.1), Lifetime = NumberRange.new(0.4, 0.8),
+			Speed = NumberRange.new(1, 5), SpreadAngle = Vector2.new(180, 180), Rotation = NumberRange.new(0, 360), RotSpeed = NumberRange.new(-200, 200), Rate = 40 * f})
+		emissor(ac, {Texture = TEX.nevoa, Color = ColorSequence.new(BRANCO_GELO), LightInfluence = 0.8, Size = ns(0, 1.2, 1, 4), Transparency = ns(0, 0.7, 1, 1),
+			Lifetime = NumberRange.new(0.4, 0.7), Speed = NumberRange.new(0.5, 2), Rate = 22 * f})
+		local l = luz(partes[2][1], C3(160, 215, 255), 2, 16)
 		local t0 = os.clock(); local giro = 0
-		local reg = {pecas = {corpo, nucleo, ponta}, luz = l}
+		local reg = {partes = partes, luz = l}
 		lancas[m] = lancas[m] or {}; lancas[m][d.indice] = reg
 		local tmax = (d.alcance or 230) / (d.vel or 240) + 0.4
 		reg.con = RunService.RenderStepped:Connect(function(dt)
 			local t = os.clock() - t0
 			if t > tmax or reg.fim then
 				reg.con:Disconnect(); liberarLuz(l)
-				for _, p in ipairs(reg.pecas) do p:Destroy() end
+				for _, x in ipairs(reg.partes) do x[1]:Destroy() end
 				return
 			end
-			giro += dt * 9
+			giro += dt * 7
 			local p = de + dir * (d.vel or 240) * math.min(t, tmax)
 			local cf = CFrame.lookAt(p, p + dir) * CFrame.Angles(0, 0, giro)
-			corpo.CFrame = cf; nucleo.CFrame = cf; ponta.CFrame = cf * CFrame.new(0, 0, -4.7) * CFrame.Angles(math.rad(90), 0, 0)
+			for _, x in ipairs(reg.partes) do x[1].CFrame = cf * x[2] end
 		end)
 	elseif d.fase == "impacto" or d.fase == "dissipa" then
 		local reg = lancas[m] and lancas[m][d.indice]; if reg then reg.fim = true; lancas[m][d.indice] = nil end
 		if d.fase == "impacto" then
-			estilhaco(d.pos, d.acertou and 1.1 or 0.8, f, d.normal)
+			estilhaco(d.pos, d.acertou and 1.3 or 0.95, f, d.normal, not d.acertou)
 			somEm(d.pos, sorteia(SOM.estilhaco), d.acertou and 1.1 or 0.8, 1.0 + math.random() * 0.15, 2)
-			if not d.acertou and d.normal and d.normal.Y > 0.4 then      -- errou no chao: pequeno impacto glacial (3 cristais)
-				for i = 1, 3 do
-					local off = Vector3.new(math.random(-20, 20) / 10, 0, math.random(-20, 20) / 10)
-					cristal(d.pos + off, (d.normal + Vector3.new(math.random() - 0.5, 0, math.random() - 0.5) * 0.5).Unit, 2.5 + math.random() * 2.5, 1.1, 2.5)
+			if not d.acertou and d.normal and d.normal.Y > 0.4 then
+				for i = 1, 4 do
+					local off = Vector3.new(math.random(-22, 22) / 10, 0, math.random(-22, 22) / 10)
+					cristal(d.pos + off, (d.normal + Vector3.new(math.random() - 0.5, 0, math.random() - 0.5) * 0.6).Unit, 2.5 + math.random() * 3, 1.0, 3)
 				end
 			end
 		else
 			local a = ancora(d.pos); Debris:AddItem(a, 1.2)
-			emissor(a, {Texture = TEX.faisca, Color = ColorSequence.new(AZUL_CLARO), LightEmission = 1, Size = ns(0, 0.5, 1, 0), Lifetime = NumberRange.new(0.3, 0.6),
+			emissor(a, {Texture = TEX.lasca, Color = ColorSequence.new(AZUL_CLARO), LightEmission = 0.8, Size = ns(0, 0.6, 1, 0), Lifetime = NumberRange.new(0.3, 0.6),
 				Speed = NumberRange.new(5, 14), SpreadAngle = Vector2.new(180, 180), Rate = 0}):Emit(math.floor(14 * f))
 		end
 	end
 end
 
--- ===== ZERO ABSOLUTO: tensao -> onda circular, chao tomado pelo gelo, cristais emergindo, neblina rasteira =========
+-- ===== ZERO ABSOLUTO: congelamento PROGRESSIVO do chao (v2, 02/11) =================================================
+-- tensao (frio puxado, geada nascendo sob as patas) -> descarga: onda de choque + frente de congelamento que se espalha
+-- (disco de gelo + geada com veios, veios de gelo correndo pelo chao, nevoa na borda da frente) -> SO DEPOIS da frente
+-- passar, espinhos/cristais emergem em aneis -> zona: nevoa baixa, cintilacoes e luz fria pulsando -> derrete.
 local function zero(m, d, f)
 	local pp = m.PrimaryPart
 	if d.fase == "preparo" then
-		brilhoCorpo(m, 0.86, 0.85, d.emissao or 1)
+		local emissao = d.emissao or 1
+		brilhoCorpo(m, 0.88, 0.85, emissao)
 		som(pp, SOM.jato, 0.5, 0.45, 1.2)
-		local c = centro(m); local a = ancora(c); Debris:AddItem(a, (d.emissao or 1) + 0.3)
-		-- o frio e PUXADO para o corpo (particulas convergem) e uma neblina comeca a escorrer para o chao
-		emissor(a, {Texture = TEX.faisca, Color = ColorSequence.new(AZUL_CLARO), LightEmission = 1, Size = ns(0, 0.7, 1, 0), Lifetime = NumberRange.new(0.5, 0.8),
-			Speed = NumberRange.new(-45, -30), SpreadAngle = Vector2.new(180, 180), Shape = Enum.ParticleEmitterShape.Sphere, Rate = 90 * f})
-		emissor(a, {Texture = TEX.fumaca, Color = seq({BRANCO_GELO, AZUL_CLARO}), LightInfluence = 0.8, Size = ns(0, 4, 1, 12), Transparency = ns(0, 0.6, 1, 1),
-			Lifetime = NumberRange.new(1.0, 1.4), Speed = NumberRange.new(4, 9), Acceleration = Vector3.new(0, -14, 0), SpreadAngle = Vector2.new(180, 180), Rate = 18 * f})
-		local l = luz(a, C3(160, 215, 255), 0, 40); if l then TweenService:Create(l, TweenInfo.new(d.emissao or 1), {Brightness = 2}):Play(); task.delay((d.emissao or 1) + 0.4, function() liberarLuz(l) end) end
+		local c = centro(m); local a = ancora(c); Debris:AddItem(a, emissao + 0.3)
+		emissor(a, {Texture = TEX.lasca, Orientation = Enum.ParticleOrientation.VelocityParallel, Color = ColorSequence.new(AZUL_CLARO), LightEmission = 0.9,
+			Size = ns(0, 1.0, 1, 0.2), Lifetime = NumberRange.new(0.5, 0.8), Speed = NumberRange.new(-45, -30), SpreadAngle = Vector2.new(180, 180),
+			Shape = Enum.ParticleEmitterShape.Sphere, Rate = 80 * f})
+		emissor(a, {Texture = TEX.floco, Color = ColorSequence.new(BRANCO_GELO), LightEmission = 0.5, Size = ns(0, 0.5, 1, 0.2), Lifetime = NumberRange.new(0.6, 0.9),
+			Speed = NumberRange.new(-30, -20), SpreadAngle = Vector2.new(180, 180), Shape = Enum.ParticleEmitterShape.Sphere, Rotation = NumberRange.new(0, 360),
+			RotSpeed = NumberRange.new(-200, 200), Rate = 60 * f})
+		emissor(a, {Texture = TEX.nevoa, Color = seq({BRANCO_GELO, AZUL_CLARO}), LightInfluence = 0.8, Size = ns(0, 4, 1, 12), Transparency = ns(0, 0.65, 1, 1),
+			Lifetime = NumberRange.new(1.0, 1.4), Speed = NumberRange.new(4, 9), Acceleration = Vector3.new(0, -14, 0), SpreadAngle = Vector2.new(180, 180), Rate = 16 * f})
+		local l = luz(a, C3(160, 215, 255), 0, 40); if l then TweenService:Create(l, TweenInfo.new(emissao), {Brightness = 2}):Play(); task.delay(emissao + 0.4, function() liberarLuz(l) end) end
+		-- a geada ja comeca a nascer sob as patas durante a tensao
+		local rp = RaycastParams.new(); rp.FilterType = Enum.RaycastFilterType.Exclude; rp.FilterDescendantsInstances = {m, pastaFX()}
+		local h = workspace:Raycast(c + Vector3.new(0, 5, 0), Vector3.new(0, -70, 0), rp)
+		if h then geadaChao(h.Position, h.Normal, 12, emissao + 0.4, emissao) end
 	elseif d.fase == "onda" then
-		local c = d.centro; local R, vel = d.raio or 64, d.vel or 95; local tOnda = R / vel
-		local normal = d.normal or Vector3.yAxis
-		brilhoCorpo(m, 0.62, 0.55, 0.12); task.delay(0.6, function() brilhoCorpo(m, 1, 1, 1.0) end)
+		local c = d.centro; local R, vel = d.raio or 64, d.vel or 95
+		local zr, zona = d.zonaRaio or 52, d.zona or 4
+		local up = d.normal or Vector3.yAxis
+		local vVis = math.min(vel, 58); local tEsp = zr / vVis           -- frente visual (um pouco mais lenta que o golpe: le-se a propagacao)
+		brilhoCorpo(m, 0.84, 0.75, 0.12); task.delay(0.6, function() brilhoCorpo(m, 1, 1, 1.0) end)
 		som(pp, SOM.jato, 1.0, 0.42, 1.8); som(pp, sorteia(SOM.estilhaco), 0.9, 0.7, 2)
 		somEm(c, SOM.rachar, 1.2, 0.8, 4.5)
-		local ac = ancora(c + Vector3.new(0, 1, 0)); Debris:AddItem(ac, (d.zona or 4) + 2)
+		local ac = ancora(c + up * 1.5); Debris:AddItem(ac, zona + 3)
 		luz(ac, C3(170, 225, 255), 2.2, R * 0.8, 0.9)
-		-- frente da onda (anel luminoso fino + anel de pressao mais largo e transparente)
-		anel(c + normal * 0.6, R, BRANCO_GELO, tOnda, 1.2, 0.25, normal)
-		anel(c + normal * 2.5, R * 1.08, AZUL_CLARO, tOnda * 1.15, 4, 0.65, normal)
-		-- lencol de nevoa rasteira que acompanha a onda: 12 bocas em circulo, cada uma soprando para fora
-		for k = 1, 12 do
-			local ang = k / 12 * math.pi * 2; local dh = Vector3.new(math.cos(ang), 0, math.sin(ang))
-			local a = Instance.new("Attachment"); a.Parent = workspace.Terrain; a.WorldCFrame = CFrame.lookAt(c + Vector3.new(0, 1.5, 0) + dh * 4, c + Vector3.new(0, 1.5, 0) + dh * 5)
-			Debris:AddItem(a, 2.5)
-			emissor(a, {Texture = TEX.fumaca, Color = seq({BRANCO_GELO, C3(205, 228, 242)}), LightInfluence = 1, Size = ns(0, 5, 1, 16), Transparency = ns(0, 0.45, 1, 1),
-				Lifetime = NumberRange.new(1.4, 2.0), Speed = NumberRange.new(vel * 0.45, vel * 0.6), SpreadAngle = Vector2.new(14, 3), Drag = 0.9,
-				Rotation = NumberRange.new(0, 360), RotSpeed = NumberRange.new(-20, 20), Rate = 0, EmissionDirection = Enum.NormalId.Front}):Emit(math.max(2, math.floor(6 * f)))
+		emissor(ac, {Texture = TEX.brilho, Color = ColorSequence.new(C3(255, 255, 255)), LightEmission = 1, Size = ns(0, 16, 1, 0), Lifetime = NumberRange.new(0.25, 0.3),
+			Speed = NumberRange.new(0, 0), Rate = 0}):Emit(1)
+		anel(c + up * 0.6, R, BRANCO_GELO, R / vel, 1.0, 0.3, up)                   -- onda de choque (tempo do dano)
+		anel(c + up * 2.5, R * 1.08, AZUL_CLARO, R / vel * 1.2, 4, 0.7, up)
+		if not d.noChao then
+			emissor(ac, {Texture = TEX.lasca, Orientation = Enum.ParticleOrientation.VelocityParallel, Color = ColorSequence.new(AZUL_CLARO), LightEmission = 0.8,
+				Size = ns(0, 1.4, 1, 0.4), Lifetime = NumberRange.new(0.4, 0.7), Speed = NumberRange.new(70, 110), SpreadAngle = Vector2.new(180, 25), Rate = 0}):Emit(math.floor(80 * f))
+			return
 		end
-		if d.noChao then
-			-- chao dominado pelo frio: disco de gelo que se espalha com a onda e fica durante a zona
-			local disco = peca({Shape = Enum.PartType.Cylinder, Size = Vector3.new(0.25, 4, 4), Material = Enum.Material.Ice, Color = C3(185, 220, 245), Transparency = 0.45,
-				CFrame = CFrame.lookAt(c + normal * 0.12, c + normal * 1.12) * CFrame.Angles(0, math.rad(90), 0)})
-			local zr = d.zonaRaio or 52
-			TweenService:Create(disco, TweenInfo.new(zr / vel, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = Vector3.new(0.25, zr * 2, zr * 2)}):Play()
-			task.delay(d.zona or 4, function() if disco.Parent then TweenService:Create(disco, TweenInfo.new(1.2), {Transparency = 1}):Play(); Debris:AddItem(disco, 1.3) end end)
-			-- neblina fria rasteira persistente sobre a zona (pontos espalhados, fumaca lenta que escorre pelo chao)
-			for k = 1, math.max(3, math.floor(7 * f)) do
-				local ang = math.random() * math.pi * 2; local rr = math.sqrt(math.random()) * zr * 0.85
-				local a = ancora(c + Vector3.new(math.cos(ang) * rr, 1.5, math.sin(ang) * rr)); Debris:AddItem(a, (d.zona or 4) + 3.5)
-				local nz = emissor(a, {Texture = TEX.fumaca, Color = seq({BRANCO_GELO, C3(210, 232, 245)}), LightInfluence = 1, Size = ns(0, 7, 1, 16),
-					Transparency = ns(0, 0.75, 0.5, 0.62, 1, 1), Lifetime = NumberRange.new(2.5, 3.5), Speed = NumberRange.new(2, 6), SpreadAngle = Vector2.new(180, 180),
-					Acceleration = Vector3.new(0, -2, 0), Rotation = NumberRange.new(0, 360), RotSpeed = NumberRange.new(-10, 10), Rate = 3})
-				task.delay(d.zona or 4, function() nz.Enabled = false end)
+		local x, u2 = base(up); local z = x:Cross(u2)
+		local rp = RaycastParams.new(); rp.FilterType = Enum.RaycastFilterType.Exclude; rp.FilterDescendantsInstances = {m, pastaFX()}
+		local function chaoEm(p) local h = workspace:Raycast(p + u2 * 18, -u2 * 40, rp); return h and h.Position or p, h and h.Normal or u2 end
+		local itens = {}
+		-- 1) gelo espalhando: disco de gelo translucido + geada com veios, crescendo do centro ao raio da zona
+		local disco = peca({Shape = Enum.PartType.Cylinder, Size = Vector3.new(0.22, 2, 2), Material = Enum.Material.Ice, Color = C3(190, 223, 246), Transparency = 0.5,
+			CFrame = CFrame.lookAt(c + up * 0.1, c + up * 1.1) * CFrame.Angles(0, math.rad(90), 0)})
+		TweenService:Create(disco, TweenInfo.new(tEsp, Enum.EasingStyle.Linear), {Size = Vector3.new(0.22, zr * 2, zr * 2)}):Play()
+		table.insert(itens, disco)
+		local gp, gd = geadaChao(c, up, zr * 1.05, zona + tEsp, tEsp)
+		-- 2) veios de gelo correndo pelo chao (raios irregulares que crescem com a frente)
+		local nV = math.max(10, math.floor(22 * f))
+		for k = 1, nV do
+			local ang = k / nV * math.pi * 2 + math.random() * 0.25
+			local Lt = zr * (0.7 + math.random() * 0.3); local segs = 4; local p0 = c; local dirA = ang
+			for j = 1, segs do
+				dirA += (math.random() - 0.5) * 0.5
+				local lseg = Lt / segs; local pf = p0 + (x * math.cos(dirA) + z * math.sin(dirA)) * lseg
+				local pchao = chaoEm(pf); pf = pchao
+				local t1 = ((j - 1) * lseg) / vVis
+				local v = peca({Size = Vector3.new(0.35 - j * 0.05, 0.12, 0.05), Material = Enum.Material.Neon, Color = C3(205, 238, 255), Transparency = 0.25,
+					CFrame = CFrame.lookAt(p0 + up * 0.18, pf + up * 0.18)})
+				local ini = p0; local fim2 = pf
+				task.delay(t1, function()
+					if not v.Parent then return end
+					local comp = (fim2 - ini).Magnitude
+					TweenService:Create(v, TweenInfo.new(lseg / vVis, Enum.EasingStyle.Linear), {Size = Vector3.new(v.Size.X, 0.12, comp),
+						CFrame = CFrame.lookAt((ini + fim2) / 2 + up * 0.18, fim2 + up * 0.18)}):Play()
+				end)
+				table.insert(itens, v); p0 = pf
 			end
-			-- cristais emergindo da superficie em aneis, no tempo da onda (raycast no relevo real)
-			local rp = RaycastParams.new(); rp.FilterType = Enum.RaycastFilterType.Exclude; rp.FilterDescendantsInstances = {m, pastaFX()}
-			local aneis = {0.35, 0.6, 0.85}
-			for ia, fr in ipairs(aneis) do
-				local r = R * fr; local n = math.max(6, math.floor((8 + ia * 4) * f))
-				task.delay(r / vel, function()
-					local g0 = math.random() * math.pi * 2
-					for k = 1, n do
-						local ang = g0 + k / n * math.pi * 2 + math.random() * 0.3
-						local xz = c + Vector3.new(math.cos(ang), 0, math.sin(ang)) * (r + math.random(-3, 3))
-						local h = workspace:Raycast(xz + Vector3.new(0, 18, 0), Vector3.new(0, -40, 0), rp)
-						if h then
-							local alt = (11 - ia * 2) * (0.7 + math.random() * 0.6)
-							cristal(h.Position, (h.Normal + (h.Position - c).Unit * 0.35).Unit, alt, alt * 0.3, (d.zona or 4) - r / vel + 0.4)
-						end
-					end
+		end
+		-- 3) nevoa na borda da frente (ancoras que andam com ela)
+		local bordas = {}
+		for k = 1, math.max(8, math.floor(16 * f)) do
+			local ang = k / 16 * math.pi * 2
+			local a = Instance.new("Attachment"); a.Parent = workspace.Terrain; a.WorldPosition = c + up * 1.5; table.insert(bordas, {a, x * math.cos(ang) + z * math.sin(ang)})
+			emissor(a, {Texture = TEX.nevoa, Color = seq({BRANCO_GELO, C3(205, 228, 245)}), LightInfluence = 1, Size = ns(0, 5, 1, 13), Transparency = ns(0, 0.55, 1, 1),
+				Lifetime = NumberRange.new(1.0, 1.5), Speed = NumberRange.new(2, 6), Acceleration = Vector3.new(0, -2, 0), Rotation = NumberRange.new(0, 360),
+				RotSpeed = NumberRange.new(-20, 20), Rate = 9})
+			emissor(a, {Texture = TEX.floco, Color = ColorSequence.new(BRANCO_GELO), LightEmission = 0.6, Size = ns(0, 0.45, 1, 0.1), Lifetime = NumberRange.new(0.6, 1.0),
+				Speed = NumberRange.new(3, 9), SpreadAngle = Vector2.new(60, 60), EmissionDirection = Enum.NormalId.Top, Rotation = NumberRange.new(0, 360), Rate = 10})
+		end
+		local t0 = os.clock()
+		local con; con = RunService.RenderStepped:Connect(function()
+			local r = math.min(zr, (os.clock() - t0) * vVis)
+			for _, b in ipairs(bordas) do b[1].WorldPosition = c + up * 1.5 + b[2] * r end
+			if os.clock() - t0 > tEsp + 0.2 then
+				con:Disconnect()
+				for _, b in ipairs(bordas) do for _, e in ipairs(b[1]:GetChildren()) do e.Enabled = false end; Debris:AddItem(b[1], 1.6) end
+			end
+		end)
+		-- 4) espinhos/cristais emergem DEPOIS que a frente passa (aneis), alguns em grupos
+		for ia, fr in ipairs({0.28, 0.48, 0.68, 0.88}) do
+			local r = zr * fr; local n = math.max(5, math.floor((7 + ia * 3) * f))
+			task.delay(r / vVis + 0.18, function()
+				if not m.Parent then return end
+				local g0 = math.random() * math.pi * 2
+				for k = 1, n do
+					local ang = g0 + k / n * math.pi * 2 + math.random() * 0.3
+					local p, nrm = chaoEm(c + (x * math.cos(ang) + z * math.sin(ang)) * (r + math.random(-4, 4)))
+					local out = (p - c); out = out.Magnitude > 0.1 and out.Unit or up
+					local alt = (12 - ia * 1.8) * (0.7 + math.random() * 0.6)
+					local vida = zona - r / vVis + 0.6
+					cristal(p, (nrm + out * 0.4).Unit, alt, alt * 0.3, vida)
+					if math.random() < 0.55 then cristal(p + out * 1.5 + (x * math.random() - z * math.random()), (nrm + out * 0.7).Unit, alt * 0.6, alt * 0.22, vida) end
+				end
+				somEm(c + x * r, sorteia(SOM.estilhaco), 0.5, 0.6 + ia * 0.08, 1.5)
+			end)
+		end
+		-- 5) zona de frio extremo: nevoa baixa, cintilacoes e luz fria pulsando
+		task.delay(tEsp * 0.5, function()
+			for k = 1, math.max(4, math.floor(9 * f)) do
+				local ang = math.random() * math.pi * 2; local rr = math.sqrt(math.random()) * zr * 0.85
+				local a = ancora(c + (x * math.cos(ang) + z * math.sin(ang)) * rr + up * 1.2); Debris:AddItem(a, zona + 3.5)
+				local e1 = emissor(a, {Texture = TEX.nevoa, Color = seq({BRANCO_GELO, C3(210, 232, 245)}), LightInfluence = 1, Size = ns(0, 7, 1, 16),
+					Transparency = ns(0, 0.8, 0.5, 0.66, 1, 1), Lifetime = NumberRange.new(2.5, 3.5), Speed = NumberRange.new(2, 5), SpreadAngle = Vector2.new(180, 180),
+					Acceleration = Vector3.new(0, -2, 0), Rotation = NumberRange.new(0, 360), RotSpeed = NumberRange.new(-10, 10), Rate = 3})
+				local e2 = emissor(a, {Texture = TEX.brilho, Color = ColorSequence.new(C3(255, 255, 255)), LightEmission = 1, Size = ns(0, 1.2, 0.5, 1.6, 1, 0),
+					Lifetime = NumberRange.new(0.4, 0.8), Speed = NumberRange.new(0, 1), SpreadAngle = Vector2.new(180, 180), Shape = Enum.ParticleEmitterShape.Sphere,
+					Rotation = NumberRange.new(0, 90), Rate = 4})
+				task.delay(zona - tEsp * 0.5, function() e1.Enabled = false; e2.Enabled = false end)
+			end
+			local l = luz(ac, C3(160, 215, 255), 1.2, zr * 0.9)
+			if l then
+				task.spawn(function()
+					local tf = os.clock() + zona
+					while os.clock() < tf and l.Parent do l.Brightness = 0.9 + 0.5 * math.sin(os.clock() * 3); task.wait(0.05) end
+					liberarLuz(l)
 				end)
 			end
-		end
+		end)
+		-- 6) derrete: disco e veios desbotam
+		task.delay(zona + tEsp * 0.6, function()
+			for _, it in ipairs(itens) do if it.Parent then TweenService:Create(it, TweenInfo.new(1.2), {Transparency = 1}):Play(); Debris:AddItem(it, 1.25) end end
+		end)
 	end
 end
 
--- ===== NEVASCA ANCESTRAL: corpo inteiro azul brilhante, tempestade de fragmentos em ondas =========================
+-- ===== NEVASCA ANCESTRAL: descarga glacial (v2, 02/11) =============================================================
+-- corpo inteiro azul brilhante SEM esconder a silhueta (preenchimento parcial + contorno claro); tempestade girando;
+-- em cada onda: muitos fragmentos de gelo reais (pecas) e lascas em alta velocidade + PULSOS BRANCOS (esferas e aneis)
+-- saindo do corpo; pulsos menores continuos durante a descarga.
 local nevascas = {}
-local function fragmentos(m, c, raio, f, n)
+local function fragmentos(c, raio, f, n)
 	for i = 1, math.floor(n * f) do
-		local dir = Vector3.new(math.random() - 0.5, (math.random() - 0.35) * 0.9, math.random() - 0.5).Unit
-		local s = 0.5 + math.random() * 1.4
-		local p = peca({Size = Vector3.new(s * 0.45, s * 0.45, s * 3.2), Material = math.random() < 0.5 and Enum.Material.Glass or Enum.Material.Ice,
-			Color = AZUL_CLARO:Lerp(BRANCO_GELO, math.random()), Transparency = 0.15, CFrame = CFrame.lookAt(c + dir * 6, c + dir * 7)}, "WedgePart")
-		local alvo = c + dir * raio * (0.75 + math.random() * 0.35)
-		local dur = 0.32 + math.random() * 0.22
-		TweenService:Create(p, TweenInfo.new(dur, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {CFrame = CFrame.lookAt(alvo, alvo + dir), Transparency = 0.6}):Play()
+		local dir = Vector3.new(math.random() - 0.5, (math.random() - 0.3) * 0.9, math.random() - 0.5).Unit
+		local s = 0.6 + math.random() * 1.6
+		local p = peca({Size = Vector3.new(s * 0.5, s * 0.32, s * 3.4), Material = math.random() < 0.5 and Enum.Material.Glass or Enum.Material.Ice,
+			Color = AZUL_CLARO:Lerp(BRANCO_GELO, math.random()), Transparency = 0.1, Reflectance = 0.12, CFrame = CFrame.lookAt(c + dir * 6, c + dir * 7)}, "WedgePart")
+		local alvo = c + dir * raio * (0.7 + math.random() * 0.4)
+		local dur = 0.3 + math.random() * 0.2
+		TweenService:Create(p, TweenInfo.new(dur, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {CFrame = CFrame.lookAt(alvo, alvo + dir), Transparency = 0.55}):Play()
 		Debris:AddItem(p, dur + 0.05)
 	end
+end
+local function pulso(c, raio, transp, dur)                            -- casca de energia fria se expandindo
+	-- (teste no jogo 02/11: esfera Neon escondia o dragao) ForceField = brilho branco so nas bordas da casca
+	local b = peca({Shape = Enum.PartType.Ball, Size = Vector3.new(8, 8, 8), Material = Enum.Material.ForceField, Color = C3(225, 243, 255), Transparency = transp, CFrame = CFrame.new(c)})
+	TweenService:Create(b, TweenInfo.new(dur, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = Vector3.new(raio * 2, raio * 2, raio * 2), Transparency = 1}):Play()
+	Debris:AddItem(b, dur + 0.05)
 end
 local function nevasca(m, d, f)
 	local pp = m.PrimaryPart
 	if d.fase == "inicio" then
 		local reg = {itens = {}}; nevascas[m] = reg
 		local f2 = math.max(f, 0.35)
-		brilhoCorpo(m, 0.8, 0.85, 0.6)
-		-- subida: asas puxam ar frio, cristais saem das pontas
+		brilhoCorpo(m, 0.85, 0.8, 0.6)
 		local c0 = centro(m)
 		som(pp, SOM.vento, 0.9, 0.7, 2.5)
-		-- rugido muito alto + corpo INTEIRO azul brilhante (Highlight cobre cabeca, olhos, tronco, patas, garras, cauda e asas)
 		task.delay(d.rugido or 1.75, function()
 			if not m.Parent or nevascas[m] ~= reg then return end
 			som(pp, SOM.rugido, 2.2, 0.7 * tomVoz(m), 3.0, 420)
-			brilhoCorpo(m, 0.28, 0, 0.35)
+			brilhoCorpo(m, 0.45, 0, 0.35)                               -- azul forte no corpo todo, silhueta legivel
+			pulso(centro(m), 45, 0, 0.5)
 			local cb = ossoC(m, "Coluna2") or pp
 			local l = Instance.new("PointLight"); l.Color = C3(150, 215, 255); l.Brightness = 0; l.Range = 60; l.Shadows = false; l.Parent = cb
-			TweenService:Create(l, TweenInfo.new(0.35), {Brightness = 5}):Play(); table.insert(reg.itens, l)
-			-- aura de energia glacial no corpo todo (pontos nos ossos principais e nas asas)
+			TweenService:Create(l, TweenInfo.new(0.35), {Brightness = 4}):Play(); table.insert(reg.itens, l)
+			-- aura nos ossos (corpo, cabeca, cauda e asas): lascas e cintilacoes saindo do corpo
 			for _, n in ipairs({"Coluna2", "Pescoco2", "Cabeca", "Cauda3", "Cauda5", "Quadril", "AsaE_2", "AsaD_2", "wing_tip_l", "wing_tip_r", "wing_3_l", "wing_3_r"}) do
 				local b = ossoC(m, n)
 				if b then
-					table.insert(reg.itens, emissor(b, {Texture = TEX.faisca, Color = seq({C3(255, 255, 255), AZUL_CLARO}), LightEmission = 1, Size = ns(0, 0.9, 1, 0),
-						Lifetime = NumberRange.new(0.5, 0.9), Speed = NumberRange.new(6, 14), SpreadAngle = Vector2.new(180, 180), Rate = 16 * f2}))
+					table.insert(reg.itens, emissor(b, {Texture = TEX.lasca, Orientation = Enum.ParticleOrientation.VelocityParallel, Color = seq({C3(255, 255, 255), AZUL_CLARO}),
+						LightEmission = 0.8, Size = ns(0, 1.2, 1, 0.3), Lifetime = NumberRange.new(0.4, 0.7), Speed = NumberRange.new(20, 40), SpreadAngle = Vector2.new(180, 180), Rate = 14 * f2}))
+					table.insert(reg.itens, emissor(b, {Texture = TEX.brilho, Color = ColorSequence.new(C3(255, 255, 255)), LightEmission = 1, Size = ns(0, 2, 1, 0),
+						Lifetime = NumberRange.new(0.2, 0.35), Speed = NumberRange.new(0, 3), Rotation = NumberRange.new(0, 90), Rate = 5 * f2}))
 				end
 			end
-			-- tempestade glacial ao redor: anel de neve girando + nevoa + fragmentos rapidos continuos
+			-- tempestade: fragmentos continuos em alta velocidade + riscos de vento + nevoa e neve girando em volta
 			local ac = ancora(centro(m)); table.insert(reg.itens, ac)
-			table.insert(reg.itens, emissor(ac, {Texture = TEX.fumaca, Color = seq({BRANCO_GELO, AZUL_CLARO}), LightInfluence = 0.8, LightEmission = 0.05, Size = ns(0, 4, 1, 14),
+			table.insert(reg.itens, emissor(ac, {Texture = TEX.lasca, Orientation = Enum.ParticleOrientation.VelocityParallel, Color = seq({C3(255, 255, 255), AZUL_CLARO}),
+				LightEmission = 0.7, Size = ns(0, 1.8, 1, 0.8), Lifetime = NumberRange.new(0.45, 0.7), Speed = NumberRange.new(150, 230), SpreadAngle = Vector2.new(180, 70), Rate = 90 * f2}))
+			table.insert(reg.itens, emissor(ac, {Texture = TEX.rastro, Orientation = Enum.ParticleOrientation.VelocityParallel, Color = ColorSequence.new(C3(240, 250, 255)),
+				LightEmission = 0.8, Size = ns(0, 2.5, 1, 1), Transparency = ns(0, 0.2, 1, 1), Lifetime = NumberRange.new(0.3, 0.5), Speed = NumberRange.new(160, 240),
+				SpreadAngle = Vector2.new(180, 60), Rate = 60 * f2}))
+			table.insert(reg.itens, emissor(ac, {Texture = TEX.nevoa, Color = seq({BRANCO_GELO, AZUL_CLARO}), LightInfluence = 0.8, LightEmission = 0.05, Size = ns(0, 4, 1, 14),
 				Transparency = ns(0, 0.72, 1, 1), Lifetime = NumberRange.new(1.0, 1.5), Speed = NumberRange.new(70, 100), SpreadAngle = Vector2.new(180, 30),
-				Rotation = NumberRange.new(0, 360), RotSpeed = NumberRange.new(-80, 80), Drag = 1.2, Rate = 18 * f2}))
-			table.insert(reg.itens, emissor(ac, {Texture = TEX.faisca, Color = seq({C3(255, 255, 255), AZUL_CLARO}), LightEmission = 1, Size = ns(0, 0.8, 1, 0.2),
-				Lifetime = NumberRange.new(0.5, 0.9), Speed = NumberRange.new(140, 200), SpreadAngle = Vector2.new(180, 60), Rate = 120 * f2}))
-			local giro = Instance.new("Attachment"); giro.Parent = workspace.Terrain; table.insert(reg.itens, giro)
+				Rotation = NumberRange.new(0, 360), RotSpeed = NumberRange.new(-80, 80), Drag = 1.2, Rate = 16 * f2}))
 			local braco = {}
-			for k = 1, 3 do
+			for k = 1, 4 do
 				local a = Instance.new("Attachment"); a.Parent = workspace.Terrain; table.insert(reg.itens, a); table.insert(braco, a)
-				table.insert(reg.itens, emissor(a, {Texture = TEX.fumaca, Color = seq({BRANCO_GELO, AZUL_CLARO}), LightInfluence = 0.7, Size = ns(0, 3, 1, 8),
-					Transparency = ns(0, 0.65, 1, 1), Lifetime = NumberRange.new(0.8, 1.2), Speed = NumberRange.new(2, 6), Rate = 22 * f2}))
+				table.insert(reg.itens, emissor(a, {Texture = TEX.nevoa, Color = seq({BRANCO_GELO, AZUL_CLARO}), LightInfluence = 0.7, Size = ns(0, 3, 1, 8),
+					Transparency = ns(0, 0.65, 1, 1), Lifetime = NumberRange.new(0.8, 1.2), Speed = NumberRange.new(2, 6), Rate = 18 * f2}))
+				table.insert(reg.itens, emissor(a, {Texture = TEX.floco, Color = ColorSequence.new(BRANCO_GELO), LightEmission = 0.6, Size = ns(0, 0.6, 1, 0.2),
+					Lifetime = NumberRange.new(0.6, 1.0), Speed = NumberRange.new(4, 12), SpreadAngle = Vector2.new(180, 180), Rotation = NumberRange.new(0, 360),
+					RotSpeed = NumberRange.new(-250, 250), Rate = 30 * f2}))
 			end
 			local t0 = os.clock()
 			reg.con = RunService.RenderStepped:Connect(function()
@@ -550,14 +696,20 @@ local function nevasca(m, d, f)
 				local c = centro(m); ac.WorldPosition = c
 				local t = os.clock() - t0
 				for k, a in ipairs(braco) do
-					local ang = t * 3.2 + k * 2.094; local r = 38 + 10 * math.sin(t * 2 + k)
-					a.WorldPosition = c + Vector3.new(math.cos(ang) * r, -8 + 10 * math.sin(t * 1.4 + k), math.sin(ang) * r)
+					local ang = t * 3.4 + k * 1.571; local r = 36 + 10 * math.sin(t * 2 + k)
+					a.WorldPosition = c + Vector3.new(math.cos(ang) * r, -8 + 12 * math.sin(t * 1.4 + k), math.sin(ang) * r)
 				end
 			end)
-			reg.somT = som(pp, SOM.tempestade, 1.4, 1.0, (d.duracao or 5.6) - (d.rugido or 1.75), 400)
+			-- pulsos brancos menores e continuos acompanhando a descarga
+			task.spawn(function()
+				local fim = os.clock() + (d.duracao or 5.6) - (d.rugido or 1.75) - 1.0
+				while os.clock() < fim and nevascas[m] == reg and m.Parent do
+					pulso(centro(m), 26 + math.random() * 10, 0.35, 0.4); task.wait(0.38)
+				end
+			end)
+			som(pp, SOM.tempestade, 1.4, 1.0, (d.duracao or 5.6) - (d.rugido or 1.75), 400)
 			som(pp, SOM.vento, 1.1, 0.85, 3.5, 400)
 		end)
-		-- fim do brilho: diminui suave e volta ao normal
 		task.delay((d.duracao or 5.6) - 0.9, function()
 			if nevascas[m] ~= reg then return end
 			brilhoCorpo(m, 1, 1, 1.1)
@@ -570,14 +722,28 @@ local function nevasca(m, d, f)
 		end)
 		task.delay(0.4, function() if m.Parent then som(pp, sorteia(SOM.disparo), 0.6, 0.7, 1) end end)
 		local a = ancora(c0); Debris:AddItem(a, 1.8)
-		emissor(a, {Texture = TEX.faisca, Color = ColorSequence.new(AZUL_CLARO), LightEmission = 1, Size = ns(0, 0.8, 1, 0), Lifetime = NumberRange.new(0.6, 1.0),
-			Speed = NumberRange.new(-30, -18), SpreadAngle = Vector2.new(180, 180), Shape = Enum.ParticleEmitterShape.Sphere, Rate = 60 * f2})
+		emissor(a, {Texture = TEX.lasca, Orientation = Enum.ParticleOrientation.VelocityParallel, Color = ColorSequence.new(AZUL_CLARO), LightEmission = 0.9,
+			Size = ns(0, 1.2, 1, 0.3), Lifetime = NumberRange.new(0.6, 1.0), Speed = NumberRange.new(-30, -18), SpreadAngle = Vector2.new(180, 180),
+			Shape = Enum.ParticleEmitterShape.Sphere, Rate = 50 * f2})
 	elseif d.fase == "onda" then
-		local c = d.pos or centro(m); local i = d.indice or 1
-		fragmentos(m, c, d.raio or 95, math.max(f, 0.35), i == 1 and 46 or 26)
-		anel(c, (d.raio or 95) * (i == 1 and 1 or 0.8), BRANCO_GELO, 0.55, 1.5, i == 1 and 0.3 or 0.5)
-		anel(c, (d.raio or 95) * 0.7, AZUL_CLARO, 0.45, 0.6, 0.55, Vector3.new(0, 0, 1))
-		brilhoCorpo(m, 0.1, 0, 0.08); task.delay(0.22, function() if nevascas[m] then brilhoCorpo(m, 0.28, 0, 0.3) end end)
+		local c = d.pos or centro(m); local i = d.indice or 1; local R = d.raio or 95
+		local f2 = math.max(f, 0.35)
+		fragmentos(c, R, f2, i == 1 and 80 or 50)
+		local a = ancora(c); Debris:AddItem(a, 1.5)
+		emissor(a, {Texture = TEX.lasca, Orientation = Enum.ParticleOrientation.VelocityParallel, Color = seq({C3(255, 255, 255), AZUL_CLARO}), LightEmission = 0.8,
+			Size = ns(0, 2.2, 1, 1), Lifetime = NumberRange.new(0.4, 0.6), Speed = NumberRange.new(180, 260), SpreadAngle = Vector2.new(180, 180), Rate = 0}):Emit(math.floor(160 * f2))
+		emissor(a, {Texture = TEX.rastro, Orientation = Enum.ParticleOrientation.VelocityParallel, Color = ColorSequence.new(C3(245, 252, 255)), LightEmission = 0.9,
+			Size = ns(0, 3, 1, 1.5), Transparency = ns(0, 0.1, 1, 1), Lifetime = NumberRange.new(0.3, 0.45), Speed = NumberRange.new(200, 280), SpreadAngle = Vector2.new(180, 180), Rate = 0}):Emit(math.floor(80 * f2))
+		emissor(a, {Texture = TEX.brilho, Color = ColorSequence.new(C3(255, 255, 255)), LightEmission = 1, Size = ns(0, 22, 1, 0), Lifetime = NumberRange.new(0.2, 0.25), Speed = NumberRange.new(0, 0), Rate = 0}):Emit(1)
+		-- pulsos brancos em ondas: esfera grande + aneis em planos diferentes, um atras do outro
+		pulso(c, R * 0.85, 0, 0.55)
+		task.delay(0.12, function() pulso(c, R * 0.6, 0.15, 0.45) end)
+		task.delay(0.24, function() pulso(c, R * 0.4, 0.3, 0.4) end)
+		anel(c, R * (i == 1 and 1 or 0.85), BRANCO_GELO, 0.55, 1.5, 0.25)
+		anel(c, R * 0.75, AZUL_CLARO, 0.5, 0.8, 0.45, Vector3.new(0.35, 0.2, 1).Unit)
+		anel(c, R * 0.75, AZUL_CLARO, 0.5, 0.8, 0.45, Vector3.new(1, 0.2, -0.35).Unit)
+		luz(a, C3(200, 235, 255), 5, R, 0.35)
+		brilhoCorpo(m, 0.2, 0, 0.06); task.delay(0.2, function() if nevascas[m] then brilhoCorpo(m, 0.45, 0, 0.3) end end)
 		som(pp, sorteia(SOM.disparo), 1.2, 0.8 + 0.1 * i, 1.2, 400); som(pp, sorteia(SOM.estilhaco), 1.0, 0.75, 2, 400)
 		if i == 1 then som(pp, SOM.estilhacoForte, 1.0, 0.8, 3, 400) end
 	elseif d.fase == "fim" then
