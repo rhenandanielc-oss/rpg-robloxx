@@ -31,6 +31,7 @@ for k, v in pairs(base:GetAttributes()) do if not k:find("^RBX_") then m:SetAttr
 m:SetAttribute("FormaRegional", "Glacial"); m:SetAttribute("ElementoNato", "Gelo"); m:SetAttribute("ElementosDesbloqueados", "")
 m:SetAttribute("NomeExibicao", "Dragao Glacial"); m:SetAttribute("PastaAnimacoes", "Glacial"); m:SetAttribute("PerfilMovimento", "Silverwing")
 m:SetAttribute("TesteScriptsMontanhas", nil)
+m:SetAttribute("HabilidadesForma", "")                   -- kit de gelo pendente: HUD sem habilidades (patch_hud_habilidades_forma)
 m:SetAttribute("Versao", "Glacial r9 (corpo unico, boca em bolsa, rugido v2 gelo)")
 m:SetAttribute("Origem", "Modelo proprio (Blender, criar_glacial_r9.py) + esqueleto Silverwing; TESTE")
 -- pivo -> pes igual ao do Silverwing (montaria e IA movem por PivotTo contando com essa altura)

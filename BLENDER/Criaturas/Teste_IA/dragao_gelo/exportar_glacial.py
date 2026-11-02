@@ -69,6 +69,25 @@ for o in malhas:
     assert n <= 20000, o.name + " passa de 20k tris"
 for im in bpy.data.images:
     if im.size[0] > 1024: im.scale(1024, 1024); print("TEX", im.name, "-> 1024")
+# ORM sem metal (achado no teste do Studio 01/11): com so a rugosidade ligada, o glTF usava a imagem cinza inteira como
+# metallicRoughness e o importador do Roblox gerava um MetalnessMap = rugosidade (dragao metalico/prateado). Aqui o
+# mapa vira ORM explicito: R = 1 (oclusao), G = rugosidade, B = 0 (sem metal)
+import numpy as np
+for mt in bpy.data.materials:
+    if not mt.node_tree: continue
+    nt_ = mt.node_tree; bs = nt_.nodes.get("Principled BSDF")
+    lk = bs and bs.inputs["Roughness"].links
+    if not lk or lk[0].from_node.bl_idname != "ShaderNodeTexImage": continue
+    rim = lk[0].from_node.image; w_, h_ = rim.size
+    px = np.array(rim.pixels[:], dtype=np.float32).reshape(-1, 4)
+    orm = np.ones_like(px); orm[:, 1] = px[:, 0]; orm[:, 2] = 0.0
+    im = bpy.data.images.new(rim.name + "_ORM", w_, h_, alpha=False); im.colorspace_settings.name = "Non-Color"
+    im.pixels.foreach_set(orm.ravel()); im.pack()
+    t_ = nt_.nodes.new("ShaderNodeTexImage"); t_.image = im
+    sp_ = nt_.nodes.new("ShaderNodeSeparateColor")
+    nt_.links.new(t_.outputs["Color"], sp_.inputs[0])
+    nt_.links.new(sp_.outputs["Green"], bs.inputs["Roughness"]); nt_.links.new(sp_.outputs["Blue"], bs.inputs["Metallic"])
+    print("ORM", mt.name, w_, "x", h_, "metal=0")
 bpy.ops.object.select_all(action="DESELECT")
 for o in (A,) + malhas: o.select_set(True)
 bpy.context.view_layer.objects.active = A

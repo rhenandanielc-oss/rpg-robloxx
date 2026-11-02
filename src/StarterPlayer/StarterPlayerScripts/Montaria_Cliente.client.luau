@@ -125,6 +125,12 @@ local NOMES = {chao = "No chao", decolando = "Decolando", voo = "Em voo", pousan
 
 -- ===== estado montado ============================================================================================
 local m = nil                                                        -- dragao montado
+-- PATCH_HUD_FORMA (01/11): habilidades que ESTE dragao tem (atributo HabilidadesForma; sem ele = todas, como antes)
+local function habPermitida(nome)
+	local lista = m and m:GetAttribute("HabilidadesForma")
+	if lista == nil then return true end
+	return table.find(string.split(lista, ","), nome) ~= nil
+end
 local seg = {subir = false, descer = false, correr = false}
 local alvoCam, camAntes
 local soproSegurado = false                                           -- sopro com a tecla segurada (mira viva)
@@ -177,6 +183,7 @@ local function ligarAcoes()
 		return Enum.ContextActionResult.Sink
 	end, C.elemento, "Elem.") end
 	for _, h in ipairs(C.habilidades) do
+		if not habPermitida(h[1]) then continue end
 		acao("Mont_" .. h[1], function(st)
 			if not (m and Pedido) then return Enum.ContextActionResult.Sink end
 			if st == Enum.UserInputState.Begin then
@@ -323,6 +330,10 @@ local function entrar(dragao)
 		"Botao direito: girar a camera (o dragao segue) | Cursor: mira | W acelera | solte W: para no ar | E sobe / Q desce | Espaco: decolar | segure 1: sopro continuo (mira no cursor) | 2 Arremetida | 3 Tempestade | 4 Coracao Infernal | R: garra (no chao) | M1: mordida (no chao: terrestre; no ar: mordida aerea | G planar | X desmontar | Roda: zoom | Alt solta o mouse"
 		or "Mouse: direcao (no ar: sobe/desce/vira para onde a camera olha) | W acelera, S desacelera | Espaco decolar | G planar | F pousar | X desmontar | 1-4 habilidades | Alt solta o mouse"
 	slotMordida.Visible = m:GetAttribute("VooLivre") == true
+	for _, h in ipairs(C.habilidades) do slots[h[1]].cob.Parent.Visible = habPermitida(h[1]) end
+	if m:GetAttribute("HabilidadesForma") ~= nil then
+		dica.Text = dica.Text:gsub(" | segure 1: sopro continuo %(mira no cursor%) | 2 Arremetida | 3 Tempestade | 4 Coracao Infernal", ""):gsub(" | 1%-4 habilidades", "")
+	end
 	gui.Enabled = true; if reticula then reticula.Visible = UIS.MouseEnabled end
 	ligarAcoes()
 end
