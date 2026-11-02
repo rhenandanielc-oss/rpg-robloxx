@@ -836,6 +836,11 @@ function M.evento(d)
 	-- sem elemento: Montanhas segue no Fogo; outras formas (Glacial com kit pendente) usam o impacto Neutro
 	local semEl = (m:GetAttribute("FormaRegional") ~= "Montanhas") and "Neutro" or "Fogo"
 	local f = fatorLOD(m:GetPivot().Position); local el = d.el or semEl; local P = PERFIL[el] or PERFIL.Neutro
+	-- PATCH_KIT_GELO: efeitos do Gelo (kit do Glacial, reacoes, Frostbite) no modulo proprio
+	if el == "Gelo" or d.hab == "Frostbite" then
+		local G = script.Parent:FindFirstChild("VFXGelo")
+		if G then return require(G).evento(d, fatorLOD(m:GetPivot().Position)) end
+	end
 	if d.fase == "reacao" then reacao(d.alvo, el, d.intensidade); return end
 	if d.fase == "lancamento" then lancamento(d); return end              -- empurrao (Tempestade/Ruptura): so o personagem atingido
 	if f <= 0 then return end

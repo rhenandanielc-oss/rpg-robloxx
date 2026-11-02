@@ -1698,6 +1698,104 @@ def f_hab_recuperacao(u):
     cauda(p, -14, 5.0, onda_cauda(u, [(3.0, 1, 0.0, 1.0)]), onda=[3 * (1 - u) * PESO_CAUDA[k] for k in range(7)])
     return p
 
+# ---------------------------------------------------------------- KIT DO GELO (oficial 02/11, Dragao Glacial)
+# Sopro Glacial (Sopro_Glacial_*), Rajadas de Gelo, Zero Absoluto e Nevasca Ancestral. Tempos casados com
+# ConfigCombate (Glacial): Rajadas 2,4 s com disparos em 0,72/1,08/1,44/1,80 s; Zero Absoluto 2,8 s com a descarga
+# em 1,06 s; Nevasca 5,6 s (salto 0,5 s, rugido 1,75 s, ondas 2,2-4,3 s, pouso 4,7-5,4 s no solo). "_Camada" = no ar.
+RAJ_TIROS = [0.30, 0.45, 0.60, 0.75]
+def f_rajadas(ar=False):
+    """Rajadas de Gelo 2,4 s: pescoco recolhe em S e a cabeca MIRA (preparo), 4 disparos ritmados: a boca estala
+    aberta, a cabeca recua e o peito da um tranco a cada tiro; asas meio armadas estabilizam; recupera."""
+    def fn(u):
+        prep = janela(u, 0.0, 0.25) * (1 - janela(u, 0.82, 1.0))
+        rec = sum(math.exp(-((u - t - 0.03) / 0.04) ** 2) for t in RAJ_TIROS)
+        abre = min(1.0, sum(pulso(u, t - 0.045, t - 0.005, t + 0.03, t + 0.085) for t in RAJ_TIROS))
+        if ar:
+            p = f_pairar((u * 2.0) % 1.0)
+            p.arf += 3 * rec
+            pescoco_voo(p, cima=-30 + 6 * prep - 5 * rec, cab=-p.arf * 0.2 - 4 * prep + 6 * rec)
+        else:
+            p = Pose(); base_pe(p, 0.3 * prep)
+            for c in PERNAS: p.pata[c]["beta"] += 5 * prep
+            p.off += Vector((0, 0.010 * prep + 0.012 * rec, 0.004 * rec))
+            p.arf += 2 * prep + 2.5 * rec
+            pescoco_alto(p, cima=-10 * prep + 4 * rec, cab=-6 * prep + 7 * rec)
+            for i, n_ in enumerate(PESCOCO):                                     # S de mira (soma 0)
+                c_, e_ = p.curva[n_]; p.curva[n_] = (c_ + [7, 0, -7][i] * prep, e_)
+            p.asas = asas_ameaca(0.28 * prep + 0.04 * rec)
+            cauda(p, -10 + 3 * prep, 5.0, onda_cauda(u, [(1.6, 1, 0.3, 1.0)]), onda=[(2 * prep + 3 * rec) * PESO_CAUDA[k] for k in range(7)])
+        p.curva["spine_1"] = (p.curva.get("spine_1", (0, 0))[0] + 3 * prep - 3 * rec, 0)
+        boca_abre(p, 0.12 * prep + 0.75 * abre)
+        return p
+    return fn
+
+def f_zero_absoluto(ar=False):
+    """Zero Absoluto 2,8 s: tensao (abaixa, asas sobem tremendo, peito enche, pescoco recolhe) -> DESCARGA em 0,38
+    (corpo cai sobre as patas, asas abrem ao maximo, cabeca baixa e a frente com a boca aberta, cauda bate) ->
+    sustenta com tremor fino -> recupera."""
+    def fn(u):
+        prep = janela(u, 0.0, 0.34) * (1 - janela(u, 0.36, 0.40))
+        desc = pulso(u, 0.36, 0.40, 0.62, 0.86)
+        choque = math.exp(-((u - 0.39) / 0.03) ** 2)
+        trem = math.sin(2 * math.pi * 26 * u) * (prep * 0.6 + desc * 0.4)
+        if ar:
+            p = f_pairar((u * 2.2) % 1.0)
+            p.arf += -6 * prep + 10 * desc
+            Rb = p.Rb()
+            for s_, n in ((1, "shoulder_l"), (-1, "shoulder_r")): p.extra[n] = Rax(Rb @ X, 22 + 14 * desc - 8 * prep)
+            p.asas = mistura(p.asas, asas("Silverwing_Fly_Glide", 0.2), 0.7 * desc)
+            pescoco_voo(p, cima=-34 - 10 * desc + 0.5 * trem, cab=-p.arf * 0.2 - 6 * desc)
+        else:
+            p = Pose(); em_pe(p, agach=0.035 * prep + 0.07 * desc)
+            for c in PERNAS: p.pata[c]["beta"] += 6 * desc
+            p.off += Vector((0, 0, -0.012 * choque))
+            p.arf += 3 * prep - 4 * desc
+            pescoco_alto(p, cima=-12 * prep - 20 * desc + 0.6 * trem, esq=0.4 * trem, cab=6 * prep - 4 * desc)
+            p.asas = asas_ameaca(0.45 * prep + 0.95 * desc + 0.03 * trem * prep)
+            vert = [(-6 * choque + 7 * desc * math.sin(math.pi * min(1, max(0, (u - 0.40 - 0.02 * k) / 0.25)))) * PESO_CAUDA[k] for k in range(7)]
+            cauda(p, -12 - 4 * prep + 8 * desc, 5.0, onda_cauda(u, [(2.0, 1, 0.0, 1.0), (1.0, 7, 0.4, 1.3)]), onda=vert)
+        p.curva["spine_1"] = (p.curva.get("spine_1", (0, 0))[0] + 6 * prep - 4 * desc + 0.5 * trem, 0)
+        boca_abre(p, 0.15 * prep + 0.85 * desc, tranco=0.3 * trem)
+        return p
+    return fn
+
+def f_nevasca(ar=False):
+    """Nevasca Ancestral 5,6 s (ultimate): solo = agacha e SALTA (o servidor ergue o corpo), ar = batidas fortes; o
+    corpo se ergue com o peito ao alto, RUGE para o ceu, asas abrem e sustentam a descarga (tremor de esforco no corpo
+    todo, cauda baixa), recupera; no solo desce, estende as patas e amortece o pouso."""
+    def fn(u):
+        ag = janela(u, 0.0, 0.08) * (1 - janela(u, 0.08, 0.12))
+        ergue = pulso(u, 0.22, 0.31, 0.78, 0.9)
+        rug = pulso(u, 0.30, 0.34, 0.50, 0.58)
+        desc = pulso(u, 0.35, 0.42, 0.76, 0.86)
+        trem = math.sin(2 * math.pi * 30 * u) * desc
+        ar_ = f_pairar((u * 4.0) % 1.0)
+        ar_.arf += 14 * ergue
+        aberta = mistura(asas("Silverwing_Fly_Glide", 0.2), asas("Silverwing_Fly_Flap", FA), 0.35)
+        ar_.asas = mistura(ar_.asas, aberta, 0.85 * desc)
+        Rb = ar_.Rb()
+        for s_, n in ((1, "shoulder_l"), (-1, "shoulder_r")): ar_.extra[n] = Rax(Rb @ X, 22 + 14 * PENDULO - 18 * desc)
+        pescoco_voo(ar_, cima=-30 - 18 * PENDULO + 40 * ergue + 18 * rug + 0.8 * trem, esq=0.6 * trem, cab=-ar_.arf * 0.3 + 14 * rug)
+        ar_.curva["spine_1"] = (ar_.curva.get("spine_1", (0, 0))[0] + 8 * ergue + 1.2 * trem, 0)
+        boca_abre(ar_, 0.2 * ergue + 1.05 * rug + 0.35 * desc * (1 - rug), tranco=0.4 * trem)
+        vert = [(-8 * desc + 3 * math.sin(2 * math.pi * 3 * u - 0.5 * k)) * PESO_CAUDA[k] for k in range(7)]
+        cauda_ar(ar_, -14 - 10 * desc, onda_cauda(u, [(6.0, 2, 0.3, 1.0), (2.0, 5, 1.1, 1.3)]), vert)
+        if ar: return ar_
+        chao = Pose(); em_pe(chao, agach=0.07 * ag)
+        absorve = math.sin(math.pi * min(1, max(0, (u - 0.93) / 0.07)))
+        chao.off += Vector((0, 0, -0.04 * absorve)); chao.arf += 6 * ag + 4 * absorve
+        for c in chao.pata: chao.pata[c]["beta"] += 28 * ag + 28 * absorve
+        pescoco_alto(chao, cima=-10 * ag + 10 * janela(u, 0.06, 0.12) - 8 * absorve)
+        chao.asas = (mistura(asas("Silverwing_Idle", 0.0), asas("Silverwing_Fly_Flap", FA), janela(u, 0.0, 0.09)) if u < 0.5
+                     else mistura(asas("Silverwing_Fly_Glide", 0.2), asas("Silverwing_Idle", 0.0), janela(u, 0.92, 1.0)))
+        cauda(chao, -12 + 8 * ag, 5.0, onda_cauda(u, [(2.0, 1, 0.0, 1.0)]))
+        w = janela(u, 0.08, 0.16) * (1 - janela(u, 0.86, 0.95))
+        p = chao if w <= 0 else (ar_ if w >= 1 else mistura_pose(chao, ar_, w))
+        if u < 0.22 or u > 0.84:                       # perto do chao (antes do corpo subir / no pouso): asas e cauda acima
+            asas_acima_do_chao(p, asas("Silverwing_Fly_Flap", FA)); cauda_sobre_chao(p)
+        return p
+    return fn
+
 # ---------------------------------------------------------------- gerar
 if PEDIDOS == {"DEBUG"}:
     p = f_parado(0.0); W, B = resolver(p)
@@ -1789,6 +1887,14 @@ gerar("Hab_Golpe_Garras", n(2.2), f_hab_golpe_garras, loop=False)
 gerar("Hab_Area", n(3.4), f_tempestade, loop=False)
 gerar("Hab_Area_Ar", n(2.4), f_tempestade_ar, loop=False)
 gerar("Hab_Recuperacao", n(1.6), f_hab_recuperacao, loop=False)
+# kit do gelo (oficial 02/11)
+for ar_, suf in ((False, ""), (True, "_Camada")):
+    gerar("Sopro_Glacial_Inicio" + suf, n(1.2), f_sopro("Inicio", ar_), loop=False)
+    gerar("Sopro_Glacial_Loop" + suf, n(0.9), f_sopro("Loop", ar_))
+    gerar("Sopro_Glacial_Fim" + suf, n(0.8), f_sopro("Fim", ar_), loop=False)
+    gerar("Rajadas_Gelo" + suf, n(2.4), f_rajadas(ar_), loop=False)
+    gerar("Zero_Absoluto" + suf, n(2.8), f_zero_absoluto(ar_), loop=False)
+    gerar("Nevasca_Ancestral" + suf, n(5.6), f_nevasca(ar_), loop=False)
 print("VEL_ANDAR studs/s", round(S_ANDAR / (D_ANDAR * T_ANDAR) * 17.5, 2), "VEL_CORRER", round(S_CORRER / (D_CORRER * T_CORRER) * 17.5, 2))
 for m in M.modifiers: m.show_viewport = True
 bpy.ops.wm.save_mainfile()

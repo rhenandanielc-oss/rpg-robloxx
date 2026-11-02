@@ -238,6 +238,7 @@ local function passoChao(M, dt)
 	if ataque == "Arremetida" then M.vel = m:GetAttribute("VelArremetida") or 0; return end
 	if m:GetAttribute("CorpoElevado") then M.vel = 0; return end
 	local fixo = ataque == "Ruptura" or ataque == "Coracao" or ataque == "Tempestade" or ataque == "Garra" or ataque == "Mordida" or ataque == "Cauda"
+		or ataque == "Rajadas" or ataque == "ZeroAbsoluto" or ataque == "Nevasca"            -- PATCH_KIT_GELO
 		or m:GetAttribute("Incapacitado")
 	local alvo = 0
 	if not fixo then
@@ -523,6 +524,7 @@ local function passoVoo(M, dt)
 	local e = entrada(M)
 	local ataque = m:GetAttribute("EmAtaque")
 	if ataque == "Arremetida" then M.vel = m:GetAttribute("VelArremetida") or M.vel; return end    -- o Nucleo move; a velocidade volta no fim
+	if m:GetAttribute("CorpoElevado") then M.vel = 0; M.vyH = 0; return end                   -- PATCH_KIT_GELO: Nevasca no ar (o Nucleo move)
 	if m:GetAttribute("VooLivre") and temMix(M) then return passoVooLivre(M, dt) end
 	if m:GetAttribute("Incapacitado") then M.planar = true end                                   -- incapacitado: plana e desce
 	if temMix(M) then

@@ -1,4 +1,5 @@
 -- Nucleo (ModuleScript, ServerScriptService.Combate_Dragao) — combate do Dragao das Montanhas, AUTORIDADE DO SERVIDOR.
+-- PATCH_KIT_GELO (02/11): kit oficial do Dragao Glacial (Sopro Glacial, Rajadas, Zero Absoluto, Nevasca; Frostbite).
 -- Validacao (elemento unico da forma, energia, recarga por habilidade, ocupado, vivo/incapacitado), deteccao de
 -- acerto (geometria + linha de visao, no instante dos marcadores da animacao no servidor, com tempo de reserva),
 -- aplicacao de dano (Humanoid:TakeDamage) e eventos cosmeticos para os clientes (RemoteEvent FX, so servidor->cliente).
@@ -85,6 +86,8 @@ function N:auditarDados()
 	self.m:SetAttribute("ElementosValidos", table.concat(validos, ","))                     -- exibicao/selecao no cliente
 	return notas
 end
+-- PATCH_KIT_GELO: slot (tecla/HUD/IA) -> habilidade real da forma (Glacial: Sopro Glacial, Rajadas, Zero Absoluto, Nevasca)
+function N:real(hab) local k = Cfg.kitForma and Cfg.kitForma[self.forma]; return (k and k[hab]) or hab end
 function N:temHabilidade(hab)
 	if Cfg.basicos[hab] then return true end
 	for _, h in ipairs(Cfg.habilidadesForma[self.forma] or {}) do if h == hab then return true end end
@@ -169,6 +172,8 @@ function N.danoGuardiao(g, dano, atacante, el)
 	-- resistencia a Fogo (Sangue de Magma ou atributo ResistenciaFogo) e ativacao do reforco (passiva do proprio guardiao)
 	if Passivas.tem(g, "SangueDeMagma") then dano = Passivas.danoRecebido(g, dano, el)
 	elseif el == "Fogo" then dano *= (1 - Passivas.resistenciaFogo(g)) end
+	if el == "Gelo" then dano *= (1 - Passivas.resistenciaGelo(g)) end
+	dano *= Passivas.vulnerabilidade(g)
 	if dano <= 0 then return false end
 	local max = g:GetAttribute("VidaMax") or 600
 	local v = math.max(0, (g:GetAttribute("Vida") or max) - dano)
@@ -216,7 +221,7 @@ function N:visivel(de, alvoMod)
 end
 -- dano UNICO do combate (habilidades, basicos, mordida aerea da montaria e ticks de Burning): resistencia a Fogo do alvo,
 -- vida do guardiao ou Humanoid. Acerto que causou dano (e nao e tick) aplica Burning se a fonte tem a passiva.
-function N.ferir(fonte, a, dano, el, tipo, intensidade, ehTick)
+function N.ferir(fonte, a, dano, el, tipo, intensidade, ehTick, frost)
 	if not (a and a.Parent) or not dano or dano <= 0 then return false end
 	local h = a:FindFirstChildOfClass("Humanoid")
 	local ok = false
@@ -224,19 +229,23 @@ function N.ferir(fonte, a, dano, el, tipo, intensidade, ehTick)
 		ok = N.danoGuardiao(a, dano, fonte, el)
 	elseif h and h.Health > 0 then
 		if el == "Fogo" then dano *= (1 - Passivas.resistenciaFogo(a)) end
+		if el == "Gelo" then dano *= (1 - Passivas.resistenciaGelo(a)) end
+		dano *= Passivas.vulnerabilidade(a)                             -- Frostbite: alvo muito congelado sofre mais
 		if dano > 0 then h:TakeDamage(dano); ok = true end
 	end
 	if ok and not ehTick then
 		FX:FireAllClients({d = fonte, fase = "reacao", alvo = a, intensidade = intensidade, el = el, tipo = tipo})
 		Passivas.aplicarBurning(fonte, a)
+		Passivas.aplicarFrostbite(fonte, a, frost or Cfg.passivas.Frostbite.basico)   -- Glacial: todo acerto acumula
+		Passivas.marcarCombate(fonte)
 	end
 	return ok
 end
-function N:aplicar(alvos, dano, tipo, intensidade, el)
+function N:aplicar(alvos, dano, tipo, intensidade, el, frost)
 	local mult = ((self.m:GetAttribute("DominioAtivo") and Cfg.habilidades.Dominio.multiplicadorDano) or 1) * Passivas.multiplicadorOfensivo(self.m)
 	local n = 0
 	for _, a in ipairs(alvos) do
-		if N.ferir(self.m, a, dano * mult, el, tipo, intensidade) then n += 1 end
+		if N.ferir(self.m, a, dano * mult, el, tipo, intensidade, nil, frost) then n += 1 end
 	end
 	return n
 end
@@ -255,7 +264,7 @@ end
 function N:podeUsar(hab)
 	if self.m:GetAttribute("Incapacitado") then return false, "incapacitado" end
 	if self.ocupado then return false, "ocupado" end
-	local def = Cfg.habilidades[hab] or Cfg.basicos[hab]; if not def then return false, "habilidade inexistente" end
+	local def = Cfg.habilidades[self:real(hab)] or Cfg.basicos[hab]; if not def then return false, "habilidade inexistente" end
 	if not self:temHabilidade(hab) then return false, "habilidade nao pertence a forma " .. self.forma end
 	if self.m:GetAttribute("Montaria_Transicao") then return false, "transicao de montaria" end
 	if (self.recargas[hab] or 0) > os.clock() then return false, ("recarga %.1fs"):format(self.recargas[hab] - os.clock()) end
@@ -275,9 +284,10 @@ function N:usar(hab, op)
 	self.ocupado = true                                        -- Dominio libera depois da animacao de ativacao
 	local el = self.m:GetAttribute("ElementoAtivo")
 	local noAr = self.m:GetAttribute("NoAr") == true
-	self.m:SetAttribute("EmAtaque", hab)
+	self.m:SetAttribute("EmAtaque", def.emAtaque or self:real(hab))
+	Passivas.marcarCombate(self.m)
 	task.spawn(function()
-		local okE, err = pcall(self["_" .. hab], self, def, el, noAr, op)
+		local okE, err = pcall(self["_" .. self:real(hab)], self, def, el, noAr, op)
 		if not okE then warn("Combate " .. hab .. ": " .. tostring(err)) end
 		self.ocupado = false; self.m:SetAttribute("EmAtaque", nil)
 	end)
@@ -341,9 +351,10 @@ end
 function N:_Sopro(def, el, noAr, op)
 	local e = def.porElemento[el]
 	FX:FireAllClients({d = self.m, hab = "Sopro", fase = "preparo", el = el})
-	local t0 = self:tocar("Sopro_Inicio", noAr, {Emissao = 1.05}, function() end)
+	local px = def.clipes or "Sopro"
+	local t0 = self:tocar(px .. "_Inicio", noAr, {Emissao = 1.05}, function() end)
 	task.wait(1.05)
-	local loop = self:clipe("Sopro_Loop", noAr); if loop then loop.Looped = true; loop:Play(0.1) end
+	local loop = self:clipe(px .. "_Loop", noAr); if loop then loop.Looped = true; loop:Play(0.1) end
 	if t0 then t0:Stop(0.1) end
 	local alvoPos = op.alvo and raiz(op.alvo) and raiz(op.alvo).Position
 	if not alvoPos and typeof(op.direcao) == "Vector3" and op.direcao.Magnitude > 0.1 then   -- montado: mira pela camera, so a frente
@@ -406,14 +417,14 @@ function N:_Sopro(def, el, noAr, op)
 				end
 				FX:FireAllClients({d = self.m, hab = "Sopro", fase = "pulso", el = el, de = b, ate = fimRaio})
 			end
-			if #alvos > 0 then self:aplicar(alvos, e.dano, "Sopro", "leve", el) end
+			if #alvos > 0 then self:aplicar(alvos, e.dano, "Sopro", "leve", el, def.frost) end
 			task.wait(e.forma == "descarga" and def.emissao / e.pulsos or def.tick)
 		end
 	end
 	if loop then loop:Stop(0.15) end
 	self.segurando = nil; self.miraDir = nil
 	FX:FireAllClients({d = self.m, hab = "Sopro", fase = "fim", el = el})
-	local tf = self:tocar("Sopro_Fim", noAr, {}, function() end); task.wait(0.8)
+	local tf = self:tocar(px .. "_Fim", noAr, {}, function() end); task.wait(0.8)
 end
 
 -- Arremetida Draconica (oficial 30/10): ACELERACAO fisica, nunca teleporte. Preparo (o corpo recolhe e perde a
@@ -795,6 +806,141 @@ function N:_Coracao(def, el, noAr, op)
 	task.wait(def.dissipa)
 	local resto = t and (t.Length - (def.carga + fimAtivo + def.dissipa)) or 0
 	if resto > 0 then task.wait(math.min(resto, 0.8)) end                  -- recuperacao do clipe
+end
+
+-- ===== KIT DO GELO (Dragao Glacial, oficial 02/11) ===============================================================
+function N:_SoproGlacial(def, el, noAr, op) return self:_Sopro(def, "Gelo", noAr, op) end
+
+-- Rajadas de Gelo: 4 lancas, cada uma com a mira do momento do disparo (cursor do cavaleiro, que o cliente segue
+-- enviando, ou alvo da IA com antecipacao), dentro do cone do pescoco. Voo simulado no servidor quadro a quadro:
+-- segmento percorrido x alvos (hitbox fina) e x mundo (impacto no chao/parede). 1 acerto por lanca.
+function N:voarLanca(def, el, de, dir, i)
+	local pos, perc = de, 0
+	local fm = filtroMundo(self)
+	while perc < def.alcance and self.m.Parent do
+		local dt = RunService.Heartbeat:Wait()
+		local passo = math.min(def.velocidade * dt, def.alcance - perc)
+		for _, a in ipairs(self:alvosValidos()) do
+			local p = raiz(a).Position
+			local extra = a:GetAttribute("GuardiaoNinho") and (a:GetAttribute("CorpoRaio") or 8) * 1.4 or 2.2
+			local s = math.clamp((p - pos):Dot(dir), 0, passo)
+			if (pos + dir * s - p).Magnitude <= def.raio + extra then
+				self:aplicar({a}, def.dano, "Rajadas", def.intensidade, el, def.frost)
+				FX:FireAllClients({d = self.m, hab = "Rajadas", fase = "impacto", el = el, pos = pos + dir * s, indice = i, acertou = true})
+				return
+			end
+		end
+		local h = workspace:Raycast(pos, dir * passo, fm)
+		if h then FX:FireAllClients({d = self.m, hab = "Rajadas", fase = "impacto", el = el, pos = h.Position, normal = h.Normal, indice = i, acertou = false}); return end
+		pos += dir * passo; perc += passo
+	end
+	FX:FireAllClients({d = self.m, hab = "Rajadas", fase = "dissipa", el = el, pos = pos, indice = i})
+end
+function N:_Rajadas(def, el, noAr, op)
+	FX:FireAllClients({d = self.m, hab = "Rajadas", fase = "preparo", el = el})
+	self.miraDir = nil
+	self:tocar(def.clipe, noAr, {}, function() end)
+	local t0 = os.clock()
+	for i, ts in ipairs(def.disparos) do
+		local espera = ts - (os.clock() - t0); if espera > 0 then task.wait(espera) end
+		if not self.m.Parent or self.m:GetAttribute("Incapacitado") then return end
+		local b = self:boca(); local f = self:frente()
+		local dir
+		local md = self.miraDir or op.direcao
+		if typeof(md) == "Vector3" and md.Magnitude > 0.1 then dir = md.Unit end
+		if op.alvo and raiz(op.alvo) then                                      -- IA: mira com antecipacao do movimento
+			local r = raiz(op.alvo); local tv = (r.Position - b).Magnitude / def.velocidade
+			dir = ((r.Position + r.AssemblyLinearVelocity * tv) - b).Unit
+		end
+		dir = dir or f
+		local pd = plano(dir)
+		if pd.Magnitude < 0.1 or pd.Unit:Dot(f) < def.coneMin then dir = (f + Vector3.new(0, math.clamp(dir.Y, -0.5, 0.4), 0)).Unit end
+		dir = Vector3.new(dir.X, math.clamp(dir.Y, -0.8, 0.6), dir.Z).Unit
+		FX:FireAllClients({d = self.m, hab = "Rajadas", fase = "disparo", el = el, de = b, dir = dir, vel = def.velocidade, alcance = def.alcance, indice = i})
+		task.spawn(function() self:voarLanca(def, el, b, dir, i) end)
+	end
+	local resto = def.duracao - (os.clock() - t0); if resto > 0.1 then task.wait(resto - 0.1) end
+	self.miraDir = nil
+end
+
+-- Zero Absoluto: descarga em def.emissao; a onda nasce no chao sob o corpo (no ar, se houver chao ate alturaMaxAr;
+-- senao na altura do corpo) e se expande a velOnda ate o raio: 1 acerto por alvo quando a frente da onda passa.
+-- Depois a zona congelada segue acumulando Frostbite (sem dano) por def.zona segundos.
+function N:_ZeroAbsoluto(def, el, noAr, op)
+	FX:FireAllClients({d = self.m, hab = "ZeroAbsoluto", fase = "preparo", el = el, noAr = noAr, emissao = def.emissao})
+	self:tocar(def.clipe, noAr, {}, function() end)
+	task.wait(def.emissao)
+	if not self.m.Parent or self.m:GetAttribute("Incapacitado") then return end
+	local c = self:centroCorpo()
+	local h = workspace:Raycast(c + Vector3.new(0, 5, 0), Vector3.new(0, -(def.alturaMaxAr + 25), 0), filtroMundo(self))
+	local centro = h and h.Position or c
+	FX:FireAllClients({d = self.m, hab = "ZeroAbsoluto", fase = "onda", el = el, centro = centro, normal = h and h.Normal, noChao = h ~= nil,
+		raio = def.raio, vel = def.velOnda, zona = def.zona, zonaRaio = def.zonaRaio})
+	local atingidos, r = {}, 0
+	while r < def.raio and self.m.Parent do
+		local dt = RunService.Heartbeat:Wait()
+		r = math.min(def.raio, r + def.velOnda * dt)
+		for _, a in ipairs(self:alvosValidos()) do
+			if not atingidos[a] then
+				local p = raiz(a).Position
+				local extra = a:GetAttribute("GuardiaoNinho") and (a:GetAttribute("CorpoRaio") or 8) * 1.6 or 2
+				if plano(p - centro).Magnitude <= r + extra and math.abs(p.Y - centro.Y) <= def.alturaFaixa + extra then
+					atingidos[a] = true
+					self:aplicar({a}, def.dano, "ZeroAbsoluto", def.intensidade, el, def.frost)
+				end
+			end
+		end
+	end
+	if h then
+		local m = self.m
+		task.spawn(function()
+			local fim = os.clock() + def.zona
+			while os.clock() < fim and m.Parent do
+				task.wait(def.zonaTick)
+				for _, a in ipairs(self:alvosValidos()) do
+					local p = raiz(a).Position
+					if plano(p - centro).Magnitude <= def.zonaRaio and math.abs(p.Y - centro.Y) <= 14 then Passivas.aplicarFrostbite(m, a, def.zonaFrost) end
+				end
+			end
+		end)
+	end
+	local resto = def.duracao - def.emissao - def.raio / def.velOnda; if resto > 0.05 then task.wait(resto) end
+end
+
+-- Nevasca Ancestral (ultimate): o combate move o corpo (CorpoElevado: montaria e IA nao disputam o pivo). Solo: sobe
+-- elevacaoSolo e no fim desce de volta; ar: ganha subidaAr e estabiliza. Ondas de fragmentos em def.ondas (1a cheia,
+-- seguintes x fatorOnda), esfera em volta do tronco com linha de visao.
+function N:_Nevasca(def, el, noAr, op)
+	FX:FireAllClients({d = self.m, hab = "Nevasca", fase = "inicio", el = el, noAr = noAr, duracao = def.duracao, rugido = def.rugido,
+		ondas = def.ondas, raio = def.raio, subida = def.subida})
+	self:tocar(def.clipe, noAr, {}, function() end)
+	self.m:SetAttribute("CorpoElevado", true)
+	local t0 = os.clock()
+	local H = noAr and def.subidaAr or def.elevacaoSolo
+	local s0, s1, d0, d1 = def.subida[1], def.subida[2], def.descida[1], def.descida[2]
+	local feitas, yAtual = {}, 0
+	local function onda(i)
+		local c = self:centroCorpo(); local lista = {}
+		for _, a in ipairs(self:alvosValidos()) do if naEsfera(c, def.raio, a) and self:visivel(c, a) then table.insert(lista, a) end end
+		self:aplicar(lista, def.dano * (i == 1 and 1 or def.fatorOnda), "Nevasca", def.intensidade, el, def.frost)
+		FX:FireAllClients({d = self.m, hab = "Nevasca", fase = "onda", el = el, indice = i, pos = c, raio = def.raio})
+	end
+	while self.m.Parent and not self.m:GetAttribute("Incapacitado") do
+		RunService.Heartbeat:Wait()
+		local k = os.clock() - t0
+		if k >= def.duracao then break end
+		local y
+		if k < s0 then y = 0
+		elseif k < s1 then local x = (k - s0) / (s1 - s0); y = H * (1 - (1 - x) ^ 2)
+		elseif noAr or k < d0 then y = H + 0.8 * math.sin((k - s1) * 2.2)
+		elseif k < d1 then local x = (k - d0) / (d1 - d0); y = (H + 0.8 * math.sin((d0 - s1) * 2.2)) * (1 - x * x * (3 - 2 * x))
+		else y = 0 end
+		self.m:PivotTo(self.m:GetPivot() + Vector3.new(0, y - yAtual, 0)); yAtual = y
+		for i, to in ipairs(def.ondas) do if not feitas[i] and k >= to then feitas[i] = true; onda(i) end end
+	end
+	if not noAr and self.m.Parent then self.m:PivotTo(self.m:GetPivot() - Vector3.new(0, yAtual, 0)) end   -- volta ao chao exato
+	self.m:SetAttribute("CorpoElevado", nil)
+	FX:FireAllClients({d = self.m, hab = "Nevasca", fase = "fim", el = el})
 end
 
 -- energia

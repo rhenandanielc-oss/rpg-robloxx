@@ -95,9 +95,9 @@ for i, h in ipairs(C.habilidades) do
 	local cob = Instance.new("Frame"); cob.BackgroundColor3 = Color3.new(0, 0, 0); cob.BackgroundTransparency = 0.45; cob.BorderSizePixel = 0
 	cob.AnchorPoint = Vector2.new(0, 1); cob.Position = UDim2.fromScale(0, 1); cob.Size = UDim2.fromScale(1, 0); cob.Parent = f
 	rotulo(f, {Text = tostring(i), Position = UDim2.fromOffset(6, 2), Size = UDim2.fromOffset(20, 16), TextSize = 13})
-	rotulo(f, {Text = h[4] or h[1], Position = UDim2.fromOffset(0, 24), Size = UDim2.new(1, 0, 0, 18), TextXAlignment = Enum.TextXAlignment.Center, TextSize = 12})
+	local nm = rotulo(f, {Text = h[4] or h[1], Position = UDim2.fromOffset(0, 24), Size = UDim2.new(1, 0, 0, 18), TextXAlignment = Enum.TextXAlignment.Center, TextSize = 12})
 	local tr = rotulo(f, {Text = "", Position = UDim2.fromOffset(0, 42), Size = UDim2.new(1, 0, 0, 18), TextXAlignment = Enum.TextXAlignment.Center, TextSize = 13})
-	slots[h[1]] = {cob = cob, txt = tr}
+	slots[h[1]] = {cob = cob, txt = tr, nome = nm, padrao = h[4] or h[1]}
 end
 -- slot extra da Mordida Aerea (so aparece em dragao com VooLivre; mesma regra de recarga por atributo)
 local slotMordida = Instance.new("Frame"); slotMordida.Size = UDim2.fromOffset(68, 64); slotMordida.Position = UDim2.fromOffset(4 * 74 + 12, 0)
@@ -134,6 +134,7 @@ end
 local seg = {subir = false, descer = false, correr = false}
 local alvoCam, camAntes
 local soproSegurado = false                                           -- sopro com a tecla segurada (mira viva)
+local miraAte = 0                                                      -- PATCH_KIT_GELO: habilidade com mira viva (Rajadas)
 local function cyCp()
 	-- a camera fica acima do dragao olhando um pouco para baixo: esse angulo (pitchNeutro) conta como voo horizontal
 	local lv = workspace.CurrentCamera.CFrame.LookVector
@@ -189,6 +190,8 @@ local function ligarAcoes()
 			if st == Enum.UserInputState.Begin then
 				Pedido:FireServer(m, "usar", h[1], dirMira())                     -- direcao da BOCA ate o ponto do cursor
 				if h[1] == "Sopro" then soproSegurado = true end
+				local mv = C.miraVivaForma and C.miraVivaForma[m:GetAttribute("FormaRegional") or ""]
+				if mv and mv[h[1]] then miraAte = os.clock() + mv[h[1]] end
 			elseif st == Enum.UserInputState.End and h[1] == "Sopro" and soproSegurado then
 				soproSegurado = false; Pedido:FireServer(m, "soltar")
 			end
@@ -334,6 +337,12 @@ local function entrar(dragao)
 	if m:GetAttribute("HabilidadesForma") ~= nil then
 		dica.Text = dica.Text:gsub(" | segure 1: sopro continuo %(mira no cursor%) | 2 Arremetida | 3 Tempestade | 4 Coracao Infernal", ""):gsub(" | 1%-4 habilidades", "")
 	end
+	-- PATCH_KIT_GELO: nomes dos slots, dica e cor da energia da forma
+	local fr = m:GetAttribute("FormaRegional") or ""
+	local rf = C.rotulosForma and C.rotulosForma[fr]
+	for id, s in pairs(slots) do if s.nome then s.nome.Text = (rf and rf[id]) or s.padrao end end
+	if C.dicaForma and C.dicaForma[fr] then dica.Text ..= C.dicaForma[fr] end
+	energia.BackgroundColor3 = (C.corEnergiaForma and C.corEnergiaForma[fr]) or Color3.fromRGB(255, 150, 60)
 	gui.Enabled = true; if reticula then reticula.Visible = UIS.MouseEnabled end
 	ligarAcoes()
 end
@@ -378,7 +387,7 @@ RunService.RenderStepped:Connect(function(dt)
 		if not (orbAtivo or stick or not UIS.MouseEnabled) then cy, cp = nil, 0 end
 		Entrada:FireServer({f = -mv.Z, t = mv.X, up = (seg.subir and 1 or 0) - (seg.descer and 1 or 0), c = seg.correr, cy = cy, cp = cp})
 		local dm = dirMira(); m:SetAttribute("MiraLocal", dm)                   -- cabeca do dragao olha a mira (MovimentoVivo)
-		if soproSegurado and Pedido then Pedido:FireServer(m, "mira", nil, dm) end
+		if (soproSegurado or os.clock() < miraAte) and Pedido then Pedido:FireServer(m, "mira", nil, dm) end
 	end
 	-- camera: alvo suavizado no pivo (sem tremer com as asas); FOV abre um pouco com a velocidade
 	local alvo = m:GetPivot().Position + Vector3.yAxis * (camCfg("alturaAlvo") + (m:GetAttribute("NoAr") and camCfg("alturaVoo") or 0))

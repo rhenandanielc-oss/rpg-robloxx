@@ -12,9 +12,11 @@ return {
 	NAO_APROVADO = NAO_APROVADO,
 	elementosGlobais = {"Fogo", "Terra", "Ar", "Raio", "Gelo", "Agua", "Luz", "Sombra"},  -- referencia; cada forma restringe abaixo
 	-- elemento UNICO por forma (oficial 30/10). Glacial = Gelo e Sombrio = Sombra: kits ainda nao definidos (nao ativar)
-	elementosForma = {Montanhas = {"Fogo"}},
-	habilidadesForma = {Montanhas = {"Sopro", "Arremetida", "Tempestade", "Coracao"}},
-	passivasForma = {Montanhas = {"SangueDeMagma", "Burning"}},
+	elementosForma = {Montanhas = {"Fogo"}, Glacial = {"Gelo"}},
+	habilidadesForma = {Montanhas = {"Sopro", "Arremetida", "Tempestade", "Coracao"}, Glacial = {"Sopro", "Arremetida", "Tempestade", "Coracao"}},
+	passivasForma = {Montanhas = {"SangueDeMagma", "Burning"}, Glacial = {"SangueGlacial", "Frostbite"}},
+	-- PATCH_KIT_GELO (oficial 02/11): o slot (tecla/HUD/IA) continua com o mesmo id; a forma decide a habilidade real
+	kitForma = {Glacial = {Sopro = "SoproGlacial", Arremetida = "Rajadas", Tempestade = "ZeroAbsoluto", Coracao = "Nevasca"}},
 	maxElementos = 1,                                            -- sem elementos secundarios (o Nucleo nao le desbloqueios)
 	energiaMax = 100, energiaRegen = 6,                         -- por segundo
 	basicos = {
@@ -53,7 +55,26 @@ return {
 			folgaCorpo = 7, folgaAsa = 5,                          -- exclusao: distancia minima do pilar aos ossos/membranas
 			raioPilar = 8, protecaoOvo = 16,
 			lancamento = {vertical = 48, horizontal = 28}},        -- reacao curta (studs/s); intensidade a balancear
-		Dominio = {recarga = 30, energia = 35, duracao = 12, multiplicadorDano = 1.0},   -- NAO pertence ao Montanhas (outras formas)
+		Dominio = {recarga = 30, energia = 35, duracao = 12, multiplicadorDano = 1.0},
+		-- ===== KIT DO GELO (Dragao Glacial, oficial 02/11; numeros PROVISORIOS) =====
+		-- Sopro Glacial: jato continuo de frio (mesma mecanica do sopro segurado), dano por tick + Frostbite por tick
+		SoproGlacial = {recarga = 10, energia = 25, emissao = 1.8, tick = 0.3, elemental = true, emissaoMax = 5, energiaSeg = 8,
+			emAtaque = "Sopro", clipes = "Sopro_Glacial", frost = 6,
+			porElemento = {Gelo = {forma = "cone", alcance = 105, angulo = 11, dano = 6}}},
+		-- Rajadas de Gelo: 4 lancas rapidas pela boca, cada uma com mira propria (cursor do cavaleiro ou alvo da IA com
+		-- antecipacao); hitbox FINA (mais dificil de acertar), mais dano e muito Frostbite por acerto
+		Rajadas = {recarga = 11, energia = 30, elemental = true, intensidade = "moderado", clipe = "Rajadas_Gelo", duracao = 2.4,
+			disparos = {0.72, 1.08, 1.44, 1.80}, velocidade = 240, alcance = 230, raio = 3.2, dano = 22, frost = 24, coneMin = 0.25},
+		-- Zero Absoluto: tensao e descarga; onda circular que se expande pelo chao (1 acerto por alvo) e deixa uma zona
+		-- congelada que segue acumulando Frostbite em quem fica dentro
+		ZeroAbsoluto = {recarga = 15, energia = 35, elemental = true, intensidade = "pesado", clipe = "Zero_Absoluto", duracao = 2.8,
+			emissao = 1.06, raio = 64, velOnda = 95, alturaFaixa = 18, alturaMaxAr = 45, dano = 24, frost = 50,
+			zona = 4.0, zonaRaio = 52, zonaTick = 0.5, zonaFrost = 6},
+		-- Nevasca Ancestral (ultimate): sobe (solo) ou ganha altitude (ar), ruge, corpo inteiro brilha, tempestade de
+		-- fragmentos em ondas ao redor; no solo desce e pousa no fim
+		Nevasca = {recarga = 28, energia = 55, elemental = true, intensidade = "pesado", clipe = "Nevasca_Ancestral", duracao = 5.6,
+			elevacaoSolo = 26, subidaAr = 14, subida = {0.5, 1.6}, descida = {4.7, 5.4}, rugido = 1.75,
+			ondas = {2.2, 2.9, 3.6, 4.3}, raio = 95, dano = 30, fatorOnda = 0.55, frost = 30},   -- NAO pertence ao Montanhas (outras formas)
 		-- Coracao Infernal (oficial 30/10): concentra energia no peito/garganta, EXPELE pela boca uma lamina de fogo que
 		-- se projeta do focinho e depois GIRA ao redor do corpo (plano horizontal na altura da boca), com rastro.
 		-- Hitbox = setor varrido pela lamina a cada quadro (entre o angulo anterior e o atual), 1 acerto por alvo por uso.
@@ -78,6 +99,14 @@ return {
 		Burning = {duracao = 4, intervalo = 1, danoTick = 3, renovaMax = 3,
 			duracaoMaxTotal = 12,                              -- teto absoluto de uma queimadura continua (s)
 			imuneAtributo = "ImuneQueimadura"},                -- alvo com este atributo = true nao queima
+		-- Sangue Glacial (Glacial): frio constante — resistencia a Gelo, imune ao proprio Frostbite; em combate os olhos
+		-- e o interior da boca brilham (atributo SangueGlacialFim, so visual)
+		SangueGlacial = {resistenciaGelo = 0.3, combateJanela = 6},
+		-- Frostbite (Glacial): acumulo 0..100 por alvo; lentidao e vulnerabilidade crescem com o acumulo; em 100 o alvo
+		-- CONGELA por instantes e volta a 45 (com janela em que acumula mais devagar, sem travar em cadeia); sem novos
+		-- acertos o acumulo cai. basico = acumulo dos ataques basicos (mordida/garra/cauda/mordida aerea)
+		Frostbite = {max = 100, basico = 10, decaiApos = 2.0, decaiPorSeg = 12, lentidaoMax = 0.55, vulnerabMax = 0.25,
+			congelaDur = 1.4, aposCongelar = 45, imuneCongelarPor = 4, imuneAtributo = "ImuneFrostbite"},
 	},
 	pvpAtivoAtributo = "PvPAtivo",                              -- Workspace:SetAttribute("PvPAtivo", true) libera dano entre jogadores
 	zonaSeguraTag = "ZonaSegura",                               -- CollectionService: partes que protegem quem esta dentro

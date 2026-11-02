@@ -114,4 +114,67 @@ task.spawn(function()
 		end
 	end
 end)
+
+-- ===== PATCH_KIT_GELO: Sangue Glacial e Frostbite (Dragao Glacial, oficial 02/11) ==================================
+function P.resistenciaGelo(alvo)
+	if P.tem(alvo, "SangueGlacial") then return Cfg.passivas.SangueGlacial.resistenciaGelo end
+	return math.clamp(alvo:GetAttribute("ResistenciaGelo") or 0, 0, 1)
+end
+function P.marcarCombate(m)                                          -- Sangue Glacial: brilho frio em combate (visual)
+	if m and P.tem(m, "SangueGlacial") then m:SetAttribute("SangueGlacialFim", agora() + Cfg.passivas.SangueGlacial.combateJanela) end
+end
+local frost = {}                                                    -- [alvo] = {v, ultimo, congeladoAte, imuneAte, ws, pulo}
+P.frost = frost
+function P.vulnerabilidade(alvo)
+	local f = frost[alvo]; if not f then return 1 end
+	local F = Cfg.passivas.Frostbite; return 1 + F.vulnerabMax * f.v / F.max
+end
+local function aplicarLentidao(alvo, f)
+	local h = alvo:FindFirstChildOfClass("Humanoid"); if not h then return end
+	local F = Cfg.passivas.Frostbite
+	if not f.ws then f.ws = h.WalkSpeed; f.pulo = h.UseJumpPower and h.JumpPower or h.JumpHeight end
+	local congelado = (f.congeladoAte or 0) > os.clock()
+	h.WalkSpeed = congelado and 0 or f.ws * (1 - F.lentidaoMax * f.v / F.max)
+	if h.UseJumpPower then h.JumpPower = congelado and 0 or f.pulo else h.JumpHeight = congelado and 0 or f.pulo end
+end
+local function soltarFrost(alvo)
+	local f = frost[alvo]; frost[alvo] = nil; if not f then return end
+	local h = alvo.Parent and alvo:FindFirstChildOfClass("Humanoid")
+	if h and f.ws then h.WalkSpeed = f.ws; if h.UseJumpPower then h.JumpPower = f.pulo else h.JumpHeight = f.pulo end end
+	if alvo.Parent then alvo:SetAttribute("Frostbite", nil); alvo:SetAttribute("Congelado", nil) end
+end
+function P.aplicarFrostbite(fonte, alvo, qtd)
+	if not (fonte and alvo and alvo.Parent) or not qtd or qtd <= 0 or not P.tem(fonte, "Frostbite") then return false end
+	local F = Cfg.passivas.Frostbite
+	if alvo:GetAttribute(F.imuneAtributo) or P.tem(alvo, "SangueGlacial") then return false end
+	local f = frost[alvo]; if not f then f = {v = 0}; frost[alvo] = f end
+	if (f.imuneAte or 0) > os.clock() then qtd *= 0.4 end            -- logo apos descongelar acumula mais devagar
+	f.v = math.min(F.max, f.v + qtd); f.ultimo = os.clock()
+	if f.v >= F.max and (f.imuneAte or 0) <= os.clock() then
+		f.congeladoAte = os.clock() + F.congelaDur; f.imuneAte = f.congeladoAte + F.imuneCongelarPor
+		alvo:SetAttribute("Congelado", agora() + F.congelaDur)
+		if N then N.FX:FireAllClients({d = fonte, hab = "Frostbite", fase = "congelar", alvo = alvo, duracao = F.congelaDur, el = "Gelo"}) end
+	end
+	alvo:SetAttribute("Frostbite", math.floor(f.v))
+	aplicarLentidao(alvo, f)
+	return true
+end
+task.spawn(function()
+	while true do
+		local dt = task.wait(0.2)
+		local F = Cfg.passivas.Frostbite; local t = os.clock()
+		for alvo, f in pairs(frost) do
+			if not alvo.Parent then frost[alvo] = nil
+			else
+				if f.congeladoAte and t >= f.congeladoAte then              -- descongela: volta a um acumulo medio
+					f.congeladoAte = nil; f.v = math.min(f.v, F.aposCongelar); f.ultimo = t; alvo:SetAttribute("Congelado", nil)
+				end
+				if not f.congeladoAte and t - (f.ultimo or 0) > F.decaiApos then f.v -= F.decaiPorSeg * dt end
+				local h = alvo:FindFirstChildOfClass("Humanoid")
+				if f.v <= 0 or (h and h.Health <= 0) then soltarFrost(alvo)
+				else alvo:SetAttribute("Frostbite", math.floor(f.v)); aplicarLentidao(alvo, f) end
+			end
+		end
+	end
+end)
 return P

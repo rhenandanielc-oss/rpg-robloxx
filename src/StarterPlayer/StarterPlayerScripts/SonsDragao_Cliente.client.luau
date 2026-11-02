@@ -164,7 +164,7 @@ if FX then
 		if h == "Sopro" and f == "emissao" then
 			if el == "Fogo" then tocar(pp, Cfg.fogo, 1.4, 0.8); task.delay(0.9, function() tocar(pp, Cfg.fogo, 1.2, 0.75) end)
 			elseif el == "Terra" then tocar(pp, Cfg.rochaArrasto, 1.2, 0.9)
-			else tocar(pp, Cfg.ar, 1.3, 0.8) end
+			elseif el ~= "Gelo" then tocar(pp, Cfg.ar, 1.3, 0.8) end              -- PATCH_KIT_GELO: Gelo toca no VFXGelo
 		elseif h == "Sopro" and f == "preparo" then tocar(pp, Cfg.rugido, 0.6, 1.15, 0.9)
 		elseif h == "Sopro" and f == "projetil" then tocar(pp, Cfg.avanco, 0.7, 1.1)
 		elseif h == "Arremetida" and f == "emissao" then tocar(pp, Cfg.avanco, 1.4, 0.75)

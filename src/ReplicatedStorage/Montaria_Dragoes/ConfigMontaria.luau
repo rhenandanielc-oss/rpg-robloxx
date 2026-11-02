@@ -60,7 +60,12 @@ return {
 			{"Tempestade", Enum.KeyCode.Three, Enum.KeyCode.ButtonX, "Tempestade"},
 			{"Coracao", Enum.KeyCode.Four, Enum.KeyCode.DPadRight, "Coração Inf."},
 		},
-		passivas = {SangueDeMagma = "Sangue de Magma", Burning = "Burning"},   -- exibicao no HUD (lista vem do atributo Passivas)
+		passivas = {SangueDeMagma = "Sangue de Magma", Burning = "Burning", SangueGlacial = "Sangue Glacial", Frostbite = "Frostbite"},   -- exibicao no HUD (lista vem do atributo Passivas)
+		-- PATCH_KIT_GELO: rotulo de cada slot por forma, e slots que seguem mandando a mira enquanto a habilidade roda (s)
+		rotulosForma = {Glacial = {Sopro = "Sopro Glacial", Arremetida = "Rajadas", Tempestade = "Zero Absol.", Coracao = "Nevasca"}},
+		dicaForma = {Glacial = " | segure 1: Sopro Glacial | 2 Rajadas de Gelo (mire) | 3 Zero Absoluto | 4 Nevasca Ancestral"},
+		miraVivaForma = {Glacial = {Arremetida = 2.6}},
+		corEnergiaForma = {Glacial = Color3.fromRGB(150, 215, 255)},
 	},
 	-- alturaAlvo: ACIMA do dorso (o pivo fica no chao; o dorso esta a ~34). Antes era 14 = dentro do tronco, e a camera
 	-- de oclusao do Roblox colava no corpo. No ar soma alturaVoo (os clipes de voo erguem o corpo 14 acima do pivo).
