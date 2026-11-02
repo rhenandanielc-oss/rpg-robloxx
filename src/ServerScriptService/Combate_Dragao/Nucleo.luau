@@ -352,9 +352,13 @@ function N:_Sopro(def, el, noAr, op)
 	local e = def.porElemento[el]
 	FX:FireAllClients({d = self.m, hab = "Sopro", fase = "preparo", el = el})
 	local px = def.clipes or "Sopro"
-	local t0 = self:tocar(px .. "_Inicio", noAr, {Emissao = 1.05}, function() end)
+	-- PATCH_SOPRO_MOVIMENTO (02/11): andando/voando, so pescoco/cabeca/mandibula (_Sup); as patas e asas seguem a locomocao
+	local function movendo() return (self.m:GetAttribute("Velocidade") or 0) > 3 end
+	local function escolher(nome) return (movendo() and self:clipe(nome .. "_Sup", noAr)) and (nome .. "_Sup") or nome end
+	local t0 = self:tocar(escolher(px .. "_Inicio"), noAr, {Emissao = 1.05}, function() end)
 	task.wait(1.05)
-	local loop = self:clipe(px .. "_Loop", noAr); if loop then loop.Looped = true; loop:Play(0.1) end
+	local loopMov = movendo()
+	local loop = self:clipe(escolher(px .. "_Loop"), noAr); if loop then loop.Looped = true; loop:Play(0.1) end
 	if t0 then t0:Stop(0.1) end
 	local alvoPos = op.alvo and raiz(op.alvo) and raiz(op.alvo).Position
 	if not alvoPos and typeof(op.direcao) == "Vector3" and op.direcao.Magnitude > 0.1 then   -- montado: mira pela camera, so a frente
@@ -389,6 +393,13 @@ function N:_Sopro(def, el, noAr, op)
 			local agora = os.clock()
 			local segue = op.segurar and self.segurando ~= false and agora - t0 < (def.emissaoMax or 6) and self.energia > 0
 			if not self.m.Parent or self.m:GetAttribute("Incapacitado") then break end   -- removido/incapacitado: encerra ja
+			if movendo() ~= loopMov then                                  -- comecou/parou de andar no meio do sopro: troca com fade
+				loopMov = movendo()
+				local novoLoop = self:clipe(escolher(px .. "_Loop"), noAr)
+				if novoLoop and novoLoop ~= loop then
+					novoLoop.Looped = true; novoLoop:Play(0.25); if loop then loop:Stop(0.25) end; loop = novoLoop
+				end
+			end
 			if agora >= fim and not segue then break end
 			if op.segurar and self.segurando == false and agora - t0 > 0.5 then break end
 			if agora > fim then self.energia = math.max(0, self.energia - (def.energiaSeg or 8) * def.tick); self.m:SetAttribute("Energia", self.energia) end
@@ -424,7 +435,7 @@ function N:_Sopro(def, el, noAr, op)
 	if loop then loop:Stop(0.15) end
 	self.segurando = nil; self.miraDir = nil
 	FX:FireAllClients({d = self.m, hab = "Sopro", fase = "fim", el = el})
-	local tf = self:tocar(px .. "_Fim", noAr, {}, function() end); task.wait(0.8)
+	local tf = self:tocar(escolher(px .. "_Fim"), noAr, {}, function() end); task.wait(0.8)
 end
 
 -- Arremetida Draconica (oficial 30/10): ACELERACAO fisica, nunca teleporte. Preparo (o corpo recolhe e perde a
