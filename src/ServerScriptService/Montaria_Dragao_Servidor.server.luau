@@ -221,6 +221,17 @@ Entrada.OnServerEvent:Connect(function(plr, d)
 	M.ultEnt = os.clock()
 end)
 
+-- ===== PATCH_ARREMETIDA_5S (02/11): bonus de velocidade da Arremetida DENTRO deste controlador ==================
+-- O Nucleo marca ArremetidaFim (tempo do servidor) e ArremetidaImpacto; aqui a velocidade-alvo sobe, a aceleracao parte da
+-- velocidade atual, o jogador segue dirigindo e as colisoes/relevo deste controlador continuam valendo. No fim, a
+-- desaceleracao normal do controlador traz a velocidade de volta (sem parada brusca, sem ganho permanente).
+local ARR = require(game:GetService("ServerScriptService"):WaitForChild("Combate_Dragao"):WaitForChild("ConfigCombate")).habilidades.Arremetida
+local function arremetendo(m) return (m:GetAttribute("ArremetidaFim") or 0) > workspace:GetServerTimeNow() end
+local function impactoArremetida(M)
+	local t = M.m:GetAttribute("ArremetidaImpacto")
+	if t and t ~= M.ultImpactoArr then M.ultImpactoArr = t; M.vel *= ARR.freioImpacto end   -- peso da colisao
+end
+
 -- ===== chao ======================================================================================================
 local function clipe(M, nome, ritmo, segurar)
 	if os.clock() < M.clipeAte and not segurar then
@@ -234,18 +245,18 @@ local function passoChao(M, dt)
 	local e = entrada(M)
 	local ataque = m:GetAttribute("EmAtaque")
 	-- um so controlador por vez: durante a investida e a elevacao da Tempestade quem move o corpo e o combate
-	-- Arremetida: o Nucleo acelera o corpo; a velocidade dele volta ao controlador no fim (recuperacao gradual, sem tranco)
-	if ataque == "Arremetida" then M.vel = m:GetAttribute("VelArremetida") or 0; return end
+	local arr = arremetendo(m); impactoArremetida(M)                     -- PATCH_ARREMETIDA_5S
 	if m:GetAttribute("CorpoElevado") then M.vel = 0; return end
 	local fixo = ataque == "Ruptura" or ataque == "Coracao" or ataque == "Tempestade" or ataque == "Garra" or ataque == "Mordida" or ataque == "Cauda"
 		or ataque == "Rajadas" or ataque == "ZeroAbsoluto" or ataque == "Nevasca"            -- PATCH_KIT_GELO
 		or m:GetAttribute("Incapacitado")
 	local alvo = 0
-	if not fixo then
+	if arr and not fixo then alvo = ARR.velChao                           -- investida: corre para frente; A/D e camera dirigem
+	elseif not fixo then
 		if e.f > 0.1 then alvo = (e.correr and (m:GetAttribute("VelCorrer") or Cfg.correrVel) or (m:GetAttribute("VelAndar") or Cfg.andarVel)) * math.min(e.f, 1)
 		elseif e.f < -0.1 then alvo = -Cfg.recuarVel end
 	end
-	local a = math.abs(alvo) > math.abs(M.vel) and Cfg.acelChao or Cfg.freioChao
+	local a = math.abs(alvo) > math.abs(M.vel) and (arr and ARR.acelChao or Cfg.acelChao) or Cfg.freioChao
 	M.vel += math.clamp(alvo - M.vel, -a * dt, a * dt)
 	if alvo <= 0 and M.vel > Cfg.frenagemMin and not M.freando and not ataque then
 		M.freando = true; M.L:clipe("Correr_Frenagem", false); M.clipeAte = os.clock() + 0.9
@@ -414,7 +425,8 @@ local function passoVooLivre(M, dt)
 	local ataque = m:GetAttribute("EmAtaque")
 	if not (M.mix and M.mix.ativo) then iniciarMix(M) end
 	local V, VL = Cfg.voo, Cfg.vooLivre
-	local f = math.max(e.f, 0)                                                        -- S sem funcao no ar
+	local arr = arremetendo(m); impactoArremetida(M)                                -- PATCH_ARREMETIDA_5S
+	local f = arr and 1 or math.max(e.f, 0)                                           -- S sem funcao no ar; investida = empuxo pleno
 	local wNovo = f > 0.1 and (M.fAnt or 0) <= 0.1; local upNovo = (e.up or 0) > 0.5 and (M.upAnt or 0) <= 0.5
 	M.fAnt, M.upAnt = f, e.up or 0
 	if m:GetAttribute("Incapacitado") then M.planar = true
@@ -432,16 +444,16 @@ local function passoVooLivre(M, dt)
 	M.gama = M.gama or 0
 	M.gama += math.clamp(gAlvo - M.gama, -math.rad(V.gamaTaxa) * dt, math.rad(V.gamaTaxa) * dt)
 	-- velocidade: W leva ao alvo; sem W freia suave ate zero; subir custa e mergulhar ganha (moderado)
-	local alvoVel = f > 0.1 and (e.correr and Cfg.vooRapidoVel or Cfg.vooVel) * f or 0
+	local alvoVel = arr and ARR.velAr or f > 0.1 and (e.correr and Cfg.vooRapidoVel or Cfg.vooVel) * f or 0
 	local acel
 	local mergulhando = M.gama < -math.rad(V.mergulhoInicio)
 	if M.planar then acel = -Cfg.planeioPerda
-	elseif alvoVel > M.vel then acel = Cfg.acelVoo
+	elseif alvoVel > M.vel then acel = arr and ARR.acelAr or Cfg.acelVoo
 	elseif mergulhando and f > 0.1 then acel = 0                                        -- mergulho com W: a gravidade acelera
 	else acel = -VL.desacel end
 	if M.planar or f > 0.1 then acel -= V.gravidade * math.sin(M.gama) * (M.planar and 1 or 0.5) end
 	if passoMordida(M, dt, e) then acel = 0 end                                       -- ataque controla a velocidade
-	M.vel = math.clamp(M.vel + acel * dt, M.planar and Cfg.planeioMin or 0, math.max(V.mergulhoVel, Cfg.mordidaAerea.velocidade))
+	M.vel = math.clamp(M.vel + acel * dt, M.planar and Cfg.planeioMin or 0, math.max(V.mergulhoVel, Cfg.mordidaAerea.velocidade, arr and ARR.velAr or 0))
 	-- vertical no estacionario (Espaco/Ctrl)
 	local vyH = 0
 	if not M.planar and (e.up or 0) ~= 0 and f <= 0.1 then vyH = (e.up > 0 and e.up * VL.vSubidaParado or e.up * VL.vDescidaParado) * (1 - mover * 0.6) end
@@ -524,7 +536,7 @@ local function passoVoo(M, dt)
 	local m, L = M.m, M.L
 	local e = entrada(M)
 	local ataque = m:GetAttribute("EmAtaque")
-	if ataque == "Arremetida" then M.vel = m:GetAttribute("VelArremetida") or M.vel; return end    -- o Nucleo move; a velocidade volta no fim
+	local arr = arremetendo(m); impactoArremetida(M)                                         -- PATCH_ARREMETIDA_5S (bonus abaixo)
 	if m:GetAttribute("CorpoElevado") then M.vel = 0; M.vyH = 0; return end                   -- PATCH_KIT_GELO: Nevasca no ar (o Nucleo move)
 	if m:GetAttribute("VooLivre") and temMix(M) then return passoVooLivre(M, dt) end
 	if m:GetAttribute("Incapacitado") then M.planar = true end                                   -- incapacitado: plana e desce
@@ -546,13 +558,14 @@ local function passoVoo(M, dt)
 		M.gama += math.clamp(gAlvo - M.gama, -math.rad(V.gamaTaxa) * dt, math.rad(V.gamaTaxa) * dt)
 		-- velocidade: empuxo (W/S) + gravidade na trajetoria (sobe perde, mergulha ganha) + sustentacao minima
 		local acel = 0
-		if not M.planar then
+		if arr then acel += (M.vel < ARR.velAr and ARR.acelAr or 0); M.planar = false
+		elseif not M.planar then
 			if e.f > 0.1 then acel += Cfg.acelVoo * e.f * (M.vel < Cfg.vooRapidoVel and 1 or 0)
 			elseif e.f < -0.1 then acel -= Cfg.freioVoo * -e.f end
 		else acel -= Cfg.planeioPerda end
 		acel -= V.gravidade * math.sin(M.gama)
-		if M.vel > Cfg.vooRapidoVel and M.gama > -math.rad(20) then acel -= V.arrastoExcesso * (M.vel - Cfg.vooRapidoVel) end
-		M.vel = math.clamp(M.vel + acel * dt, M.planar and Cfg.planeioMin or Cfg.vooMin, V.mergulhoVel)
+		if M.vel > Cfg.vooRapidoVel and M.gama > -math.rad(20) and not arr then acel -= V.arrastoExcesso * (M.vel - Cfg.vooRapidoVel) end
+		M.vel = math.clamp(M.vel + acel * dt, M.planar and Cfg.planeioMin or Cfg.vooMin, arr and math.max(V.mergulhoVel, ARR.velAr) or V.mergulhoVel)
 		-- rumo: segue o yaw da camera; taxa e aceleracao de giro limitadas (sem giro instantaneo / oscilacao)
 		local k = math.clamp((M.vel - Cfg.vooVel) / (Cfg.vooRapidoVel - Cfg.vooVel), 0, 1)
 		local lento = math.clamp((V.velGiroLento - M.vel) / V.velGiroLento, 0, 1)

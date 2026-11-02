@@ -843,7 +843,19 @@ function M.evento(d)
 	end
 	if d.fase == "reacao" then reacao(d.alvo, el, d.intensidade); return end
 	if d.fase == "lancamento" then lancamento(d); return end              -- empurrao (Tempestade/Ruptura): so o personagem atingido
+	-- PATCH_VFX_FOGO (02/11): audio do Fogo no SonsFogo (nao depende do LOD visual) e efeitos refinados no VFXFogo
+	if el == "Fogo" then
+		local SF = script.Parent:FindFirstChild("SonsFogo"); if SF then require(SF).evento(d) end
+	end
 	if f <= 0 then return end
+	if el == "Fogo" then
+		local VF = script.Parent:FindFirstChild("VFXFogo")
+		if VF then
+			local Fm = require(VF)
+			if d.hab == "Tempestade" and d.fase == "batida" then tremor(d.pos, (d.indice or 1) == 1 and 0.5 or 0.35, 0.4); Fm.evento(d, f); return end
+			if Fm.evento(d, f) then return end
+		end
+	end
 	if d.hab == "Ruptura" then ruptura(m, d, f); return end
 	if d.hab == "Coracao" then coracao(m, d, f); return end
 	if d.hab == "SangueDeMagma" and d.fase == "ativar" then                -- reforco ativado: pulso de calor no peito (discreto)
@@ -871,6 +883,7 @@ function M.evento(d)
 					while soproAtivo[m] == tok and os.clock() < lim and m.Parent do
 						local b, dr = bocaDe(m); local ap = miraSopro[m] or d.alvoPos; if ap then dr = (ap - b).Unit end
 						local h = workspace:Raycast(b, dr * (d.alcance or 90), rp)
+						if el == "Fogo" then local SF = script.Parent:FindFirstChild("SonsFogo"); if SF then require(SF).soproImpacto(m, h and h.Position) end end
 						if h then
 							if el == "Fogo" then rajada(h.Position, "Fogo", 0.45, f) else rajada(h.Position, "Ar", 0.55, f) end
 						end
@@ -924,8 +937,9 @@ function M.evento(d)
 	elseif d.hab == "Tempestade" then
 		-- asas em brasa: no ar acendem ja no preparo e apagam depois da ultima batida; no solo acendem no impulso (subida)
 		-- e apagam devagar a partir da descida do corpo (~1,35 s apos o impulso) ate depois do pouso
-		if d.fase == "preparo" and d.noAr then acenderAsas(m, 0.9, math.max(f, 0.3)); task.delay(2.0, function() apagarAsas(m, 1.8) end)
-		elseif d.fase == "impulso" then acenderAsas(m, 0.45, math.max(f, 0.3)); task.delay(1.35, function() apagarAsas(m, 2.2) end) end
+		-- PATCH_TEMPESTADE_V2: apagam no fim da sequencia de batidas (duracao enviada pelo servidor)
+		if d.fase == "preparo" and d.noAr then acenderAsas(m, 0.9, math.max(f, 0.3)); task.delay(math.max(2.0, (d.duracao or 2.4) - 0.6), function() apagarAsas(m, 1.8) end)
+		elseif d.fase == "impulso" then acenderAsas(m, 0.45, math.max(f, 0.3)); task.delay(math.max(1.35, (d.duracao or 2.2) - 0.7), function() apagarAsas(m, 2.2) end) end
 		if d.fase == "preparo" then                                        -- ar comeca a ser puxado para as asas
 			local c = m:GetPivot().Position; local a = ancora(c + Vector3.new(0, 2, 0)); Debris:AddItem(a, 2)
 			local e = emissor(a, flip({Shape = Enum.ParticleEmitterShape.Sphere, ShapeInOut = Enum.ParticleEmitterShapeInOut.Inward, Color = seq({C3(150, 130, 110), C3(110, 98, 86)}),

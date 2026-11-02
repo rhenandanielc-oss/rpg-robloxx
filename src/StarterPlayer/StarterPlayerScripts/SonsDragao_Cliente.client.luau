@@ -190,7 +190,7 @@ RunService.Heartbeat:Connect(function(dt)
 								asaJa = true                                   -- mistura de varias trilhas de voo: 1 batida
 								tocar(pp, sorteia(C.asa), C.asaVolume * math.clamp(t.WeightCurrent, 0.4, 1), faixa(C.asaTom), nil, C.distAsa)
 							elseif PASSOS[nome] and not m:GetAttribute("NoAr") then
-								tocar(pp, sorteia(C.passo), C.passoVolume, faixa(C.passoTom), C.passo ~= Cfg.passo and 0.9 or nil, C.distPasso)
+								tocar(pp, sorteia(C.passo), C.passoVolume, faixa(C.passoTom), 0.6, C.distPasso)   -- corte curto: corrida rapida nao esgota a cota de sons
 								tocar(pp, C.passoPeso, C.passoPesoVolume * (nome == "Correr" and 1.4 or 1), 0.9 + math.random() * 0.2, C.passoPesoCorte, C.distPasso)
 							elseif voz then
 								tocarVoz(m, pp, nome, alvo)
@@ -258,6 +258,7 @@ if FX then
 		local pp = e.d.PrimaryPart; local h, f, el = e.hab, e.fase, e.el
 		local C = cfgDe(e.d)
 		if el == "Gelo" and (h == "Sopro" or h == "Rajadas" or h == "ZeroAbsoluto" or h == "Nevasca") then return end   -- PATCH_AUDIO_GELO: SonsGelo
+		if el == "Fogo" and (h == "Sopro" or h == "Arremetida" or h == "Tempestade" or h == "Coracao" or h == "SangueDeMagma") then return end   -- PATCH_AUDIO_FOGO: SonsFogo
 		if h == "Sopro" and f == "emissao" then
 			if el == "Fogo" then tocar(pp, C.fogo, 1.4, 0.8); task.delay(0.9, function() tocar(pp, C.fogo, 1.2, 0.75) end)
 			elseif el == "Terra" then tocar(pp, C.rochaArrasto, 1.2, 0.9)

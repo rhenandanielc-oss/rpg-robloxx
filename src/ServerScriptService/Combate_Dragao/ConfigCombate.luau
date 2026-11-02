@@ -36,17 +36,31 @@ return {
 				Raio = {forma = "descarga", alcance = 100, largura = 5, pulsos = 3, dano = 10},
 				Ar = {forma = "cone", alcance = 95, angulo = 18, dano = 5},
 			}},
-		-- Arremetida: ACELERACAO fisica (sem teleporte): preparo do corpo, ganho de velocidade a partir da atual,
-		-- pico, desaceleracao e devolucao da velocidade ao controlador (montaria). Distancia resulta do perfil.
-		Arremetida = {recarga = 12, energia = 30, raio = 22, dano = 26, intensidade = "pesado",
-			preparo = 0.7, acelera = 0.24, sustenta = 0.32, desacelera = 0.38,
-			velPico = 150, velSaidaChao = 18, velSaidaAr = 45},
+		-- Arremetida Draconica (ATUALIZACAO OFICIAL 02/11): 5 s de velocidade extraordinaria no PROPRIO controlador de
+		-- locomocao (montaria: chao e voo; IA: perseguicao integrada), partindo da velocidade atual e terminando por
+		-- desaceleracao; o jogador continua dirigindo. Contato da cabeca com um inimigo valido = UMA mordida devastadora
+		-- por ativacao (dano > mordida comum, Burning), que encerra a fase ofensiva. Numeros provisorios (NAO_APROVADO).
+		Arremetida = {recarga = 12, energia = 30, intensidade = "pesado", duracao = 5,
+			velChao = 52, acelChao = 24,                           -- correr normal 17-22 -> ~2,4x
+			velAr = 90, acelAr = 30,                               -- voo rapido 55 / voo livre 20
+			giroIA = 75,                                           -- graus/s de correcao de rumo da IA na perseguicao
+			danoMordida = 46, raioMordida = 9, avancoMordida = 7, alturaMordida = 22,   -- alcance: horizontal + faixa vertical (cabeca alta)
+			   -- mordida comum = 18; hitbox a frente da cabeca
+			antecipa = 0.32,                                       -- s: abre a mandibula antes do contato previsto
+			freioImpacto = 0.5, empurraoMordida = 40, recuperacao = 0.7,
+			distancia = 170},                                      -- so para a decisao da IA (alcance de perseguicao)
 		-- Tempestade: no solo o corpo se eleva e as asas batem repetidas vezes; no ar as batidas comecam direto. Cada batida
 		-- REAL do clipe (tempos abaixo) solta uma onda: dano (1a cheia, demais fracao) e empurrao, 1 acerto por alvo por batida.
 		Tempestade = {recarga = 16, energia = 40, raio = 78, dano = 16, intensidade = "moderado",
 			elevacao = 11,                                         -- quanto o corpo sobe de verdade na versao terrestre
-			batidasChao = {1.75, 2.17, 2.54}, batidasAr = {1.0, 1.86},   -- segundos do clipe (pontos baixos das asas)
+			-- PATCH_TEMPESTADE_V2 (02/11): SEQUENCIA de batidas. Solo: Tempestade_Asas ate a 3a batida (2,62 s), o corpo
+			-- fica no alto e o clipe aereo (Tempestade_Asas_Ar) da mais 2 batidas; depois o trecho final do clipe terrestre
+			-- (a partir de 2,6 s) faz a descida e o pouso. Ar: o clipe aereo 2 vezes = 4 batidas. Tempos = pontos baixos
+			-- das asas nos clipes (a onda sai no instante da batida real).
+			batidasChao = {1.75, 2.17, 2.54, 3.62, 4.48}, trocaAr = 2.62, retomaQueda = 4.95, quedaClipe = 2.6, pousoApos = 0.35,
+			batidasAr = {1.0, 1.86, 3.4, 4.26}, voltasAr = 2, clipeAr = 2.4,
 			fatorSecundario = 0.35,                                -- dano das batidas seguintes = dano x fator
+			fatorEmpurraoSec = 0.55,                               -- empurrao das seguintes (nada de lancar sem controle)
 			empurrao = {horizontal = 42, vertical = 16}},           -- studs/s (reacao curta; provisorio)
 		Ruptura = {recarga = 15, energia = 35, dano = 24, intensidade = "pesado",
 			requerSolo = true, distSoloMax = 7,                    -- patas ate 7 studs do chao

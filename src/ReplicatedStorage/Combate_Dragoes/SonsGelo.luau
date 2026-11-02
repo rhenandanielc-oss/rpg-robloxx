@@ -488,6 +488,10 @@ function S.evento(d)
 	elseif d.hab == "Nevasca" then nevasca(m, d)
 	elseif (d.hab == "Mordida" or d.hab == "Garra" or d.hab == "Cauda") and d.fase == "impacto" and d.acertou then S.golpe(d.pos) end
 end
+-- mixer compartilhado (PATCH_AUDIO_FOGO 02/11): o SonsFogo usa o MESMO orcamento global, prioridades e limpeza
+S.mixer = {tocar = tocar, emPos = emPos, laco = laco, pararLaco = pararLaco, ajustarLaco = ajustarLaco, pararTudo = pararTudo,
+	vigiar = vigiar, novoTok = novoTok, valido = valido, depois = depois, pode = pode, osso = osso, var = var, sorteia = sorteia,
+	ancora = ancora, tomVoz = tomVoz, vivo = vivo, tok = tok}
 -- diagnostico (testes): sons vivos deste modulo
 function S.contagem() local n, l = 0, 0; for _, r in ipairs(ativos) do n += 1; if r.laco then l += 1 end end; return n, l end
 return S
