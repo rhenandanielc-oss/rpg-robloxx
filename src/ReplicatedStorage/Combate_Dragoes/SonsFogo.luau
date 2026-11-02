@@ -37,8 +37,8 @@ local B = {
 	mordida = {id(9125467298), id(9125466463)},                             -- Creature Bite Pterodactyl Crunch
 	asa = {id(9120771864), id(9120776877)},                                 -- Wing Flaps: Large Flying Creature
 	-- rugidos (PATCH_RUGIDOS_FOGO): combate curto e feroz / aereo poderoso; rosnado de preparo
-	rugCombate = id(9113980319), rugCombateB = id(9113985445),             -- Giant Crab Monster Roar Growl 1 / Creature Roar Deep Throaty 2
-	rugAereo = id(9113985604), rugAereoCorpo = id(9113987603),              -- Creature Roar Mix Of Animals 1 / Giant Crab Monster Roars 1
+	-- usuario 02/11: UM rugido so e o MESMO tom em todos os rugidos do Fogo (mesmo arquivo dos comportamentos)
+	rugido = id(9113985451),                                                -- Creature Roar Constant Deep Throaty Growls 1
 	rosnado = {id(9113973520), id(9113973748)},                             -- Creature Growls Pit Bull 4 / 3
 }
 S.BANCO = B
@@ -247,14 +247,11 @@ local function rugido(m, d)
 	local cab = cabeca(m)
 	if d.fase == "preparo" then
 		novoTok(m, "Rug")
-		tocar(cab, sorteia(B.rosnado), {vol = 0.55, tom = var(0.75, 0.04), corte = 0.6, fadeOut = 0.2, dist = 160, prio = 3})
 	elseif d.fase == "emissao" then
 		if d.tipo == "aereo" then
-			tocar(cab, B.rugAereo, {vol = 1.1, tom = var(0.74, 0.03), corte = 2.6, rugido = true, dist = 360, min = 25, prio = 5})
-			tocar(cab, B.rugAereoCorpo, {vol = 0.5, tom = var(0.7, 0.03), corte = 2.4, rugido = true, dist = 300, min = 25, prio = 4})
+			tocar(cab, B.rugido, {vol = 1.1, tom = 0.85, corte = 2.6, rugido = true, dist = 360, min = 25, prio = 5})
 		else
-			tocar(cab, B.rugCombate, {vol = 1.05, tom = var(0.82, 0.04), corte = 1.8, rugido = true, dist = 340, min = 22, prio = 5})
-			tocar(cab, B.rugCombateB, {vol = 0.55, tom = var(0.9, 0.04), corte = 1.5, rugido = true, dist = 300, min = 22, prio = 4})
+			tocar(cab, B.rugido, {vol = 1.05, tom = 0.85, corte = 2.0, rugido = true, dist = 340, min = 22, prio = 5})
 		end
 		task.delay(d.tipo == "aereo" and 1.6 or 1.0, function()
 			if vivo(m) then tocar(bocaO(m), B.arQuente, {vol = 0.18, tom = 0.85, corte = 1.0, fadeIn = 0.1, fadeOut = 0.5, dist = 90}) end

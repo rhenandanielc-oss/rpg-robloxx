@@ -42,13 +42,13 @@ local VOZ = {
 -- alerta, grunhido, farejar, comer, beber, sono, despertar, dano leve/forte); tons ja contam com TomVoz 0.8
 -- PATCH_RUGIDOS_FOGO (02/11): Dragao das Montanhas — fases = momentos reais dos clipes novos (preparo/inspiracao,
 -- emissao com a boca abrindo, bafo quente no fim); rugidos em CAMADAS (voz + corpo grave), grunhidos discretos
+-- usuario 02/11: UM rugido so (sem camadas nem rosnado separado) e o MESMO tom (TOM_RUGIDO_FOGO) em todos
+local TOM_RUGIDO_FOGO = 0.85
 local VOZ_MONTANHAS = {
-	Rugido_Territorial = {{0.12, "inspira", 1, 0.55, 0.62}, {0.30, "rugidoTerritorial", 1, 1.15, 0.92}, {0.31, "rugidoCorpo", 1, 0.6, 0.72},
-		{0.86, "bafo", 0.8, 0.22, 0.8}},
-	Rugido_Ameaca = {{0.25, "rosnado", 1, 0.75, 0.72}, {0.56, "rugidoAmeaca", 1, 1.05, 0.95}, {0.565, "rugidoAmeacaCorpo", 1, 0.55, 0.78}},
-	Rugido_Vitoria = {{0.18, "inspira", 1, 0.5, 0.6}, {0.36, "rugidoVitoria", 1, 1.0, 0.82}, {0.365, "rugidoCorpo", 1, 0.45, 0.85},
-		{0.8, "bafo", 0.7, 0.2, 0.85}},
-	Ninho_Ameaca = {{0.18, "rosnado", 1, 0.7, 0.75}, {0.36, "rugidoAmeaca", 1, 1.0, 0.9}, {0.365, "rugidoAmeacaCorpo", 1, 0.5, 0.8}},
+	Rugido_Territorial = {{0.12, "inspira", 1, 0.55, 0.62}, {0.30, "rugidoTerritorial", 1, 1.15, TOM_RUGIDO_FOGO}, {0.86, "bafo", 0.8, 0.22, 0.8}},
+	Rugido_Ameaca = {{0.56, "rugidoAmeaca", 1, 1.05, TOM_RUGIDO_FOGO}},
+	Rugido_Vitoria = {{0.18, "inspira", 1, 0.5, 0.6}, {0.36, "rugidoVitoria", 1, 1.0, TOM_RUGIDO_FOGO}, {0.8, "bafo", 0.7, 0.2, 0.85}},
+	Ninho_Ameaca = {{0.36, "rugidoAmeaca", 1, 1.0, TOM_RUGIDO_FOGO}},
 	Intimidar = {{0.18, "intimidar", 0.8, 0.6, 0.78}, {0.68, "rosnado", 0.5, 0.5, 0.82}},
 	Reagir_Estimulo = {{0.12, "alerta", 0.8, 0.6, 0.95}}, Ninho_Alerta = {{0.2, "alerta", 0.8, 0.6, 0.9}},
 	Idle_Alerta_Mantido = {{0.5, "grunhido", 0.35, 0.45, 0.9}}, Preparar_Combate = {{0.3, "rosnado", 0.45, 0.5, 0.8}},
@@ -149,7 +149,8 @@ local function tocarVoz(m, pp, nome, fase)
 					if donoUltimoRugido ~= m and os.clock() - ultimoRugidoGlobal < 1.6 then vol *= 0.35 end
 					ultimoRugidoGlobal, donoUltimoRugido = os.clock(), m
 				end
-				tocar(pp, sorteia(C[k]), vol, ev[5] * (0.95 + math.random() * 0.1) * tomVoz(pp), CORTE_VOZ[k], dist, ENVELOPE[k])
+				local varia = RUGIDOS[k] and 1 or (0.95 + math.random() * 0.1)      -- rugido: sempre o mesmo tom
+				tocar(pp, sorteia(C[k]), vol, ev[5] * varia * tomVoz(pp), CORTE_VOZ[k], dist, ENVELOPE[k])
 			end
 		end
 	end
