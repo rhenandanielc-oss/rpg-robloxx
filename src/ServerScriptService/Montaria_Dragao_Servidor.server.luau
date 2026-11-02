@@ -498,6 +498,13 @@ local function passoVooLivre(M, dt)
 	local w = {Mergulho_AFK = mergulho, Planeio_AFK = pl * (1 - curva), Pairar_AFK = ba * pairar,
 		Voo_AFK = ativo * (1 - sub) * (1 - des), Subida_AFK = ativo * sub, Descida_AFK = ativo * des}
 	w[esq and "Curva_Aerea_E_AFK" or "Curva_Aerea_D_AFK"] = pl * curva + ba * (1 - pairar) * curva * 0.35
+	-- PATCH_MIX_VERTICAL (02/11): parado no ar subindo (E) ou descendo (Q): Subida/Descida entram sobre o Pairar
+	if m:GetAttribute("MixVerticalParado") and M.vyH ~= 0 then
+		local hp = ba * pairar
+		local sv = math.clamp(M.vyH / math.max(1, VL.vSubidaParado), 0, 1) * 0.7
+		local dv = math.clamp(-M.vyH / math.max(1, VL.vDescidaParado), 0, 1) * 0.7
+		w.Pairar_AFK = hp * (1 - sv - dv); w.Subida_AFK += hp * sv; w.Descida_AFK += hp * dv
+	end
 	pesos(M, w)
 	local ritmo = 0.9 + 0.45 * k + (gd > 8 and 0.25 or 0) + (f > 0.1 and 0.1 or 0)
 	if math.abs(ritmo - (M.ritmoVoo or 1)) > 0.05 then

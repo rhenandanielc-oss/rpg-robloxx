@@ -40,6 +40,14 @@ PASSO_PESADO = os.environ.get("PASSO_PESADO") == "1"
 # PERSONALIDADE (sistema universal 01/11): batidas por clipe no voo e no pairar. Glacial = menos batidas, mais amplas e
 # cadenciadas (o controlador da montaria segue com as mesmas velocidades: so a cadencia da asa muda)
 NB_VOO = int(os.environ.get("NB_VOO", "4")); NB_PAIRAR = int(os.environ.get("NB_PAIRAR", "4"))
+# CERTIFICACAO (02/11, Glacial): batida PROFUNDA e com golpe forte. AMP_ASA amplia o giro do ombro/umero/antebraco em
+# torno da pose media do Fly_Flap (1 = fonte intacta); ASA_GOLPE (0..0,5) acelera a descida da asa e alonga a subida no
+# MESMO periodo (laco e reacoes do corpo continuam casados: ponta() usa a mesma fase). T_VOO/T_PAIRAR = duracao dos
+# clipes (cadencia = duracao / batidas). AG_DEITADO = agachamento do deitado/dormindo (barriga no chao). Sem as
+# variaveis tudo fica como antes (CR/Silverwing inalterados).
+AMP_ASA = float(os.environ.get("AMP_ASA", "1")); ASA_GOLPE = float(os.environ.get("ASA_GOLPE", "0"))
+T_VOO = float(os.environ.get("T_VOO", "3.2")); T_PAIRAR = float(os.environ.get("T_PAIRAR", "4.0"))
+AG_DEITADO = float(os.environ.get("AG_DEITADO", "0.09"))
 sc = bpy.context.scene; sc.render.fps = FPS
 A = bpy.data.objects["Silverwing_Rig"]; M = bpy.data.objects["Silverwing"]
 for m in M.modifiers: m.show_viewport = False
@@ -89,9 +97,33 @@ def fonte(nome):
     for f in range(f0, f1 + 1):
         sc.frame_set(f); quadros.append({n: A.pose.bones[n].matrix_basis.copy() for n in ASA})
     A.animation_data.action = ant                 # restaura a acao sendo gravada
+    if nome == "Silverwing_Fly_Flap" and AMP_ASA != 1.0: _ampliar_batida(quadros)
     CACHE[nome] = quadros; return quadros
+def _ampliar_batida(quadros):
+    """batida mais PROFUNDA: o giro de cada osso em torno da sua pose media no ciclo e multiplicado (ombro e umero
+    inteiro, antebraco 60%, dedos/membrana intactos = a membrana acompanha sem torcer)"""
+    for b in ASA:
+        k = AMP_ASA if b.startswith(("shoulder_", "wing_1_")) else (1 + (AMP_ASA - 1) * 0.6 if b.startswith("wing_2_") else 1.0)
+        if k == 1.0: continue
+        qs = [f[b].to_quaternion() for f in quadros]; s = Quaternion((0, 0, 0, 0))
+        for q in qs: s = s + (q if q.dot(qs[0]) >= 0 else -q)
+        med = s.normalized()
+        for f, q in zip(quadros, qs):
+            d = med.rotation_difference(q); eixo, ang = d.to_axis_angle()
+            if ang > math.pi: ang -= 2 * math.pi
+            f[b] = Matrix.Translation(f[b].translation) @ (med @ Quaternion(eixo, ang * k)).to_matrix().to_4x4()
+_XC = {"v": None}
+def _fase(u):
+    """tempo do clipe -> fase da fonte Fly_Flap (ASA_GOLPE: descida mais rapida, subida mais lenta; g(0)=0, g(1)=1)"""
+    if ASA_GOLPE == 0: return u
+    if _XC["v"] is None:
+        n_ = len(PONTA) - 1; it = max(range(n_ + 1), key=lambda i: PONTA[i]) / n_; ib = min(range(n_ + 1), key=lambda i: PONTA[i]) / n_
+        _XC["v"] = (it + ((ib - it) % 1.0) / 2) % 1.0                 # meio do golpe descendente (alto -> baixo)
+    x = u % 1.0; xc = _XC["v"]; k = ASA_GOLPE / (2 * math.pi)
+    return (u - x) + x + k * (math.sin(2 * math.pi * (x - xc)) - math.sin(-2 * math.pi * xc))
 def asas(nome, u):
     """basis das asas na fase u (0..1, ciclo: ultimo quadro = primeiro)"""
+    if nome == "Silverwing_Fly_Flap": u = _fase(u)
     q = fonte(nome); n = len(q) - 1; x = (u % 1.0) * n; i = int(x); t = x - i; j = min(i + 1, n)
     out = {}
     for b in ASA:
@@ -220,7 +252,10 @@ def _alt_ponta():
     m = sum(zs) / len(zs); r = max(zs) - min(zs); return [(z - m) / r for z in zs]
 PONTA = _alt_ponta()
 def ponta(u):
-    n = len(PONTA) - 1; x = (u % 1.0) * n; i = int(x); return lerp(PONTA[i], PONTA[min(i + 1, n)], x - i)
+    n = len(PONTA) - 1; x = (_fase(u) % 1.0) * n; i = int(x); return lerp(PONTA[i], PONTA[min(i + 1, n)], x - i)
+def fase_alta():
+    """tempo do clipe em que a asa esta no alto (com ASA_GOLPE a fase muda; sem ele = indice do maximo do PONTA)"""
+    return max((k / 400 for k in range(400)), key=ponta)
 
 # ---------------------------------------------------------------- IK
 def ik2(J, P, a, b, polo):
@@ -306,6 +341,10 @@ def gerar(nome, n_quadros, fn, loop=True):
     for k in range(n_quadros + 1):
         u = k / n_quadros
         p = fn(u)
+        # certificacao 02/11: em clipe de chao (alguma pata apoiada) nenhuma ponta de asa entra no piso (asas dobradas
+        # com o tronco inclinado / meia abertura de exibicao passando por baixo): sobe so o necessario
+        if p.asas and any(sp.get("modo") == "chao" for sp in p.pata.values()):
+            asas_acima_do_chao(p, asas("Silverwing_Fly_Flap", FA))
         W, B = resolver(p)
         chave(act, k + 1, B)
         if "chao" in nome or True:
@@ -478,7 +517,7 @@ f_correr = andadura(T_CORRER, D_CORRER, S_CORRER, {"PT_E": 0.0, "PT_D": 0.12, "P
 def f_parada(u):                       # frenagem curta: dianteiras firmam a frente, corpo recua e assenta
     p = Pose(); em_pe(p)
     k = math.sin(math.pi * min(1, u * 1.4)); p.arf += 5 * k; p.off += Vector((0, 0.02 * k, -0.02 * k))
-    for c in ("PD_E", "PD_D"): p.pata[c]["K"].y -= 0.05 * k * (1 - u)
+    # (certificacao 02/11: o pe dianteiro deslizava 0,6 stud apoiado; agora fica plantado e so o corpo recua)
     pescoco_alto(p, cima=-6 * k)
     p.asas = asas("Silverwing_Idle", u * 0.3)
     # frenagem: a cauda sobe (contrapeso do corpo que recua) e a ponta chicoteia para cima com atraso
@@ -489,14 +528,19 @@ def f_parada(u):                       # frenagem curta: dianteiras firmam a fre
 # SENTADO (usuario 31/10, referencia do dragao verde): traseiras dobradas sob o corpo com o metatarso no chao, quadril
 # baixo, peito e pescoco erguidos, cabeca altiva e nivelada, dianteiras retas apoiando, asas recolhidas, cauda em
 # curva suave pelo lado no chao. a = 0 (em pe) .. 1 (sentado); r = respiracao; olhar = giro da cabeca
-def pose_sentado(p, a, r=0.0, olhar=0.0, ponta=None):
+def pose_sentado(p, a, r=0.0, olhar=0.0, ponta=None, passo=None):
+    """passo (transicoes): progresso 0..1 de cada pata reposicionada EM PASSO (levanta, avanca, pousa); sem ele o
+    pe acompanha 'a' (antes deslizava apoiado ate 1,2 stud no Sentar)"""
     em_pe(p)
     p.arf += 30 * a                                                     # peito sobe, quadril desce (giro no centro)
     p.off += Vector((0, 0.03 * a, -0.105 * a + 0.004 * r * a))          # ombros quase na altura de pe
+    def ap(c): return passo[c] if passo else a
     for c in ("PT_E", "PT_D"):                                          # traseiras sob o corpo, pe deitado no chao
-        p.pata[c]["K"].y -= 0.07 * a; p.pata[c]["beta"] = lerp(BETA[c], 6, a)
+        p.pata[c]["K"].y -= 0.07 * ap(c); p.pata[c]["beta"] = lerp(BETA[c], 6, a)
     for c in ("PD_E", "PD_D"):                                          # dianteiras retas, um pouco a frente
-        p.pata[c]["K"].y -= 0.03 * a; p.pata[c]["beta"] = lerp(BETA[c], 64, a)
+        p.pata[c]["K"].y -= 0.03 * ap(c); p.pata[c]["beta"] = lerp(BETA[c], 64, a)
+    if passo:
+        for c in PERNAS: p.pata[c]["K"].z += (0.03 if c.startswith("PD") else 0.04) * math.sin(math.pi * passo[c])
     p.curva["spine_1"] = (1.2 * r * a, 0); p.curva["spine_0"] = (-0.6 * r * a, -2.0 * olhar * a)
     pescoco_alto(p, cima=-14 * (1 - a) - 8 * a + 1.5 * r, esq=12 * olhar, cab=4 * a)
     lado = -1                                                           # cauda curva para a direita do dragao
@@ -522,11 +566,26 @@ def pose_sentado(p, a, r=0.0, olhar=0.0, ponta=None):
             corr = math.degrees(math.asin(max(-1, min(1, (alvo - tz) / Lb)))) * 0.9 * a
             c, e = p.curva[n]; p.curva[n] = (c + corr, e)
     p.asas = asas_armadas(a, r) if ASAS_ARMADAS else asas("Silverwing_Idle", 0.0)    # sentado: asas acima do corpo
+    if not ASAS_ARMADAS:
+        # asas DOBRADAS (certificacao 02/11): com o tronco erguido 30 graus a dobra apontava para o chao (pontas ~5 studs
+        # dentro do piso); o ombro devolve a inclinacao do tronco e a dobra fica deitada ao longo do flanco
+        Rb = p.Rb()
+        for n_ in ("shoulder_l", "shoulder_r"): p.extra[n_] = Rax(Rb @ X, 26 * a)
+    if passo: cauda_sobre_chao(p)              # transicao: a cauda nao atravessa o piso no meio do caminho (era -2,9 studs)
     return p
-def f_sentar(u):                    # em pe -> sentado: o quadril desce primeiro, o peito sobe no fim
-    return pose_sentado(Pose(), smooth(u))
-def f_levantar_sentado(u):          # sentado -> em pe
-    return pose_sentado(Pose(), 1 - smooth(u))
+def f_sentar(u):
+    """em pe -> sentado 1,6 s: para, REPOSICIONA as dianteiras (um passo curto cada), flexiona joelhos/quadris e baixa a
+    garupa enquanto as traseiras vem para baixo do corpo em passo, peito sobe, pescoco e asas acomodam, cauda curva"""
+    passo = {"PD_E": janela(u, 0.02, 0.17), "PD_D": janela(u, 0.12, 0.27), "PT_E": janela(u, 0.32, 0.52), "PT_D": janela(u, 0.46, 0.66)}
+    return pose_sentado(Pose(), smooth(u), passo=passo)
+def f_levantar_sentado(u):
+    """sentado -> em pe 1,2 s: o peso passa para as dianteiras (corpo vai a frente), as traseiras empurram e erguem a
+    garupa voltando em passo para tras, o peito desce para a postura quadrupede e as dianteiras se ajustam"""
+    passo = {"PT_E": 1 - janela(u, 0.22, 0.44), "PT_D": 1 - janela(u, 0.36, 0.58), "PD_E": 1 - janela(u, 0.62, 0.78), "PD_D": 1 - janela(u, 0.74, 0.92)}
+    a = 1 - smooth(min(1.0, u * 1.1))
+    p = pose_sentado(Pose(), a, passo=passo)
+    p.off += Vector((0, -0.018 * pulso(u, 0.0, 0.3, 0.55, 0.9), 0)); p.arf -= 4 * pulso(u, 0.0, 0.3, 0.55, 0.9)
+    return p
 def f_sentado(u):
     """8 s: 3 respiracoes, olhar lento (ida e volta + desvio), ajustes de cauda com momentos quase parados"""
     r = math.sin(2 * math.pi * 3 * u)
@@ -535,10 +594,10 @@ def f_sentado(u):
     ponta = onda_cauda(u, [(4.0, 1, 0.6, 0.9), (2.0, 3, 1.4, 1.3)], env)
     return pose_sentado(Pose(), 1.0, r, olhar, ponta)
 
-def f_agachar(ini, fim):
+def f_agachar(ini, fim, ag=0.09):
     def fn(u):
         a = lerp(ini, fim, smooth(u)) if ini != fim else ini
-        p = Pose(); em_pe(p, agach=0.09 * a)
+        p = Pose(); em_pe(p, agach=ag * a)
         r = math.sin(2 * math.pi * u) if ini == fim else 0
         p.off += Vector((0, 0, 0.003 * r))
         pescoco_alto(p, cima=-8 * a + 2 * r)
@@ -705,7 +764,7 @@ def asas_ameaca(abre):
 
 def pose_dormir(u, a=1.0):
     """deitado (agach 1), pescoco curvado para o lado com a cabeca apoiada no chao junto as patas, cauda enrolada"""
-    p = Pose(); em_pe(p, agach=0.09)
+    p = Pose(); em_pe(p, agach=AG_DEITADO)
     r = math.sin(2 * math.pi * 2 * u)                                                # respiracao LENTA (2 em 8 s)
     p.off += Vector((0, 0, 0.004 * r * a))
     p.curva["spine_1"] = (1.2 * r * a, 0)
@@ -720,7 +779,7 @@ def f_adormecer(u): return pose_dormir(u, smooth(u))
 def f_acordar(u):
     """Acordar 2 s: abre/ergue a cabeca do chao (0-40%), depois levanta o corpo (Levantar)"""
     if u < 0.4: return pose_dormir(0.0, 1 - smooth(u / 0.4))
-    return f_agachar(1, 0)((u - 0.4) / 0.6)
+    return f_agachar(1, 0, AG_DEITADO)((u - 0.4) / 0.6)
 def f_ninho_alerta(u):
     """Ninho_Alerta 1,2 s: do deitado direto para alerta (levanta ja de cabeca erguida e asas meio abertas)"""
     p = f_agachar(1, 0)(smooth(min(1, u * 1.25)))
@@ -966,7 +1025,7 @@ def f_curva(lado):
         pescoco_voo(p, cima=3, esq=22 * sg, cab=4)
         p.curva["spine_1"] = (0, 5 * sg)
         # cauda compensa a curva: base segue o tronco, meio acompanha, ponta abre para fora com atraso + correcoes
-        base = [-sg * (3 + 3.0 * k) * (0.5 + 0.5 * smooth(min(1, u * 4))) for k in range(7)]
+        base = [-sg * (3 + 3.0 * k) for k in range(7)]          # constante: a rampa antiga quebrava o laco (10,5 graus)
         cauda_ar(p, 1, somar(base, onda_cauda(u, [(2.5, 2, 0.0, 1.1), (1.2, 3, 1.4, 1.4)])), onda_cauda(u, [(1.5, 1, 0.6, 0.9)]))
         return p
     return fn
@@ -1101,6 +1160,30 @@ def resolver(p):                                      # suporte a patas em posic
         p.pata[c] = dict(modo="livre", P=s["P"] - J, meta=(s["K"] - s["P"]), dedos=(s["D"] - s["K"]), ponta=(s["E"] - s["D"]))
     return _resolver_base(p)
 
+def _min_asa(p):
+    W, _ = resolver(p)
+    return min((W[n].translation + rot(W[n]) @ Vector((0, A.data.bones[n].length, 0))).z for n in ASA)
+def asas_acima_do_chao(p, alto, piso=0.06):
+    """se alguma ponta de osso da asa fica abaixo do piso (unidades do rig; 0,06 = ~1 stud), mistura as asas com a
+    pose 'alto' so o necessario (busca binaria)"""
+    if _min_asa(p) >= piso: return
+    orig = p.asas; lo, hi = 0.0, 1.0
+    for _ in range(9):
+        t = (lo + hi) / 2; p.asas = mistura(orig, alto, t)
+        if _min_asa(p) >= piso: hi = t
+        else: lo = t
+    p.asas = mistura(orig, alto, hi)
+def cauda_sobre_chao(p, piso=0.035):
+    """segmento da cauda cuja ponta entraria no chao sobe so o necessario (transicoes ar <-> chao)"""
+    for it in range(12):
+        W, _ = resolver(p); mudou = False
+        for i, n in enumerate(CAUDA):
+            L = A.data.bones[n].length; tz = (W[n].translation + rot(W[n]) @ Vector((0, L, 0))).z
+            if tz < piso:
+                c, e = p.curva.get(n, (0.0, 0.0)); p.curva[n] = (c + math.degrees(math.asin(min(1, (piso - tz) / L))), e); mudou = True
+                break
+        if not mudou: break
+
 def f_decolagem(u):
     # 0-0.35 agacha e ergue as asas; 0.35-0.55 impulso (pernas estendem, batida forte); 0.55-1 recolhe e bate
     chao = Pose(); em_pe(chao)
@@ -1111,13 +1194,17 @@ def f_decolagem(u):
     pescoco_alto(chao, cima=-10 * ag + (16 * smooth((u - 0.35) / 0.25) if u > 0.35 else 0))
     cauda(chao, -10 + 14 * ag, 4.5, [0] * 7, chao=True)
     # asas: dobradas -> erguidas (fase alta do Flap) -> ciclo de batidas
-    fase_alta = max(range(len(PONTA)), key=lambda i: PONTA[i]) / (len(PONTA) - 1)
-    if u < 0.35: chao.asas = mistura(asas("Silverwing_Idle", u), asas("Silverwing_Fly_Flap", fase_alta), smooth(u / 0.35))
-    else: chao.asas = asas("Silverwing_Fly_Flap", fase_alta + (u - 0.35) / 0.65 * 1.5)
-    ar = f_voo(fase_alta + (u - 0.35) / 0.65 * 1.5 if u > 0.35 else fase_alta)
+    fa = fase_alta()
+    if u < 0.35: chao.asas = mistura(asas("Silverwing_Idle", u), asas("Silverwing_Fly_Flap", fa), smooth(u / 0.35))
+    else: chao.asas = asas("Silverwing_Fly_Flap", fa + (u - 0.35) / 0.65 * 1.5)
+    ar = f_voo(fa + (u - 0.35) / 0.65 * 1.5 if u > 0.35 else fa)
     w = smooth((u - 0.45) / 0.35)
-    if w <= 0: return chao
-    return mistura_pose(chao, ar, w)
+    p = chao if w <= 0 else mistura_pose(chao, ar, w)
+    # CERTIFICACAO 02/11: com as patas ainda perto do chao a batida completa enfiava as pontas ~7 studs no solo (o
+    # servidor so ergue o corpo depois de 40% do clipe; a IA nao ergue). A batida e limitada para as pontas ficarem
+    # acima do piso (golpe raso enquanto o corpo sobe) e a cauda nao atravessa o chao
+    asas_acima_do_chao(p, asas("Silverwing_Fly_Flap", fa)); cauda_sobre_chao(p)
+    return p
 
 def f_pouso(u):
     # contato rapido: patas estendidas p/ o chao, toque, amortecimento, asas fecham
@@ -1130,7 +1217,9 @@ def f_pouso(u):
     cauda(chao, -14, 5.0, [0] * 7)
     chao.asas = mistura(asas("Silverwing_Fly_Glide", 0.2), asas("Silverwing_Idle", u), smooth((u - 0.15) / 0.85))
     w = smooth(u / 0.25)
-    return mistura_pose(ar, chao, w)
+    p = mistura_pose(ar, chao, w)
+    asas_acima_do_chao(p, asas("Silverwing_Fly_Glide", 0.2)); cauda_sobre_chao(p)       # certificacao 02/11
+    return p
 
 def f_mordida(u):
     """Mordida Aerea (1,0 s, no lugar: o servidor faz o avanco). 0-0.28 preparo (pescoco recolhe em S, cabeca baixa,
@@ -1177,7 +1266,7 @@ def f_mordida(u):
 # Arremetida preparo 0,7 + avanco 0,7; Tempestade Impulso 1,1 / Batida 1,75 / Pouso 2,95; Tempestade aerea Batida
 # 1,0; Ruptura Impacto 1,4 / Erupcao 1,65 / Fim 3,4. Cada golpe: antecipacao -> preparo -> execucao -> contato ->
 # reacao -> recuperacao, com corpo, pescoco, cauda (contrapeso com atraso) e patas participando.
-FA = max(range(len(PONTA)), key=lambda i: PONTA[i]) / (len(PONTA) - 1)       # asa no alto (fase do Fly_Flap)
+FA = fase_alta()                                                                 # asa no alto (fase do Fly_Flap)
 FB = min(range(len(PONTA)), key=lambda i: PONTA[i]) / (len(PONTA) - 1)       # asa embaixo
 def janela(u, a, b): return smooth((u - a) / (b - a)) if b > a else float(u >= a)
 def pulso(u, a, b, c, d): return janela(u, a, b) * (1 - janela(u, c, d))      # sobe a-b, fica, desce c-d
@@ -1367,6 +1456,7 @@ def f_arremetida(ar=False):
                 bote.asas = mistura(asas("Silverwing_Fly_Glide", 0.2), asas("Silverwing_Idle", 0.0), 0.45)
                 cauda(bote, -4, 2.0, onda_cauda(u, [(1.5, 2, 0.0, 0.8)]), chao=False)
                 p = mistura_pose(base, bote, av)
+                asas_acima_do_chao(p, asas("Silverwing_Fly_Flap", FA))      # certificacao 02/11
         boca_abre(p, abre)
         return p
     return fn
@@ -1501,6 +1591,113 @@ def f_ruptura(u):
     boca_abre(p, pulso(u, 0.15, 0.3, 0.4, 0.5) * 0.9)
     return p
 
+# ---------------------------------------------------------------- certificacao (02/11): clipes que a IA pedia e caiam em
+# apelidos (Deitar/Deitado_Acordado -> Abaixar/Abaixado, Beber_Loop/Comer_Mastigar/Espreguicar -> Parado, Giro -> Andar)
+# e animacoes GENERICAS de habilidade (Hab_*): so movimento, sem poder, dano, recarga ou efeito (kit de gelo pendente).
+def pose_deitado(u, a=1.0, olhar=0.0, cima=0.0):
+    """deitado ACORDADO: quatro patas flexionadas sob o corpo (AG_DEITADO), barriga no chao, pescoco erguido baixo
+    (esfinge), cabeca nivelada, asas dobradas, cauda curvada ao lado"""
+    p = Pose(); em_pe(p, agach=AG_DEITADO * a)
+    r = math.sin(2 * math.pi * 2 * u)
+    p.off += Vector((0, 0, 0.003 * r * a)); p.curva["spine_1"] = (1.0 * r * a, 0)
+    pescoco_alto(p, cima=-14 * (1 - a) - 26 * a + cima + 1.2 * r, esq=olhar, cab=3 * a)
+    p.asas = asas("Silverwing_Idle", 0.0)
+    enrola = [(8.0 * a) * PESO_CAUDA[k_] for k_ in range(7)]
+    cauda(p, -16, 5.0, somar(enrola, onda_cauda(u, [(1.6 * a, 1, 0.3, 0.9), (0.8 * a, 3, 1.2, 1.2)])))
+    return p
+def f_deitar(u):
+    """em pe -> deitado 2,2 s: dianteiras flexionam primeiro e o torax desce, depois o quadril acomoda, a cauda curva
+    e a cabeca baixa ate a posicao de descanso"""
+    p = pose_deitado(u, smooth(u))
+    frente = pulso(u, 0.0, 0.35, 0.55, 0.95)                    # a frente desce antes (nariz para baixo), o quadril segue
+    p.arf -= 7 * frente; p.off += Vector((0, -0.006 * frente, 0))
+    return p
+def f_deitado_acordado(u):
+    """8 s em laco: respiracao lenta, olhar em etapas (vira, segura), cabeca sobe as vezes, ponta da cauda viva"""
+    esq = segura(u, [0, 20, 20, -14, -14, 4, 0], 0.6); cima = segura(u, [0, 4, 7, 2, 5, 0, 0], 0.6)
+    return pose_deitado(u, 1.0, esq, cima)
+def f_beber_loop(u):
+    """Beber em laco 3 s (estado BebendoLongo): boca na agua, 6 lambidas com a mandibula, cabeca corrige de leve"""
+    p = Pose(); base_pe(p, 1.0)
+    lam = max(0.0, math.sin(2 * math.pi * 6 * u)) ** 2
+    pescoco_ao_chao(p, 0.035 - 0.012 * lam, esq=3 * math.sin(2 * math.pi * u))
+    boca_abre(p, 0.18 * lam)
+    p.asas = asas("Silverwing_Idle", u)
+    cauda(p, -14, 5.0, onda_cauda(u, [(-6.0, 1, 0.6, 0.95)]), onda=onda_cauda(u, [(1.2, 2, 0.3, 0.8)]))
+    return p
+def f_comer_mastigar(u):
+    """Mastigar em laco 3 s: cabeca meio baixa, mandibula mastiga (rapido), pequenos trancos de engolir e correcoes"""
+    p = Pose(); base_pe(p, 0.5)
+    eng = pulso(u, 0.45, 0.52, 0.56, 0.66)
+    pescoco_ao_chao(p, 0.22 + 0.02 * eng, esq=4 * math.sin(2 * math.pi * u + 0.5), cab_extra=4 * eng)
+    boca_abre(p, 0.22 * (0.5 + 0.5 * math.sin(2 * math.pi * 9 * u)) * (1 - eng))
+    p.asas = asas("Silverwing_Idle", u)
+    cauda(p, -14, 5.0, onda_cauda(u, [(-5.0, 1, 0.2, 0.95), (2.0, 2, 1.1, 1.2)]))
+    return p
+def f_espreguicar(u):
+    """Espreguicar 4 s: dianteiras avancam em passo, peito desce e quadril sobe (dorso arqueado), pescoco estica, asas
+    abrem e tremem, bocejo; recolhe tudo e volta"""
+    est = pulso(u, 0.12, 0.38, 0.62, 0.86)
+    p = Pose(); em_pe(p)
+    passo = {"PD_E": pulso(u, 0.02, 0.14, 0.86, 0.96), "PD_D": pulso(u, 0.08, 0.2, 0.9, 1.0)}
+    for c, k in passo.items():
+        p.pata[c]["K"].y -= 0.11 * k
+        if 0 < k < 1: p.pata[c]["K"].z += 0.035 * math.sin(math.pi * k)
+        p.pata[c]["beta"] += 24 * est
+    # (teste no Studio 02/11: com -12 graus parecia so exibicao de asas) peito bem baixo, garupa alta, dorso arqueado
+    p.arf -= 19 * est; p.off += Vector((0, -0.012 * est, -0.028 * est))
+    p.curva["spine_1"] = (-9 * est, 0); p.curva["spine_0"] = (7 * est, 0)
+    boce = pulso(u, 0.36, 0.46, 0.56, 0.66)
+    pescoco_alto(p, cima=-12 + 22 * est - 10 * boce, cab=-6 * est + 10 * boce)
+    boca_abre(p, 0.95 * boce)
+    p.asas = asas_ameaca(0.7 * est + 0.03 * est * math.sin(2 * math.pi * 9 * u))
+    cauda(p, -12 + 10 * est, 5.0, onda_cauda(u, [(3.0, 1, 0.3, 1.0)]), onda=[6 * est * PESO_CAUDA[k] for k in range(7)])
+    return p
+def f_giro(lado):
+    """girar no lugar (o Locomotor gira o modelo): passos SEM avanco (pe nao desliza), cabeca guia a curva, tronco e
+    cauda acompanham com atraso para o lado de fora"""
+    sg = 1 if lado == "E" else -1
+    base = andadura(T_ANDAR, D_ANDAR, 0.0001, {"PT_E": 0.0, "PD_E": 0.25, "PT_D": 0.5, "PD_D": 0.75}, 0.045, 0.04,
+                    0.004, 1.5, 0.0)
+    def fn(u):
+        p = base(u)
+        p.curva["spine_0"] = (p.curva["spine_0"][0], 4 * sg); p.curva["spine_1"] = (p.curva["spine_1"][0], 3 * sg)
+        pescoco_alto(p, cima=-22 + 2 * math.cos(4 * math.pi * u), esq=20 * sg, cab=0)
+        cauda(p, -12, 4.5, somar([-sg * 2.5 * k for k in range(7)], onda_cauda(u, [(4.0, 1, -0.4, 0.8)])), onda=onda_cauda(u, [(1.2, 2, 0.0, 0.6)]))
+        return p
+    return fn
+def f_hab_concentracao(u):
+    """Concentracao elemental 3 s (laco): frente baixa e firme, cabeca recolhida e baixa, asas meio erguidas com
+    tremor fino, respiracao profunda (2 por clipe), boca entreaberta, cauda tensa quase parada"""
+    r = math.sin(2 * math.pi * 2 * u)
+    p = Pose(); base_pe(p, 0.35)
+    for c in PERNAS: p.pata[c]["beta"] += 5
+    p.off += Vector((0, 0.006, -0.008 + 0.003 * r)); p.arf += 1.5 * r
+    p.curva["spine_1"] = (4 + 3 * r, 0)
+    pescoco_alto(p, cima=-20 + 3 * r, esq=1.5 * math.sin(2 * math.pi * 7 * u), cab=8)
+    for i, n_ in enumerate(PESCOCO):
+        c_, e_ = p.curva[n_]; p.curva[n_] = (c_ + [8, 0, -8][i], e_)
+    boca_abre(p, 0.10 + 0.05 * max(0.0, r))
+    p.asas = asas_ameaca(0.38 + 0.025 * math.sin(2 * math.pi * 11 * u))
+    cauda(p, -10, 5.0, onda_cauda(u, [(1.5, 1, 0.3, 1.0), (0.6, 5, 0.0, 1.4)]), onda=[3 * PESO_CAUDA[k] for k in range(7)])
+    return p
+def f_hab_golpe_garras(u):
+    """Golpe com garras 2,2 s: garra esquerda (contato 0,24) e direita (contato 0,74) em sequencia"""
+    return f_ataque_garra("E")(u * 2) if u < 0.5 else f_ataque_garra("D")((u - 0.5) * 2)
+def f_hab_recuperacao(u):
+    """Recuperacao pos-habilidade 1,6 s: sacode a cabeca (amortecido), solta o ar (peito baixa), fecha a boca,
+    recolhe as asas e assenta o corpo"""
+    sac = math.sin(2 * math.pi * 3 * u) * (1 - janela(u, 0.1, 0.7)) * janela(u, 0.0, 0.08)
+    sol = pulso(u, 0.05, 0.3, 0.45, 0.9)
+    p = Pose(); em_pe(p)
+    p.arf -= 3 * sol; p.off += Vector((0, 0, -0.008 * sol))
+    p.curva["spine_1"] = (-3 * sol, 0)
+    pescoco_alto(p, cima=-16 * sol, esq=14 * sac, cab=4 * sol)
+    boca_abre(p, 0.25 * (1 - janela(u, 0.0, 0.5)))
+    p.asas = asas_ameaca(0.35 * (1 - janela(u, 0.1, 0.8)))
+    cauda(p, -14, 5.0, onda_cauda(u, [(3.0, 1, 0.0, 1.0)]), onda=[3 * (1 - u) * PESO_CAUDA[k] for k in range(7)])
+    return p
+
 # ---------------------------------------------------------------- gerar
 if PEDIDOS == {"DEBUG"}:
     p = f_parado(0.0); W, B = resolver(p)
@@ -1523,9 +1720,9 @@ gerar("Sentado", n(8.0), f_sentado)
 gerar("Levantar_Sentado", n(1.2), f_levantar_sentado, loop=False)
 gerar("Levantar", n(0.7), f_agachar(1, 0), loop=False)
 # voo: 4 batidas por clipe (mesmo ritmo de antes) para a cauda/patas terem movimento LENTO e nao repetitivo
-gerar("Voo", n(3.2), lambda u: f_voo(u, NB_VOO, u))
+gerar("Voo", n(T_VOO), lambda u: f_voo(u, NB_VOO, u))
 gerar("Voo_Rapido", n(3.2), lambda u: f_voo_rapido(u, 5, u))
-gerar("Pairar", n(4.0), lambda u: f_pairar(u, NB_PAIRAR, u))
+gerar("Pairar", n(T_PAIRAR), lambda u: f_pairar(u, NB_PAIRAR, u))
 gerar("Subida", n(2.8), lambda u: f_subida(u, 4, u))
 gerar("Descida", n(4.0), f_descida)
 gerar("Planeio", n(4.0), f_planeio)
@@ -1574,6 +1771,24 @@ gerar("Dano_Forte", n(1.1), f_dano(True), loop=False)
 gerar("Dano_Leve_Ar", n(0.6), f_dano(False, True), loop=False)
 gerar("Dano_Forte_Ar", n(1.1), f_dano(True, True), loop=False)
 gerar("Mergulho_Saida", n(1.2), f_mergulho_saida, loop=False)
+# certificacao 02/11: estados da IA sem clipe proprio + animacoes genericas de habilidade (nenhum poder ligado)
+gerar("Deitar", n(2.2), f_deitar, loop=False)
+gerar("Deitado_Acordado", n(8.0), f_deitado_acordado)
+gerar("Beber_Loop", n(3.0), f_beber_loop)
+gerar("Comer_Mastigar", n(3.0), f_comer_mastigar)
+gerar("Espreguicar", n(4.0), f_espreguicar, loop=False)
+gerar("Giro_E", n(T_ANDAR), f_giro("E"))
+gerar("Giro_D", n(T_ANDAR), f_giro("D"))
+gerar("Hab_Concentracao", n(3.0), f_hab_concentracao)
+for ar_, suf in ((False, ""), (True, "_Ar")):
+    gerar("Hab_Preparo_Respiratorio" + suf, n(1.2), f_sopro("Inicio", ar_), loop=False)
+    gerar("Hab_Emissao_Loop" + suf, n(0.9), f_sopro("Loop", ar_))
+    gerar("Hab_Emissao_Fim" + suf, n(0.8), f_sopro("Fim", ar_), loop=False)
+    gerar("Hab_Investida" + suf, n(2.1), f_arremetida(ar_), loop=False)
+gerar("Hab_Golpe_Garras", n(2.2), f_hab_golpe_garras, loop=False)
+gerar("Hab_Area", n(3.4), f_tempestade, loop=False)
+gerar("Hab_Area_Ar", n(2.4), f_tempestade_ar, loop=False)
+gerar("Hab_Recuperacao", n(1.6), f_hab_recuperacao, loop=False)
 print("VEL_ANDAR studs/s", round(S_ANDAR / (D_ANDAR * T_ANDAR) * 17.5, 2), "VEL_CORRER", round(S_CORRER / (D_CORRER * T_CORRER) * 17.5, 2))
 for m in M.modifiers: m.show_viewport = True
 bpy.ops.wm.save_mainfile()
