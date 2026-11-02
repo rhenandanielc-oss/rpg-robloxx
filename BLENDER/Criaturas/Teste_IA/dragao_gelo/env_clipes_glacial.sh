@@ -20,3 +20,7 @@ export ASAS_ARMADAS=1 AG_DEITADO=0.235 AMP_ASA=1.18 ASA_GOLPE=0.35 T_VOO=3.6
 #   ARMADAS em todas as posturas de chao (parado, andar, sentado, deitado...); a dobra lateral nao e mais usada no Glacial
 # (usuario 02/11) deitado/descansando: asas BAIXAS, leve dobra, pontas rentes ao chao (asas_descanso + asas_rente_chao)
 export P_DESCANSO='{"ergue": -8, "recua": 6, "cotovelo": -26, "punho": 46, "leque": 0.4}' ALVO_DESCANSO=0.062
+# (usuario 02/11) "ao voar as asas nao ficam grudadas ao corpo, mas sim fora do corpo, com o movimento": com AMP_ASA 1,18
+#   as pontas chegavam a 0,2 stud da linha do corpo (asas se encostando no alto e rentes as patas embaixo). 0,7 mantem
+#   ~117 graus de batida (-40 a +77) com as pontas a 7-10 studs do corpo; o golpe forte (ASA_GOLPE) e a cadencia ficam
+export AMP_ASA=0.7
