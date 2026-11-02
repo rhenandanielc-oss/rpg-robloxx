@@ -171,6 +171,12 @@ local function ligarAcoes()
 			end, C.garra, "Garra")
 		end
 	end
+	if C.rugido then                                                       -- PATCH_RUGIDOS_FOGO: so pede; o servidor valida (recarga, ocupado)
+		acao("Mont_Rugido", function(st)
+			if st == Enum.UserInputState.Begin and m and Pedido then Pedido:FireServer(m, "usar", "Rugido", workspace.CurrentCamera.CFrame.LookVector) end
+			return Enum.ContextActionResult.Sink
+		end, C.rugido, "Rugir")
+	end
 	acao("Mont_Pousar", function(st) if st == Enum.UserInputState.Begin then Comando:FireServer("pousar") end; return Enum.ContextActionResult.Sink end, C.pousar, "Pousar")
 	acao("Mont_Desmontar", function(st) if st == Enum.UserInputState.Begin then Comando:FireServer("desmontar") end; return Enum.ContextActionResult.Sink end, C.desmontar, "Sair")
 	-- troca de elemento: so em forma com MAIS de um elemento (oficial 30/10: o Montanhas e so Fogo, sem troca)
@@ -200,7 +206,7 @@ local function ligarAcoes()
 	end
 end
 local function desligarAcoes()
-	for _, n in ipairs({"Mont_Subir", "Mont_Descer", "Mont_Correr", "Mont_Planar", "Mont_Pousar", "Mont_Desmontar", "Mont_Elemento", "Mont_Mordida", "Mont_Garra"}) do CAS:UnbindAction(n) end
+	for _, n in ipairs({"Mont_Subir", "Mont_Descer", "Mont_Correr", "Mont_Planar", "Mont_Pousar", "Mont_Desmontar", "Mont_Elemento", "Mont_Mordida", "Mont_Garra", "Mont_Rugido"}) do CAS:UnbindAction(n) end
 	for _, h in ipairs(C.habilidades) do CAS:UnbindAction("Mont_" .. h[1]) end
 end
 
@@ -330,7 +336,7 @@ local function entrar(dragao)
 		task.delay(0.2, function() lp.CameraMinZoomDistance = camCfg("distMin"); lp.CameraMaxZoomDistance = camCfg("distMax") end)
 	end
 	dica.Text = m:GetAttribute("VooLivre") and
-		"Botao direito: girar a camera (o dragao segue) | Cursor: mira | W acelera | solte W: para no ar | E sobe / Q desce | Espaco: decolar | segure 1: sopro continuo (mira no cursor) | 2 Arremetida | 3 Tempestade | 4 Coracao Infernal | R: garra (no chao) | M1: mordida (no chao: terrestre; no ar: mordida aerea | G planar | X desmontar | Roda: zoom | Alt solta o mouse"
+		"Botao direito: girar a camera (o dragao segue) | Cursor: mira | W acelera | solte W: para no ar | E sobe / Q desce | Espaco: decolar | segure 1: sopro continuo (mira no cursor) | 2 Arremetida | 3 Tempestade | 4 Coracao Infernal | R: garra (no chao) | M1: mordida (no chao: terrestre; no ar: mordida aerea | G planar | T rugir | X desmontar | Roda: zoom | Alt solta o mouse"
 		or "Mouse: direcao (no ar: sobe/desce/vira para onde a camera olha) | W acelera, S desacelera | Espaco decolar | G planar | F pousar | X desmontar | 1-4 habilidades | Alt solta o mouse"
 	slotMordida.Visible = m:GetAttribute("VooLivre") == true
 	for _, h in ipairs(C.habilidades) do slots[h[1]].cob.Parent.Visible = habPermitida(h[1]) end

@@ -31,6 +31,9 @@ M.ESTADOS = {
 	RugidoTerritorial = {postura = "pe", entrada = "Rugido_Territorial", depois = "Idle"},          -- dominio do territorio
 	Intimidacao = {postura = "pe", entrada = "Reagir_Estimulo", loop = {"Intimidar"}},              -- encara, dentes, grunhidos
 	Curiosidade = {postura = "pe", entrada = "Curiosidade", depois = "Observacao"},                 -- inclina a cabeca, fareja
+	-- PATCH_RUGIDOS_FOGO (02/11): so nas formas que tem o clipe (o Cerebro confere antes de pedir)
+	RugidoAmeaca = {postura = "pe", entrada = "Rugido_Ameaca", loop = {"Preparar_Combate"}, levantar = "Ninho_Alerta"},   -- encara e explode
+	RugidoVitoria = {postura = "pe", entrada = "Rugido_Vitoria", depois = "Idle"},                  -- triunfo (inimigo importante)
 }
 -- como sair de cada postura para ficar em pe (inserido automaticamente)
 M.LEVANTAR = {deitado = "Acordar", abaixado = "Montaria_Levantar", sentado = "Levantar_Sentado"}

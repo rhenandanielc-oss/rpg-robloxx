@@ -25,6 +25,25 @@ return {
 	-- PATCH_AUDIO_GELO (02/11): perfil PROPRIO por forma regional (atributo FormaRegional). O que nao estiver aqui cai
 	-- no padrao acima (Montanhas). Alcance por categoria (dist*): voz longe, respiracao perto.
 	formas = {
+		-- PATCH_RUGIDOS_FOGO (02/11): voz do Dragao das Montanhas — agressiva, rouca e dominante (familia Creature Roar /
+		-- Giant Crab Monster / Pit Bull snarl); NADA da familia Lion usada no Glacial. So as chaves de VOZ; o resto herda.
+		Montanhas = {
+			rugidoTerritorial = id(9113985451),          -- Creature Roar Constant Deep Throaty Growls 1 (trecho inicial)
+			rugidoCorpo = id(9113987603),                -- Creature Vocal Giant Crab Monster Roars 1 (corpo grave, camada)
+			rugidoAmeaca = id(9113985445),               -- Creature Roar Deep Throaty Growls 2 (explosao curta)
+			rugidoAmeacaCorpo = id(9113980319),          -- Creature Mix Giant Crab Monster Roar Growl 1 (camada; a 4 carrega vazia)
+			rugidoVitoria = id(9113985717),              -- Creature Roar Mix Of Animals 1 (imponente, medio)
+			rosnado = {id(9113973520), id(9113973748), id(9113973436)},   -- Creature Growls Pit Bull 4 / 3 / 1: snarl agressivo
+			bafo = id(9114431819),                       -- Fire Burst 6: ascending air release (calor na expiracao, baixo)
+			esforco = {id(9125467833), id(9125467848)}, grunhido = {id(9125467833), id(9125467848)}, alerta = id(9125467848),
+			intimidar = {id(9113973520), id(9113973748)},
+			dano = id(9113985598), danoLeve = id(9125467848),            -- Creature Roar Mix Of Animals 2 / Guttural 3
+			farejar = {id(9119305209), id(9119305223)},  -- Sniff Breathe In 5 / 6
+			respiroSono = id(9113971531), despertar = id(9113985604),    -- Lion 4 breathy lento (do Montanhas) / Creature Roar Mix 1
+			beber = id(9120571917), mastigar = {id(9125467298), id(9125466463)},
+			inspira = {id(9119305002), id(9119304904)},
+			distVoz = 360, distRespiro = 90,
+		},
 		Glacial = {
 			-- voz: felino grande grave/cansado (Lion "tired/pitched down", growls com "tubular ticking") — nao e o Montanhas
 			rugido = id(9116306862),                     -- Lion Roar Tired 3: pitched down, large (territorial)

@@ -23,7 +23,10 @@ return {
 		Mordida = {clipe = "Ataque_Mordida", recarga = 1.6, dano = 18, alcance = 34, raio = 14, intensidade = "leve"},
 		Garra = {clipe = "Ataque_Garra_E", clipeD = "Ataque_Garra_D", recarga = 1.8, dano = 14, alcance = 30, raio = 18, intensidade = "moderado"},
 		Cauda = {clipe = "Ataque_Cauda", recarga = 3, dano = 20, raio = 62, intensidade = "pesado"},
-		Rugido = {clipe = "Rugido_Combate", recarga = 8, dano = 0},  -- sem dano: nao ha regra aprovada
+		Rugido = {clipe = "Rugido_Combate", recarga = 8, dano = 0, emissao = 0.95,  -- sem dano: nao ha regra aprovada
+			-- PATCH_RUGIDOS_FOGO (02/11): por forma, o clipe certo para a situacao {clipe, segundo da emissao}: parado =
+			-- corpo inteiro; andando = so pescoco/cabeca (_Sup) sobre a locomocao; voando = parcial aereo (asas seguem o voo)
+			porForma = {Montanhas = {chao = {"Rugido_Combate", 0.48}, mov = {"Rugido_Combate_Sup", 0.48}, ar = {"Rugido_Aereo_Sup", 0.84}}}},
 	},
 	habilidades = {
 		Sopro = {recarga = 9, energia = 25, emissao = 1.8, tick = 0.3, elemental = true,

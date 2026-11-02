@@ -341,10 +341,18 @@ function N:_Cauda(def, el)
 	task.wait(math.max(t and t.Length or 0, 1.8) - 0.1)
 end
 function N:_Rugido(def, el, noAr)
-	local t = self:tocar("Rugido_Combate", noAr, {RugidoInicio = 0.95}, function(n)
-		if n == "RugidoInicio" then FX:FireAllClients({d = self.m, hab = "Rugido", fase = "emissao", el = el}) end
+	-- PATCH_RUGIDOS_FOGO: clipe por situacao (config porForma); sem config, o rugido padrao (camada no ar)
+	local nome, tEm, camada = "Rugido_Combate", def.emissao or 0.95, noAr
+	local pf = def.porForma and def.porForma[self.forma]
+	if pf then
+		local esc = noAr and pf.ar or ((self.m:GetAttribute("Velocidade") or 0) > 3 and pf.mov) or pf.chao
+		if esc and self:clipe(esc[1], false) then nome, tEm, camada = esc[1], esc[2], false end
+	end
+	FX:FireAllClients({d = self.m, hab = "Rugido", fase = "preparo", el = el, noAr = noAr})
+	local t = self:tocar(nome, camada, {RugidoInicio = tEm}, function(n)
+		if n == "RugidoInicio" then FX:FireAllClients({d = self.m, hab = "Rugido", fase = "emissao", el = el, tipo = noAr and "aereo" or "combate"}) end
 	end)
-	task.wait(math.max(t and t.Length or 0, 2.6) - 0.1)
+	task.wait(math.max(t and t.Length or 0, tEm + 0.6) - 0.1)
 end
 
 -- ===== habilidades oficiais (prototipos) ======================================================================

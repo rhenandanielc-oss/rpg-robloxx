@@ -17,6 +17,7 @@ workspace.ChildAdded:Connect(function(m) task.defer(function() if dragao(m) then
 -- formas que as tenham (o Montanhas nao tem mais, oficial 30/10).
 local ultimaRuptura = {}
 local ultimoCoracao = {}
+local ultimoRugidoIA = {}                                           -- PATCH_RUGIDOS_FOGO
 local function raiz(m) return m and (m:FindFirstChild("HumanoidRootPart") or m.PrimaryPart) end
 local function escolher_antigo(c, alvo)          -- substituida pela escolha tatica abaixo
 	local r = raiz(alvo); if not r then return nil end
@@ -114,6 +115,11 @@ local function escolher(c, alvo)
 		elseif math.abs(acima) > 30 and not noAr then table.insert(bloqueio, "Arremetida: desnivel")
 		else add("Arremetida", d > alcSopro(c) and 1.0 or 0.75) end
 	end
+	-- PATCH_RUGIDOS_FOGO: rugido de combate ocasional a media distancia (forma com rugido proprio), nunca colado
+	local RG = Cfg.basicos.Rugido
+	if RG.porForma and RG.porForma[c.forma] and d >= 40 and d < 150 and frente and os.clock() - (ultimoRugidoIA[c.m] or -99) > 18 and math.random() < 0.3 then
+		add("Rugido", 0.7)
+	end
 	table.sort(ordem, function(x, y) return x[2] > y[2] end)
 	for _, o in ipairs(ordem) do
 		local h = o[1]
@@ -122,6 +128,7 @@ local function escolher(c, alvo)
 			if ok then
 				if h == "Ruptura" then ultimaRuptura[c.m] = os.clock() end
 				if h == "Coracao" then ultimoCoracao[c.m] = os.clock() end
+				if h == "Rugido" then ultimoRugidoIA[c.m] = os.clock() end
 				c.m:SetAttribute("IA_Habilidade", h); c.m:SetAttribute("IA_Bloqueio", #bloqueio > 0 and table.concat(bloqueio, "; ") or nil)
 				return h
 			end
@@ -181,7 +188,7 @@ Pedido.OnServerEvent:Connect(function(plr, m, acao, arg, dir)
 		local usou = c:usar(arg, {direcao = typeof(dir) == "Vector3" and dir or nil, segurar = arg == "Sopro"})
 		-- habilidade usada perto de um guardiao selvagem (ou mirando nele): ele reage ao agressor (direcao aproximada).
 		-- Sem dano no guardiao: vida/incapacitacao de dragao selvagem ainda sem regra aprovada.
-		if usou and plr.Character then
+		if usou and plr.Character and arg ~= "Rugido" then                -- rugir nao e agressao (PATCH_RUGIDOS_FOGO)
 			local pd = m:GetPivot().Position; local fr = c:frente()
 			for _, g in ipairs(workspace:GetChildren()) do
 				if g ~= m and g:IsA("Model") and g:GetAttribute("GuardiaoNinho") and g.PrimaryPart then

@@ -1455,6 +1455,93 @@ def f_rugido(base_ar=False):
         return p
     return fn
 
+# ---------------------------------------------------------------- RUGIDOS DO FOGO (02/11, Dragao das Montanhas)
+# Agressivo, dominante e expressivo (o Glacial e frio e controlado). Cada um: preparo -> emissao (tempo = fase do som no
+# SonsDragao_Cliente / marcador do Nucleo) -> reacao do corpo (garganta treme, peito, coluna) -> recuperacao.
+def tremor_voz(rug, freq, amp, u): return math.sin(2 * math.pi * freq * u) * rug * amp
+def garganta(p, t):
+    """tremor da garganta/pescoco durante a vocalizacao (vibracao gutural); chamar DEPOIS de pescoco_alto/voo"""
+    for i, n_ in enumerate(PESCOCO):
+        c_, e_ = p.curva[n_]; p.curva[n_] = (c_ + t * (0.3 + 0.25 * i), e_ + 0.2 * t)
+    return t
+
+def f_rugido_ameaca(u):
+    """Rugido de AMEACA 3,0 s (emissao do rugido em 0,56; rosnado desde 0,25): encara o alvo (o MovimentoVivo vira
+    pescoco/cabeca pelo AlvoOlhar), focinho BAIXO e a frente, dentes a mostra, ombros e asas tensos, patas se
+    reposicionam; o rosnado cresce e EXPLODE num rugido curto PROJETANDO a cabeca para frente (nunca para o ceu);
+    mantem a atencao no alvo."""
+    enc = janela(u, 0.0, 0.22); rosn = pulso(u, 0.25, 0.42, 0.52, 0.58); rug = pulso(u, 0.55, 0.60, 0.74, 0.86)
+    fica = janela(u, 0.80, 1.0)
+    p = Pose(); base_pe(p, 0.45 * enc)
+    for c in PERNAS: p.pata[c]["beta"] += (7 if c.startswith("PD") else 4) * enc
+    p.off += Vector((0, 0.008 * rosn - 0.03 * rug, -0.006 * enc + 0.004 * rosn))
+    p.arf += 2 * rosn - 5 * rug
+    p.curva["spine_1"] = (2 * rosn + 4 * rug, 0); p.curva["spine_0"] = (-2 * rosn, 0)
+    tr = tremor_voz(max(rosn * 0.5, rug), 26, 2.6, u)
+    pescoco_alto(p, cima=-16 * enc - 4 * rosn - 10 * rug + 3 * fica, esq=0.4 * tr, cab=5 * enc + 2 * rosn - 7 * rug)
+    # FOCINHO BAIXO e a frente (revisao 02/11: so com pescoco_alto o pescoco subia no rugido): mistura com a pose de
+    # boca na altura do alvo (0,42 = ~7 studs), mais forte no rosnado/rugido
+    w = min(1.0, 0.45 * enc + 0.35 * rosn + 0.6 * rug)
+    if w > 0.01:
+        antes = {n_: p.curva[n_] for n_ in PESCOCO + ["head"]}
+        pescoco_ao_chao(p, lerp(0.42, 0.30, rug), cab_extra=8 * rug)            # focinho a frente: a mandibula abre para frente
+        for n_, (ca, ea) in antes.items():
+            cb, eb = p.curva[n_]; p.curva[n_] = (lerp(ca, cb, w), lerp(ea, eb, w))
+    garganta(p, tr)
+    boca_abre(p, 0.14 * enc + 0.16 * rosn + 0.95 * rug + 0.06 * fica, tranco=tr)
+    p.asas = asas_ameaca(0.35 * enc + 0.25 * rug + 0.03 * math.sin(2 * math.pi * 7 * u) * enc)
+    cauda(p, -9 + 4 * rug, 5.0, onda_cauda(u, [(9.0, 1, 0.0, 0.9), (3.0, 3, 1.0, 1.2)]),
+          onda=[(2.5 * enc + 2.5 * rug) * PESO_CAUDA[k] for k in range(7)])
+    return p
+
+def f_rugido_combate_fogo(u):
+    """Rugido de COMBATE do Fogo 1,6 s (emissao em 0,30): contrai o pescoco em S, PROJETA a cabeca de uma vez, boca
+    escancarada, vocalizacao curta e feroz; ombros/peito/coluna acusam o esforco, cauda compensa, recupera rapido."""
+    con = pulso(u, 0.0, 0.22, 0.24, 0.32); proj = pulso(u, 0.28, 0.34, 0.58, 0.82)
+    p = Pose(); em_pe(p)
+    for c in PERNAS: p.pata[c]["beta"] += (5 if c.startswith("PD") else 2) * proj
+    p.off += Vector((0, 0.014 * con - 0.028 * proj, 0.004 * con - 0.006 * proj))
+    p.arf += 3 * con - 6 * proj
+    p.curva["spine_1"] = (4 * con + 5 * proj, 0); p.curva["spine_0"] = (-2 * con + 1.5 * proj, 0)
+    pescoco_alto(p, cima=6 * con - 14 * proj, cab=5 * con - 6 * proj)
+    for i, n_ in enumerate(PESCOCO):                                            # S de recolhimento -> projecao
+        c_, e_ = p.curva[n_]; p.curva[n_] = (c_ + [12, 0, -12][i] * con + [-10, -4, 6][i] * proj, e_)
+    tr = tremor_voz(proj, 24, 3.2, u); garganta(p, tr)
+    boca_abre(p, 0.2 * con + 1.0 * proj, tranco=tr)
+    p.asas = asas_ameaca(0.12 * con + 0.32 * proj)
+    vert = [(5 * proj - 3 * con) * PESO_CAUDA[k] for k in range(7)]
+    cauda(p, -14 + 5 * proj, 5.0, onda_cauda(u, [(2.5, 1, 0.3, 1.0)]), onda=vert)
+    return p
+
+def f_rugido_aereo(u):
+    """Rugido AEREO 2,4 s (emissao em 0,35): no Studio vira clipe PARCIAL (_Sup: so pescoco/cabeca/mandibula/peito),
+    entao asas, patas e cauda seguem o voo. Peito expande, pescoco projeta discretamente para frente, boca abre."""
+    ins = pulso(u, 0.0, 0.25, 0.28, 0.36); rug = pulso(u, 0.33, 0.40, 0.72, 0.9)
+    p = f_pairar(u * 2 % 1.0)
+    tr = math.sin(2 * math.pi * 20 * u) * rug * 2.5
+    p.arf += 3 * ins - 2 * rug
+    p.curva["spine_1"] = (p.curva.get("spine_1", (0, 0))[0] + 6 * ins + 3 * rug, 0)
+    pescoco_voo(p, cima=-30 + 8 * ins - 4 * rug, esq=0.3 * tr, cab=-p.arf * 0.2 + 4 * ins - 6 * rug)
+    boca_abre(p, 0.15 * ins + 1.0 * rug, tranco=tr)
+    return p
+
+def f_rugido_vitoria(u):
+    """Rugido de VITORIA 3,6 s (emissao em 0,36): ergue a cabeca, enche o peito, abre as asas pela metade, rugido medio
+    e imponente (cabeca alta mas nao ao ceu), cauda balancando; recupera devagar."""
+    sobe = pulso(u, 0.0, 0.25, 0.80, 1.0); ins = pulso(u, 0.18, 0.30, 0.32, 0.38); rug = pulso(u, 0.35, 0.42, 0.66, 0.80)
+    p = Pose(); em_pe(p)
+    p.off += Vector((0, 0.006 * ins, 0.002 * sobe + 0.001 * ins))           # peito enche sem esticar as patas
+    p.arf += 1.5 * sobe + 1.5 * ins                                             # peito sobe pela coluna, nao pelas patas
+    p.curva["spine_1"] = (3 * sobe + 3 * ins + 2 * rug, 0)
+    tr = tremor_voz(rug, 18, 2.2, u)
+    pescoco_alto(p, cima=10 * sobe + 4 * ins + 2 * rug, esq=0.4 * tr + 3 * math.sin(2 * math.pi * u) * sobe, cab=3 * ins + 8 * rug)
+    garganta(p, tr)
+    boca_abre(p, 0.12 * ins + 0.95 * rug, tranco=tr)
+    p.asas = asas_ameaca(0.45 * sobe + 0.08 * rug)
+    cauda(p, -12 + 8 * sobe, 5.0, onda_cauda(u, [(5.0, 1, 0.2, 0.9), (2.0, 3, 1.0, 1.2)]),
+          onda=[5 * sobe * PESO_CAUDA[k] for k in range(7)])
+    return p
+
 def _sopro(p, ar, recolhe, mira, abre, tremor, u):
     """pescoco/cabeca/boca do sopro sobre a pose base (solo ou pairando)"""
     if ar:
@@ -1900,7 +1987,13 @@ gerar("Ataque_Mordida", n(1.4), f_ataque_mordida, loop=False)
 gerar("Ataque_Garra_E", n(1.5), f_ataque_garra("E"), loop=False)
 gerar("Ataque_Garra_D", n(1.5), f_ataque_garra("D"), loop=False)
 gerar("Ataque_Cauda", n(1.8), f_ataque_cauda, loop=False)
-gerar("Rugido_Combate", n(2.6), f_rugido(False), loop=False)
+if ROAR_ESTILO == "fogo":                     # rugidos proprios do Fogo (02/11); o Gelo segue com o padrao v2
+    gerar("Rugido_Combate", n(1.6), f_rugido_combate_fogo, loop=False)
+    gerar("Rugido_Ameaca", n(3.0), f_rugido_ameaca, loop=False)
+    gerar("Rugido_Aereo", n(2.4), f_rugido_aereo, loop=False)
+    gerar("Rugido_Vitoria", n(3.6), f_rugido_vitoria, loop=False)
+else:
+    gerar("Rugido_Combate", n(2.6), f_rugido(False), loop=False)
 gerar("Rugido_Combate_Camada", n(2.6), f_rugido(True), loop=False)
 for ar_, suf in ((False, ""), (True, "_Camada")):
     gerar("Sopro_Inicio" + suf, n(1.2), f_sopro("Inicio", ar_), loop=False)

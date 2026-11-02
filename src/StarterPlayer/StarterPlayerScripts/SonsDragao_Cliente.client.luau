@@ -40,7 +40,27 @@ local VOZ = {
 }
 -- PATCH_AUDIO_GELO: vozes do Glacial — cada comportamento com o SEU som (territorial, ameaca de ninho, intimidacao,
 -- alerta, grunhido, farejar, comer, beber, sono, despertar, dano leve/forte); tons ja contam com TomVoz 0.8
-local VOZ_FORMA = {Glacial = {
+-- PATCH_RUGIDOS_FOGO (02/11): Dragao das Montanhas — fases = momentos reais dos clipes novos (preparo/inspiracao,
+-- emissao com a boca abrindo, bafo quente no fim); rugidos em CAMADAS (voz + corpo grave), grunhidos discretos
+local VOZ_MONTANHAS = {
+	Rugido_Territorial = {{0.12, "inspira", 1, 0.55, 0.62}, {0.30, "rugidoTerritorial", 1, 1.15, 0.92}, {0.31, "rugidoCorpo", 1, 0.6, 0.72},
+		{0.86, "bafo", 0.8, 0.22, 0.8}},
+	Rugido_Ameaca = {{0.25, "rosnado", 1, 0.75, 0.72}, {0.56, "rugidoAmeaca", 1, 1.05, 0.95}, {0.565, "rugidoAmeacaCorpo", 1, 0.55, 0.78}},
+	Rugido_Vitoria = {{0.18, "inspira", 1, 0.5, 0.6}, {0.36, "rugidoVitoria", 1, 1.0, 0.82}, {0.365, "rugidoCorpo", 1, 0.45, 0.85},
+		{0.8, "bafo", 0.7, 0.2, 0.85}},
+	Ninho_Ameaca = {{0.18, "rosnado", 1, 0.7, 0.75}, {0.36, "rugidoAmeaca", 1, 1.0, 0.9}, {0.365, "rugidoAmeacaCorpo", 1, 0.5, 0.8}},
+	Intimidar = {{0.18, "intimidar", 0.8, 0.6, 0.78}, {0.68, "rosnado", 0.5, 0.5, 0.82}},
+	Reagir_Estimulo = {{0.12, "alerta", 0.8, 0.6, 0.95}}, Ninho_Alerta = {{0.2, "alerta", 0.8, 0.6, 0.9}},
+	Idle_Alerta_Mantido = {{0.5, "grunhido", 0.35, 0.45, 0.9}}, Preparar_Combate = {{0.3, "rosnado", 0.45, 0.5, 0.8}},
+	Curiosidade = {{0.4, "farejar", 0.9, 0.45, 0.8}}, Observar_Farejar = {{0.25, "farejar", 0.9, 0.45, 0.78}, {0.65, "farejar", 0.6, 0.4, 0.85}},
+	Comer = {{0.1, "mastigar", 1, 0.6, 0.75}, {0.433, "mastigar", 1, 0.6, 0.7}, {0.766, "mastigar", 1, 0.6, 0.78}},
+	Beber = {{0.2, "beber", 1, 0.45, 0.85}},
+	Adormecer = {{0.6, "respiroSono", 1, 0.35, 0.5}}, Dormir = {{0.1, "respiroSono", 1, 0.3, 0.48}},
+	Acordar = {{0.15, "despertar", 1, 0.45, 0.8}, {0.6, "esforco", 0.6, 0.45, 0.9}},
+	Dano_Leve = {{0.05, "danoLeve", 1, 0.65, 1.0}}, Dano_Leve_Ar = {{0.05, "danoLeve", 1, 0.65, 1.0}},
+	Dano_Forte = {{0.05, "dano", 1, 0.8, 0.9}}, Dano_Forte_Ar = {{0.05, "dano", 1, 0.8, 0.9}},
+}
+local VOZ_FORMA = {Montanhas = VOZ_MONTANHAS, Glacial = {
 	Ninho_Ameaca = {{0.36, "intimidar", 1, 1.0, 1.0}}, Rugido_Territorial = {{0.3, "rugido", 1, 1.25, 1.0}},
 	Intimidar = {{0.15, "intimidar", 0.9, 0.85, 1.0}, {0.65, "grunhido", 0.6, 0.6, 0.95}},
 	Reagir_Estimulo = {{0.12, "alerta", 0.8, 0.65, 1.05}}, Ninho_Alerta = {{0.2, "alerta", 0.8, 0.65, 1.0}},
@@ -68,10 +88,16 @@ local function asasDe(m, nome)
 	return ASAS[nome] or (t and t[nome])
 end
 local INTERVALO_VOZ = {rugido = 12, esforco = 7, mordida = 0.5, intimidar = 8, grunhido = 5, alerta = 5, farejar = 2.5,
-	mastigar = 0.5, beber = 1.5, respiroSono = 4, despertar = 10, dano = 1.2, danoLeve = 0.8}
-local CORTE_VOZ = {esforco = 1.2, grunhido = 1.5, alerta = 1.2, farejar = 1.4, mastigar = 1.1, beber = 1.3, respiroSono = 4.5, respiro = 1.8}
-local LONGE = {rugido = true, intimidar = true, rugidoCombate = true, dano = true}
-local PERTO = {respiro = true, farejar = true, beber = true, mastigar = true, respiroSono = true}
+	mastigar = 0.5, beber = 1.5, respiroSono = 4, despertar = 10, dano = 1.2, danoLeve = 0.8,
+	rugidoTerritorial = 8, rugidoCorpo = 2, rugidoAmeaca = 4, rugidoAmeacaCorpo = 2, rugidoVitoria = 20, rosnado = 2.5, bafo = 3, inspira = 2}
+local CORTE_VOZ = {esforco = 1.2, grunhido = 1.5, alerta = 1.2, farejar = 1.4, mastigar = 1.1, beber = 1.3, respiroSono = 4.5, respiro = 1.8,
+	rugidoTerritorial = 3.0, rugidoCorpo = 2.6, rugidoAmeaca = 1.4, rugidoAmeacaCorpo = 1.3, rugidoVitoria = 2.2, rosnado = 1.1, bafo = 1.2,
+	inspira = 1.1, dano = 0.9, despertar = 1.0, intimidar = 1.1}
+local LONGE = {rugido = true, intimidar = true, rugidoCombate = true, dano = true, rugidoTerritorial = true, rugidoCorpo = true,
+	rugidoAmeaca = true, rugidoAmeacaCorpo = true, rugidoVitoria = true}
+local RUGIDOS = {rugido = true, rugidoTerritorial = true, rugidoAmeaca = true, rugidoVitoria = true, rugidoCombate = true}
+local ultimoRugidoGlobal, donoUltimoRugido = -99, nil      -- dois dragoes nao rugem por cima um do outro
+local PERTO = {respiro = true, farejar = true, beber = true, mastigar = true, respiroSono = true, bafo = true, inspira = true}
 local ultimaVoz = {}
 
 local ativos = {}
@@ -100,7 +126,12 @@ local function tocarVoz(m, pp, nome, fase)
 			if C[k] and os.clock() - (ultimaVoz[m][k] or -99) >= (INTERVALO_VOZ[k] or 5) then
 				ultimaVoz[m][k] = os.clock()
 				local dist = LONGE[k] and (C.distVoz or Cfg.distMax) or PERTO[k] and (C.distRespiro or 120) or nil
-				tocar(pp, sorteia(C[k]), ev[4], ev[5] * (0.95 + math.random() * 0.1) * tomVoz(pp), CORTE_VOZ[k], dist)
+				local vol = ev[4]
+				if RUGIDOS[k] then                                    -- outro dragao rugiu ha pouco: este entra baixo (sem embolar)
+					if donoUltimoRugido ~= m and os.clock() - ultimoRugidoGlobal < 1.6 then vol *= 0.35 end
+					ultimoRugidoGlobal, donoUltimoRugido = os.clock(), m
+				end
+				tocar(pp, sorteia(C[k]), vol, ev[5] * (0.95 + math.random() * 0.1) * tomVoz(pp), CORTE_VOZ[k], dist)
 			end
 		end
 	end
@@ -258,7 +289,7 @@ if FX then
 		local pp = e.d.PrimaryPart; local h, f, el = e.hab, e.fase, e.el
 		local C = cfgDe(e.d)
 		if el == "Gelo" and (h == "Sopro" or h == "Rajadas" or h == "ZeroAbsoluto" or h == "Nevasca") then return end   -- PATCH_AUDIO_GELO: SonsGelo
-		if el == "Fogo" and (h == "Sopro" or h == "Arremetida" or h == "Tempestade" or h == "Coracao" or h == "SangueDeMagma") then return end   -- PATCH_AUDIO_FOGO: SonsFogo
+		if el == "Fogo" and (h == "Sopro" or h == "Arremetida" or h == "Tempestade" or h == "Coracao" or h == "SangueDeMagma" or h == "Rugido") then return end   -- PATCH_AUDIO_FOGO: SonsFogo
 		if h == "Sopro" and f == "emissao" then
 			if el == "Fogo" then tocar(pp, C.fogo, 1.4, 0.8); task.delay(0.9, function() tocar(pp, C.fogo, 1.2, 0.75) end)
 			elseif el == "Terra" then tocar(pp, C.rochaArrasto, 1.2, 0.9)

@@ -70,6 +70,27 @@ function C.novo(modelo, ninho, pois, cfg)
 end
 
 -- foco do olhar (MovimentoVivo_Cliente): posicao da cabeca do alvo, ou nil para soltar
+-- PATCH_RUGIDOS_FOGO: a forma tem este clipe proprio? (rugidos novos so onde existem; senao o comportamento antigo)
+function C:temClipe(nome)
+	local E = self.E; return E and E.pasta ~= nil and E.pasta:FindFirstChild((E.prefixo or "") .. nome) ~= nil
+end
+-- vitoria: SO depois de derrotar um inimigo importante (jogador ou dragao), nunca apos cada inimigo comum; intervalo longo
+local INTERVALO_VITORIA = 120
+local function eImportante(alvo)                                    -- jogador ou dragao (avaliado com o alvo ainda vivo)
+	return alvo ~= nil and (game:GetService("Players"):GetPlayerFromCharacter(alvo) ~= nil or alvo:GetAttribute("FormaRegional") ~= nil)
+end
+function C:talvezVitoria(alvo, vivo, importante)
+	if not (alvo and vivo()) or not self:temClipe("Rugido_Vitoria") then return end
+	if os.clock() - (self.ultVitoria or -1e9) < INTERVALO_VITORIA then return end
+	if not importante then return end                                 -- o personagem morto ja nao pertence ao jogador
+	local h = alvo:FindFirstChildOfClass("Humanoid")
+	local derrotado = (not alvo.Parent) or (h and h.Health <= 0) or alvo:GetAttribute("Incapacitado") == true
+	if not derrotado then return end
+	self.ultVitoria = os.clock(); self:registrar("vitoria sobre " .. alvo.Name)
+	self:focar(nil)
+	if self.L.noAr then self.L:pousar(vivo, true) end
+	self:comportamento("RugidoVitoria", 3.8, vivo)
+end
 function C:focar(alvo)
 	local r = alvo and raizDe and raizDe(alvo)
 	self.m:SetAttribute("AlvoOlhar", r and (r.Position + Vector3.new(0, 2, 0)) or nil)
@@ -541,9 +562,11 @@ end
 -- RETORNO URGENTE + DEFESA + PERSEGUICAO LIMITADA + ATAQUE
 function C:_DefendNest(vivo)
 	local ultimoAtaque, ameacou, falhas = 0, false, 0
+	local ultimoAlvo, ultimoImportante
 	while vivo() do
 		local alvo, a = self:maiorAmeaca()
 		if not alvo or a.nivel < 2 then break end
+		if alvo ~= ultimoAlvo then ultimoAlvo = alvo; ultimoImportante = eImportante(alvo) end
 		if self.m:GetAttribute("EmAtaque") then
 			if self.L.noAr and self.m:GetAttribute("EmAtaque") ~= "Arremetida" then self.L:clipe("Pairar", true) end   -- golpe no ar: paira
 			task.wait(0.1); continue
@@ -614,7 +637,9 @@ function C:_DefendNest(vivo)
 			end
 			self.L:virarPara(pI, function() return vivo() end)
 			self:focar(alvo)
-			if not ameacou then ameacou = true; self:comportamento("AmeacaNinho", 4.6, vivo)
+			if not ameacou then ameacou = true
+				-- PATCH_RUGIDOS_FOGO: encara e explode num rugido curto (cabeca baixa a frente) onde houver o clipe
+				if self:temClipe("Rugido_Ameaca") then self:comportamento("RugidoAmeaca", 3.1, vivo) else self:comportamento("AmeacaNinho", 4.6, vivo) end
 			else self:comportamento("PosturaCombate", 1.0, vivo) end
 			if self:podeAtacar(alvo) and os.clock() - ultimoAtaque > self.cfg.intervaloAtaque then
 				ultimoAtaque = os.clock(); self:definir("Attack"); Territorio.Eventos.AtaqueSolicitado:Fire(self.m, alvo)
@@ -624,5 +649,6 @@ function C:_DefendNest(vivo)
 	end
 	self.aposConfronto = os.clock(); self.recuperado = false
 	self:focar(nil)
+	self:talvezVitoria(ultimoAlvo, vivo, ultimoImportante)
 end
 return C

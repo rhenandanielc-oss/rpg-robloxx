@@ -53,6 +53,7 @@ return {
 		pousar = {Enum.KeyCode.F, Enum.KeyCode.ButtonB},
 		subirAr = {Enum.KeyCode.E}, descerAr = {Enum.KeyCode.Q},          -- (29/10) E sobe / Q desce (prioridade sobre a camera)
 		desmontar = {Enum.KeyCode.X, Enum.KeyCode.DPadDown},
+		rugido = {Enum.KeyCode.T, Enum.KeyCode.DPadRight},               -- PATCH_RUGIDOS_FOGO: rugir (chao parado/andando ou voando)
 		elemento = {Enum.KeyCode.Z, Enum.KeyCode.DPadUp},                  -- so liga em forma com MAIS de um elemento (nenhuma hoje)
 		habilidades = {                                                   -- ordem oficial das 4 ativas (oficial 30/10): {id, tecla, gamepad, rotulo}
 			{"Sopro", Enum.KeyCode.One, Enum.KeyCode.ButtonR2, "Sopro"},

@@ -36,6 +36,10 @@ local B = {
 	lavaRochas = id(9112823563),                                            -- Lava Rumble 2: rocks, violent (loop)
 	mordida = {id(9125467298), id(9125466463)},                             -- Creature Bite Pterodactyl Crunch
 	asa = {id(9120771864), id(9120776877)},                                 -- Wing Flaps: Large Flying Creature
+	-- rugidos (PATCH_RUGIDOS_FOGO): combate curto e feroz / aereo poderoso; rosnado de preparo
+	rugCombate = id(9113980319), rugCombateB = id(9113985445),             -- Giant Crab Monster Roar Growl 1 / Creature Roar Deep Throaty 2
+	rugAereo = id(9113985604), rugAereoCorpo = id(9113987603),              -- Creature Roar Mix Of Animals 1 / Giant Crab Monster Roars 1
+	rosnado = {id(9113973520), id(9113973748)},                             -- Creature Growls Pit Bull 4 / 3
 }
 S.BANCO = B
 local function peito(m) return osso(m, "Coluna2") or osso(m, "spine_0") or m.PrimaryPart end
@@ -237,6 +241,27 @@ local function coracao(m, d)
 	end
 end
 
+-- ===== RUGIDO de combate (solo/andando) e AEREO: rosnado curto no preparo -> no instante da emissao (marcador do
+-- Nucleo, boca abrindo) a voz + corpo grave em camadas; bafo quente baixo no fim. Volume moderado, alcance de rugido.
+local function rugido(m, d)
+	local cab = cabeca(m)
+	if d.fase == "preparo" then
+		novoTok(m, "Rug")
+		tocar(cab, sorteia(B.rosnado), {vol = 0.55, tom = var(0.75, 0.04), corte = 0.6, fadeOut = 0.2, dist = 160, prio = 3})
+	elseif d.fase == "emissao" then
+		if d.tipo == "aereo" then
+			tocar(cab, B.rugAereo, {vol = 1.1, tom = var(0.74, 0.03), corte = 2.0, fadeOut = 0.6, dist = 360, min = 25, prio = 5})
+			tocar(cab, B.rugAereoCorpo, {vol = 0.5, tom = var(0.7, 0.03), corte = 1.8, fadeOut = 0.6, dist = 300, min = 25, prio = 4})
+		else
+			tocar(cab, B.rugCombate, {vol = 1.05, tom = var(0.82, 0.04), corte = 1.2, fadeOut = 0.45, dist = 340, min = 22, prio = 5})
+			tocar(cab, B.rugCombateB, {vol = 0.55, tom = var(0.9, 0.04), corte = 1.0, fadeOut = 0.4, dist = 300, min = 22, prio = 4})
+		end
+		task.delay(d.tipo == "aereo" and 1.6 or 1.0, function()
+			if vivo(m) then tocar(bocaO(m), B.arQuente, {vol = 0.18, tom = 0.85, corte = 1.0, fadeIn = 0.1, fadeOut = 0.5, dist = 90}) end
+		end)
+	end
+end
+
 -- ===== passiva: Sangue de Magma (so na ativacao, discreto) ======================================================
 local function sangue(m)
 	tocar(peito(m), B.lavaGraveB, {vol = 0.5, tom = 0.7, corte = 1.6, fadeIn = 0.3, fadeOut = 0.8, dist = 140})
@@ -250,6 +275,7 @@ function S.evento(d)
 	elseif d.hab == "Arremetida" then arremetida(m, d)
 	elseif d.hab == "Tempestade" then tempestade(m, d)
 	elseif d.hab == "Coracao" then coracao(m, d)
-	elseif d.hab == "SangueDeMagma" and d.fase == "ativar" then sangue(m) end
+	elseif d.hab == "SangueDeMagma" and d.fase == "ativar" then sangue(m)
+	elseif d.hab == "Rugido" then rugido(m, d) end
 end
 return S
