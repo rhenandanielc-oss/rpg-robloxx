@@ -36,7 +36,8 @@ sc.view_settings.view_transform = "AgX"
 cam = sc.camera
 VISTAS = {"tres_q": (V((1.9, -2.9, 1.15)), V((0, -0.25, 0.40)), 38), "lado": (V((-3.4, -0.25, 0.55)), V((0, -0.25, 0.40)), 38),
           "frente": (V((0.0, -3.4, 0.70)), V((0, -0.25, 0.45)), 38), "baixo": (V((1.6, -2.6, 0.12)), V((0, -0.25, 0.30)), 34),
-          "cima": (V((1.2, 1.6, 3.2)), V((0, -0.2, 0.35)), 34), "tras": (V((-1.4, 3.2, 1.2)), V((0, -0.2, 0.40)), 38)}
+          "cima": (V((1.2, 1.6, 3.2)), V((0, -0.2, 0.35)), 34), "tras": (V((-1.4, 3.2, 1.2)), V((0, -0.2, 0.40)), 38),
+          "raiz": (V((0.75, 0.55, 1.05)), V((0.05, -0.18, 0.42)), 40), "raiz_baixo": (V((0.9, -0.1, 0.05)), V((0.05, -0.15, 0.38)), 40)}
 pos, alvo, lente = VISTAS[VISTA]
 cam.location = pos; cam.rotation_euler = (alvo - pos).to_track_quat("-Z", "Y").to_euler(); cam.data.lens = lente
 for nome, fr in SPEC:

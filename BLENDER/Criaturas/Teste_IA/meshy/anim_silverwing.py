@@ -285,7 +285,29 @@ class Pose:
     def Rb(s): return Rax(Z, s.gui) @ Rax(X, -s.arf) @ Rax(Y, s.rol)
 
 ESTIC = {}
+# OMBRO FIXO (usuario 02/11, Glacial: "a asa deve se juntar ao corpo, nao ficar separada"): a batida e as correcoes de
+# voo giravam o osso shoulder_*, que arrasta a RAIZ da asa (pele presa ao flanco) para fora do tronco (costura afastada
+# ate 1,3 stud no Voo e 4,2 no Pairar). Com OMBRO_FIXO=1 o shoulder volta a pose de repouso (raiz presa ao corpo) e o
+# MESMO giro passa para o umero (wing_1), entao o resto da asa faz exatamente o mesmo movimento; giros extras de ombro
+# (plano da batida no pairar, curvas, mergulho...) tambem passam para o umero. Idempotente. Sem a variavel: como antes.
+OMBRO_FIXO = os.environ.get("OMBRO_FIXO") == "1"
+def _fixar_ombro(p):
+    if not OMBRO_FIXO or not p.asas: return
+    if any(sp.get("modo") == "chao" for sp in p.pata.values()): return   # so no ar (no chao a asa armada ja assenta melhor)
+    novo = dict(p.asas)
+    for s_ in ("l", "r"):
+        sh, w1 = "shoulder_" + s_, "wing_1_" + s_
+        if sh in novo and w1 in novo:
+            Bs = rot(novo[sh]); Rr = rot(REL[w1])
+            corr = Rr.inverted() @ Bs @ Rr                         # (repouso)^-1 @ Bs: giro do ombro levado ao umero
+            Bw = novo[w1]
+            novo[w1] = Matrix.Translation(Bw.translation) @ (corr @ rot(Bw)).to_4x4()
+            novo[sh] = Matrix.Translation(novo[sh].translation)
+        if sh in p.extra:
+            e = p.extra.pop(sh); p.extra[w1] = e @ p.extra[w1] if w1 in p.extra else e
+    p.asas = novo
 def resolver(p):
+    _fixar_ombro(p)
     Rb = p.Rb(); ex, ey, ez = Rb @ X, Rb @ Y, Rb @ Z
     W, B, dirs = {}, {}, {}
     for n in ORD:

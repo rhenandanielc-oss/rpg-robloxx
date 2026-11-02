@@ -24,3 +24,7 @@ export P_DESCANSO='{"ergue": -8, "recua": 6, "cotovelo": -26, "punho": 46, "lequ
 #   as pontas chegavam a 0,2 stud da linha do corpo (asas se encostando no alto e rentes as patas embaixo). 0,7 mantem
 #   ~117 graus de batida (-40 a +77) com as pontas a 7-10 studs do corpo; o golpe forte (ASA_GOLPE) e a cadencia ficam
 export AMP_ASA=0.7
+# (usuario 02/11, esclarecido) o pedido era a asa NAO se soltar do corpo no voo (defeito), nao asas mais afastadas: volta a
+#   batida profunda AMP_ASA 1,18 e liga OMBRO_FIXO (raiz da asa presa ao tronco; o giro do ombro passa para o umero). Costura
+#   asa-corpo no ar: Pairar 4,2 -> 0,84 stud, Subida 2,1 -> 0,81, Voo 1,3 -> 0,80 (= nivel do dragao parado no chao)
+export AMP_ASA=1.18 OMBRO_FIXO=1
