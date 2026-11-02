@@ -33,6 +33,11 @@ local function preparar(m)
 		assert(not (d:IsA("Bone") and MAPA[d.Name]), "GLB antigo com nomes do Blender (" .. d.Name .. "); reexporte com exportar_cr.py")
 		if d:IsA("BasePart") then d.Anchored = true end
 		if d:IsA("MeshPart") then d.DoubleSided = true end      -- membranas sem espessura e interior da boca
+		-- boca v3: o importador traz a malha da boca como Plastic com TextureID (brilho especular forte, lingua parecia
+		-- metal); SurfaceAppearance com a mesma textura = acabamento fosco como o resto do corpo
+		if d:IsA("MeshPart") and d.Name == "Silverwing_Boca" and d.TextureID ~= "" and not d:FindFirstChildOfClass("SurfaceAppearance") then
+			local sa = Instance.new("SurfaceAppearance"); sa.ColorMap = d.TextureID; sa.Parent = d
+		end
 	end
 	-- a RootPart importada (35x35x17,5, invisivel) colidia e bloqueava raios: parede invisivel em volta do dragao
 	local rp = m:FindFirstChild("RootPart")
