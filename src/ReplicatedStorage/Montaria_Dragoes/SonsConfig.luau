@@ -22,4 +22,36 @@ return {
 	garra = id(9119228132), garraVolume = 0.9,       -- Slow Whoosh Beefy Airy Pass By 5 (SFX): deslocamento do golpe
 	impacto = id(9118633669), impactoCorte = 0.3,    -- Rock Impacts Deep Crunchy: so quando ACERTA
 	maxSimultaneos = 6,                              -- por dragao (evita sobreposicao)
+	-- PATCH_AUDIO_GELO (02/11): perfil PROPRIO por forma regional (atributo FormaRegional). O que nao estiver aqui cai
+	-- no padrao acima (Montanhas). Alcance por categoria (dist*): voz longe, respiracao perto.
+	formas = {
+		Glacial = {
+			-- voz: felino grande grave/cansado (Lion "tired/pitched down", growls com "tubular ticking") — nao e o Montanhas
+			rugido = id(9116306862),                     -- Lion Roar Tired 3: pitched down, large (territorial)
+			rugidoCombate = id(9116302511),              -- Lion Roar Short Blast Attack Angry Sharp 4 (direcionado)
+			intimidar = {id(9116303194), id(9116303929)}, -- Lion Roar Snarl Growl Inhale Exhale 1 / 8
+			esforco = {id(9125470306), id(9125470318), id(9125470377), id(9125470501)},   -- Lion Deep Guttural Rumbling 7/8/9/11
+			grunhido = {id(9125470318), id(9125470377)}, alerta = id(9125470306),
+			respiro = {id(9113971975), id(9113972744), id(9113973128)}, respiroVolume = 0.32, respiroTom = {0.62, 0.74},  -- Creature Growls Lion 6/20/8
+			respiroSono = id(9113972534),                -- Creature Growls Lion 16: breathy lento (6,5 s)
+			despertar = id(9116304872),                  -- Lion Roar Tired 12: distant, muffled (curto)
+			dano = id(9125628981), danoLeve = id(9116304872),   -- Lion Roar Painful Bellow 5 / Tired 12
+			farejar = {id(9119305128), id(9119305002)},  -- Sniff Breathe In 4 / 2
+			beber = id(9120571904),                      -- Water Lapping Single Person 1 (trecho curto, tom baixo)
+			mastigar = id(9113445183),                   -- Bite Ice Cube 1: crunch
+			ataqueVoz = {id(9125629454), id(9125629224)}, -- Lion Roar Short Attack Lunge Jumping Fighting 5 / 2
+			mordida = {id(9113445183)}, mordidaTom = {0.55, 0.65},
+			garra = id(9125647922), garraVolume = 0.7,   -- Magic Zoom Up: golpe cortando o ar (tom baixo)
+			avanco = id(9125647922),
+			impacto = id(9114861568), impactoCorte = 0.5, -- Ice Cube Drops: golpe seco
+			-- corpo: membrana pesada nas asas, neve compacta + garras nos passos
+			asa = {id(9114461411), id(9114461597), id(9114461307)}, asaVolume = 1.0, asaTom = {0.4, 0.5},   -- Flag Flapping 3 (cloth)
+			passo = {id(9125965053), id(9126274134), id(9126274119)}, passoTom = {0.62, 0.78}, passoVolume = 0.55, -- Snow Stomping / Paddle Into Icy Snow
+			passoPeso = id(9119316414), passoPesoCorte = 0.4, passoPesoVolume = 0.42,   -- Snow Impact Big Hits Semi-Deep
+			pouso = id(9119316414),
+			-- vento do voo pela VELOCIDADE (laço; some ao pousar). No planeio so ha vento, sem batidas.
+			ventoVoo = id(9125742262), ventoVooVolume = 0.55, ventoVooTom = {0.7, 1.15}, ventoVooVel = {4, 70},   -- voo livre: plena 20, mergulho ate 80 (ConfigMontaria)
+			distVoz = 340, distRespiro = 80, distPasso = 140, distAsa = 200,
+		},
+	},
 }

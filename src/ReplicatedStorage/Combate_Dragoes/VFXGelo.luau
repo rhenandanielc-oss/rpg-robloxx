@@ -2,7 +2,7 @@
 -- Glacial, oficial 02/11), so no cliente. Chamado pelo VFXCombate para todo evento com el = "Gelo" e para o Frostbite.
 -- Paleta: branco-gelo, azul glacial claro, azul profundo so nos nucleos; brilho limpo, sem poluicao. Nada aqui altera
 -- dano/alvos nem o mapa (pecas temporarias em workspace.VFX_Temporarios). LOD pelo fator recebido (distancia/qualidade).
--- Audio: SO Pro Sound Effects (biblioteca licenciada publicada na Roblox) e o rugido ja usado pelo projeto.
+-- Audio: modulo proprio SonsGelo (PATCH_AUDIO_GELO 02/11), chamado nos mesmos instantes dos efeitos.
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
 local Debris = game:GetService("Debris")
@@ -17,16 +17,7 @@ local TEX = {fumaca = "rbxasset://textures/particles/smoke_main.dds", faisca = "
 	nevoa = "rbxassetid://105424368956403", jato = "rbxassetid://129300151490629", jato_h = "rbxassetid://114995351681928",
 	brilho = "rbxassetid://139365298148840", floco = "rbxassetid://94651834263686", geada = "rbxassetid://91218303362945"}
 local function id(n) return "rbxassetid://" .. n end
-local SOM = {
-	jato = id(9114437277), jatoCurto = id(9114437231),             -- Fire Extinguisher 2 / 1 (SFX): pressao fria
-	vento = id(9125742111),                                          -- Plasma Trails Constant Airy Whooshing Windy 1 (SFX)
-	tempestade = id(9125443744),                                     -- Clouds Swirl Swirling Steamy Rumble Churning 1 (SFX)
-	disparo = {id(9125648149), id(9125648137), id(9125648134)},      -- Magic Zoom Up Sharp Tubular Whoosh Fast Hiss (SFX)
-	estilhaco = {id(9114591164), id(9114590269)},                    -- Glass Break 9 / Glass Break 1 crash-shatter (SFX)
-	estilhacoForte = id(9114590476),                                 -- Glass Break 1: thin plate shatters twice (SFX)
-	rachar = id(9118762653),                                         -- Safety Glass 4: slow cracking (SFX)
-	rugido = id(9113985445),                                         -- Creature Roar Deep Throaty Growls 2 (SFX)
-}
+local Som = require(script.Parent:WaitForChild("SonsGelo"))     -- PATCH_AUDIO_GELO: todo o audio do Gelo
 local function seq(cs) local k = {}; for i, c in ipairs(cs) do table.insert(k, ColorSequenceKeypoint.new((i - 1) / (#cs - 1), c)) end; return ColorSequence.new(k) end
 local function ns(...) local a = {...}; local k = {}; for i = 1, #a, 2 do table.insert(k, NumberSequenceKeypoint.new(a[i], a[i + 1])) end; return NumberSequence.new(k) end
 
@@ -76,24 +67,6 @@ local function centro(m)
 	if q and c then return (q.TransformedWorldCFrame.Position + c.TransformedWorldCFrame.Position) / 2 end
 	return m:GetPivot().Position + Vector3.new(0, 15, 0)
 end
-local ativosSom = {}
-local function som(pai, sid, vol, tom, corte, dist)
-	if not (pai and pai.Parent) then return end
-	if (ativosSom[pai] or 0) >= 8 then return end
-	ativosSom[pai] = (ativosSom[pai] or 0) + 1
-	local s = Instance.new("Sound"); s.SoundId = sid; s.Volume = vol or 1; s.PlaybackSpeed = tom or 1
-	s.RollOffMode = Enum.RollOffMode.InverseTapered; s.RollOffMinDistance = 14; s.RollOffMaxDistance = dist or 300
-	s.Parent = pai; s:Play()
-	local fim = corte or 6
-	task.delay(fim, function()
-		ativosSom[pai] = math.max(0, (ativosSom[pai] or 1) - 1)
-		if s.Parent then TweenService:Create(s, TweenInfo.new(0.25), {Volume = 0}):Play(); Debris:AddItem(s, 0.3) end
-	end)
-	return s
-end
-local function somEm(pos, sid, vol, tom, corte) local a = ancora(pos); Debris:AddItem(a, (corte or 4) + 0.5); return som(a, sid, vol, tom, corte) end
-local function sorteia(t) return type(t) == "table" and t[math.random(#t)] or t end
-local function tomVoz(m) return (m and m:GetAttribute("TomVoz")) or 1 end
 local function anel(c, raioFinal, cor, dur, espessura, transp, normal)
 	local cf = normal and (CFrame.lookAt(c, c + normal) * CFrame.Angles(0, math.rad(90), 0)) or (CFrame.new(c) * CFrame.Angles(0, 0, math.rad(90)))
 	local a = peca({Shape = Enum.PartType.Cylinder, Size = Vector3.new(espessura or 0.6, 4, 4), Material = Enum.Material.Neon, Color = cor, Transparency = transp or 0.4, CFrame = cf})
@@ -199,6 +172,7 @@ local function ligarSangue(m)
 			Speed = NumberRange.new(0.5, 2), SpreadAngle = Vector2.new(180, 180), Rate = 4})
 	end
 	sangue[m] = s
+	Som.sangue(m)                                                   -- som discreto SO na ativacao
 end
 local function desligarSangue(m)
 	local s = sangue[m]; sangue[m] = nil; if not s then return end
@@ -227,12 +201,14 @@ local function atualizarFrio(m, v)
 	local f = frio[m]; if not f then return end
 	local x = math.clamp(v / 100, 0, 1)
 	f.nevoa.Rate = (2 + 10 * x) * f.k; f.cristais.Rate = (2 + 14 * x) * f.k
+	Som.frio(m, v)
 	if not (brilhos[m] and brilhos[m].FillTransparency < 0.8) then
 		TweenService:Create(f.h, TweenInfo.new(0.25), {FillTransparency = 1 - 0.5 * x, OutlineTransparency = 1 - 0.6 * x}):Play()
 	end
 end
 local function desligarFrio(m)
 	local f = frio[m]; frio[m] = nil; if not f then return end
+	Som.frioFim(m, crostas[m] ~= nil)
 	f.nevoa.Enabled = false; f.cristais.Enabled = false; Debris:AddItem(f.a, 1.8)
 	TweenService:Create(f.h, TweenInfo.new(0.5), {FillTransparency = 1, OutlineTransparency = 1}):Play(); Debris:AddItem(f.h, 0.6)
 end
@@ -253,14 +229,14 @@ local function congelar(alvo, dur, fator)
 		table.insert(pecas, {p, r.CFrame:ToObjectSpace(p.CFrame)})
 	end
 	crostas[alvo] = pecas
-	somEm(r.Position, SOM.rachar, 0.9, 1.15, 1.4)
+	Som.congelar(alvo, dur)
 	local con; con = RunService.Heartbeat:Connect(function()
 		if not r.Parent then con:Disconnect(); return end
 		for _, x in ipairs(pecas) do if x[1].Parent then x[1].CFrame = r.CFrame * x[2] end end
 	end)
 	task.delay(dur, function()
 		con:Disconnect(); crostas[alvo] = nil
-		if r.Parent then estilhaco(r.Position, grande and 1.4 or 0.7, math.max(fator, 0.3)); somEm(r.Position, sorteia(SOM.estilhaco), 0.9, 1.1, 2) end
+		if r.Parent then estilhaco(r.Position, grande and 1.4 or 0.7, math.max(fator, 0.3)) end
 		for _, x in ipairs(pecas) do x[1]:Destroy() end
 	end)
 end
@@ -351,7 +327,7 @@ local function ligarSopro(m, ligado, f, alvo, alcance)
 		task.delay(1.8, function() if s.con and s.e.nucleo.Rate == 0 then s.con:Disconnect(); s.con = nil end end)
 	end
 end
-local soproTok, soproMira, soproSom = {}, {}, {}
+local soproTok, soproMira = {}, {}
 local function soproEvento(m, d, f)
 	local pp = m.PrimaryPart
 	if d.fase == "preparo" then                                       -- frio acumulando na boca: cristais e nevoa sugados para dentro
@@ -362,15 +338,9 @@ local function soproEvento(m, d, f)
 			Size = ns(0, 0.7, 1, 0.2), Lifetime = NumberRange.new(0.3, 0.5), Speed = NumberRange.new(-18, -12), SpreadAngle = Vector2.new(180, 180), Rate = 50 * f})
 		luz(a, C3(160, 215, 255), 2, 22, 1.2)
 		brilhoCorpo(m, 0.95, 0.93, 0.5)
-		som(pp, SOM.jatoCurto, 0.45, 0.55, 1.0)
 	elseif d.fase == "emissao" then
 		soproTok[m] = (soproTok[m] or 0) + 1; local tok = soproTok[m]; soproMira[m] = d.alvoPos
 		ligarSopro(m, true, f, d.alvoPos, d.alcance)
-		task.spawn(function()
-			local lim = os.clock() + 7
-			while soproTok[m] == tok and os.clock() < lim and m.Parent do som(pp, SOM.jato, 0.8, 0.62 + math.random() * 0.06, 2.0); task.wait(1.15) end
-		end)
-		soproSom[m] = som(pp, SOM.vento, 0.55, 1.25, 7)
 		-- impacto continuo: estilhaco frio, geada que cresce onde o jato bate e cristais que brotam
 		task.spawn(function()
 			local rp = RaycastParams.new(); rp.FilterType = Enum.RaycastFilterType.Exclude; rp.FilterDescendantsInstances = {m, pastaFX()}
@@ -378,6 +348,7 @@ local function soproEvento(m, d, f)
 			while soproTok[m] == tok and os.clock() < lim and m.Parent do
 				local b, dr = boca(m); local ap = soproMira[m]; if ap then dr = (ap - b).Unit end
 				local h = workspace:Raycast(b, dr * (d.alcance or 100), rp)
+				Som.soproImpacto(m, h and h.Position)
 				if h then
 					estilhaco(h.Position, 0.45, f, h.Normal, false)
 					if h.Normal.Y > 0.45 and os.clock() - ultG > 0.35 then ultG = os.clock(); geadaChao(h.Position, h.Normal, 6 + math.random() * 3, 3, 0.6) end
@@ -394,7 +365,6 @@ local function soproEvento(m, d, f)
 		soproTok[m] = (soproTok[m] or 0) + 1; soproMira[m] = nil
 		ligarSopro(m, false, f)
 		brilhoCorpo(m, 1, 1, 0.8)
-		local s = soproSom[m]; if s and s.Parent then TweenService:Create(s, TweenInfo.new(0.5), {Volume = 0}):Play(); Debris:AddItem(s, 0.6) end
 		local b = boca(m); local a = ancora(b); Debris:AddItem(a, 2)
 		emissor(a, {Texture = TEX.nevoa, Color = seq({BRANCO_GELO, AZUL_CLARO}), LightInfluence = 0.8, Size = ns(0, 2, 1, 8), Transparency = ns(0, 0.55, 1, 1),
 			Lifetime = NumberRange.new(0.9, 1.4), Speed = NumberRange.new(3, 8), Acceleration = Vector3.new(0, -3, 0), SpreadAngle = Vector2.new(40, 40), Rate = 0}):Emit(math.floor(14 * f))
@@ -415,8 +385,6 @@ local function rajadas(m, d, f)
 		task.delay(2.3, function() brilhoCorpo(m, 1, 1, 0.6) end)
 	elseif d.fase == "disparo" then
 		local de, dir = d.de, d.dir
-		som(pp, sorteia(SOM.disparo), 0.85, 1.25 + math.random() * 0.15, 1.2)
-		som(pp, SOM.jatoCurto, 0.35, 1.4, 0.5)
 		anel(de + dir * 3, 6, BRANCO_GELO, 0.22, 0.25, 0.35, dir)
 		local am = ancora(de); Debris:AddItem(am, 1.2)
 		emissor(am, {Texture = TEX.nevoa, Color = seq({BRANCO_GELO, AZUL_CLARO}), LightInfluence = 0.7, Size = ns(0, 1.5, 1, 6), Transparency = ns(0, 0.5, 1, 1),
@@ -434,6 +402,7 @@ local function rajadas(m, d, f)
 			{peca({Size = Vector3.new(1.0, 0.5, 1.4), Material = Enum.Material.Glass, Color = C3(190, 228, 250), Transparency = 0.2}, "WedgePart"), CFrame.new(0, -0.25, L / 2 + 0.7) * CFrame.Angles(0, math.pi, math.pi)},
 		}
 		local corpo = partes[1][1]
+		Som.lanca(m, corpo, de)                                            -- silvo 3D que viaja com a lanca
 		local a0 = Instance.new("Attachment", corpo); a0.Position = Vector3.new(0.5, 0, 3); local a1 = Instance.new("Attachment", corpo); a1.Position = Vector3.new(-0.5, 0, 3)
 		local tr = Instance.new("Trail"); tr.Attachment0 = a0; tr.Attachment1 = a1; tr.Texture = TEX.rastro_h; tr.TextureMode = Enum.TextureMode.Stretch; tr.Lifetime = 0.32
 		tr.LightEmission = 0.75; tr.FaceCamera = true; tr.Color = seq({C3(255, 255, 255), AZUL_CLARO, AZUL}); tr.Transparency = ns(0, 0.1, 1, 1); tr.WidthScale = ns(0, 1.6, 1, 0.2); tr.Parent = corpo
@@ -465,7 +434,6 @@ local function rajadas(m, d, f)
 		local reg = lancas[m] and lancas[m][d.indice]; if reg then reg.fim = true; lancas[m][d.indice] = nil end
 		if d.fase == "impacto" then
 			estilhaco(d.pos, d.acertou and 1.3 or 0.95, f, d.normal, not d.acertou)
-			somEm(d.pos, sorteia(SOM.estilhaco), d.acertou and 1.1 or 0.8, 1.0 + math.random() * 0.15, 2)
 			if not d.acertou and d.normal and d.normal.Y > 0.4 then
 				for i = 1, 4 do
 					local off = Vector3.new(math.random(-22, 22) / 10, 0, math.random(-22, 22) / 10)
@@ -489,7 +457,6 @@ local function zero(m, d, f)
 	if d.fase == "preparo" then
 		local emissao = d.emissao or 1
 		brilhoCorpo(m, 0.88, 0.85, emissao)
-		som(pp, SOM.jato, 0.5, 0.45, 1.2)
 		local c = centro(m); local a = ancora(c); Debris:AddItem(a, emissao + 0.3)
 		emissor(a, {Texture = TEX.lasca, Orientation = Enum.ParticleOrientation.VelocityParallel, Color = ColorSequence.new(AZUL_CLARO), LightEmission = 0.9,
 			Size = ns(0, 1.0, 1, 0.2), Lifetime = NumberRange.new(0.5, 0.8), Speed = NumberRange.new(-45, -30), SpreadAngle = Vector2.new(180, 180),
@@ -510,8 +477,6 @@ local function zero(m, d, f)
 		local up = d.normal or Vector3.yAxis
 		local vVis = math.min(vel, 58); local tEsp = zr / vVis           -- frente visual (um pouco mais lenta que o golpe: le-se a propagacao)
 		brilhoCorpo(m, 0.84, 0.75, 0.12); task.delay(0.6, function() brilhoCorpo(m, 1, 1, 1.0) end)
-		som(pp, SOM.jato, 1.0, 0.42, 1.8); som(pp, sorteia(SOM.estilhaco), 0.9, 0.7, 2)
-		somEm(c, SOM.rachar, 1.2, 0.8, 4.5)
 		local ac = ancora(c + up * 1.5); Debris:AddItem(ac, zona + 3)
 		luz(ac, C3(170, 225, 255), 2.2, R * 0.8, 0.9)
 		emissor(ac, {Texture = TEX.brilho, Color = ColorSequence.new(C3(255, 255, 255)), LightEmission = 1, Size = ns(0, 16, 1, 0), Lifetime = NumberRange.new(0.25, 0.3),
@@ -590,7 +555,6 @@ local function zero(m, d, f)
 					cristal(p, (nrm + out * 0.4).Unit, alt, alt * 0.3, vida)
 					if math.random() < 0.55 then cristal(p + out * 1.5 + (x * math.random() - z * math.random()), (nrm + out * 0.7).Unit, alt * 0.6, alt * 0.22, vida) end
 				end
-				somEm(c + x * r, sorteia(SOM.estilhaco), 0.5, 0.6 + ia * 0.08, 1.5)
 			end)
 		end
 		-- 5) zona de frio extremo: nevoa baixa, cintilacoes e luz fria pulsando
@@ -665,10 +629,8 @@ local function nevasca(m, d, f)
 		local f2 = math.max(f, 0.35)
 		brilhoCorpo(m, 0.85, 0.8, 0.6)
 		local c0 = centro(m)
-		som(pp, SOM.vento, 0.9, 0.7, 2.5)
 		task.delay(d.rugido or 1.75, function()
 			if not m.Parent or nevascas[m] ~= reg then return end
-			som(pp, SOM.rugido, 2.2, 0.7 * tomVoz(m), 3.0, 420)
 			brilhoCorpo(m, 0.45, 0, 0.35)                               -- azul forte no corpo todo, silhueta legivel
 			pulso(centro(m), 45, 0, 0.5)
 			local cb = ossoC(m, "Coluna2") or pp
@@ -724,8 +686,6 @@ local function nevasca(m, d, f)
 					task.wait(0.19)
 				end
 			end)
-			som(pp, SOM.tempestade, 1.4, 1.0, (d.duracao or 5.6) - (d.rugido or 1.75), 400)
-			som(pp, SOM.vento, 1.1, 0.85, 3.5, 400)
 		end)
 		task.delay((d.duracao or 5.6) - 0.9, function()
 			if nevascas[m] ~= reg then return end
@@ -737,7 +697,6 @@ local function nevasca(m, d, f)
 			end
 			task.delay(1.5, function() if reg.con then reg.con:Disconnect() end end)
 		end)
-		task.delay(0.4, function() if m.Parent then som(pp, sorteia(SOM.disparo), 0.6, 0.7, 1) end end)
 		local a = ancora(c0); Debris:AddItem(a, 1.8)
 		emissor(a, {Texture = TEX.lasca, Orientation = Enum.ParticleOrientation.VelocityParallel, Color = ColorSequence.new(AZUL_CLARO), LightEmission = 0.9,
 			Size = ns(0, 1.2, 1, 0.3), Lifetime = NumberRange.new(0.6, 1.0), Speed = NumberRange.new(-30, -18), SpreadAngle = Vector2.new(180, 180),
@@ -761,8 +720,6 @@ local function nevasca(m, d, f)
 		anel(c, R * 0.75, AZUL_CLARO, 0.5, 0.8, 0.45, Vector3.new(1, 0.2, -0.35).Unit)
 		luz(a, C3(200, 235, 255), 5, R, 0.35)
 		brilhoCorpo(m, 0.2, 0, 0.06); task.delay(0.2, function() if nevascas[m] then brilhoCorpo(m, 0.45, 0, 0.3) end end)
-		som(pp, sorteia(SOM.disparo), 1.2, 0.8 + 0.1 * i, 1.2, 400); som(pp, sorteia(SOM.estilhaco), 1.0, 0.75, 2, 400)
-		if i == 1 then som(pp, SOM.estilhacoForte, 1.0, 0.8, 3, 400) end
 	elseif d.fase == "fim" then
 		nevascas[m] = nil
 	end
@@ -771,6 +728,8 @@ end
 -- ===== despacho ==================================================================================================
 function G.evento(d, f)
 	local m = d.d; if not m or not m.Parent then return end
+	-- PATCH_AUDIO_GELO: o audio nao depende do LOD visual (ouve-se ate o alcance de cada som)
+	if d.fase ~= "reacao" and d.hab ~= "Frostbite" then Som.evento(d) end
 	if d.fase == "reacao" then                                           -- alvo atingido por Gelo: estalo frio curto
 		local a = d.alvo; if not (a and a.Parent) then return end
 		vigiar[a] = true
