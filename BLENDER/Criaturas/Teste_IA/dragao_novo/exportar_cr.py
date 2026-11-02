@@ -5,6 +5,7 @@ Uso: blender -b CR_Dragao_M2M.blend -P exportar_cr.py -- <saida.glb>"""
 import bpy, bmesh, sys, os
 SAIDA = os.path.abspath(sys.argv[sys.argv.index("--") + 1]); os.makedirs(os.path.dirname(SAIDA), exist_ok=True)
 A = bpy.data.objects["Silverwing_Rig"]; corpo = bpy.data.objects["Silverwing"]; det = bpy.data.objects["Silverwing_Detalhes"]
+boca = bpy.data.objects.get("Silverwing_Boca")          # 02/11: lingua + garganta (boca_interior.py), malha propria
 if A.animation_data:
     A.animation_data.action = None
     for t in list(A.animation_data.nla_tracks): A.animation_data.nla_tracks.remove(t)
@@ -40,7 +41,7 @@ bpy.ops.object.mode_set(mode="EDIT")
 for s in ("l", "r"): A.data.edit_bones["horn_base_" + s].parent = A.data.edit_bones["head"]   # chifres seguem a cabeca
 bpy.ops.object.mode_set(mode="OBJECT")
 # ossos sem peso somem na importacao (mouth_upper_tip e usado pelo sopro/montaria): 1 vertice proximo, 100% no osso
-malhas = (corpo, asas, det)
+malhas = tuple(o for o in (corpo, asas, det, boca) if o)
 def usados():
     u = set()
     for o in malhas:
@@ -62,14 +63,14 @@ for velho, novo in MAPA.items():
     for o in malhas:
         g = o.vertex_groups.get(velho)
         if g: g.name = novo
-for o in (corpo, asas, det):
+for o in malhas:
     print("EXPORT", o.name, "tris", sum(len(p.vertices) - 2 for p in o.data.polygons))
     assert sum(len(p.vertices) - 2 for p in o.data.polygons) <= 20000, o.name + " passa de 20k tris"
 # texturas 1024
 for im in bpy.data.images:
     if im.size[0] > 1024: im.scale(1024, 1024); print("TEX", im.name, "-> 1024")
 bpy.ops.object.select_all(action="DESELECT")
-for o in (A, corpo, asas, det): o.select_set(True)
+for o in (A,) + malhas: o.select_set(True)
 bpy.context.view_layer.objects.active = A
 bpy.ops.export_scene.gltf(filepath=SAIDA, export_format="GLB", use_selection=True, export_animations=False,
                           export_image_format="AUTO", export_skins=True)
