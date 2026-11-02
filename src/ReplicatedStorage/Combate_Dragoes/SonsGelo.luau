@@ -11,6 +11,24 @@
 local TweenService = game:GetService("TweenService")
 local Debris = game:GetService("Debris")
 local S = {NAO_APROVADO = true}
+local INICIO = require(game:GetService("ReplicatedStorage"):WaitForChild("Montaria_Dragoes"):WaitForChild("SonsConfig")).inicioAudivel or {}
+-- PATCH_RUGIDO_SEM_ATRASO: um Sound criado na hora leva ~0,17 s para comecar a soar (medido no Studio); um ja criado
+-- e parado ha alguns decimos, ~0,03 s. Cada rugido (SonsConfig.inicioAudivel) fica com UM Sound "aquecido" em
+-- SoundService (mudo, parado); ao tocar ele e movido para a cabeca e outro e aquecido para a proxima vez.
+local SoundService = game:GetService("SoundService")
+local aquecidos = {}
+local function aquecer(sid)
+	if aquecidos[sid] then return end
+	local s = Instance.new("Sound"); s.Name = "Aquecido"; s.SoundId = sid; s.Volume = 0; s.Parent = SoundService
+	aquecidos[sid] = s
+end
+local function novoSom(sid)
+	local s = aquecidos[sid]
+	if s and s.Parent == SoundService then aquecidos[sid] = nil; aquecer(sid); return s end
+	s = Instance.new("Sound"); s.SoundId = sid; return s
+end
+if game:GetService("RunService"):IsClient() then for n in pairs(INICIO) do aquecer("rbxassetid://" .. n) end end
+S.novoSom = novoSom
 
 local function id(n) return "rbxassetid://" .. n end
 -- banco (duracao real conferida no Studio em 02/11)
@@ -84,9 +102,12 @@ local function envelopeRugido(s, tom, dur)
 end
 local function tocar(pai, sid, o)
 	o = o or {}
+	-- PATCH_RUGIDO_SEM_ATRASO: pula o comeco quase mudo do arquivo (SonsConfig.inicioAudivel) -> o som sai junto com a boca
+	local ini = INICIO[tostring(sid):match("%d+") or ""]
+	if ini and not o.ini then o.ini = ini; if o.corte then o.corte = math.max(0.8, o.corte - ini / (o.tom or 1)) end end
 	if o.rugido then                                                    -- entrada e saida do envelope (ver acima)
 		local dur = o.corte or 3
-		o.fadeIn = o.fadeIn or math.min(0.22, dur * 0.12)
+		o.fadeIn = o.fadeIn or math.min(0.06, dur * 0.05)                 -- entrada curta: ja comeca no trecho audivel
 		o.fadeOut = math.max(o.fadeOut or 0, dur * 0.4, 0.6)
 	end
 	if not (vivo(pai) and sid) then return end
@@ -101,7 +122,7 @@ local function tocar(pai, sid, o)
 		if not pior then return end
 		desligar(pior, 0.12)
 	end
-	local s = Instance.new("Sound"); s.SoundId = sid; s.PlaybackSpeed = o.tom or 1; s.Looped = o.laco == true
+	local s = novoSom(sid); s.PlaybackSpeed = o.tom or 1; s.Looped = o.laco == true
 	s.RollOffMode = Enum.RollOffMode.InverseTapered; s.RollOffMinDistance = o.min or 14; s.RollOffMaxDistance = dist
 	local vol = o.vol or 1
 	s.Volume = (o.fadeIn and o.fadeIn > 0) and 0 or vol

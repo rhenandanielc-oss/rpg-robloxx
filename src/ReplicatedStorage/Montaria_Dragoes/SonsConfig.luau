@@ -5,6 +5,15 @@ local function id(n) return "rbxassetid://" .. n end
 return {
 	NAO_APROVADO = true,
 	distMax = 260,
+	-- PATCH_RUGIDO_SEM_ATRASO (02/11): segundo do arquivo em que o rugido fica AUDIVEL (RMS medido com AudioAnalyzer no
+	-- Studio). Varias tomadas comecam quase em silencio (ate 1,1 s) e a boca abria antes do som: o mixer comeca o som
+	-- nesse ponto (TimePosition) e encurta o corte na mesma medida (o fim do arquivo continua o mesmo).
+	inicioAudivel = {
+		["9126100408"] = 0.22, ["9126100484"] = 0.47, ["9126100903"] = 1.02, ["9126100708"] = 1.17, ["9126100618"] = 0.92,  -- Fogo
+		["9113973520"] = 0.32, ["9113973748"] = 0.52, ["9113985445"] = 0.75,                                                -- Fogo (intimidar, padrao)
+		["9116306862"] = 1.00, ["9116302511"] = 0.04, ["9116303194"] = 0.25, ["9116303929"] = 0.92, ["9116300504"] = 0.32,  -- Glacial
+		["9116304872"] = 0.07,
+	},
 	asa = {id(9120771864), id(9120776877)},        -- Wing Flaps 27 / 1 (SFX): "Large Flying Creature"
 	asaVolume = 0.9, asaTom = {0.75, 0.9},
 	passo = {"rbxasset://sounds/action_footsteps_plastic.mp3"}, passoTom = {0.42, 0.55}, passoVolume = 0.9,

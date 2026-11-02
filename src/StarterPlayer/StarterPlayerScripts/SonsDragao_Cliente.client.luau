@@ -8,6 +8,16 @@ local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
 local Cfg = require(RS:WaitForChild("Montaria_Dragoes"):WaitForChild("SonsConfig"))
 local cam = workspace.CurrentCamera
+-- PATCH_RUGIDO_SEM_ATRASO (02/11): rugidos pre-carregados (o 1o toque nao espera o download) e iniciados no trecho
+-- audivel do arquivo (Cfg.inicioAudivel)
+local INICIO = Cfg.inicioAudivel or {}
+task.spawn(function()
+	local l = {}
+	for n in pairs(INICIO) do local s = Instance.new("Sound"); s.SoundId = "rbxassetid://" .. n; table.insert(l, s) end
+	pcall(function() game:GetService("ContentProvider"):PreloadAsync(l) end)
+end)
+-- Sound ja criado ("aquecido") para cada rugido: comeca a soar em ~0,03 s em vez de ~0,17 s (ver SonsGelo)
+local novoSom = require(RS:WaitForChild("Combate_Dragoes"):WaitForChild("SonsGelo")).novoSom
 
 -- perfil da forma (heranca do padrao por metatable)
 local perfis = {}
@@ -31,7 +41,7 @@ local ASAS_FORMA = {Glacial = {Mergulho_Saida = {0.3}}}
 -- VOZ (comportamento da IA): som num ponto do clipe, com chance e intervalo minimo por dragao (nada de rugir sempre)
 -- {fase, som em SonsConfig, chance, volume, tom}
 local VOZ = {
-	Ninho_Ameaca = {{0.36, "rugido", 1, 1.0, 0.9}}, Reagir_Estimulo = {{0.12, "esforco", 0.8, 0.7, 0.9}},
+	Ninho_Ameaca = {{0.34, "rugido", 1, 1.0, 0.9}}, Reagir_Estimulo = {{0.12, "esforco", 0.8, 0.7, 0.9}},
 	Idle_Alerta_Mantido = {{0.5, "esforco", 0.35, 0.55, 0.85}}, Preparar_Combate = {{0.3, "esforco", 0.4, 0.65, 0.8}},
 	Comer = {{0.1, "mordida", 1, 0.7, 0.8}, {0.433, "mordida", 1, 0.7, 0.8}, {0.766, "mordida", 1, 0.7, 0.8}},
 	-- PATCH_VOZ_FORMA (01/11): clipes do sistema universal
@@ -46,9 +56,9 @@ local VOZ = {
 local TOM_RUGIDO_FOGO = 0.92                                    -- pouco rebaixado: rebaixar muito deixava o som engasgado
 local VOZ_MONTANHAS = {
 	Rugido_Territorial = {{0.12, "inspira", 1, 0.55, 0.62}, {0.30, "rugidoTerritorial", 1, 1.15, TOM_RUGIDO_FOGO}, {0.86, "bafo", 0.8, 0.22, 0.8}},
-	Rugido_Ameaca = {{0.56, "rugidoAmeaca", 1, 1.05, TOM_RUGIDO_FOGO}},
+	Rugido_Ameaca = {{0.54, "rugidoAmeaca", 1, 1.05, TOM_RUGIDO_FOGO}},
 	Rugido_Vitoria = {{0.18, "inspira", 1, 0.5, 0.6}, {0.36, "rugidoVitoria", 1, 1.0, TOM_RUGIDO_FOGO}, {0.8, "bafo", 0.7, 0.2, 0.85}},
-	Ninho_Ameaca = {{0.36, "rugidoAmeaca", 1, 1.0, TOM_RUGIDO_FOGO}},
+	Ninho_Ameaca = {{0.34, "rugidoAmeaca", 1, 1.0, TOM_RUGIDO_FOGO}},
 	Intimidar = {{0.18, "intimidar", 0.8, 0.6, 0.78}, {0.68, "rosnado", 0.5, 0.5, 0.82}},
 	Reagir_Estimulo = {{0.12, "alerta", 0.8, 0.6, 0.95}}, Ninho_Alerta = {{0.2, "alerta", 0.8, 0.6, 0.9}},
 	Idle_Alerta_Mantido = {{0.5, "grunhido", 0.35, 0.45, 0.9}}, Preparar_Combate = {{0.3, "rosnado", 0.45, 0.5, 0.8}},
@@ -61,7 +71,7 @@ local VOZ_MONTANHAS = {
 	Dano_Forte = {{0.05, "dano", 1, 0.8, 0.9}}, Dano_Forte_Ar = {{0.05, "dano", 1, 0.8, 0.9}},
 }
 local VOZ_FORMA = {Montanhas = VOZ_MONTANHAS, Glacial = {
-	Ninho_Ameaca = {{0.36, "intimidar", 1, 1.0, 1.0}}, Rugido_Territorial = {{0.3, "rugido", 1, 1.25, 1.0}},
+	Ninho_Ameaca = {{0.34, "intimidar", 1, 1.0, 1.0}}, Rugido_Territorial = {{0.3, "rugido", 1, 1.25, 1.0}},
 	Intimidar = {{0.15, "intimidar", 0.9, 0.85, 1.0}, {0.65, "grunhido", 0.6, 0.6, 0.95}},
 	Reagir_Estimulo = {{0.12, "alerta", 0.8, 0.65, 1.05}}, Ninho_Alerta = {{0.2, "alerta", 0.8, 0.65, 1.0}},
 	Idle_Alerta_Mantido = {{0.5, "grunhido", 0.35, 0.5, 1.0}}, Preparar_Combate = {{0.3, "esforco", 0.5, 0.65, 0.95}},
@@ -108,7 +118,7 @@ local ativos = {}
 -- aos 35% e cai no fim) e TERMINA diminuindo (saida ~40% do tempo em Sine Out); o corte so remove o som ja em silencio
 local function envelopeRugido(s, vol, tom, dur)
 	s.Volume = 0; s.PlaybackSpeed = tom * 0.93
-	TweenService:Create(s, TweenInfo.new(math.min(0.22, dur * 0.12), Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {Volume = vol}):Play()
+	TweenService:Create(s, TweenInfo.new(math.min(0.06, dur * 0.05), Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {Volume = vol}):Play()
 	TweenService:Create(s, TweenInfo.new(dur * 0.35, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {PlaybackSpeed = tom * 1.04}):Play()
 	task.delay(dur * 0.35, function()
 		if s.Parent then TweenService:Create(s, TweenInfo.new(dur * 0.65, Enum.EasingStyle.Sine, Enum.EasingDirection.In), {PlaybackSpeed = tom * 0.86}):Play() end
@@ -123,10 +133,13 @@ local function tocar(pai, sid, vol, tom, corte, dist, rugido)
 	if (ativos[pai] or 0) >= (Cfg.maxSimultaneos or 6) then return end
 	local d = dist or Cfg.distMax
 	if pai:IsA("BasePart") and (pai.Position - cam.CFrame.Position).Magnitude > d then return end   -- fora do alcance: nem cria
+	local ini = INICIO[sid:match("%d+") or ""]
+	if ini and corte then corte = math.max(0.8, corte - ini / (tom or 1)) end
 	ativos[pai] = (ativos[pai] or 0) + 1
 	task.delay(corte or 2.5, function() ativos[pai] = math.max(0, (ativos[pai] or 1) - 1) end)
-	local s = Instance.new("Sound"); s.SoundId = sid; s.Volume = vol or 1; s.PlaybackSpeed = tom or 1
+	local s = novoSom(sid); s.Volume = vol or 1; s.PlaybackSpeed = tom or 1
 	s.RollOffMode = Enum.RollOffMode.InverseTapered; s.RollOffMinDistance = 12; s.RollOffMaxDistance = d
+	if ini then s.TimePosition = ini end
 	s.Parent = pai; s:Play()
 	if rugido then envelopeRugido(s, vol or 1, tom or 1, corte or 3) end
 	if corte then task.delay(corte, function() if s.Parent then s:Stop(); s:Destroy() end end)
