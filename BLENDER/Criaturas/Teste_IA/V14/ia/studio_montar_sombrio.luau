@@ -1,4 +1,4 @@
--- studio_montar_sombrio.luau (Studio, modo Edit, DEPOIS do Import 3D de dragao_sombra/final/SB_Dragao_Sombrio_v1.glb):
+-- studio_montar_sombrio.luau (Studio, modo Edit, DEPOIS do Import 3D de dragao_sombra/final/SB_Dragao_Sombrio_v4.glb):
 -- (copia do studio_montar_glacial.luau) cria o DRAGAO SOMBRIO montavel ("Sombrio") AO LADO do Dragao das Montanhas, sem substituir nada. Mesmo esqueleto e
 -- mesmos nomes de ossos -> montaria, IA, sons e MovimentoVivo funcionam; clipes em ReplicatedStorage.Animacoes_Sombrio
 -- (prefixo Sombrio_, ja montados). Kit de SOMBRA PENDENTE (decisao do usuario): FormaRegional "Sombrio" nao esta no
@@ -10,7 +10,7 @@ local importado
 for _, m in ipairs(workspace:GetChildren()) do
 	if m:IsA("Model") and not m.Name:find("^Silverwing") and m.Name ~= "Glacial" and m.Name ~= "Sombrio" and m:FindFirstChild("Silverwing_Detalhes", true) then importado = m end
 end
-assert(importado, "importacao do SB_Dragao_Sombrio_v1.glb nao encontrada no Workspace (Import 3D primeiro)")
+assert(importado, "importacao do SB_Dragao_Sombrio_v4.glb nao encontrada no Workspace (Import 3D primeiro)")
 local base = workspace:FindFirstChild("Silverwing"); assert(base, "Silverwing (referencia de escala/pivo) nao encontrado")
 local RENOMEIA = {["Silverwing"] = "Silverwing_Corpo", ["Silverwing.001"] = "Silverwing_Asas"}
 for _, d in ipairs(importado:GetDescendants()) do
@@ -32,7 +32,7 @@ m:SetAttribute("FormaRegional", "Sombrio"); m:SetAttribute("ElementoNato", "Somb
 m:SetAttribute("NomeExibicao", "Dragao Sombrio"); m:SetAttribute("PastaAnimacoes", "Sombrio"); m:SetAttribute("PerfilMovimento", "Silverwing")
 m:SetAttribute("TesteScriptsMontanhas", nil)
 m:SetAttribute("HabilidadesForma", "")                   -- kit de sombra pendente: HUD sem habilidades (patch_hud_habilidades_forma)
-m:SetAttribute("Versao", "Sombrio v1 (02/11: corpo massivo, 2 chifres, 4 dedos, cauda em serra)")
+m:SetAttribute("Versao", "Sombrio v9 (03/11: acabamento, crina, boca com paredes internas)")
 m:SetAttribute("Origem", "Modelo proprio (Blender, dragao_sombra/criar_sombrio.py) + esqueleto Silverwing; TESTE")
 -- pivo -> pes igual ao do Silverwing (montaria e IA movem por PivotTo contando com essa altura)
 local function pes(mod)

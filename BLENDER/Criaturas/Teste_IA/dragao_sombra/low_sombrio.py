@@ -52,6 +52,8 @@ for o in HIGH:
     tag = "TAG_cabeca" if o.name.startswith(CABECA) else "TAG_mandibula" if o.name.startswith(MAND) else None
     if tag:
         g = c.vertex_groups.get(tag) or c.vertex_groups.new(name=tag); g.add([v.index for v in c.data.vertices], 1.0, "REPLACE")
+    if o.name.startswith("SB_Dragao_Boca_Parede"):   # (03/11) parede interna: cor pintada direto (o bake pega dentes/ceu vizinhos)
+        g = c.vertex_groups.get("UV_PAREDE") or c.vertex_groups.new(name="UV_PAREDE"); g.add([v.index for v in c.data.vertices], 1.0, "REPLACE")
     if o.name.startswith(("Dente", "Olho")):   # (03/11) marca dentes/olhos: ganham mais area na UV (senao o bake fica escuro)
         g = c.vertex_groups.get("UV_GRANDE") or c.vertex_groups.new(name="UV_GRANDE"); g.add([v.index for v in c.data.vertices], 1.0, "REPLACE")
     partes.append(c)
@@ -89,6 +91,18 @@ if "UV_GRANDE" in low.vertex_groups: low.vertex_groups.remove(low.vertex_groups[
 bpy.ops.object.mode_set(mode="EDIT"); bpy.ops.mesh.select_all(action="SELECT")
 bpy.ops.uv.pack_islands(margin=0.004)
 bpy.ops.object.mode_set(mode="OBJECT")
+_gp = low.vertex_groups["UV_PAREDE"].index if "UV_PAREDE" in low.vertex_groups else None
+TRI_PAREDE = []
+if _gp is not None:
+    _b = _bm.new(); _b.from_mesh(low.data); _uv = _b.loops.layers.uv.active; _dl = _b.verts.layers.deform.active
+    for f in _b.faces:
+        if all(_gp in v[_dl] for v in f.verts):
+            uvs = [l[_uv].uv.copy() for l in f.loops]
+            for k in range(1, len(uvs) - 1): TRI_PAREDE.append((uvs[0], uvs[k], uvs[k + 1]))
+    _b.free(); low.vertex_groups.remove(low.vertex_groups["UV_PAREDE"])
+print("LOW parede interna triangulos UV", len(TRI_PAREDE))
+bpy.ops.object.mode_set(mode="EDIT")
+bpy.ops.object.mode_set(mode="OBJECT")
 bpy.ops.object.modifier_add(type="TRIANGULATE"); bpy.ops.object.modifier_apply(modifier=low.modifiers[-1].name)
 print("LOW_TRIS", len(low.data.polygons), "grupos", [g.name for g in low.vertex_groups])
 mat = bpy.data.materials.new("M_SB_Dragao")
@@ -119,6 +133,25 @@ bk.use_pass_direct = bk.use_pass_indirect = False; bk.use_pass_color = True
 assar("cor", "DIFFUSE", pass_filter={"COLOR"})
 assar("normal", "NORMAL")
 assar("rugosidade", "ROUGHNESS")
+# (03/11) parede interna da boca: pinta as ilhas dela (com 2 px de folga) em vermelho escuro de cavidade, normal neutra
+import numpy as _np
+def _pintar(im, cor):
+    W_, H_ = im.size; a_ = _np.array(im.pixels[:], dtype=_np.float32).reshape(H_, W_, 4); n_ = 0
+    for t in TRI_PAREDE:
+        xs = [p.x * W_ for p in t]; ys = [p.y * H_ for p in t]
+        x0, x1 = max(0, int(min(xs)) - 2), min(W_ - 1, int(max(xs)) + 2); y0, y1 = max(0, int(min(ys)) - 2), min(H_ - 1, int(max(ys)) + 2)
+        (ax, ay), (bx, by), (cx, cy) = [(p.x * W_, p.y * H_) for p in t]
+        d = (by - cy) * (ax - cx) + (cx - bx) * (ay - cy)
+        if abs(d) < 1e-9: continue
+        for yy in range(y0, y1 + 1):
+            for xx in range(x0, x1 + 1):
+                px_, py_ = xx + 0.5, yy + 0.5
+                l1 = ((by - cy) * (px_ - cx) + (cx - bx) * (py_ - cy)) / d; l2 = ((cy - ay) * (px_ - cx) + (ax - cx) * (py_ - cy)) / d
+                m_ = 2.5 / max(1.0, (abs(d) ** 0.5))
+                if l1 >= -m_ and l2 >= -m_ and 1 - l1 - l2 >= -m_: a_[yy, xx, :3] = cor; n_ += 1
+    im.pixels.foreach_set(a_.ravel()); im.save(); return n_
+if TRI_PAREDE:
+    print("LOW parede pixels", _pintar(imgs["cor"][0], (0.26, 0.05, 0.09)), _pintar(imgs["normal"][0], (0.5, 0.5, 1.0)), _pintar(imgs["rugosidade"][0], (0.35, 0.35, 0.35)))
 L = nt.links
 L.new(imgs["cor"][1].outputs["Color"], bsdf.inputs["Base Color"])
 L.new(imgs["rugosidade"][1].outputs["Color"], bsdf.inputs["Roughness"])

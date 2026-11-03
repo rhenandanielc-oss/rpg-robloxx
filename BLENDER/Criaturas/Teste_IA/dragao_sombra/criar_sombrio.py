@@ -536,11 +536,30 @@ def lingua(t, j):
     return V((-w * math.cos(a), y, zf + 0.0050 * math.sin(a) ** 0.7 - 0.0016 * math.exp(-((t - 0.5) / 0.10) ** 2)))
 BOCA_INF = malha_grades("SB_Dragao_Boca_Inf", [(lingua, 12, 16)])
 BOCA = [BOCA_INF]
+# (03/11) PAREDES INTERNAS da boca: vista de lado a boca aberta mostrava o fundo atraves dela (sem tecido entre as
+# fileiras de dentes). Uma lamina por lado, por dentro dos dentes (40% da meia-largura), do ceu da boca ao assoalho e
+# da ponta ao canto; peso SB_Mandibula = 0 em cima e 1 embaixo -> estica entre head e mouth_lower como a bochecha
+# interna. Fica escondida dentro da bolsa com a boca fechada.
+def _parede(sd):
+    def P(t, j):
+        y = lerp(Y0 + 0.020, Y_CANTO - 0.004, t); zb = z_boca(min(y, Y_CANTO))
+        fp = 0.30 + 0.70 * suave((y - Y_PONTA_L) / 0.05)
+        zt = zb + 0.0012 + 0.45 * meia_altura(min(y, Y_CANTO - 0.004), True) * fp
+        zf = zb - 0.0012 - 0.45 * meia_altura(min(y, Y_CANTO - 0.004), False) * fp
+        return V((sd * lw(y) * 0.40, y, lerp(zt, zf, j)))   # 40%: recuada (a lingua/interior continuam visiveis de 3/4)
+    nu, nv = 16, 6
+    o = malha_grades("SB_Dragao_Boca_Parede_" + ("L" if sd > 0 else "R"), [(P, nu, nv)])
+    g = o.vertex_groups.new(name="SB_Mandibula")
+    for k in range(len(o.data.vertices)): g.add([k], (k // (nu + 1)) / nv, "REPLACE")
+    return o
+BOCA += [_parede(1), _parede(-1)]
 K_CAB, PIV = 1.14, V((0, -0.64, 0.725))   # SOMBRIO: cabeca maior e mais imponente         # esguio: cabeca pequena como na referencia (sem aumento)         # glacial: cabeca proporcional (referencia elegante); articulacoes iguais
 def cabeca(p, w=None):
     w = suave((-0.61 - p.y) / 0.09) if w is None else w
     return PIV + (p - PIV) * (1 + (K_CAB - 1) * w)
 for v in ob.data.vertices: v.co = cabeca(v.co)
+for o_ in BOCA:                                 # (03/11) lingua e paredes na mesma escala da cabeca (K_CAB) que a pele
+    for v in o_.data.vertices: v.co = cabeca(v.co)
 ob.data.update()
 
 # ------------------------------------------------------------------ membranas (presas so ao flanco, a frente do quadril)
@@ -1119,6 +1138,8 @@ def mat_boca():
 MBOCA = mat_boca(); ob.data.materials.append(MBOCA)
 ML, _, bl_, _ = mat("M_Dragao_Lingua"); bl_.inputs["Base Color"].default_value = (0.30, 0.07, 0.14, 1); bl_.inputs["Roughness"].default_value = 0.28
 BOCA_INF.data.materials.append(ML)
+MPAR, _, bp_, _ = mat("M_Dragao_Boca_Parede"); bp_.inputs["Base Color"].default_value = (0.16, 0.035, 0.07, 1); bp_.inputs["Roughness"].default_value = 0.35
+for o_ in BOCA[1:]: o_.data.materials.append(MPAR)
 for o in ESPINHOS: o.data.materials.append(ME)
 for o in GARRAS: o.data.materials.append(MG)
 for o in OLHOS: o.data.materials.append(MO)
