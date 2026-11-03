@@ -650,16 +650,16 @@ for s in (1, -1):
         d0 = V(((0.20 + 0.13 * k) * s, 0.70, 1.0 - 0.26 * k + 0.08 * (rv_.random() - 0.5)))
         d1 = ((0.16 + 0.10 * k) * s, 1.0, 0.32 - 0.16 * k)
         CHIFRES.append(tubo(arco(b0, d0, d1, comp * (1 + 0.08 * (rv_.random() - 0.5)), 6), r0, "Chifre_Coroa", 1.45))
-for yy, comp in ((-0.770, 0.026), (-0.748, 0.036)):                                        # SOMBRIO: crista media baixa
-    CHIFRES.append(tubo(arco(V((0.0, yy, 0.825)), (0, 0.55, 1.0), (0, 1.0, 0.30), comp, 4), 0.0060, "Chifre_Coroa", 1.5))
+for k, yy in enumerate((-0.792, -0.772, -0.752, -0.732, -0.712)):                         # v8: crista media em degraus
+    CHIFRES.append(tubo(arco(V((0.0, yy, 0.826 - 0.004 * k)), (0, 0.50, 1.0), (0, 1.0, 0.28), 0.030 + 0.011 * k, 5), 0.0060 + 0.0006 * k, "Chifre_Coroa", 1.45))
 for s in (1, -1):
     # babado de espinhos finos ao longo da mandibula e da bochecha, abrindo para tras (referencia); refinado: curvos
     # R3: cristas laterais -- chifre da bochecha (nasce na maca e varre para tras) e crista do angulo da mandibula
-    ESPINHOS.append(tubo(arco(V((0.058 * s, -0.752, 0.748)), (0.42 * s, 1.0, 0.30), (0.28 * s, 1.0, 0.08), 0.150, 6), 0.0110, "Espinho_Bochecha", 1.3))
-    for k in range(4):                                        # SOMBRIO: leque occipital (atras e abaixo do chifre)
-        b0 = V(((0.050 - 0.004 * k) * s, -0.712 + 0.010 * k, 0.800 - 0.026 * k))
-        ESPINHOS.append(tubo(arco(b0, (0.40 * s, 1.0, 0.45 - 0.12 * k), (0.26 * s, 1.0, 0.10 - 0.06 * k), 0.150 - 0.020 * k, 6),
-                             0.0105 - 0.0012 * k, "Espinho_Bochecha", 1.3))
+    ESPINHOS.append(tubo(arco(V((0.058 * s, -0.752, 0.748)), (0.42 * s, 1.0, 0.30), (0.28 * s, 1.0, 0.08), 0.200, 7), 0.0125, "Espinho_Bochecha", 1.3))   # v8: maior
+    for k in range(6):                                        # v8: leque occipital longo (6 por lado, da coroa a mandibula)
+        b0 = V(((0.050 - 0.003 * k) * s, -0.712 + 0.012 * k, 0.805 - 0.022 * k))
+        ESPINHOS.append(tubo(arco(b0, (0.40 * s, 1.0, 0.45 - 0.10 * k), (0.24 * s, 1.0, 0.12 - 0.05 * k), 0.215 - 0.022 * k, 8),
+                             0.0120 - 0.0010 * k, "Espinho_Bochecha", 1.3))
     ESPINHOS.append(tubo(arco(V((0.054 * s, -0.738, 0.712)), (0.45 * s, 1.0, -0.10), (0.30 * s, 1.0, 0.02), 0.085, 5), 0.0068, "Espinho_Bochecha", 1.4))   # r8: na dobradica (nao aparece no canto da boca aberta)
     rv_ = random.Random(41 if s > 0 else 43)
     for k in range(2, 6):                                     # babado (R3: 4; os 2 da frente ficavam enterrados na maca)
@@ -712,6 +712,14 @@ while True:
     if c.y < -0.45: alt += 0.050 * math.exp(-((c.z - 1.03) / 0.16) ** 2) + 0.020 * math.exp(-((c.z - 0.82) / 0.16) ** 2)   # r4: leitura clara
     alt *= 1.55 * (1 - 0.40 * suave((c.y - 0.5) / 1.6))   # v7: espinhos principais com mais leitura                       # SOMBRIO: serra marcada ate a cauda
     alt *= (0.78 if i % 2 else 1.0) * (1 + 0.12 * (rvd.random() - 0.5))
+    if c.y < -0.42:                                                   # v8: CRINA (nuca -> pe do pescoco)
+        lado_ = 1 if i % 2 else -1; f_ = suave((c.z - 0.66) / 0.40)
+        comp_ = (0.115 + 0.150 * f_) * (0.70 if i % 2 else 1.0)   # (v8: crina longa, le na silhueta) * (1 + 0.10 * (rvd.random() - 0.5))
+        b_ = c + up * r * 0.93
+        e = tubo(arco(b_, up * 1.0 + tg * 0.55 + V((0.10 * lado_, 0, 0)), up * 0.30 + tg * 1.0 + V((0.16 * lado_, 0, 0)), comp_, 7),
+                 0.0085 + 0.003 * f_, "Espinho_Dorsal_Crina_%02d" % i, 1.35)
+        ESPINHOS.append(e); ENC_DORSAL[e.name] = -up; e["alt"] = 0.030 + 0.02 * f_
+        dist += 0.024 + 0.10 * r; i += 1; continue
     e = espinho_dorsal(c + up * r * 0.93, alt, 0.010 + alt * 0.34, 0.0, "Espinho_Dorsal_%02d" % i, (0.85 if c.z > 0.96 else 0.50) if c.y < -0.40 else 0.60)
     e.rotation_euler = (math.atan2(-up.y, up.z) - (0.12 if (c.y < -0.40 and c.z < 0.96) else 0.30) + 0.10 * (rvd.random() - 0.5), 0, 0); ESPINHOS.append(e); ENC_DORSAL[e.name] = -up; e["alt"] = alt
     dist += (0.030 + alt * 0.52 + 0.14 * r if c.y < -0.40 else 0.022 + alt * 0.34); i += 1   # pescoco: folga p/ dobrar para tras
@@ -1014,9 +1022,9 @@ for s in (1, -1):                                                               
         b0 = V((0.046 * s, -0.800 + 0.022 * k, 0.792 - 0.004 * k))
         ESPINHOS.append(tubo([b0, b0 + V((0.010 * s, 0.020, 0.010)), b0 + V((0.017 * s, 0.036, 0.018)), b0 + V((0.021 * s, 0.047, 0.023))],   # R3: mais curto e erguido (giro lateral)
                              0.0058, "Espinho_Sobrancelha", 1.6))
-    for k in range(3):                    # r8: espinhos SUPERIORES do cranio (entre a coroa e a linha media, para tras)
-        b0 = V((0.024 * s, -0.792 + 0.022 * k, 0.808 - 0.003 * k))
-        ESPINHOS.append(tubo(arco(b0, (0.15 * s, 0.55, 1.0), (0.10 * s, 1.0, 0.35), 0.026 + 0.006 * k, 4), 0.0042, "Espinho_Sobrancelha", 1.5))
+    for k in range(4):                    # v8: camada lateral do cranio (4 por lado, crescendo para tras)
+        b0 = V((0.022 * s, -0.796 + 0.018 * k, 0.810 - 0.003 * k))
+        ESPINHOS.append(tubo(arco(b0, (0.18 * s, 0.55, 1.0), (0.12 * s, 1.0, 0.30), 0.036 + 0.013 * k, 5), 0.0050 + 0.0005 * k, "Espinho_Sobrancelha", 1.45))
 for o in CHIFRES + OLHOS + [e for e in ESPINHOS if e.name.split(".")[0] in ("Espinho_Bochecha", "Espinho_Sobrancelha")]:
     para_cabeca(o)
 for e in ESPINHOS:
@@ -1050,7 +1058,7 @@ def realce_pele(centros, segs, alt, raio):
 K = K_CAB; centros, segs = [], []
 for o in CHIFRES: centros.append((o.location.copy(), (0.012 if o.name.split(".")[0] == "Chifre" else 0.005) * K, 0.022 * K))   # v7: base ossea maior
 for e in ESPINHOS:
-    if e.name.split(".")[0] in ("Espinho_Bochecha", "Espinho_Sobrancelha"): centros.append((e.location.copy(), 0.0025 * K, 0.007 * K))
+    if e.name.split(".")[0] in ("Espinho_Bochecha", "Espinho_Sobrancelha"): centros.append((e.location.copy(), 0.0038 * K, 0.008 * K))   # v8: bases das cristas mais marcadas
 for s in (1, -1):
     lado_ = sorted([o.location.copy() for o in CHIFRES if o.location.x * s > 0], key=lambda c: c.y)
     segs += [(a, b) for a, b in zip(lado_, lado_[1:])]
