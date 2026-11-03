@@ -9,6 +9,7 @@ export P_ERGUIDA='{"recua": 30, "ergue": 54}'
 # batidas de asa amplas e cadenciadas (3 por clipe no voo e no pairar em vez de 4); velocidades da montaria iguais
 export AMP=2.0 NB_VOO=3 NB_PAIRAR=3
 export ROAR_ESTILO=gelo                    # rugido padrao v2 no estilo frio/controlado
+export CABECA_RUGIDO=gelo                  # (03/11) cabeca propria por tipo de rugido, estilo Glacial
 # CERTIFICACAO (02/11, pedido do usuario "Glacial r9 — refinamento completo"):
 # - asas RECOLHIDAS no chao (repouso, andar, correr, sentado, deitado): dobra lateral do DOBRA_JSON em vez das asas
 #   armadas do Fogo (ASAS_ARMADAS=1 volta ao visual anterior);

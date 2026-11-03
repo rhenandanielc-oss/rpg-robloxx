@@ -59,6 +59,7 @@ return {
 			rugido = id(9116306862),                     -- Lion Roar Tired 3: pitched down, large (territorial)
 			rugidoCombate = id(9116302511),              -- Lion Roar Short Blast Attack Angry Sharp 4 (direcionado)
 			intimidar = {id(9116303194), id(9116303929)}, -- Lion Roar Snarl Growl Inhale Exhale 1 / 8
+			rugidoAmeaca = id(9116303194),               -- (03/11) ameaca do ninho: Snarl Growl 1 (forte ~1,2 s + cauda)
 			esforco = {id(9125470306), id(9125470318), id(9125470377), id(9125470501)},   -- Lion Deep Guttural Rumbling 7/8/9/11
 			grunhido = {id(9125470318), id(9125470377)}, alerta = id(9125470306),
 			respiro = {id(9113971975), id(9113972744), id(9113973128)}, respiroVolume = 0.32, respiroTom = {0.62, 0.74},  -- Creature Growls Lion 6/20/8

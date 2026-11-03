@@ -791,7 +791,10 @@ def f_alerta(u):
 
 def f_ameaca(u):
     """Ameaca do ninho 4,6 s: abaixa a frente (postura de bote), abre as asas bem (intimidacao), recolhe o pescoco
-    e RUGE projetando a cabeca, sacode, segura a postura ofensiva."""
+    e RUGE projetando a cabeca, sacode, segura a postura ofensiva.
+    CABECA_RUGIDO (03/11): a boca fica fechada (labios entreabertos) ate o som e abre/fecha JUNTO com ele (som em 0,34,
+    forte ate ~0,62 e cauda ate ~0,75); a cabeca vigia o ninho de um lado ao outro antes e ataca em blefe no rugido."""
+    if CABECA_RUGIDO: return f_ameaca_v2(u)
     pre = janela(u, 0.0, 0.2); insp = pulso(u, 0.18, 0.3, 0.32, 0.4); rug = pulso(u, 0.33, 0.4, 0.62, 0.75)
     p = Pose(); base_pe(p, 0.55 * pre)
     for c in PERNAS: p.pata[c]["beta"] += 6 * pre
@@ -800,6 +803,34 @@ def f_ameaca(u):
     boca_abre(p, 0.2 * pre + 1.0 * rug)
     abre = 0.62 * pre + 0.08 * rug
     p.asas = asas_ameaca(abre)
+    lat = onda_cauda(u, [(9.0, 2, 0.0, 0.9), (3.0, 4, 1.0, 1.2)])
+    cauda(p, -10 + 6 * pre, 5.0, lat, onda=[6 * pre * PESO_CAUDA[k] for k in range(7)])
+    return p
+
+def f_ameaca_v2(u):
+    gelo = CABECA_RUGIDO == "gelo"
+    pre = janela(u, 0.0, 0.2); insp = pulso(u, 0.18, 0.28, 0.30, 0.36); rug = pulso(u, 0.34, 0.41, 0.66, 0.76)
+    vigia = pre * (1 - janela(u, 0.28, 0.36))                                  # antes do rugido: vigia o ninho
+    p = Pose(); base_pe(p, 0.55 * pre)
+    for c in PERNAS: p.pata[c]["beta"] += 6 * pre
+    if gelo:
+        bote = pulso(u, 0.36, 0.44, 0.60, 0.70)                                # UM avanco longo e firme
+        p.off += Vector((0, 0.02 * insp - 0.03 * bote, -0.01 * pre))
+        olhar = 9 * math.sin(2 * math.pi * 0.9 * u - 0.6) * vigia            # varredura lenta e unica
+        pescoco_alto(p, cima=-22 * pre + 8 * insp - 6 * bote, esq=olhar, cab=4 * pre - 9 * bote)
+        cabeca_extra(p, cima=-3 * bote, esq=0.3 * olhar, inclina=-0.25 * olhar)
+        boca_abre(p, 0.05 * pre + 1.0 * rug, tranco=0.4 * math.sin(2 * math.pi * 6 * u) * rug)
+    else:
+        bote = pulso(u, 0.38, 0.43, 0.46, 0.51) + pulso(u, 0.52, 0.57, 0.60, 0.66)   # dois botes de blefe
+        p.off += Vector((0, 0.02 * insp - 0.022 * rug - 0.018 * bote, -0.01 * pre))
+        olhar = 12 * math.sin(2 * math.pi * 1.6 * u) * vigia                  # vigia rapido de um lado ao outro
+        tr = tremor_voz(rug, 24, 2.4, u)
+        pescoco_alto(p, cima=-22 * pre + 10 * insp - 4 * rug - 5 * bote, esq=olhar + 0.4 * tr, cab=4 * pre - 8 * rug)
+        cabeca_extra(p, cima=-5 * bote, esq=0.35 * olhar + sacode(u, 0.64, 0.80, 3.0, 8),
+                     inclina=-0.4 * olhar + 7 * math.sin(2 * math.pi * 2.0 * u) * rug)
+        garganta(p, tr)
+        boca_abre(p, 0.05 * pre + 1.0 * rug, tranco=tr)
+    p.asas = asas_ameaca(0.62 * pre + 0.08 * rug)
     lat = onda_cauda(u, [(9.0, 2, 0.0, 0.9), (3.0, 4, 1.0, 1.2)])
     cauda(p, -10 + 6 * pre, 5.0, lat, onda=[6 * pre * PESO_CAUDA[k] for k in range(7)])
     return p
@@ -1114,6 +1145,26 @@ def f_mergulho(u):
 # ---------------------------------------------------------------- sistema universal de animacoes (01/11): comportamento
 # Toda forma regional usa as MESMAS funcoes (proporcoes vem do esqueleto encaixado; personalidade por variaveis de
 # ambiente). Antecipacao -> acao -> reacao do corpo -> movimento secundario (cauda/asas) -> recuperacao.
+# ---------------------------------------------------------------- CABECA DOS RUGIDOS (usuario 03/11)
+# "diferencie o movimento da cabeca dos dragoes em cada rugido, conforme o tipo de rugido e a situacao": cada rugido
+# ganha uma linguagem de cabeca PROPRIA (giro/inclinacao/sacudida sobre o pescoco) e por forma: fogo = agressivo,
+# sacode e da trancos; gelo = frio, movimentos lentos, longos e estaveis. CABECA_RUGIDO vazio (Sombrio, por ora) =
+# clipes exatamente como antes.
+CABECA_RUGIDO = os.environ.get("CABECA_RUGIDO", "")
+def _lim(x): return max(0.0, min(1.0, x))
+def cabeca_extra(p, cima=0.0, esq=0.0, inclina=0.0):
+    """giro proprio da CABECA (chamar depois de pescoco_alto/voo/ao_chao): cima/esq somam na curva da cabeca;
+    inclina = rolagem em torno do focinho (+ = orelha esquerda desce)"""
+    c, e = p.curva.get("head", (0.0, 0.0)); p.curva["head"] = (c + cima, e + esq)
+    if abs(inclina) > 0.01:
+        frente_, _, _ = eixos(p); R = Rax(frente_, inclina)
+        p.extra["head"] = R @ p.extra["head"] if "head" in p.extra else R
+def sacode(u, a, b, ciclos, amp):
+    """sacudida amortecida de a a b (ciclos dentro da janela): comeca forte e morre suave"""
+    if u <= a or u >= b: return 0.0
+    t = (u - a) / (b - a)
+    return amp * math.sin(2 * math.pi * ciclos * t) * (1 - t) ** 1.6 * smooth(min(1.0, t * 5))
+
 def f_rugido_territorial(u):
     """Rugido territorial 4,2 s: firma as patas, ergue o pescoco ao alto, enche o peito, abre as asas pela metade e
     solta um rugido LONGO para o ceu (cabeca sobe), tremor da garganta, cauda erguida varrendo; recupera devagar."""
@@ -1128,6 +1179,15 @@ def f_rugido_territorial(u):
     p.asas = asas_ameaca(0.5 * firma + 0.1 * rug)
     lat = onda_cauda(u, [(8.0, 1, 0.3, 0.9), (3.0, 3, 1.1, 1.2)])
     cauda(p, -12 + 8 * rug, 5.0, lat, onda=[6 * rug * PESO_CAUDA[k] for k in range(7)])
+    if CABECA_RUGIDO == "fogo":
+        # proclama o territorio: varre o horizonte de um lado ao outro durante o rugido longo (cabeca ao alto),
+        # inclina para o lado da varredura e fecha com uma sacudida forte de cabeca
+        varre = 13 * math.sin(2 * math.pi * 0.9 * (u - 0.40)) * rug
+        cabeca_extra(p, cima=3 * rug, esq=varre + sacode(u, 0.80, 0.97, 3.5, 7), inclina=0.35 * varre)
+    elif CABECA_RUGIDO == "gelo":
+        # majestoso: UM arco lento e continuo pelo horizonte (sem sacudir), cabeca subindo devagar ate o fim do folego
+        arco = 9 * (2 * smooth(_lim((u - 0.36) / 0.52)) - 1) * rug
+        cabeca_extra(p, cima=5 * smooth(_lim((u - 0.36) / 0.5)) * rug, esq=arco, inclina=-0.12 * arco)
     return p
 
 def f_intimidar(u):
@@ -1452,6 +1512,11 @@ def f_rugido(base_ar=False):
         p.curva["spine_1"] = (p.curva.get("spine_1", (0, 0))[0] + 7 * ant + 3 * inv, 0)
         p.curva["spine_0"] = (p.curva.get("spine_0", (0, 0))[0] - 2 * ant, p.curva.get("spine_0", (0, 0))[1])
         boca_abre(p, 0.18 * ant + 1.12 * inv, tranco=0.3 * trem)
+        if CABECA_RUGIDO == "gelo":
+            # frio e calculado: recua e inclina a cabeca medindo o alvo, depois UMA virada lenta e deliberada de um
+            # lado ao outro com o queixo recolhido (sem tranco nem sacudida) e volta a encarar
+            vira = 8 * math.sin(2 * math.pi * (u - 0.40) / 0.9) * sus
+            cabeca_extra(p, cima=4 * ant - 5 * sus, esq=vira, inclina=6 * ant - 0.3 * vira)
         return p
     return fn
 
@@ -1470,6 +1535,7 @@ def f_rugido_ameaca(u):
     pescoco/cabeca pelo AlvoOlhar), focinho BAIXO e a frente, dentes a mostra, ombros e asas tensos, patas se
     reposicionam; o rosnado cresce e EXPLODE num rugido curto PROJETANDO a cabeca para frente (nunca para o ceu);
     mantem a atencao no alvo."""
+    if CABECA_RUGIDO: return f_rugido_ameaca_v2(u)
     enc = janela(u, 0.0, 0.22); rosn = pulso(u, 0.25, 0.42, 0.52, 0.58); rug = pulso(u, 0.55, 0.60, 0.74, 0.86)
     fica = janela(u, 0.80, 1.0)
     p = Pose(); base_pe(p, 0.45 * enc)
@@ -1494,6 +1560,36 @@ def f_rugido_ameaca(u):
           onda=[(2.5 * enc + 2.5 * rug) * PESO_CAUDA[k] for k in range(7)])
     return p
 
+def f_rugido_ameaca_v2(u):
+    """Rugido de AMEACA v2 (03/11) 3,0 s: o som comeca em 0,30 e dura ate ~0,88 -> a boca fica FECHADA (labio
+    entreaberto) ate 0,30, abre com o som, fica aberta no trecho forte e fecha quando ele morre (antes abria num rosnado
+    mudo 0,8 s antes e o rugido era mais curto que a boca aberta). Cabeca: encara baixo, oscila como cobra e inclina
+    medindo o alvo; no rugido projeta e da dois trancos para frente, contra-inclina e volta a encarar."""
+    enc = janela(u, 0.0, 0.22); rug = pulso(u, 0.30, 0.40, 0.76, 0.88); fica = janela(u, 0.84, 1.0)
+    cobra = enc * (1 - janela(u, 0.26, 0.34))
+    tranco = pulso(u, 0.44, 0.48, 0.51, 0.56) + pulso(u, 0.60, 0.64, 0.67, 0.72)
+    p = Pose(); base_pe(p, 0.45 * enc)
+    for c in PERNAS: p.pata[c]["beta"] += (7 if c.startswith("PD") else 4) * enc
+    p.off += Vector((0, -0.026 * rug - 0.012 * tranco, -0.006 * enc))
+    p.arf += -4 * rug
+    p.curva["spine_1"] = (4 * rug, 0); p.curva["spine_0"] = (-1.5 * rug, 0)
+    tr = tremor_voz(rug, 26, 2.6, u)
+    ond = 7 * math.sin(2 * math.pi * 1.7 * u) * cobra                      # cobra: vai e volta lento, encarando
+    pescoco_alto(p, cima=-16 * enc - 10 * rug - 4 * tranco + 3 * fica, esq=ond + 0.4 * tr, cab=5 * enc - 7 * rug)
+    w = min(1.0, 0.45 * enc + 0.6 * rug)
+    if w > 0.01:
+        antes = {n_: p.curva[n_] for n_ in PESCOCO + ["head"]}
+        pescoco_ao_chao(p, lerp(0.42, 0.30, rug), esq=ond, cab_extra=8 * rug)
+        for n_, (ca, ea) in antes.items():
+            cb, eb = p.curva[n_]; p.curva[n_] = (lerp(ca, cb, w), lerp(ea, eb, w))
+    garganta(p, tr)
+    cabeca_extra(p, cima=-6 * tranco + 2 * cobra, esq=0.4 * ond, inclina=10 * cobra - 6 * rug + 4 * fica)
+    boca_abre(p, 0.05 * enc + 0.97 * rug + 0.04 * fica, tranco=tr)
+    p.asas = asas_ameaca(0.35 * enc + 0.25 * rug + 0.03 * math.sin(2 * math.pi * 7 * u) * enc)
+    cauda(p, -9 + 4 * rug, 5.0, onda_cauda(u, [(9.0, 1, 0.0, 0.9), (3.0, 3, 1.0, 1.2)]),
+          onda=[(2.5 * enc + 2.5 * rug) * PESO_CAUDA[k] for k in range(7)])
+    return p
+
 def f_rugido_combate_fogo(u):
     """Rugido de COMBATE do Fogo 1,6 s (emissao em 0,30): contrai o pescoco em S, PROJETA a cabeca de uma vez, boca
     escancarada, vocalizacao curta e feroz; ombros/peito/coluna acusam o esforco, cauda compensa, recupera rapido."""
@@ -1511,6 +1607,11 @@ def f_rugido_combate_fogo(u):
     p.asas = asas_ameaca(0.12 * con + 0.32 * proj)
     vert = [(5 * proj - 3 * con) * PESO_CAUDA[k] for k in range(7)]
     cauda(p, -14 + 5 * proj, 5.0, onda_cauda(u, [(2.5, 1, 0.3, 1.0)]), onda=vert)
+    if CABECA_RUGIDO == "fogo":
+        # combate: arma a cabeca para tras inclinada, ESTALA para frente/baixo no grito e sacode de raiva no fim
+        estala = pulso(u, 0.28, 0.33, 0.38, 0.48)
+        cabeca_extra(p, cima=6 * con - 9 * estala, esq=sacode(u, 0.48, 0.84, 3.0, 9),
+                     inclina=7 * con - 5 * estala + 0.5 * sacode(u, 0.50, 0.86, 3.0, 9))
     return p
 
 def f_rugido_aereo(u):
@@ -1523,6 +1624,12 @@ def f_rugido_aereo(u):
     p.curva["spine_1"] = (p.curva.get("spine_1", (0, 0))[0] + 6 * ins + 3 * rug, 0)
     pescoco_voo(p, cima=-30 + 8 * ins - 4 * rug, esq=0.3 * tr, cab=-p.arf * 0.2 + 4 * ins - 6 * rug)
     boca_abre(p, 0.15 * ins + 1.0 * rug, tranco=tr)
+    if CABECA_RUGIDO == "fogo":
+        # no ar: cabeca estica para frente, da um tranco PARA CIMA no pico do grito e inclina de um lado ao outro como
+        # se cortasse o vento (o corpo segue o voo; so pescoco/cabeca no clipe parcial)
+        joga = pulso(u, 0.44, 0.50, 0.56, 0.66)
+        cabeca_extra(p, cima=-3 * rug + 9 * joga, esq=5 * math.sin(2 * math.pi * 1.2 * (u - 0.4)) * rug,
+                     inclina=8 * math.sin(2 * math.pi * 1.2 * (u - 0.4)) * rug)
     return p
 
 def f_rugido_vitoria(u):
@@ -1540,6 +1647,13 @@ def f_rugido_vitoria(u):
     p.asas = asas_ameaca(0.45 * sobe + 0.08 * rug)
     cauda(p, -12 + 8 * sobe, 5.0, onda_cauda(u, [(5.0, 1, 0.2, 0.9), (2.0, 3, 1.0, 1.2)]),
           onda=[5 * sobe * PESO_CAUDA[k] for k in range(7)])
+    if CABECA_RUGIDO == "fogo":
+        # triunfo: no pico JOGA a cabeca para tras (queixo ao alto), depois vira devagar olhando o derrotado de cima e
+        # termina com dois acenos curtos de dominio
+        joga = pulso(u, 0.44, 0.50, 0.56, 0.64)
+        olha = 12 * math.sin(math.pi * _lim((u - 0.58) / 0.30)) * janela(u, 0.56, 0.64) * (1 - janela(u, 0.86, 0.98))
+        acena = pulso(u, 0.84, 0.87, 0.88, 0.91) + pulso(u, 0.92, 0.95, 0.96, 0.99)
+        cabeca_extra(p, cima=11 * joga - 5 * acena - 4 * (olha / 12), esq=olha, inclina=-0.3 * olha + 3 * joga)
     return p
 
 def _sopro(p, ar, recolhe, mira, abre, tremor, u):

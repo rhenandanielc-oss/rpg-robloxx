@@ -56,7 +56,8 @@ local VOZ = {
 local TOM_RUGIDO_FOGO = 0.92                                    -- pouco rebaixado: rebaixar muito deixava o som engasgado
 local VOZ_MONTANHAS = {
 	Rugido_Territorial = {{0.12, "inspira", 1, 0.55, 0.62}, {0.30, "rugidoTerritorial", 1, 1.15, TOM_RUGIDO_FOGO}, {0.86, "bafo", 0.8, 0.22, 0.8}},
-	Rugido_Ameaca = {{0.54, "rugidoAmeaca", 1, 1.05, TOM_RUGIDO_FOGO}},
+	-- (03/11) clipe v2: boca fechada ate 0,30 e aberta junto com o som (antes abria num rosnado mudo antes do rugido)
+	Rugido_Ameaca = {{0.30, "rugidoAmeaca", 1, 1.05, TOM_RUGIDO_FOGO}},
 	Rugido_Vitoria = {{0.18, "inspira", 1, 0.5, 0.6}, {0.36, "rugidoVitoria", 1, 1.0, TOM_RUGIDO_FOGO}, {0.8, "bafo", 0.7, 0.2, 0.85}},
 	Ninho_Ameaca = {{0.34, "rugidoAmeaca", 1, 1.0, TOM_RUGIDO_FOGO}},
 	Intimidar = {{0.18, "intimidar", 0.8, 0.6, 0.78}, {0.68, "rosnado", 0.5, 0.5, 0.82}},
@@ -71,7 +72,7 @@ local VOZ_MONTANHAS = {
 	Dano_Forte = {{0.05, "dano", 1, 0.8, 0.9}}, Dano_Forte_Ar = {{0.05, "dano", 1, 0.8, 0.9}},
 }
 local VOZ_FORMA = {Montanhas = VOZ_MONTANHAS, Glacial = {
-	Ninho_Ameaca = {{0.34, "intimidar", 1, 1.0, 1.0}}, Rugido_Territorial = {{0.3, "rugido", 1, 1.25, 1.0}},
+	Ninho_Ameaca = {{0.34, "rugidoAmeaca", 1, 1.0, 1.0}},   -- (03/11) uma tomada fixa e longa (o "intimidar" sorteava uma curta) Rugido_Territorial = {{0.3, "rugido", 1, 1.25, 1.0}},
 	Intimidar = {{0.15, "intimidar", 0.9, 0.85, 1.0}, {0.65, "grunhido", 0.6, 0.6, 0.95}},
 	Reagir_Estimulo = {{0.12, "alerta", 0.8, 0.65, 1.05}}, Ninho_Alerta = {{0.2, "alerta", 0.8, 0.65, 1.0}},
 	Idle_Alerta_Mantido = {{0.5, "grunhido", 0.35, 0.5, 1.0}}, Preparar_Combate = {{0.3, "esforco", 0.5, 0.65, 0.95}},
