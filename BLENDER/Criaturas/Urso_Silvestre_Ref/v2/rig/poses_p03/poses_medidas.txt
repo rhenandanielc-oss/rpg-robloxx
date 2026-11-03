@@ -1,0 +1,7 @@
+pose;z_min;esticamento_p99;compressao_p1;pior_aresta
+repouso;-0.001;1.000;1.000;(1.0000536552441874, 'Urso_Corpo_Tras', (np.float64(2.46), np.float64(3.39), np.float64(6.66)))
+erguer_patas_traseiras;0.000;1.973;0.664;(23.69457175799182, 'Urso_Corpo_Frente', (np.float64(2.69), np.float64(3.75), np.float64(9.94)))
+passada_longa;-0.364;1.398;0.760;(21.293011013645135, 'Urso_Corpo_Frente', (np.float64(2.81), np.float64(-0.04), np.float64(6.43)))
+comer_cabeca_baixa;-0.205;2.225;0.676;(15.302096662150337, 'Urso_Cabeca', (np.float64(0.57), np.float64(-3.69), np.float64(4.35)))
+torcao_tronco;-0.506;1.249;0.816;(19.910459427279076, 'Urso_Corpo_Frente', (np.float64(3.32), np.float64(1.46), np.float64(5.48)))
+boca_aberta;-0.001;1.437;0.761;(9.409363379554533, 'Urso_Cabeca', (np.float64(-0.09), np.float64(-5.11), np.float64(7.15)))

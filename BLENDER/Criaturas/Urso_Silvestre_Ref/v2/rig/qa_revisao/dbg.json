@@ -1,0 +1,129 @@
+{
+ "simulacao_parametros_tecnicos": {
+  "Andar": {
+   "v_studs_s": 3.23,
+   "giro_graus_s": 0.0
+  },
+  "Corrida": {
+   "v_studs_s": 16.8,
+   "giro_graus_s": 0.0
+  },
+  "VirarE": {
+   "v_studs_s": 0.0,
+   "giro_graus_s": 60.0
+  },
+  "VirarD": {
+   "v_studs_s": 0.0,
+   "giro_graus_s": -60.0
+  }
+ },
+ "clipes": {
+  "Ameaca": {
+   "loop": false,
+   "quadros": 97,
+   "sim_v": 0.0,
+   "sim_giro": 0.0,
+   "sola_mundo": {
+    "MaoE": {
+     "deriva_max_studs": 0.104,
+     "deriva_osso_studs": 0.072,
+     "apoios": 2
+    },
+    "MaoD": {
+     "deriva_max_studs": 0.104,
+     "deriva_osso_studs": 0.073,
+     "apoios": 2
+    },
+    "PeE": {
+     "deriva_max_studs": 0.046,
+     "deriva_osso_studs": 0.0,
+     "apoios": 1
+    },
+    "PeD": {
+     "deriva_max_studs": 0.043,
+     "deriva_osso_studs": 0.0,
+     "apoios": 1
+    }
+   },
+   "chao_por_regiao": {
+    "garra/dedo": {
+     "prof_max": 0.018,
+     "verts_max": 6,
+     "quadro": 10
+    },
+    "sola": {
+     "prof_max": 0.014,
+     "verts_max": 2,
+     "quadro": 78
+    }
+   },
+   "boca_arestas_3x": {
+    "interior": 11,
+    "exterior": 30
+   },
+   "picos_aceleracao": [
+    [
+     "AntebracoD",
+     13,
+     17251,
+     602.1,
+     27.0
+    ],
+    [
+     "AntebracoE",
+     13,
+     15841,
+     559.9,
+     31.8
+    ],
+    [
+     "AntebracoD",
+     75,
+     13568,
+     13.4,
+     465.7
+    ],
+    [
+     "AntebracoE",
+     75,
+     12500,
+     15.8,
+     432.5
+    ],
+    [
+     "AntebracoD",
+     77,
+     10139,
+     538.6,
+     200.7
+    ],
+    [
+     "AntebracoE",
+     77,
+     9857,
+     526.3,
+     197.7
+    ]
+   ],
+   "vel_angular_max_graus_s": {
+    "AntebracoD": 602.1,
+    "AntebracoE": 559.9,
+    "BracoD": 314.0,
+    "MaoD": 302.5,
+    "BracoE": 290.6,
+    "MaoE": 284.8
+   }
+  }
+ },
+ "transicoes": {
+  "Andar->VirarE (fase sincronizada, meio da mistura)": {
+   "chao_max": 0.167
+  },
+  "Andar->VirarD (fase sincronizada, meio da mistura)": {
+   "chao_max": 0.188
+  },
+  "VirarE->Andar (fase sincronizada, meio da mistura)": {
+   "chao_max": 0.167
+  }
+ }
+}

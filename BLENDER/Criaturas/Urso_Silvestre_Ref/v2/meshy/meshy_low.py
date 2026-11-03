@@ -1,0 +1,259 @@
+"""CR_UrsoSilvestre v2 (Meshy) — malha de JOGO a partir da malha bruta do Meshy (6,5M tris, lascas soltas).
+1) remesh por voxel (malha fechada, sem buracos de UV) -> reducao para ALVO tris;
+2) boca: fenda labial ate a comissura (linha medida na malha) + cavidade -> mandibula separavel para o rig;
+3) pecas da boca (gengivas, dentes com caninos fortes, lingua, palato) numa malha propria "Urso_Boca";
+4) UV unica + bake Cycles (cor e normal) da malha bruta para a de jogo (1024); interior da boca pintado a parte;
+5) divide o corpo em 2 MeshParts (<= 20k) e exporta GLB; grava relatorio.
+Uso: blender -b CR_Urso_meshy_bruto.blend -P meshy_low.py -- <saida_dir> [alvo=26000] [voxel=0.032]"""
+import bpy, bmesh, sys, os, math, random
+from mathutils import Vector as V, Matrix
+from mathutils.bvhtree import BVHTree
+ARGS = sys.argv[sys.argv.index("--") + 1:]
+OUT = os.path.abspath(ARGS[0]); os.makedirs(OUT, exist_ok=True)
+def arg(n, d): return type(d)(next((a.split("=")[1] for a in ARGS if a.startswith(n + "=")), d))
+ALVO, VOX = arg("alvo", 32000), arg("voxel", 0.032)
+sc = bpy.context.scene; rnd = random.Random(3)
+def suave(x): x = max(0.0, min(1.0, x)); return x * x * (3 - 2 * x)
+def lerp(a, b, t): return a + (b - a) * t
+def tris(o): return sum(len(p.vertices) - 2 for p in o.data.polygons)
+def ativar(o):
+    for x in sc.objects: x.select_set(False)
+    o.select_set(True); bpy.context.view_layer.objects.active = o
+def mod(o, tipo, **kw):
+    ativar(o); m = o.modifiers.new(tipo, tipo)
+    for k, v in kw.items(): setattr(m, k, v)
+    bpy.ops.object.modifier_apply(modifier=m.name)
+HIGH = bpy.data.objects["CR_Urso_Meshy"]
+
+# ------------------------------------------------------------------ 1) voxel + reducao
+low = HIGH.copy(); low.data = HIGH.data.copy(); low.name = low.data.name = "Urso_Corpo"; sc.collection.objects.link(low)
+low.data.materials.clear()
+mod(low, "REMESH", mode="VOXEL", voxel_size=VOX, use_smooth_shade=True)
+print("LOW voxel", tris(low))
+mod(low, "SMOOTH", factor=0.4, iterations=2)
+
+# ------------------------------------------------------------------ 2) boca: linha dos labios medida na malha (lado direito, espelhada)
+LAB = [(-5.13, 6.263), (-5.24, 6.213), (-5.39, 6.153), (-5.55, 6.133), (-5.72, 6.150), (-5.90, 6.140), (-6.25, 6.140)]
+CANTO = LAB[0][0]
+def labio_z(y):
+    if y >= LAB[0][0]: return LAB[0][1]
+    for (y0, z0), (y1, z1) in zip(LAB, LAB[1:]):
+        if y1 <= y <= y0: return lerp(z0, z1, (y - y0) / (y1 - y0))
+    return LAB[-1][1]
+M_PELE = bpy.data.materials.new("M_tmp_Pele"); low.data.materials.append(M_PELE)
+M_BOCA = bpy.data.materials.new("M_tmp_Boca"); M_BOCA.use_nodes = True
+def fenda():
+    m = bpy.data.meshes.new("Fenda"); b = bmesh.new(); N = 20; secs = []
+    for i in range(N + 1):
+        t = i / N; y = lerp(-6.6, CANTO, t); z = labio_z(y)
+        meia = 0.005 * (1 - suave((t - 0.86) / 0.14)) + 0.0012
+        secs.append([b.verts.new((xx, y, z + zz)) for xx, zz in ((-1.2, -meia), (1.2, -meia), (1.2, meia), (-1.2, meia))])
+    for a, c in zip(secs, secs[1:]):
+        for k in range(4): b.faces.new((a[k], a[(k + 1) % 4], c[(k + 1) % 4], c[k]))
+    b.faces.new(secs[0][::-1]); b.faces.new(secs[-1]); bmesh.ops.recalc_face_normals(b, faces=b.faces)
+    b.to_mesh(m); b.free(); o = bpy.data.objects.new("Fenda", m); sc.collection.objects.link(o); return o
+def elipsoide(nome, c, r, seg=24):
+    bpy.ops.mesh.primitive_uv_sphere_add(radius=1, location=c, segments=seg, ring_count=seg // 2)
+    o = bpy.context.object; o.name = nome; o.scale = r; bpy.ops.object.transform_apply(scale=True); return o
+CORTES = [fenda(), elipsoide("Cav1", (0, -5.48, labio_z(-5.48) + 0.005), (0.22, 0.30, 0.070)),   # nao alcanca a parede dos labios na frente
+          elipsoide("Cav2", (0, -5.30, labio_z(-5.30) + 0.0), (0.19, 0.20, 0.08))]   # estreita: nao rompe a parede lateral
+for c in CORTES: c.data.materials.append(M_BOCA)
+for c in CORTES:
+    ativar(low); bo = low.modifiers.new("Boca", "BOOLEAN"); bo.operation = "DIFFERENCE"; bo.solver = "EXACT"; bo.object = c; bo.material_mode = "TRANSFER"
+    bpy.ops.object.modifier_apply(modifier=bo.name); bpy.data.objects.remove(c)
+mod(low, "TRIANGULATE")
+# reducao DEPOIS do recorte: paredes internas da boca saem lisas (corte feito na malha densa do voxel)
+Y_CAB = -3.9                                      # limite da MeshPart da cabeca (atras das orelhas, antes dos ombros)
+vg = low.vertex_groups.new(name="densidade")      # peso baixo = mais densidade (cabeca; labios e interior da boca mais ainda)
+for v in low.data.vertices:
+    w = 1.0 - 0.75 * suave((Y_CAB + 0.2 - v.co.y) / 0.6)
+    if v.co.y < CANTO + 0.35 and abs(v.co.z - labio_z(v.co.y)) < 0.12: w = 0.05
+    vg.add([v.index], w, "REPLACE")
+ativar(low); dm = low.modifiers.new("Dec", "DECIMATE"); dm.ratio = ALVO / tris(low); dm.use_collapse_triangulate = True
+dm.vertex_group = "densidade"; dm.vertex_group_factor = 4.0; bpy.ops.object.modifier_apply(modifier=dm.name)
+mod(low, "TRIANGULATE")
+for p in low.data.polygons: p.use_smooth = True
+print("LOW cabeca tris", sum(1 for p in low.data.polygons if p.center.y < Y_CAB), "corpo", sum(1 for p in low.data.polygons if p.center.y >= Y_CAB))
+print("LOW reduzido", tris(low))
+n_boca = sum(1 for p in low.data.polygons if p.material_index == 1)
+print("BOCA faces internas", n_boca, "corpo tris", tris(low))
+BVH = BVHTree.FromObject(low, bpy.context.evaluated_depsgraph_get())
+def arcada(y, z, s, recuo):
+    ult = None; o_ = V((0, y, z))
+    for _ in range(6):
+        h = BVH.ray_cast(o_, V((s, 0, 0)), 2.0)
+        if h[0] is None: break
+        ult = h[0]; o_ = h[0] + V((s * 0.004, 0, 0))
+    return None if ult is None else ult - V((s * recuo, 0, 0))
+
+# ------------------------------------------------------------------ 3) pecas da boca (malha propria)
+def tubo(pts, raios, nome, achat=0.85, sub=2):
+    m = bpy.data.meshes.new(nome); o = bpy.data.objects.new(nome, m); sc.collection.objects.link(o)
+    o.location = pts[0]; b = bmesh.new(); vs = [b.verts.new(p - pts[0]) for p in pts]
+    for a, c in zip(vs, vs[1:]): b.edges.new((a, c))
+    b.to_mesh(m); b.free()
+    k = o.modifiers.new("Pele", "SKIN"); k.use_smooth_shade = True
+    for i, d in enumerate(m.skin_vertices[0].data): d.radius = (raios[i], raios[i] * achat); d.use_root = i == 0
+    s2 = o.modifiers.new("Sub", "SUBSURF"); s2.levels = s2.render_levels = sub
+    ativar(o)
+    for mm in list(o.modifiers): bpy.ops.object.modifier_apply(modifier=mm.name)
+    bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
+    return o
+AJUSTE = []
+PECAS = []                                       # (objeto, papel: "dente"|"gengiva"|"lingua", sup?)
+ARCO_INF = {}
+for s in (1, -1):                                # largura da mandibula: os dentes de cima ficam por dentro dela (boca fechada)
+    ARCO_INF[s] = [(y, arcada(y, labio_z(y) - 0.02, s, 0.0)) for y in [lerp(-5.88, -5.20, i / 12) for i in range(13)]]
+def lim_inf(y, s):
+    p = min(ARCO_INF[s], key=lambda a: abs(a[0] - y))[1]
+    return abs(p.x) if p is not None else 9.0
+for sup in (True, False):
+    dz = -1 if sup else 1; zg = (lambda y, sup=sup: labio_z(y) + (0.016 if sup else -0.016))
+    for s in (1, -1):
+        arco = []
+        for y in [lerp(-5.74, -5.20, i / 12) for i in range(13)]:
+            p = arcada(y, zg(y), s, 0.15 + 0.02 * suave((y + 5.85) / 0.3))   # bem atras da parede dos labios
+            if p is not None:
+                p.z = zg(y)
+                if sup: p.x = math.copysign(min(abs(p.x), lim_inf(y, s) - 0.10), s)
+                arco.append(p)
+        if len(arco) < 4: print("ARCADA_FALHOU", sup, s); continue
+        PECAS.append((tubo([a - V((0, 0, dz * 0.010)) for a in arco[::2]], [0.040] * len(arco[::2]), "Gengiva", 0.75, 1), "gengiva", sup))
+        def em(y): return min(arco, key=lambda a: abs(a.y - y)).copy()
+        # tamanhos pela referencia (caninos fortes, incisivos visiveis); com a boca fechada as pontas ficam DENTRO da carne
+        TAB = [(-5.74, 0.062, 0.024, 0.40), (-5.715, 0.068, 0.026, 0.72), (-5.69, 0.074, 0.028, 1.0),      # incisivos
+               (-5.66, 0.18 if sup else 0.15, 0.062, 1.0),                                                    # canino forte
+               (-5.50, 0.050, 0.026, 1.0), (-5.42, 0.058, 0.030, 1.0), (-5.34, 0.064, 0.034, 1.0),          # pre-molares
+               (-5.25, 0.070, 0.048, 1.0)]                                                                    # molar
+        def visivel(q):
+            """ponta visivel com a boca fechada: algum raio horizontal/para a frente escapa sem bater na pele"""
+            for d in (V((1, 0, 0)), V((-1, 0, 0)), V((0, -1, 0)), V((0.7, -0.7, 0)), V((-0.7, -0.7, 0)), V((0, -1, 0.35)), V((0, -1, -0.35)),
+                      V((0.6, 0, -0.8)), V((-0.6, 0, -0.8)), V((0.6, 0, 0.8)), V((-0.6, 0, 0.8))):
+                if BVH.ray_cast(q, d.normalized(), 3.0)[0] is None: return True
+            return False
+        for k, (y, comp, r, fx) in enumerate(TAB):
+            p = em(y); p.x *= fx; p.z = zg(y) + dz * (-0.032)                # raiz enterrada na gengiva
+            if k <= 2: p.y += 0.02                          # incisivos recuados: nao aparecem no sulco da boca fechada
+            curva = (V((-s * 0.025, -0.014, 0)) if k == 3 else V()) * (1 if sup else -1) if not (k == 3 and not sup) else V((-s * 0.02, 0.014, 0))   # caninos curvam para dentro
+            comp0 = comp
+            for _ in range(10):                                  # encurta/recua ate a ponta ficar escondida com a boca fechada
+                ponta = p + V((0, 0, dz * comp)) + curva; meio = p + V((0, 0, dz * comp * 0.55)) + curva * 0.5
+                if not (visivel(ponta) or visivel(meio)): break
+                if comp > comp0 * 0.6: comp *= 0.9
+                else: p.y += 0.015; p.x -= math.copysign(0.01, p.x)
+            AJUSTE.append((("sup" if sup else "inf"), s, k, round(comp0, 3), round(comp, 3)))
+            pts = [p, p + V((0, 0, dz * comp * 0.55)) + curva * 0.5, p + V((0, 0, dz * comp)) + curva]
+            PECAS.append((tubo(pts, [r, r * (0.72 if k == 3 else 0.85), 0.004 if k <= 3 else r * 0.6], "Dente", 0.8 if k == 3 else 0.6, 1), "dente", sup))
+lg = elipsoide("Lingua", (0, -5.36, labio_z(-5.36) - 0.11), (0.15, 0.24, 0.036), 20); PECAS.append((lg, "lingua", False))
+print("BOCA pecas", len(PECAS)); print("DENTES (lado, s, k, comp_alvo, comp_final)", [a_ for a_ in AJUSTE if a_[3] != a_[4]])
+
+# ------------------------------------------------------------------ 4) UV + bake
+def uv_proj(o, margem=0.003):
+    ativar(o); bpy.ops.object.mode_set(mode="EDIT"); bpy.ops.mesh.select_all(action="SELECT")
+    bpy.ops.uv.smart_project(angle_limit=math.radians(66), island_margin=margem, area_weight=0.0)
+    bpy.ops.uv.pack_islands(margin=margem); bpy.ops.object.mode_set(mode="OBJECT")
+# separa a cabeca (textura propria = mais resolucao no rosto); costura duplicada, sem buraco
+def separar(o, cond, nome):
+    c = o.copy(); c.data = o.data.copy(); c.name = c.data.name = nome; sc.collection.objects.link(c)
+    for o_, manter in ((c, True), (o, False)):
+        bm_ = bmesh.new(); bm_.from_mesh(o_.data)
+        bmesh.ops.delete(bm_, geom=[f for f in bm_.faces if cond(f.calc_center_median()) != manter], context="FACES")
+        bm_.to_mesh(o_.data); bm_.free()
+    return c
+CAB = separar(low, lambda p: p.y < Y_CAB, "Urso_Cabeca")
+import numpy as np
+R = 1024
+sc.render.engine = "CYCLES"; sc.cycles.samples = 4; sc.cycles.device = "CPU"
+bk = sc.render.bake; bk.use_selected_to_active = True; bk.cage_extrusion = 0.16; bk.max_ray_distance = 0.65; bk.margin = 8
+def assar(o, prefixo):
+    uv_proj(o)
+    img_c = bpy.data.images.new(prefixo + "_Cor", R, R); img_n = bpy.data.images.new(prefixo + "_Normal", R, R)
+    img_n.colorspace_settings.name = "Non-Color"
+    mat = bpy.data.materials.new("M_" + prefixo[2:]); mat.use_nodes = True; nt = mat.node_tree
+    for img in (img_c, img_n):
+        tx = nt.nodes.new("ShaderNodeTexImage"); tx.image = img; tx.name = img.name
+    idx_boca = [p.index for p in o.data.polygons if p.material_index == 1]
+    o.data.materials.clear(); o.data.materials.append(mat)
+    for o_ in sc.objects: o_.select_set(False)
+    HIGH.select_set(True); o.select_set(True); bpy.context.view_layer.objects.active = o
+    nt.nodes.active = nt.nodes[img_c.name]; bpy.ops.object.bake(type="DIFFUSE", pass_filter={"COLOR"})
+    nt.nodes.active = nt.nodes[img_n.name]; bpy.ops.object.bake(type="NORMAL", normal_space="TANGENT")
+    # pixels que o bake nao alcancou (preto exato) recebem a cor vizinha (pontas de garra finas)
+    for img in (img_c,):
+        px = np.array(img.pixels[:], dtype=np.float32).reshape(R, R, 4)
+        for _ in range(12):
+            falha = (px[..., 0] + px[..., 1] + px[..., 2]) < 1e-4
+            if not falha.any(): break
+            viz = np.zeros_like(px[..., :3]); cont = np.zeros((R, R, 1), np.float32)
+            for dy, dx in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                sh = np.roll(px, (dy, dx), axis=(0, 1)); ok = ((sh[..., 0] + sh[..., 1] + sh[..., 2]) >= 1e-4)[..., None]
+                viz += sh[..., :3] * ok; cont += ok
+            preenche = falha & (cont[..., 0] > 0)
+            px[preenche, :3] = (viz / np.maximum(cont, 1))[preenche]
+        img.pixels[:] = px.ravel()
+    if idx_boca:                                  # interior da boca: escuro perto dos labios, rosado no fundo; normal plana
+        pc = np.array(img_c.pixels[:], dtype=np.float32).reshape(R, R, 4); pn = np.array(img_n.pixels[:], dtype=np.float32).reshape(R, R, 4)
+        uvl = o.data.uv_layers.active.data
+        for i in idx_boca:
+            poly = o.data.polygons[i]; us = [uvl[li].uv for li in poly.loop_indices]
+            cen = poly.center; xs = [u.x * R for u in us]; ys = [u.y * R for u in us]
+            x0, x1, y0, y1 = int(min(xs)) - 2, int(max(xs)) + 3, int(min(ys)) - 2, int(max(ys)) + 3
+            prof = suave((cen.y - (-5.95) - 0.06) / 0.25) * suave((0.28 - abs(cen.x)) / 0.12 + 0.3)
+            pc[max(0, y0):min(R, y1), max(0, x0):min(R, x1)] = (lerp(0.09, 0.40, prof), lerp(0.022, 0.09, prof), lerp(0.022, 0.09, prof), 1.0)
+            pn[max(0, y0):min(R, y1), max(0, x0):min(R, x1)] = (0.5, 0.5, 1.0, 1.0)
+        img_c.pixels[:] = pc.ravel(); img_n.pixels[:] = pn.ravel()
+    for img in (img_c, img_n):
+        img.filepath_raw = os.path.join(OUT, img.name + ".png"); img.file_format = "PNG"; img.save()
+    b_ = nt.nodes["Principled BSDF"]; nm = nt.nodes.new("ShaderNodeNormalMap")
+    nt.links.new(nt.nodes[img_c.name].outputs["Color"], b_.inputs["Base Color"]); nt.links.new(nt.nodes[img_n.name].outputs["Color"], nm.inputs["Color"])
+    nt.links.new(nm.outputs[0], b_.inputs["Normal"]); b_.inputs["Roughness"].default_value = 0.82
+assar(CAB, "T_Urso_Cabeca"); assar(low, "T_Urso_Corpo")
+print("BAKE_OK cabeca", tris(CAB), "corpo", tris(low))
+
+# boca: junta pecas, UV, textura pequena pintada por papel
+CORES = {"dente": (0.80, 0.72, 0.56), "gengiva": (0.42, 0.10, 0.11), "lingua": (0.50, 0.13, 0.14)}
+for o, papel, sup in PECAS:
+    a_ = o.data.attributes.new("papel", "FLOAT_COLOR", "POINT"); c = CORES[papel]
+    am = o.data.attributes.new("mand", "FLOAT", "POINT")
+    for i in range(len(o.data.vertices)): a_.data[i].color = (*c, 1.0); am.data[i].value = 0.0 if sup else 1.0
+ativar(PECAS[0][0])
+for o, _, _ in PECAS: o.select_set(True)
+bpy.ops.object.join(); BOCA = bpy.context.object; BOCA.name = BOCA.data.name = "Urso_Boca"
+mod(BOCA, "TRIANGULATE"); uv_proj(BOCA, 0.01)
+img_b = bpy.data.images.new("T_Urso_Boca_Cor", 256, 256)
+mb = bpy.data.materials.new("M_Urso_Boca"); mb.use_nodes = True; ntb = mb.node_tree; bb = ntb.nodes["Principled BSDF"]
+atn = ntb.nodes.new("ShaderNodeAttribute"); atn.attribute_name = "papel"; ntb.links.new(atn.outputs["Color"], bb.inputs["Base Color"])
+tb = ntb.nodes.new("ShaderNodeTexImage"); tb.image = img_b; ntb.nodes.active = tb; BOCA.data.materials.append(mb)
+bk.use_selected_to_active = False; ativar(BOCA); bpy.ops.object.bake(type="DIFFUSE", pass_filter={"COLOR"})
+img_b.filepath_raw = os.path.join(OUT, "T_Urso_Boca_Cor.png"); img_b.file_format = "PNG"; img_b.save()
+ntb.links.new(tb.outputs["Color"], bb.inputs["Base Color"]); bb.inputs["Roughness"].default_value = 0.35
+
+# ------------------------------------------------------------------ 5) divide o corpo (<= 20k cada) e exporta
+partes = [CAB, low]
+if tris(low) > 20000:
+    bmx = bmesh.new(); bmx.from_mesh(low.data); bmx.faces.ensure_lookup_table()
+    ys = sorted(f.calc_center_median().y for f in bmx.faces); corte = ys[len(ys) // 2]
+    tras = low.copy(); tras.data = low.data.copy(); tras.name = tras.data.name = "Urso_Corpo_Tras"; sc.collection.objects.link(tras)
+    for o_, frente in ((low, True), (tras, False)):
+        bm_ = bmesh.new(); bm_.from_mesh(o_.data)
+        bmesh.ops.delete(bm_, geom=[f for f in bm_.faces if (f.calc_center_median().y > corte) == frente], context="FACES")
+        bm_.to_mesh(o_.data); bm_.free()
+    bmx.free(); low.name = low.data.name = "Urso_Corpo_Frente"; partes = [CAB, low, tras]
+JOGO = partes + [BOCA]
+HIGH.hide_render = True; HIGH.hide_set(True)
+for o in sc.objects: o.select_set(o in JOGO)
+bpy.ops.export_scene.gltf(filepath=os.path.join(OUT, "CR_Urso_Silvestre_v2_LOW.glb"), use_selection=True, export_format="GLB",
+                          export_yup=True, export_apply=True, export_image_format="AUTO", export_materials="EXPORT")
+lin = ["malha;triangulos;material;texturas"]
+for o in JOGO:
+    imgs = sorted({n.image.name + " %dx%d" % tuple(n.image.size) for n in o.data.materials[0].node_tree.nodes if n.type == "TEX_IMAGE" and n.image})
+    lin.append("%s;%d;%s;%s" % (o.name, tris(o), o.data.materials[0].name, ", ".join(imgs)))
+lin.append("TOTAL;%d;;" % sum(tris(o) for o in JOGO))
+pts = [o.matrix_world @ v.co for o in partes for v in o.data.vertices]
+y0 = min(p.y for p in pts); L = max(p.y for p in pts) - y0
+lin.append("medidas;ombro=%.2f;comprimento=%.2f;largura=%.2f;pe_min_z=%.3f" % (max(p.z for p in pts if y0 + L * 0.15 < p.y < y0 + L * 0.45), L,
+           max(p.x for p in pts) - min(p.x for p in pts), min(p.z for p in pts)))
+open(os.path.join(OUT, "relatorio_low.txt"), "w", encoding="utf-8").write("\n".join(lin) + "\n"); print("\n".join(lin))
+sc.render.engine = "BLENDER_EEVEE"
+bpy.ops.wm.save_as_mainfile(filepath=os.path.join(OUT, "CR_Urso_v2_LOW.blend"))
+print("URSO_LOW_OK")

@@ -1,0 +1,7 @@
+pose;z_min;esticamento_p99;compressao_p1;pior_aresta
+repouso;-0.001;1.000;1.000;(1.0000148927371775, 'Urso_Cabeca', (np.float64(-0.6), np.float64(-4.91), np.float64(6.19)))
+erguer_patas_traseiras;-0.001;3.926;1.000;(242.25062009859712, 'Urso_Cabeca', (np.float64(-0.61), np.float64(0.27), np.float64(12.21)))
+passada_longa;-0.001;1.000;1.000;(11.997472648257801, 'Urso_Cabeca', (np.float64(-0.23), np.float64(-4.89), np.float64(6.26)))
+comer_cabeca_baixa;-0.001;3.028;1.000;(86.120950015825, 'Urso_Cabeca', (np.float64(-0.95), np.float64(-4.25), np.float64(8.14)))
+torcao_tronco;-0.001;1.000;1.000;(155.64459613092092, 'Urso_Cabeca', (np.float64(4.28), np.float64(-3.72), np.float64(5.76)))
+boca_aberta;-0.001;4.117;1.000;(27.464961953188602, 'Urso_Cabeca', (np.float64(-0.4), np.float64(-4.4), np.float64(8.21)))

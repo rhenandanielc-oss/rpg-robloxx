@@ -1,0 +1,10 @@
+{
+ "Sentar": {
+  "duracao": 1.4,
+  "loop": false,
+  "quadros": 43,
+  "velocidade_studs_s_PROPOSTA": 0.0,
+  "erro_ik_max": 0.0005,
+  "malha_z_min": -0.001
+ }
+}
