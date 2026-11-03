@@ -29,7 +29,7 @@ gd = lc.vertex_groups.new(name="DECIMAR")
 for v in lc.data.vertices:
     y = (lc.matrix_world @ v.co).y
     gd.add([v.index], 0.08 + 0.92 * max(0.0, min(1.0, (y + 0.66) / 0.10)), "REPLACE")
-d = lc.modifiers.new("D", "DECIMATE"); d.ratio = 15500 / tris(lc); d.use_symmetry = True; d.symmetry_axis = "X"
+d = lc.modifiers.new("D", "DECIMATE"); d.ratio = 18500 / tris(lc)   # (03/11) +3k tris: linha da mandibula/labios sem micro-pontas (Corpo continua < 20k); d.use_symmetry = True; d.symmetry_axis = "X"
 d.vertex_group = "DECIMAR"; d.vertex_group_factor = 2.0
 bpy.ops.object.modifier_apply(modifier="D"); lc.vertex_groups.remove(lc.vertex_groups["DECIMAR"])
 print("LOW corpo tris", tris(lc), "cabeca", sum(1 for p in lc.data.polygons if (lc.matrix_world @ p.center).y < -0.66), "SB_Mandibula", "SB_Mandibula" in lc.vertex_groups)
@@ -52,6 +52,8 @@ for o in HIGH:
     tag = "TAG_cabeca" if o.name.startswith(CABECA) else "TAG_mandibula" if o.name.startswith(MAND) else None
     if tag:
         g = c.vertex_groups.get(tag) or c.vertex_groups.new(name=tag); g.add([v.index for v in c.data.vertices], 1.0, "REPLACE")
+    if o.name.startswith(("Dente", "Olho")):   # (03/11) marca dentes/olhos: ganham mais area na UV (senao o bake fica escuro)
+        g = c.vertex_groups.get("UV_GRANDE") or c.vertex_groups.new(name="UV_GRANDE"); g.add([v.index for v in c.data.vertices], 1.0, "REPLACE")
     partes.append(c)
 for p in partes:
     for pl in p.data.polygons: pl.use_smooth = True
@@ -62,6 +64,29 @@ ativo(low); bpy.ops.object.transform_apply(location=True, rotation=True, scale=T
 low.data.materials.clear()
 bpy.ops.object.mode_set(mode="EDIT"); bpy.ops.mesh.select_all(action="SELECT")
 bpy.ops.uv.smart_project(angle_limit=math.radians(72), island_margin=0.003, area_weight=0.6)   # r8: menos ilhas minusculas
+# (03/11, inspecao da boca) dentes com poucos texels saiam PRETOS no jogo (o bake pegava o labio escuro vizinho):
+# as ilhas de UV dos dentes e olhos sao ampliadas x5 antes do empacotamento (que preserva a proporcao entre ilhas)
+import bmesh as _bm
+bpy.ops.object.mode_set(mode="OBJECT")
+_b = _bm.new(); _b.from_mesh(low.data); _uv = _b.loops.layers.uv.active; _dl = _b.verts.layers.deform.active
+_gi = low.vertex_groups["UV_GRANDE"].index if "UV_GRANDE" in low.vertex_groups else None
+_fs = [f for f in _b.faces if _gi is not None and all(_gi in v[_dl] for v in f.verts)] if _dl else []
+_vis = set()
+for f in _fs:
+    if f.index in _vis: continue
+    ilha, st = [], [f]
+    while st:
+        x = st.pop()
+        if x.index in _vis: continue
+        _vis.add(x.index); ilha.append(x)
+        st += [y for e in x.edges for y in e.link_faces if y.index not in _vis and _gi in y.verts[0][_dl]]
+    cs = [l[_uv].uv.copy() for x in ilha for l in x.loops]; c = sum(cs, cs[0] * 0) / len(cs)
+    for x in ilha:
+        for l in x.loops: l[_uv].uv = c + (l[_uv].uv - c) * 5.0
+_b.to_mesh(low.data); _b.free()
+print("LOW ilhas UV ampliadas (dentes/olhos):", len(_fs), "faces")
+if "UV_GRANDE" in low.vertex_groups: low.vertex_groups.remove(low.vertex_groups["UV_GRANDE"])
+bpy.ops.object.mode_set(mode="EDIT"); bpy.ops.mesh.select_all(action="SELECT")
 bpy.ops.uv.pack_islands(margin=0.004)
 bpy.ops.object.mode_set(mode="OBJECT")
 bpy.ops.object.modifier_add(type="TRIANGULATE"); bpy.ops.object.modifier_apply(modifier=low.modifiers[-1].name)
