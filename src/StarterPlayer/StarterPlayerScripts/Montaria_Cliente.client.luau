@@ -125,6 +125,7 @@ local NOMES = {chao = "No chao", decolando = "Decolando", voo = "Em voo", pousan
 
 -- ===== estado montado ============================================================================================
 local m = nil                                                        -- dragao montado
+local trava, travar, soltarTrava, avisoTrava, travaAtual             -- PATCH_TRAVA_ALVO: definidos no bloco da trava (mais abaixo)
 -- PATCH_HUD_FORMA (01/11): habilidades que ESTE dragao tem (atributo HabilidadesForma; sem ele = todas, como antes)
 local function habPermitida(nome)
 	local lista = m and m:GetAttribute("HabilidadesForma")
@@ -158,14 +159,14 @@ local function ligarAcoes()
 		acao("Mont_Mordida", function(st)
 			if st == Enum.UserInputState.Begin and m then
 				if m:GetAttribute("MontariaModo") == "voo" then Comando:FireServer("mordida")
-				elseif m:GetAttribute("MontariaModo") == "chao" and Pedido then Pedido:FireServer(m, "usar", "Mordida", workspace.CurrentCamera.CFrame.LookVector) end
+				elseif m:GetAttribute("MontariaModo") == "chao" and Pedido then Pedido:FireServer(m, "usar", "Mordida", travaAtual() and dirMira() or workspace.CurrentCamera.CFrame.LookVector, trava and trava.alvo) end
 			end
 			return (m and m:GetAttribute("MontariaModo") == "voo") and Enum.ContextActionResult.Sink or Enum.ContextActionResult.Pass
 		end, C.mordida, "Mordida")
 		if C.garra then
 			acao("Mont_Garra", function(st)
 				if st == Enum.UserInputState.Begin and m and m:GetAttribute("MontariaModo") == "chao" and Pedido then
-					Pedido:FireServer(m, "usar", "Garra", workspace.CurrentCamera.CFrame.LookVector)
+					Pedido:FireServer(m, "usar", "Garra", travaAtual() and dirMira() or workspace.CurrentCamera.CFrame.LookVector, trava and trava.alvo)
 				end
 				return Enum.ContextActionResult.Sink
 			end, C.garra, "Garra")
@@ -173,11 +174,12 @@ local function ligarAcoes()
 	end
 	if C.rugido then                                                       -- PATCH_RUGIDOS_FOGO: so pede; o servidor valida (recarga, ocupado)
 		acao("Mont_Rugido", function(st)
-			if st == Enum.UserInputState.Begin and m and Pedido then Pedido:FireServer(m, "usar", "Rugido", workspace.CurrentCamera.CFrame.LookVector) end
+			if st == Enum.UserInputState.Begin and m and Pedido then Pedido:FireServer(m, "usar", "Rugido", travaAtual() and dirMira() or workspace.CurrentCamera.CFrame.LookVector) end
 			return Enum.ContextActionResult.Sink
 		end, C.rugido, "Rugir")
 	end
 	acao("Mont_Pousar", function(st) if st == Enum.UserInputState.Begin then Comando:FireServer("pousar") end; return Enum.ContextActionResult.Sink end, C.pousar, "Pousar")
+	if C.travar then acao("Mont_Trava", function(st) if st == Enum.UserInputState.Begin then if trava then soltarTrava(); avisoTrava("Alvo solto") else travar() end end; return Enum.ContextActionResult.Sink end, C.travar, "Alvo") end   -- PATCH_TRAVA_ALVO
 	acao("Mont_Desmontar", function(st) if st == Enum.UserInputState.Begin then Comando:FireServer("desmontar") end; return Enum.ContextActionResult.Sink end, C.desmontar, "Sair")
 	-- troca de elemento: so em forma com MAIS de um elemento (oficial 30/10: o Montanhas e so Fogo, sem troca)
 	local varios = #string.split(m and m:GetAttribute("ElementosValidos") or "", ",") > 1
@@ -194,7 +196,7 @@ local function ligarAcoes()
 		acao("Mont_" .. h[1], function(st)
 			if not (m and Pedido) then return Enum.ContextActionResult.Sink end
 			if st == Enum.UserInputState.Begin then
-				Pedido:FireServer(m, "usar", h[1], dirMira())                     -- direcao da BOCA ate o ponto do cursor
+				Pedido:FireServer(m, "usar", h[1], dirMira(), travaAtual() and trava.alvo or nil)   -- direcao da BOCA ate o cursor/alvo travado
 				if h[1] == "Sopro" then soproSegurado = true end
 				local mv = C.miraVivaForma and C.miraVivaForma[m:GetAttribute("FormaRegional") or ""]
 				if mv and mv[h[1]] then miraAte = os.clock() + mv[h[1]] end
@@ -206,7 +208,8 @@ local function ligarAcoes()
 	end
 end
 local function desligarAcoes()
-	for _, n in ipairs({"Mont_Subir", "Mont_Descer", "Mont_Correr", "Mont_Planar", "Mont_Pousar", "Mont_Desmontar", "Mont_Elemento", "Mont_Mordida", "Mont_Garra", "Mont_Rugido"}) do CAS:UnbindAction(n) end
+	for _, n in ipairs({"Mont_Subir", "Mont_Descer", "Mont_Correr", "Mont_Planar", "Mont_Pousar", "Mont_Desmontar", "Mont_Elemento", "Mont_Mordida", "Mont_Garra", "Mont_Rugido", "Mont_Trava"}) do CAS:UnbindAction(n) end
+	soltarTrava()                                                       -- PATCH_TRAVA_ALVO
 	for _, h in ipairs(C.habilidades) do CAS:UnbindAction("Mont_" .. h[1]) end
 end
 
@@ -237,7 +240,84 @@ local function bocaPos()
 	for _, d in ipairs(m:GetDescendants()) do if d:IsA("Bone") and d.Name == "mouth_upper_tip" then return d.TransformedWorldCFrame.Position end end
 	return m:GetPivot().Position
 end
+-- ===== PATCH_TRAVA_ALVO (04/11): ALVO DINAMICO (C / clique do meio / R3) =========================================
+-- Trava no jogador/criatura mais perto do cursor (ou do centro da tela sem mouse). Com alvo travado, dirMira aponta
+-- da boca ao alvo, e o pedido leva o alvo (o servidor valida). Solta: mesma tecla, alvo morto/sumiu/longe, desmontar.
+local TRAVA = {alcance = 320, quebra = 400, raioTela = 0.35, cor = Color3.fromRGB(255, 95, 95)}
+trava = nil                                                          -- {alvo, raiz, hl, bb, txt} (declarado no topo)
+local function raizAlvo(md) return md and (md:FindFirstChild("HumanoidRootPart") or md.PrimaryPart) end
+local function alvoVivo(md)
+	if not (md and md.Parent and md:IsDescendantOf(workspace)) then return false end
+	local h = md:FindFirstChildOfClass("Humanoid"); if h then return h.Health > 0 end
+	return not md:GetAttribute("Incapacitado")
+end
+avisoTrava = function(txt)
+	toast.Text = txt; toast.TextTransparency = 0; toast.TextStrokeTransparency = 0.5
+	TweenService:Create(toast, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.In, 0, false, 1.2), {TextTransparency = 1, TextStrokeTransparency = 1}):Play()
+end
+soltarTrava = function()
+	if not trava then return end
+	if trava.hl then trava.hl:Destroy() end; if trava.bb then trava.bb:Destroy() end
+	trava = nil
+end
+local function candidatosTrava()
+	local l, vistos = {}, {}
+	local function por(md)
+		if vistos[md] or md == m or md == lp.Character or not md:IsA("Model") then return end
+		vistos[md] = true
+		if md:GetAttribute("DonoUserId") == lp.UserId then return end           -- nunca os proprios dragoes
+		if raizAlvo(md) and alvoVivo(md) then table.insert(l, md) end
+	end
+	for _, d in ipairs(workspace:GetDescendants()) do if d:IsA("Humanoid") and d.Parent then por(d.Parent) end end
+	for _, md in ipairs(workspace:GetChildren()) do if md:IsA("Model") and (md:GetAttribute("FormaRegional") or md:GetAttribute("GuardiaoNinho")) then por(md) end end
+	return l
+end
+travar = function()
+	local cam = workspace.CurrentCamera; local vp = cam.ViewportSize
+	local ml = UIS:GetMouseLocation()                                  -- cursor fora da tela (ou sem mouse): centro da tela
+	local foco = (UIS.MouseEnabled and ml.X >= 0 and ml.Y >= 0 and ml.X <= vp.X and ml.Y <= vp.Y) and ml or Vector2.new(vp.X / 2, vp.Y / 2)
+	local origem = m and m:GetPivot().Position or cam.CFrame.Position
+	local melhor, nota = nil, math.huge
+	for _, md in ipairs(candidatosTrava()) do
+		local r = raizAlvo(md)
+		if (r.Position - origem).Magnitude <= TRAVA.alcance then
+			local p, naTela = cam:WorldToViewportPoint(r.Position)
+			if naTela and p.Z > 0 then
+				local d = (Vector2.new(p.X, p.Y) - foco).Magnitude / math.min(vp.X, vp.Y)
+				if d <= TRAVA.raioTela and d < nota then melhor, nota = md, d end
+			end
+		end
+	end
+	if not melhor then avisoTrava("Nenhum alvo perto da mira"); return end
+	soltarTrava()
+	local r = raizAlvo(melhor)
+	local hl = Instance.new("Highlight"); hl.Name = "TravaAlvo"; hl.Adornee = melhor; hl.FillTransparency = 1; hl.OutlineColor = TRAVA.cor
+	hl.OutlineTransparency = 0.15; hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop; hl.Parent = lp.PlayerGui
+	local bb = Instance.new("BillboardGui"); bb.Name = "TravaAlvo"; bb.Adornee = r; bb.AlwaysOnTop = true; bb.Size = UDim2.fromOffset(60, 78)
+	bb.StudsOffsetWorldSpace = Vector3.new(0, 0, 0); bb.LightInfluence = 0; bb.Parent = lp.PlayerGui
+	local anel = Instance.new("Frame"); anel.AnchorPoint = Vector2.new(0.5, 0); anel.Position = UDim2.new(0.5, 0, 0, 0); anel.Size = UDim2.fromOffset(46, 46)
+	anel.BackgroundTransparency = 1; anel.Parent = bb
+	local cr = Instance.new("UICorner"); cr.CornerRadius = UDim.new(0.5, 0); cr.Parent = anel
+	local st = Instance.new("UIStroke"); st.Color = TRAVA.cor; st.Thickness = 3; st.Parent = anel
+	local txt = Instance.new("TextLabel"); txt.BackgroundTransparency = 1; txt.Position = UDim2.new(0, 0, 0, 50); txt.Size = UDim2.new(1, 0, 0, 22)
+	txt.Font = Enum.Font.GothamBold; txt.TextSize = 14; txt.TextColor3 = TRAVA.cor; txt.TextStrokeTransparency = 0.4; txt.Text = ""; txt.Parent = bb
+	trava = {alvo = melhor, raiz = r, hl = hl, bb = bb, txt = txt, anel = anel}
+	avisoTrava("Alvo travado: " .. melhor.Name)
+end
+travaAtual = function()                                              -- alvo travado ainda valido? (solta sozinho se nao)
+	if not trava then return nil end
+	local r = raizAlvo(trava.alvo)
+	if not (m and r and alvoVivo(trava.alvo)) or (r.Position - m:GetPivot().Position).Magnitude > TRAVA.quebra then soltarTrava(); return nil end
+	trava.raiz = r; return trava
+end
+RunService.RenderStepped:Connect(function()
+	local t = travaAtual(); if not t then return end
+	local d = (t.raiz.Position - m:GetPivot().Position).Magnitude
+	t.txt.Text = ("%d m"):format(math.floor(d + 0.5)); t.anel.Rotation = (os.clock() * 90) % 360
+end)
 function dirMira()
+	local t = travaAtual()                                             -- PATCH_TRAVA_ALVO: alvo travado comanda a mira
+	if t then local v = t.raiz.Position - bocaPos(); if v.Magnitude > 1 then return v.Unit end end
 	local alvo = pontoMira(); local v = alvo - bocaPos()
 	return v.Magnitude > 1 and v.Unit or workspace.CurrentCamera.CFrame.LookVector
 end
@@ -348,6 +428,7 @@ local function entrar(dragao)
 	local rf = C.rotulosForma and C.rotulosForma[fr]
 	for id, s in pairs(slots) do if s.nome then s.nome.Text = (rf and rf[id]) or s.padrao end end
 	if C.dicaForma and C.dicaForma[fr] then dica.Text ..= C.dicaForma[fr] end
+	if C.travar then dica.Text ..= " | C / clique do meio: travar alvo" end   -- PATCH_TRAVA_ALVO
 	energia.BackgroundColor3 = (C.corEnergiaForma and C.corEnergiaForma[fr]) or Color3.fromRGB(255, 150, 60)
 	gui.Enabled = true; if reticula then reticula.Visible = UIS.MouseEnabled end
 	ligarAcoes()

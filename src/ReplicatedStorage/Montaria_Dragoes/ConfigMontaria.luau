@@ -55,18 +55,22 @@ return {
 		desmontar = {Enum.KeyCode.X, Enum.KeyCode.DPadDown},
 		rugido = {Enum.KeyCode.T, Enum.KeyCode.DPadRight},               -- PATCH_RUGIDOS_FOGO: rugir (chao parado/andando ou voando)
 		elemento = {Enum.KeyCode.Z, Enum.KeyCode.DPadUp},                  -- so liga em forma com MAIS de um elemento (nenhuma hoje)
+		travar = {Enum.KeyCode.C, Enum.UserInputType.MouseButton3, Enum.KeyCode.ButtonR3},   -- PATCH_TRAVA_ALVO: alvo dinamico (liga/solta)
 		habilidades = {                                                   -- ordem oficial das 4 ativas (oficial 30/10): {id, tecla, gamepad, rotulo}
 			{"Sopro", Enum.KeyCode.One, Enum.KeyCode.ButtonR2, "Sopro"},
 			{"Arremetida", Enum.KeyCode.Two, Enum.KeyCode.ButtonR1, "Arremetida"},
 			{"Tempestade", Enum.KeyCode.Three, Enum.KeyCode.ButtonX, "Tempestade"},
 			{"Coracao", Enum.KeyCode.Four, Enum.KeyCode.DPadRight, "Coração Inf."},
 		},
-		passivas = {SangueDeMagma = "Sangue de Magma", Burning = "Burning", SangueGlacial = "Sangue Glacial", Frostbite = "Frostbite"},   -- exibicao no HUD (lista vem do atributo Passivas)
+		passivas = {SangueDeMagma = "Sangue de Magma", Burning = "Burning", SangueGlacial = "Sangue Glacial", Frostbite = "Frostbite",
+			MarcaSombria = "Marca Sombria", RastroBreu = "Rastro do Breu"},   -- PATCH_CORRENTES_NOITE: rotulos do Sombrio   -- exibicao no HUD (lista vem do atributo Passivas)
 		-- PATCH_KIT_GELO: rotulo de cada slot por forma, e slots que seguem mandando a mira enquanto a habilidade roda (s)
-		rotulosForma = {Glacial = {Sopro = "Sopro Glacial", Arremetida = "Rajadas", Tempestade = "Zero Absol.", Coracao = "Nevasca"}},
-		dicaForma = {Glacial = " | segure 1: Sopro Glacial | 2 Rajadas de Gelo (mire) | 3 Zero Absoluto | 4 Nevasca Ancestral"},
-		miraVivaForma = {Glacial = {Arremetida = 2.6}},
-		corEnergiaForma = {Glacial = Color3.fromRGB(150, 215, 255)},
+		rotulosForma = {Glacial = {Sopro = "Sopro Glacial", Arremetida = "Rajadas", Tempestade = "Zero Absol.", Coracao = "Nevasca"},
+			Sombrio = {Sopro = "Sopro Umbral", Arremetida = "Correntes", Coracao = "Eclipse"}},   -- PATCH_ECLIPSE_DRACONICO
+		dicaForma = {Glacial = " | segure 1: Sopro Glacial | 2 Rajadas de Gelo (mire) | 3 Zero Absoluto | 4 Nevasca Ancestral",
+			Sombrio = " | segure 1: Sopro Umbral | 2 Correntes da Noite (mire no chao) | 4 Eclipse Dracônico"},
+		miraVivaForma = {Glacial = {Arremetida = 2.6}, Sombrio = {Arremetida = 1.6}},   -- Correntes: mira ate a batida
+		corEnergiaForma = {Glacial = Color3.fromRGB(150, 215, 255), Sombrio = Color3.fromRGB(165, 90, 255)},
 	},
 	-- alturaAlvo: ACIMA do dorso (o pivo fica no chao; o dorso esta a ~34). Antes era 14 = dentro do tronco, e a camera
 	-- de oclusao do Roblox colava no corpo. No ar soma alturaVoo (os clipes de voo erguem o corpo 14 acima do pivo).

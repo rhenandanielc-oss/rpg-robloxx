@@ -169,7 +169,7 @@ end
 
 -- pedidos de jogadores: so o dono, com intervalo minimo; o cliente manda SO a habilidade/elemento/direcao
 local ultimo = {}
-Pedido.OnServerEvent:Connect(function(plr, m, acao, arg, dir)
+Pedido.OnServerEvent:Connect(function(plr, m, acao, arg, dir, alvo)
 	if typeof(m) ~= "Instance" or not N.registro[m] then return end
 	if m:GetAttribute("DonoUserId") ~= plr.UserId then return end
 	local c0 = N.registro[m]
@@ -185,7 +185,15 @@ Pedido.OnServerEvent:Connect(function(plr, m, acao, arg, dir)
 	if acao == "elemento" and typeof(arg) == "string" then c:trocarElemento(arg); return end
 	if acao == "usar" and typeof(arg) == "string" and (Cfg.habilidades[arg] or Cfg.basicos[arg]) then
 		if arg == "Sopro" and not c.ocupado then c.segurando = true; c.miraDir = typeof(dir) == "Vector3" and dir.Unit or nil end
-		local usou = c:usar(arg, {direcao = typeof(dir) == "Vector3" and dir or nil, segurar = arg == "Sopro"})
+		-- PATCH_TRAVA_ALVO (04/11): alvo travado pelo cavaleiro so vale se for alvo VALIDO deste dragao e estiver no alcance
+		local alvoOk
+		if typeof(alvo) == "Instance" and alvo:IsA("Model") and alvo:IsDescendantOf(workspace) then
+			local rr = alvo:FindFirstChild("HumanoidRootPart") or alvo.PrimaryPart
+			if rr and (rr.Position - m:GetPivot().Position).Magnitude <= 420 then
+				for _, a in ipairs(c:alvosValidos()) do if a == alvo then alvoOk = alvo; break end end
+			end
+		end
+		local usou = c:usar(arg, {direcao = typeof(dir) == "Vector3" and dir or nil, segurar = arg == "Sopro", alvo = alvoOk})
 		-- habilidade usada perto de um guardiao selvagem (ou mirando nele): ele reage ao agressor (direcao aproximada).
 		-- Sem dano no guardiao: vida/incapacitacao de dragao selvagem ainda sem regra aprovada.
 		if usou and plr.Character and arg ~= "Rugido" then                -- rugir nao e agressao (PATCH_RUGIDOS_FOGO)
