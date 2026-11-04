@@ -109,9 +109,14 @@ Ficha histórica de combate (aprovada antes de 30/10, ainda não revista para o 
   - Velocidades da simulação são parâmetros técnicos, não regras.
   - Cópia anterior em `v2/rig/antes_revisao/`.
 - **Não feito:** Studio (importação e montagem das KeyframeSequences), teste em PC ou celular.
+- **Piloto no Studio (04/11/2026, APROVADO pelo usuário; só PC, celular não testado):** o GLB v2 foi importado em `rpg_roblox`, em `Workspace.Teste_Urso_v2`, isolado.
+  - 31 ossos, 4 malhas com skin, escala e texturas preservadas.
+  - Repouso, Andar e Rugir tocados em Play no PC com id temporário (`RegisterAnimationClip`), sem publicar.
+  - Poses iguais ao Blender (erro ≤ 0,0021 stud). Andar a 3,23 (parâmetro técnico): deriva 0,003–0,049.
+  - O place não foi salvo. Ver `v2/LEIA-ME-v2.md`, seção "Piloto".
 - Elemento continua [PENDENTE]. A vegetação é só aparência.
 
-## 5. O que já existe no projeto (segundo os registros; o Studio NÃO foi aberto nesta sessão)
+## 5. O que já existe no projeto (registros anteriores; o place `rpg_roblox` não tem urso provisório — conferido no M0 de 04/11)
 
 ### Blender (`BLENDER/Criaturas/Blockouts/`)
 - `Urso_Silvestre/`: `_blockout.blend` (26/10), `_refinado.blend` (V2), `_final.blend`, `_refinado_v5.blend`, `_final_v5.blend` (27/10).

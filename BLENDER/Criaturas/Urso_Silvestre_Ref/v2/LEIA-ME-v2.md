@@ -210,3 +210,45 @@ Etapas:
     - Mordida 61;
     - Reação 84.
     - Os closes (`rig/qa_revisao/boca/_boca.png`) não mostram rasgo. O interior tem faixas escuras de sombra e de esticamento leve da malha interna.
+
+## Piloto no Roblox Studio: importação + Repouso, Andar e Rugir (04/11/2026, autorizado; APROVADO pelo usuário em 04/11/2026: "Aprovado")
+- **Place:** `rpg_roblox` (PlaceId 114230639394991), aberto numa janela própria do Studio. Reserva em `DOCS/estado/studio-em-uso.md` das 12:42 às 13:16, depois liberada.
+  - A outra janela (`Teste-animacoes_CR`, dos dragões) não foi tocada.
+  - Neste place **não existe urso provisório**: só marcadores do mapa (`Reserva_CavernaUrso_*`, `Ninho_Urso_*`, `Caverna_Urso_*`/`SpawnUrsoGigante`). Nenhum deles foi alterado.
+- **Importação** (Import 3D manual, feita pelo usuário) de `rig/export/CR_Urso_Silvestre_v2_Rig.glb`.
+  - Chegou como `Workspace.Scene`: 4 MeshParts com `HasSkinnedMesh=true`, cada uma com Motor6D para a `RootPart`.
+  - Ossos: 31, sem duplicados, todos em `RootPart > Raiz`. Há `AnimationController` (sem Animator) e `InitialPoses`.
+  - Texturas: `SurfaceAppearance` (cor + normal) em Cabeça e Corpo; `TextureID` na Boca.
+  - Altura da malha 8,97 (ombro). Frente para −Z. 1 unidade = 1 stud.
+  - Veio **desancorado**. Ancorei só a `RootPart` da cópia de teste.
+- **Isolamento** (só objetos do urso):
+  - `Workspace.Teste_Urso_v2`, com a plataforma 120×120 a y=2000, a grade de 2 studs e o modelo `Urso_Silvestre_v2_Piloto`, pivô (0, 2000, 0);
+  - `ServerStorage.Urso_v2_Piloto`, com `Dados_Clipes` (3 StringValues), `AdaptadorUrso`, `TestePlayUrso` e `Animacoes` (3 KeyframeSequences).
+- **Eixos:** o importador gira o modelo 180° em Y. Studio = (−x, z, y) do Blender. Como os clipes são locais a cada osso, isso não os afeta.
+  - Medido com poses conhecidas, aplicando os quadros direto nos ossos: erro máximo de **0,0015 stud** (Andar q9, Rugir q28, Repouso q0, 10 ossos cada, translações da Raiz incluídas).
+  - Em Play, pelo Animator, o erro máximo foi **0,0021 stud**. O cliente mostra a mesma pose do servidor.
+- **Clipes:** `HttpEnabled=false` neste place, e não alterei.
+  - Por isso os JSON foram compactados (`studio/empacotar_clipes.py`, inteiros ×10⁴) e enviados como StringValues.
+  - Erro de compactação 0,00005. Somas por canal iguais às do Python.
+  - O adaptador próprio (`studio/AdaptadorUrso.luau`) monta a árvore de Poses a partir da hierarquia real dos ossos do urso (`RootPart` > `Raiz` > …, 32 poses por quadro, nenhuma faltando). Não usa a ponte compartilhada nem clipe molde de outra criatura.
+  - **Correção no adaptador:** os loops do urso não repetem o último quadro. Por isso entra um keyframe final igual ao quadro 0, e as durações ficam iguais ao Blender: Repouso 4,0 s, Andar 1,2 s, Rugir 2,4 s.
+- **Play (PC, Studio):**
+  - `AnimationClipProvider:RegisterAnimationClip` funcionou, com id temporário só no Studio. **Nada publicado.**
+  - Repouso, Andar e Rugir tocaram isolados.
+  - Taxa de tempo: 0,98–1,00 na velocidade normal e 0,327–0,334 em 1/3.
+  - O Rugir termina sozinho aos 2,4 s.
+  - `parar()` desliga a conexão, para as faixas e devolve o pivô ao início. Conferido.
+  - Com streaming ligado, foi preciso levar o personagem até a plataforma e pedir streaming em volta dela, só durante o Play.
+- **Andar com deslocamento a 3,23 studs/s** (parâmetro técnico, não oficial):
+  - sentido correto (−Z, para onde a cabeça aponta);
+  - com o deslocamento por relógio (`os.clock`), a pata apoiada derivava **0,08–0,18** por apoio;
+  - amarrado ao tempo da faixa (versão final do `TestePlayUrso`), a deriva fica entre **0,003 e 0,049** conforme a execução. A tolerância proposta é 0,05; no Blender, a deriva do osso é 0,003–0,012.
+  - A diferença restante nas patas dianteiras não foi explicada: não vem da ordem `Stepped`/`PreAnimation`.
+- **Capturas:** `rig/qa_revisao/piloto_studio/` e a prancha `review/PRANCHAS_v2/13_piloto_studio_blender_x_roblox.png`, com Blender × Studio nas mesmas câmeras e a referência.
+  - As poses batem. No Studio a cor sai mais quente e saturada, por causa da iluminação do place.
+- **Não salvo:** o place **não foi salvo** por mim. A importação e os objetos de teste só existem na sessão aberta até o usuário salvar ou descartar.
+- **Pendências:**
+  - mistura entre clipes afunda a pata (até cerca de 0,19 nos testes do Blender);
+  - franja da barriga no Deitar (0,10);
+  - nada testado no celular nem com várias instâncias;
+  - publicação das animações fora do escopo.
