@@ -231,6 +231,7 @@ function N.ferir(fonte, a, dano, el, tipo, intensidade, ehTick, frost)
 		if el == "Fogo" then dano *= (1 - Passivas.resistenciaFogo(a)) end
 		if el == "Gelo" then dano *= (1 - Passivas.resistenciaGelo(a)) end
 		dano *= Passivas.vulnerabilidade(a)                             -- Frostbite: alvo muito congelado sofre mais
+		if Passivas.tem(fonte, "MarcaSombria") then el = el or "Sombra"; if el == "Sombra" then dano *= Passivas.multiplicadorMarca(fonte, a) end end   -- PATCH_MARCA_SOMBRIA
 		if dano > 0 then h:TakeDamage(dano); ok = true end
 	end
 	if ok and not ehTick then
@@ -238,7 +239,9 @@ function N.ferir(fonte, a, dano, el, tipo, intensidade, ehTick, frost)
 		Passivas.aplicarBurning(fonte, a)
 		Passivas.aplicarFrostbite(fonte, a, frost or Cfg.passivas.Frostbite.basico)   -- Glacial: todo acerto acumula
 		Passivas.marcarCombate(fonte)
+		if el == "Sombra" then Passivas.aplicarMarca(fonte, a) end      -- PATCH_MARCA_SOMBRIA: acerto (nao tick) marca
 	end
+	if ok then local t = workspace:GetServerTimeNow(); if fonte then fonte:SetAttribute("UltimoCombate", t) end; a:SetAttribute("UltimoCombate", t) end   -- PATCH_MARCA_SOMBRIA: Rastro do Breu
 	return ok
 end
 function N:aplicar(alvos, dano, tipo, intensidade, el, frost)
@@ -302,7 +305,10 @@ end
 -- ===== basicos =================================================================================================
 function N:_Mordida(def, el, noAr)
 	FX:FireAllClients({d = self.m, hab = "Mordida", fase = "preparo", el = el})
-	local t = self:tocar("Ataque_Mordida", noAr, {Impacto = 0.74}, function(n)
+	-- PATCH_MORDIDA_MOVIMENTO (03/11): andando no chao (modelos com MordidaEmMovimento), so pescoco/cabeca/mandibula (_Sup)
+	local mov = not noAr and self.m:GetAttribute("MordidaEmMovimento") and (self.m:GetAttribute("Velocidade") or 0) > 3
+	local nomeM = (mov and self:clipe("Ataque_Mordida_Sup", false)) and "Ataque_Mordida_Sup" or "Ataque_Mordida"
+	local t = self:tocar(nomeM, noAr, {Impacto = 0.74}, function(n)
 		if n == "Impacto" then
 			local b = self:boca(); local alvos = {}
 			for _, a in ipairs(self:alvosValidos()) do if naEsfera(b + self:frente() * 6, def.raio, a) and self:visivel(b, a) then table.insert(alvos, a) end end
@@ -896,6 +902,132 @@ end
 
 -- ===== KIT DO GELO (Dragao Glacial, oficial 02/11) ===============================================================
 function N:_SoproGlacial(def, el, noAr, op) return self:_Sopro(def, "Gelo", noAr, op) end
+-- PATCH_SOPRO_UMBRAL (04/11): Sopro Umbral (Sombrio) = mesmo jato segurado com elemento Sombra; cada pulso causa dano
+-- (com o multiplicador da Marca), mas o mesmo alvo ganha no maximo 1 marca por marcaIntervalo
+function N:_SoproUmbral(def, el, noAr, op)
+	Passivas.intervaloMarca[self.m] = def.marcaIntervalo
+	local ok, err = pcall(self._Sopro, self, def, "Sombra", noAr, op)
+	Passivas.intervaloMarca[self.m] = nil
+	if not ok then error(err, 0) end
+end
+-- PATCH_CORRENTES_NOITE (04/11): Correntes da Noite (Sombrio, slot Arremetida). Longo alcance: o ponto vem da mira
+-- (montado: direcao da boca ao cursor, com mira viva ate a batida; IA: o alvo). As garras batem no chao -> aviso curto
+-- no ponto (tempo para sair) -> correntes de sombra saem do chao e PRENDEM ate maxAlvos alvos no raio (nao andam nem
+-- pulam; podem atacar), com acerto inicial (Marca) e dano Sombra continuo enquanto presos (ticks: multiplicador da
+-- Marca, sem marcar). Alvo no ar (acima de alturaChao) nao e preso. Recem-solto fica resistente por `resistencia` s:
+-- novas correntes so causam o acerto. Dragoes/guardioes (sem Humanoid) so recebem dano. Numeros NAO_APROVADO.
+-- PATCH_CORRENTES_AR (04/11, pedido do usuario: "as correntes tambem devem prender o aereo"): o alvo pode estar no AR.
+-- Centro: alvo da IA / ponto mirado; se ali nao ha chao perto (mais de `alturaChao` acima), o centro fica no ar (no
+-- alvo/ponto) e as correntes saem de fendas de sombra no ar (visual). Selecao: distancia 3D ao centro <= raio (+ corpo
+-- dos guardioes). Prender: personagem (Humanoid) perde andar/pulo aos poucos e, se estiver no ar, e SEGURADO onde esta
+-- (AlignPosition com forca crescente); dragao/guardiao (sem Humanoid) recebe PresoFator 1 -> 0 em `aperta` s, que a IA
+-- (Locomotor) e a montaria usam para frear ate parar. Tempo preso, ticks, dano, Marca e resistencia iguais.
+local presos, resistente = {}, {}                                     -- [alvo] = {ate, ws, pulo, usaJP, fonte, ...} / [alvo] = os.clock()
+N.presosCorrentes = presos
+local function soltarCorrente(a)
+	local p = presos[a]; if not p then return end
+	presos[a] = nil
+	local h = a.Parent and a:FindFirstChildOfClass("Humanoid")
+	if h then h.WalkSpeed = p.ws; if p.usaJP then h.JumpPower = p.pulo else h.JumpHeight = p.pulo end end
+	if p.segura then p.segura:Destroy() end; if p.ancA then p.ancA:Destroy() end
+	if a.Parent then a:SetAttribute("PresoCorrentes", nil); a:SetAttribute("PresoFator", nil) end
+	FX:FireAllClients({d = p.fonte, hab = "Correntes", fase = "soltar", alvo = a, el = "Sombra"})
+end
+local rpC = RaycastParams.new(); rpC.FilterType = Enum.RaycastFilterType.Exclude
+local function chaoAbaixo(pos, ignorar, ate)
+	rpC.FilterDescendantsInstances = ignorar
+	local h = workspace:Raycast(pos + Vector3.new(0, 6, 0), Vector3.new(0, -(ate or 400) - 6, 0), rpC); return h and h.Position
+end
+function N:_Correntes(def, el, noAr, op)
+	el = "Sombra"
+	local m = self.m
+	local ignorar = {m}; for _, a in ipairs(self:alvosValidos()) do table.insert(ignorar, a) end
+	local vfx = workspace:FindFirstChild("VFX_Temporarios"); if vfx then table.insert(ignorar, vfx) end
+	self.miraDir = nil                                                     -- so a mira desta ativacao (mira viva do cliente)
+	FX:FireAllClients({d = m, hab = "Correntes", fase = "preparo", el = el, noAr = noAr})
+	self:tocar(def.clipe, noAr, {}, function() end)
+	local batida = noAr and def.batidaAr or def.batida
+	task.wait(batida)
+	if not m.Parent or m:GetAttribute("Incapacitado") then return end
+	-- ponto: alvo da IA ou mira; perto do chao -> centro no chao; longe -> centro no ar (no proprio ponto)
+	local p
+	if op.alvo and raiz(op.alvo) then p = raiz(op.alvo).Position
+	else
+		local d = self.miraDir or (typeof(op.direcao) == "Vector3" and op.direcao.Magnitude > 0.1 and op.direcao.Unit) or self:frente()
+		local b = self:boca()
+		rpC.FilterDescendantsInstances = {m, vfx}                            -- a mira PODE acertar um alvo no ar
+		local h = workspace:Raycast(b, d * def.alcance, rpC)
+		p = h and h.Position or (b + d * def.alcance)
+	end
+	local pv = m:GetPivot().Position
+	if (p - pv).Magnitude > def.alcance then p = pv + (p - pv).Unit * def.alcance end
+	local g = chaoAbaixo(p, ignorar, def.alturaChao + 4)
+	local noChao = g ~= nil
+	local centro = g or p
+	FX:FireAllClients({d = m, hab = "Correntes", fase = "aviso", el = el, pos = centro, raio = def.raio, duracao = def.aviso, ar = not noChao})
+	task.wait(def.aviso)
+	if not m.Parent then return end
+	local lista = {}                                                       -- no raio (3D), mais proximos primeiro
+	for _, a in ipairs(self:alvosValidos()) do
+		local r = raiz(a)
+		if r then
+			local extra = a:GetAttribute("GuardiaoNinho") and (a:GetAttribute("CorpoRaio") or 8) or 0
+			local dist = (r.Position - centro).Magnitude
+			if noChao then dist = math.min(dist, (plano(r.Position - centro).Magnitude ^ 2 + math.max(0, math.abs(r.Position.Y - centro.Y) - def.alturaChao) ^ 2) ^ 0.5) end
+			if dist <= def.raio + extra then table.insert(lista, {a, dist}) end
+		end
+	end
+	table.sort(lista, function(x, y) return x[2] < y[2] end)
+	FX:FireAllClients({d = m, hab = "Correntes", fase = "erupcao", el = el, pos = centro, raio = def.raio, ar = not noChao})
+	for i = 1, math.min(#lista, def.maxAlvos) do
+		local a = lista[i][1]
+		self:aplicar({a}, def.dano, "Correntes", def.intensidade, el)         -- acerto inicial: dano + Marca
+		local h = a:FindFirstChildOfClass("Humanoid")
+		local vivo = (h and h.Health > 0) or (not h and not a:GetAttribute("Incapacitado"))
+		if vivo and (resistente[a] or 0) < os.clock() and not presos[a] then
+			local r = raiz(a)
+			local usaJP = h and h.UseJumpPower
+			local p = {ate = os.clock() + def.preso, ws = h and h.WalkSpeed or 0, pulo = h and (usaJP and h.JumpPower or h.JumpHeight) or 0, usaJP = usaJP, fonte = m, t0 = os.clock()}
+			presos[a] = p
+			-- PATCH_CORRENTES_APERTA (04/11): as correntes apertam aos poucos; o movimento cai ate 0 em def.aperta s
+			local ap = def.aperta or 0
+			local noAlto = not chaoAbaixo(r.Position, ignorar, def.alturaChao)  -- alvo no ar: segura onde esta
+			if h and noAlto then
+				p.ancA = Instance.new("Attachment"); p.ancA.Name = "Correntes_Ancora"; p.ancA.Parent = r
+				p.segura = Instance.new("AlignPosition"); p.segura.Name = "Correntes_Segura"; p.segura.Mode = Enum.PositionAlignmentMode.OneAttachment
+				p.segura.Attachment0 = p.ancA; p.segura.Position = r.Position; p.segura.Responsiveness = 12; p.segura.MaxForce = 0; p.segura.Parent = r
+			end
+			local function fator() if ap <= 0 then return 0 end; local x = math.clamp((os.clock() - p.t0) / ap, 0, 1); return (1 - x) ^ 2 end
+			local function apertar()
+				local k = fator()
+				if h then
+					local ws, pl = p.ws * k, p.pulo * k
+					if h.WalkSpeed > ws + 0.01 then h.WalkSpeed = ws end                -- outro script tentou soltar: continua apertando
+					if usaJP then if h.JumpPower > pl + 0.01 then h.JumpPower = pl end elseif h.JumpHeight > pl + 0.01 then h.JumpHeight = pl end
+					if p.segura then p.segura.MaxForce = (1 - k) * r.AssemblyMass * workspace.Gravity * 6 end
+				else
+					a:SetAttribute("PresoFator", k)                                   -- IA/montaria freiam por este fator
+				end
+			end
+			apertar()
+			if ap > 0 then task.spawn(function() while presos[a] == p and os.clock() - p.t0 < ap + 0.05 do RunService.Heartbeat:Wait(); if presos[a] == p then apertar() end end end) end
+			a:SetAttribute("PresoCorrentes", workspace:GetServerTimeNow() + def.preso)
+			FX:FireAllClients({d = m, hab = "Correntes", fase = "prender", el = el, alvo = a, duracao = def.preso, aperta = ap, ar = noAlto})
+			task.spawn(function()
+				while presos[a] == p and os.clock() < p.ate do
+					task.wait(def.tick)
+					local ok = a.Parent and ((h and h.Health > 0) or (not h and not a:GetAttribute("Incapacitado")))
+					if presos[a] ~= p or not ok then break end
+					apertar()                                                   -- PATCH_CORRENTES_APERTA (antes: WalkSpeed = 0 direto)
+					N.ferir(m, a, def.danoTick, el, "Correntes", "leve", true)  -- tick: usa a Marca, nao marca
+				end
+				if presos[a] == p then soltarCorrente(a); resistente[a] = os.clock() + def.resistencia end
+			end)
+		end
+	end
+	local resto = (noAr and def.duracaoAr or def.duracao) - batida - def.aviso
+	if resto > 0 then task.wait(resto) end
+end
 
 -- Rajadas de Gelo: 4 lancas, cada uma com a mira do momento do disparo (cursor do cavaleiro, que o cliente segue
 -- enviando, ou alvo da IA com antecipacao), dentro do cone do pescoco. Voo simulado no servidor quadro a quadro:
@@ -1027,6 +1159,103 @@ function N:_Nevasca(def, el, noAr, op)
 	if not noAr and self.m.Parent then self.m:PivotTo(self.m:GetPivot() - Vector3.new(0, yAtual, 0)) end   -- volta ao chao exato
 	self.m:SetAttribute("CorpoElevado", nil)
 	FX:FireAllClients({d = self.m, hab = "Nevasca", fase = "fim", el = el})
+end
+
+-- PATCH_ECLIPSE_DRACONICO (04/11): Eclipse Draconico (Sombrio, slot Coracao, especial). Concentracao (inicio do
+-- Hab_Concentracao) -> Rugido_Combate; no pico do rugido a area em volta do corpo escurece (so visual, no cliente) e as
+-- Marcas Sombrias PROPRIAS dos alvos na esfera (com linha de visao) DETONAM: o alvo perde todas as marcas deste Sombrio
+-- e recebe danoPorMarca x marcas (sem marca = sem dano; a detonacao nao cria marca nova). Sem invisibilidade,
+-- invulnerabilidade nem execucao. Contrajogo: sair da area na antecipacao / nao acumular marcas. Numeros NAO_APROVADO.
+-- PATCH_ECLIPSE_VOO (04/11, pedido do usuario): o dragao LEVANTA VOO, ruge, SOLTA o poder no ar e segue rugindo
+-- pairando enquanto a area dura; quando o poder comeca a cessar, fecha a boca e POUSA. O combate move o corpo
+-- (CorpoElevado: montaria e IA nao disputam o pivo, como na Nevasca). No ar: ganha um pouco de altura e paira.
+-- Detonacao das Marcas (danoPorMarca x marcas) e dano continuo da area (danoArea por tickArea) iguais; o centro da
+-- area e o chao sob o dragao (o corpo esta no alto). Numeros NAO_APROVADO.
+function N:_Eclipse(def, el, noAr, op)
+	el = "Sombra"
+	local m = self.m
+	FX:FireAllClients({d = m, hab = "Eclipse", fase = "inicio", el = el, noAr = noAr, detona = def.detona, raio = def.raio})
+	m:SetAttribute("CorpoElevado", true)
+	local P = Enum.AnimationPriority
+	local function trilha(nome, camada, laco, prio) local t = self:tocar(nome, camada, {}, function() end, laco); if t then t.Priority = prio end; return t end
+	local tDec = not noAr and trilha("Decolagem", false, false, P.Action2) or nil
+	local tPairar
+	task.delay(noAr and 0 or 0.8, function() if m.Parent then tPairar = trilha("Pairar", false, true, P.Action2); if tDec then tDec:Stop(0.3) end end end)
+	local tRugido; task.delay(def.rugir or 1.2, function() if m.Parent then tRugido = trilha("Rugido_Combate", true, false, P.Action3) end end)
+	local H = noAr and (def.subidaAr or 10) or (def.altura or 24)
+	local s0, s1 = noAr and 0 or 0.2, noAr and 1.0 or 1.5
+	local yAtual = 0
+	local function subir(k)                                           -- altura do corpo no instante k (decola, paira, pousa)
+		local y
+		if k < s0 then y = 0 elseif k < s1 then local x = (k - s0) / (s1 - s0); y = H * (1 - (1 - x) ^ 2) else y = H + 0.9 * math.sin((k - s1) * 2.0) end
+		return y
+	end
+	local t0 = os.clock(); local morto = false
+	local con = RunService.Heartbeat:Connect(function()
+		if not m.Parent then return end
+		local y = subir(os.clock() - t0)
+		m:PivotTo(m:GetPivot() + Vector3.new(0, y - yAtual, 0)); yAtual = y
+	end)
+	local function encerrar()                                         -- desce e pousa (no chao) ou estabiliza (no ar)
+		con:Disconnect()
+		if m.Parent and not noAr then
+			local y0 = yAtual; local d0 = os.clock(); local desce = def.descida or 1.1; local pousou = false
+			while m.Parent and os.clock() - d0 < desce do
+				RunService.Heartbeat:Wait()
+				local x = math.min(1, (os.clock() - d0) / desce); local y = y0 * (1 - x * x * (3 - 2 * x))
+				m:PivotTo(m:GetPivot() + Vector3.new(0, y - yAtual, 0)); yAtual = y
+				if not pousou and x > 0.55 then pousou = true; local tp = trilha("Pouso", false, false, P.Action2); if tPairar then tPairar:Stop(0.25) end; if tp then task.delay(0.5, function() tp:Stop(0.3) end) end end
+			end
+			if m.Parent then m:PivotTo(m:GetPivot() - Vector3.new(0, yAtual, 0)); yAtual = 0 end   -- volta ao chao exato
+		end
+		if tPairar then tPairar:Stop(0.3) end
+		m:SetAttribute("CorpoElevado", nil)
+	end
+	task.wait(def.detona)
+	if not m.Parent or m:GetAttribute("Incapacitado") then FX:FireAllClients({d = m, hab = "Eclipse", fase = "fimRugido", el = el}); encerrar(); return end
+	-- PATCH_CORRENTES_AR / ECLIPSE no ar: com chao ate pertoChao abaixo -> area no chao; senao, em volta do corpo no ar
+	local cc = self:centroCorpo(); local vfxF = workspace:FindFirstChild("VFX_Temporarios")
+	local gE = chaoAbaixo(cc - Vector3.new(0, yAtual, 0), {m, vfxF}, def.pertoChao or 40)
+	local c = gE and (gE + Vector3.new(0, 3, 0)) or cc
+	FX:FireAllClients({d = m, hab = "Eclipse", fase = "detonar", el = el, pos = c, raio = def.raio, duracao = def.escuro, ar = gE == nil})
+	local mult = ((m:GetAttribute("DominioAtivo") and Cfg.habilidades.Dominio.multiplicadorDano) or 1) * Passivas.multiplicadorOfensivo(m)
+	local total, nAlvos = 0, 0
+	for _, a in ipairs(self:alvosValidos()) do
+		if naEsfera(c, def.raio, a) and self:visivel(c, a) then
+			local n = Passivas.consumirMarcas(m, a)                         -- zera ANTES do dano: o multiplicador da Marca nao soma
+			if n > 0 and N.ferir(m, a, def.danoPorMarca * n * mult, el, "Eclipse", def.intensidade, true) then   -- como tick: nao marca de novo
+				FX:FireAllClients({d = m, fase = "reacao", alvo = a, intensidade = def.intensidade, el = el, tipo = "Eclipse"})
+				FX:FireAllClients({d = m, hab = "Eclipse", fase = "marca", el = el, alvo = a, marcas = n})
+				total += n; nAlvos += 1
+			end
+		end
+	end
+	m:SetAttribute("UltimoEclipse", ("alvos=%d marcas=%d raio=%d"):format(nAlvos, total, def.raio))
+	-- rugido sustentado (laco aereo com a boca aberta) e dano continuo na area enquanto ela existe
+	local tLaco
+	task.delay(0.45, function() if m.Parent then tLaco = trilha(def.clipeLoop, true, true, P.Action3); if tLaco and tRugido then tRugido:Stop(0.3) end end end)
+	local ta, ticks, feridos = os.clock(), 0, {}
+	while os.clock() - ta < def.escuro do
+		task.wait(def.tickArea)
+		if not m.Parent or m:GetAttribute("Incapacitado") then morto = true; break end   -- dragao derrubado: a area acaba
+		ticks += 1
+		for _, a in ipairs(self:alvosValidos()) do
+			if naEsfera(c, def.raio, a) and self:visivel(c, a) and N.ferir(m, a, def.danoArea * mult, el, "Eclipse", "leve", true) then
+				FX:FireAllClients({d = m, fase = "reacao", alvo = a, intensidade = "leve", el = el, tipo = "EclipseArea"})
+				feridos[a.Name] = (feridos[a.Name] or 0) + 1
+			end
+		end
+	end
+	local fr = {}; for n, k in pairs(feridos) do table.insert(fr, n .. "=" .. k) end
+	m:SetAttribute("UltimoEclipseArea", ("ticks=%d %s"):format(ticks, table.concat(fr, " ")))
+	-- o poder comeca a cessar: fecha a boca e pousa
+	FX:FireAllClients({d = m, hab = "Eclipse", fase = "fimRugido", el = el})
+	if m.Parent and not morto then
+		local tFim = trilha(def.clipeFim, true, false, P.Action3)
+		if tLaco then tLaco:Stop(0.25) end; if tRugido then tRugido:Stop(0.25) end
+		if tFim then task.delay(def.fimRugido, function() tFim:Stop(0.3) end) end
+	end
+	encerrar()
 end
 
 -- energia

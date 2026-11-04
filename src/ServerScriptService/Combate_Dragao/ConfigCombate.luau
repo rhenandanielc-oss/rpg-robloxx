@@ -12,11 +12,13 @@ return {
 	NAO_APROVADO = NAO_APROVADO,
 	elementosGlobais = {"Fogo", "Terra", "Ar", "Raio", "Gelo", "Agua", "Luz", "Sombra"},  -- referencia; cada forma restringe abaixo
 	-- elemento UNICO por forma (oficial 30/10). Glacial = Gelo e Sombrio = Sombra: kits ainda nao definidos (nao ativar)
-	elementosForma = {Montanhas = {"Fogo"}, Glacial = {"Gelo"}},
-	habilidadesForma = {Montanhas = {"Sopro", "Arremetida", "Tempestade", "Coracao"}, Glacial = {"Sopro", "Arremetida", "Tempestade", "Coracao"}},
-	passivasForma = {Montanhas = {"SangueDeMagma", "Burning"}, Glacial = {"SangueGlacial", "Frostbite"}},
+	elementosForma = {Montanhas = {"Fogo"}, Glacial = {"Gelo"}, Sombrio = {"Sombra"}},   -- PATCH_MARCA_SOMBRIA (03/11): Sombrio = Sombra
+	habilidadesForma = {Montanhas = {"Sopro", "Arremetida", "Tempestade", "Coracao"}, Glacial = {"Sopro", "Arremetida", "Tempestade", "Coracao"},
+		Sombrio = {"Sopro", "Arremetida", "Coracao"}},            -- PATCH_SOPRO_UMBRAL / CORRENTES_NOITE / ECLIPSE_DRACONICO (04/11): kit completo do Sombrio
+	passivasForma = {Montanhas = {"SangueDeMagma", "Burning"}, Glacial = {"SangueGlacial", "Frostbite"}, Sombrio = {"MarcaSombria", "RastroBreu"}},
 	-- PATCH_KIT_GELO (oficial 02/11): o slot (tecla/HUD/IA) continua com o mesmo id; a forma decide a habilidade real
-	kitForma = {Glacial = {Sopro = "SoproGlacial", Arremetida = "Rajadas", Tempestade = "ZeroAbsoluto", Coracao = "Nevasca"}},
+	kitForma = {Glacial = {Sopro = "SoproGlacial", Arremetida = "Rajadas", Tempestade = "ZeroAbsoluto", Coracao = "Nevasca"},
+		Sombrio = {Sopro = "SoproUmbral", Arremetida = "Correntes", Coracao = "Eclipse"}},
 	maxElementos = 1,                                            -- sem elementos secundarios (o Nucleo nao le desbloqueios)
 	energiaMax = 100, energiaRegen = 6,                         -- por segundo
 	basicos = {
@@ -74,6 +76,30 @@ return {
 			raioPilar = 8, protecaoOvo = 16,
 			lancamento = {vertical = 48, horizontal = 28}},        -- reacao curta (studs/s); intensidade a balancear
 		Dominio = {recarga = 30, energia = 35, duracao = 12, multiplicadorDano = 1.0},
+		-- ===== KIT DA SOMBRA (Dragao Sombrio, definido pelo usuario em 03/11; numeros NAO_APROVADO) =====
+		-- Sopro Umbral: jato continuo de nevoa negra-violeta (mesma mecanica do sopro segurado), dano Sombra por pulso
+		-- (com o multiplicador da Marca Sombria); cada alvo ganha no maximo 1 marca por marcaIntervalo s de jato.
+		-- Vinheta leve na tela do jogador atingido: so visual (VFXSombra)
+		SoproUmbral = {recarga = 10, energia = 25, emissao = 1.8, tick = 0.3, elemental = true, emissaoMax = 5, energiaSeg = 8,
+			emAtaque = "Sopro", clipes = "Sopro_Umbral", marcaIntervalo = 1.0,
+			porElemento = {Sombra = {forma = "cone", alcance = 95, angulo = 13, dano = 5}}},
+		-- Correntes da Noite (PATCH_CORRENTES_NOITE): longo alcance; batida das garras -> aviso no chao -> prende ate maxAlvos
+		-- no raio (sem andar/pular) com dano Sombra continuo; no ar nao prende; resistencia apos soltar. NAO_APROVADO
+		Correntes = {recarga = 12, energia = 30, elemental = true, intensidade = "moderado", clipe = "Correntes_Noite",
+			alcance = 160, raio = 16, maxAlvos = 3, alturaChao = 8, batida = 1.7, batidaAr = 1.0, aviso = 0.5,
+			duracao = 3.4, duracaoAr = 2.4, dano = 10, preso = 2.5, tick = 0.5, danoTick = 4, resistencia = 6,
+			aperta = 0.9},   -- PATCH_CORRENTES_APERTA: s ate o alvo perder TODO o movimento (cai aos poucos)
+		-- Eclipse Draconico (PATCH_ECLIPSE_DRACONICO): especial; concentracao -> rugido; no pico (boca aberta, ~2,15 s) a area
+		-- escurece (so visual) e DETONA as Marcas Sombrias proprias dos alvos na esfera: danoPorMarca x marcas (sem marca = 0).
+		-- escuro = s de escurecimento depois da detonacao. NAO_APROVADO
+		Eclipse = {recarga = 25, energia = 50, elemental = true, intensidade = "pesado", clipe = "Eclipse_Draconico",
+			detona = 2.15, duracao = 3.7, raio = 60, danoPorMarca = 9, escuro = 4.0,
+			-- PATCH_ECLIPSE_AREA (04/11, pedido do usuario): a area escura fere quem esta dentro enquanto dura e o dragao
+			-- segue rugindo ate ela sumir (ocupado: detona + escuro + fim). NAO_APROVADO
+			danoArea = 3, tickArea = 0.5, clipeLoop = "Eclipse_Rugido_Loop", clipeFim = "Eclipse_Rugido_Fim", fimRugido = 0.6,
+			-- PATCH_ECLIPSE_VOO (04/11, pedido do usuario): decola (altura), ruge (rugir s), solta no ar e pousa (descida s)
+			altura = 24, subidaAr = 10, rugir = 1.2, descida = 1.1,
+			pertoChao = 40},   -- PATCH_CORRENTES_AR: mais alto que isto, a area do Eclipse fica em volta do dragao no ar
 		-- ===== KIT DO GELO (Dragao Glacial, oficial 02/11; numeros PROVISORIOS) =====
 		-- Sopro Glacial: jato continuo de frio (mesma mecanica do sopro segurado), dano por tick + Frostbite por tick
 		SoproGlacial = {recarga = 10, energia = 25, emissao = 1.8, tick = 0.3, elemental = true, emissaoMax = 5, energiaSeg = 8,
@@ -123,6 +149,9 @@ return {
 		-- Frostbite (Glacial): acumulo 0..100 por alvo; lentidao e vulnerabilidade crescem com o acumulo; em 100 o alvo
 		-- CONGELA por instantes e volta a 45 (com janela em que acumula mais devagar, sem travar em cadeia); sem novos
 		-- acertos o acumulo cai. basico = acumulo dos ataques basicos (mordida/garra/cauda/mordida aerea)
+		-- Marca Sombria (Sombrio, 03/11; NAO_APROVADO): ate max marcas por alvo e por origem; +porMarca de dano Sombra por
+		-- marca; sem acerto por decaiApos s, cai 1 marca a cada decaiIntervalo s
+		MarcaSombria = {max = 5, porMarca = 0.06, decaiApos = 6, decaiIntervalo = 1.5},
 		Frostbite = {max = 100, basico = 10, decaiApos = 2.0, decaiPorSeg = 12, lentidaoMax = 0.55, vulnerabMax = 0.25,
 			congelaDur = 1.4, aposCongelar = 45, imuneCongelarPor = 4, imuneAtributo = "ImuneFrostbite"},
 	},

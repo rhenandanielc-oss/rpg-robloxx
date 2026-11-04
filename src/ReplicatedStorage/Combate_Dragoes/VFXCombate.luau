@@ -841,6 +841,12 @@ function M.evento(d)
 		local G = script.Parent:FindFirstChild("VFXGelo")
 		if G then return require(G).evento(d, fatorLOD(m:GetPivot().Position)) end
 	end
+	-- PATCH_SOPRO_UMBRAL (04/11): Sombra (Dragao Sombrio) no modulo proprio; o que ele nao trata segue no perfil Neutro
+	if el == "Sombra" then
+		local VS = script.Parent:FindFirstChild("VFXSombra")
+		if VS and require(VS).evento(d, f) then return end
+		el = "Neutro"; P = PERFIL.Neutro
+	end
 	if d.fase == "reacao" then reacao(d.alvo, el, d.intensidade); return end
 	if d.fase == "lancamento" then lancamento(d); return end              -- empurrao (Tempestade/Ruptura): so o personagem atingido
 	-- PATCH_VFX_FOGO (02/11): audio do Fogo no SonsFogo (nao depende do LOD visual) e efeitos refinados no VFXFogo

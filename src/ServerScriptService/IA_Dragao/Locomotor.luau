@@ -54,6 +54,8 @@ function L:pos() return self.m:GetPivot().Position end
 function L:frente() return CFrame.Angles(0, self.psi, 0):VectorToWorldSpace(self.f0) end
 function L:_aplicar(pos)
 	if self.m:GetAttribute("EmAtaque") == "Arremetida" or self.m:GetAttribute("CorpoElevado") then return end   -- o combate move o corpo
+	local pf = self.m:GetAttribute("PresoFator")                           -- PATCH_CORRENTES_AR: preso pelas Correntes da Noite
+	if pf then local atual = self:pos(); pos = atual + (pos - atual) * math.clamp(pf, 0, 1) end
 	local giro = CFrame.Angles(0, self.psi, 0)
 	local dir = giro:VectorToWorldSpace(self.f0); local direita = dir:Cross(Vector3.yAxis).Unit
 	self.m:PivotTo(CFrame.new(pos) * CFrame.fromAxisAngle(direita, self.pitch) * giro * self.R0)

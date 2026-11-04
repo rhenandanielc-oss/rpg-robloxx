@@ -8,11 +8,11 @@
 local SS = game:GetService("ServerStorage")
 local importado
 for _, m in ipairs(workspace:GetChildren()) do
-	if m:IsA("Model") and not m.Name:find("^Silverwing") and m.Name ~= "Glacial" and m.Name ~= "Sombrio" and m:FindFirstChild("Silverwing_Detalhes", true) then importado = m end
+	if m:IsA("Model") and not m.Name:find("^Silverwing") and m.Name ~= "Glacial" and m.Name ~= "Sombrio" and (m:FindFirstChild("Silverwing_Detalhes", true) or m:FindFirstChild("Silverwing.002")) then importado = m end   -- (03/11: o importador nomeou as malhas Silverwing/.001/.002)
 end
 assert(importado, "importacao do SB_Dragao_Sombrio_v4.glb nao encontrada no Workspace (Import 3D primeiro)")
 local base = workspace:FindFirstChild("Silverwing"); assert(base, "Silverwing (referencia de escala/pivo) nao encontrado")
-local RENOMEIA = {["Silverwing"] = "Silverwing_Corpo", ["Silverwing.001"] = "Silverwing_Asas"}
+local RENOMEIA = {["Silverwing"] = "Silverwing_Corpo", ["Silverwing.001"] = "Silverwing_Asas", ["Silverwing.002"] = "Silverwing_Detalhes"}
 for _, d in ipairs(importado:GetDescendants()) do
 	if d:IsA("MeshPart") and RENOMEIA[d.Name] then d.Name = RENOMEIA[d.Name] end
 end
@@ -31,7 +31,7 @@ for k, v in pairs(base:GetAttributes()) do if not k:find("^RBX_") then m:SetAttr
 m:SetAttribute("FormaRegional", "Sombrio"); m:SetAttribute("ElementoNato", "Sombra"); m:SetAttribute("ElementosDesbloqueados", "")
 m:SetAttribute("NomeExibicao", "Dragao Sombrio"); m:SetAttribute("PastaAnimacoes", "Sombrio"); m:SetAttribute("PerfilMovimento", "Silverwing")
 m:SetAttribute("TesteScriptsMontanhas", nil)
-m:SetAttribute("HabilidadesForma", "")                   -- kit de sombra pendente: HUD sem habilidades (patch_hud_habilidades_forma)
+m:SetAttribute("HabilidadesForma", "Sopro,Arremetida,Coracao")   -- kit de sombra (04/11): Sopro Umbral, Correntes, Eclipse (patch_sombrio_montado_rastro)
 m:SetAttribute("Versao", "Sombrio v9 (03/11: acabamento, crina, boca com paredes internas)")
 m:SetAttribute("Origem", "Modelo proprio (Blender, dragao_sombra/criar_sombrio.py) + esqueleto Silverwing; TESTE")
 -- pivo -> pes igual ao do Silverwing (montaria e IA movem por PivotTo contando com essa altura)
@@ -51,5 +51,7 @@ if velho then
 	velho.Name = "Sombrio_" .. os.date("!%Y%m%d_%H%M%S"); velho.Parent = guard
 end
 m.Parent = workspace
-importado:Destroy()
+-- (03/11) o importado vai para ServerStorage (copia de seguranca recuperavel), nao e apagado
+local guardI = SS:FindFirstChild("Dragoes_Retirados") or Instance.new("Folder"); guardI.Name = "Dragoes_Retirados"; guardI.Parent = SS
+importado.Name = "Sombrio_Importado_v4_" .. os.date("!%Y%m%d_%H%M%S"); importado.Parent = guardI
 return "Sombrio criado em " .. tostring(m:GetPivot().Position)

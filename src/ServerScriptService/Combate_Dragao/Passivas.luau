@@ -177,4 +177,68 @@ task.spawn(function()
 		end
 	end
 end)
+
+-- ===== Marca Sombria (Dragao Sombrio, kit definido pelo usuario em 03/11; numeros NAO_APROVADO) =================
+-- Acertos de Sombra do Sombrio acumulam marcas no alvo (por ORIGEM: cada Sombrio so ve as proprias). Cada marca
+-- aumenta o dano Sombra dele contra esse alvo (linear, com teto; ticks de dano usam o multiplicador mas NAO marcam).
+-- Sem lentidao nem stun. Sem novos acertos, as marcas caem uma a uma. Atributos no alvo (so para o visual e para o
+-- Rastro do Breu): MarcaSombria = total; MarcaSombria_<nome da origem> = marcas daquela origem.
+local marcas = {}                                                   -- [alvo] = {[fonte] = {n, ultimo, prox}}
+P.marcas = marcas
+local function atribMarca(alvo)
+	local tot = 0
+	for f, e in pairs(marcas[alvo] or {}) do tot += e.n; alvo:SetAttribute("MarcaSombria_" .. f.Name, e.n > 0 and e.n or nil) end
+	alvo:SetAttribute("MarcaSombria", tot > 0 and tot or nil)
+	local CS = game:GetService("CollectionService")                 -- tag para o visual no cliente (sem varrer o workspace)
+	if tot > 0 then CS:AddTag(alvo, "MarcaSombria") else CS:RemoveTag(alvo, "MarcaSombria") end
+end
+function P.marcasDe(fonte, alvo) local t = marcas[alvo]; local e = t and t[fonte]; return e and e.n or 0 end
+function P.alvosMarcados(fonte)                                     -- lista de alvos com marca desta origem
+	local l = {}; for a, t in pairs(marcas) do if t[fonte] and t[fonte].n > 0 and a.Parent then table.insert(l, a) end end; return l
+end
+function P.multiplicadorMarca(fonte, alvo)
+	if not P.tem(fonte, "MarcaSombria") then return 1 end
+	return 1 + Cfg.passivas.MarcaSombria.porMarca * P.marcasDe(fonte, alvo)
+end
+P.intervaloMarca = {}                                              -- PATCH_SOPRO_UMBRAL: [fonte] = s, enquanto um jato continuo dura
+function P.aplicarMarca(fonte, alvo)
+	if not (fonte and alvo and alvo.Parent) or not P.tem(fonte, "MarcaSombria") then return false end
+	local M_ = Cfg.passivas.MarcaSombria
+	local t = marcas[alvo]; if not t then t = {}; marcas[alvo] = t end
+	local e = t[fonte]; if not e then e = {n = 0}; t[fonte] = e end
+	local iv = P.intervaloMarca[fonte]                              -- jato continuo: no maximo 1 marca por intervalo (renova a duracao)
+	if iv and e.marcou and os.clock() - e.marcou < iv then e.ultimo = os.clock(); e.prox = nil; return false end
+	e.n = math.min(M_.max, e.n + 1); e.ultimo = os.clock(); e.prox = nil; e.marcou = os.clock()
+	atribMarca(alvo); return true
+end
+function P.consumirMarcas(fonte, alvo)                              -- Eclipse Draconico: zera as marcas desta origem; devolve quantas havia
+	local n = P.marcasDe(fonte, alvo)
+	if n > 0 then marcas[alvo][fonte] = nil; alvo:SetAttribute("MarcaSombria_" .. fonte.Name, nil); atribMarca(alvo) end   -- PATCH_ECLIPSE_DRACONICO: limpa o atributo da origem
+	return n
+end
+task.spawn(function()
+	while true do
+		task.wait(0.25)
+		local M_ = Cfg.passivas.MarcaSombria; local t0 = os.clock()
+		for alvo, t in pairs(marcas) do
+			local h = alvo.Parent and alvo:FindFirstChildOfClass("Humanoid")
+			if not alvo.Parent or (h and h.Health <= 0) then
+				if alvo.Parent then for f in pairs(t) do alvo:SetAttribute("MarcaSombria_" .. f.Name, nil) end; alvo:SetAttribute("MarcaSombria", nil); game:GetService("CollectionService"):RemoveTag(alvo, "MarcaSombria") end
+				marcas[alvo] = nil
+			else
+				local mudou = false
+				for f, e in pairs(t) do
+					if not f.Parent then t[f] = nil; alvo:SetAttribute("MarcaSombria_" .. f.Name, nil); mudou = true
+					elseif t0 - e.ultimo > M_.decaiApos then
+						e.prox = e.prox or t0
+						if t0 >= e.prox then e.n -= 1; e.prox = t0 + M_.decaiIntervalo; mudou = true end
+						if e.n <= 0 then t[f] = nil; alvo:SetAttribute("MarcaSombria_" .. f.Name, nil) end
+					end
+				end
+				if mudou then atribMarca(alvo) end
+				if next(t) == nil then marcas[alvo] = nil end
+			end
+		end
+	end
+end)
 return P

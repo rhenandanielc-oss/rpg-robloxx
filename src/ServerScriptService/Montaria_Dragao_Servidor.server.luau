@@ -111,6 +111,8 @@ end
 -- ===== montar / desmontar ========================================================================================
 local function aplicar(M, pos)
 	local L = M.L
+	local pf = M.m:GetAttribute("PresoFator")                               -- PATCH_CORRENTES_AR: preso pelas Correntes da Noite
+	if pf then local atual = L:pos(); pos = atual + (pos - atual) * math.clamp(pf, 0, 1) end
 	local giro = CFrame.Angles(0, L.psi, 0)
 	local dir = giro:VectorToWorldSpace(L.f0); local direita = dir:Cross(Y).Unit
 	M.m:PivotTo(CFrame.new(pos) * CFrame.fromAxisAngle(dir, M.roll) * CFrame.fromAxisAngle(direita, L.pitch) * giro * L.R0)
@@ -247,13 +249,17 @@ local function passoChao(M, dt)
 	-- um so controlador por vez: durante a investida e a elevacao da Tempestade quem move o corpo e o combate
 	local arr = arremetendo(m); impactoArremetida(M)                     -- PATCH_ARREMETIDA_5S
 	if m:GetAttribute("CorpoElevado") then M.vel = 0; return end
-	local fixo = ataque == "Ruptura" or ataque == "Coracao" or ataque == "Tempestade" or ataque == "Garra" or ataque == "Mordida" or ataque == "Cauda"
+	local fixo = ataque == "Ruptura" or ataque == "Coracao" or ataque == "Tempestade" or ataque == "Garra" or ataque == "Cauda"
+		or (ataque == "Mordida" and not m:GetAttribute("MordidaEmMovimento"))   -- PATCH_MORDIDA_MOVIMENTO (03/11)
 		or ataque == "Rajadas" or ataque == "ZeroAbsoluto" or ataque == "Nevasca"            -- PATCH_KIT_GELO
+		or ataque == "Correntes"                                                            -- PATCH_CORRENTES_NOITE (Sombrio)
+		or ataque == "Eclipse"                                                              -- PATCH_ECLIPSE_DRACONICO (Sombrio)
 		or m:GetAttribute("Incapacitado")
 	local alvo = 0
 	if arr and not fixo then alvo = ARR.velChao                           -- investida: corre para frente; A/D e camera dirigem
 	elseif not fixo then
 		if e.f > 0.1 then alvo = (e.correr and (m:GetAttribute("VelCorrer") or Cfg.correrVel) or (m:GetAttribute("VelAndar") or Cfg.andarVel)) * math.min(e.f, 1)
+			* (1 + (m:GetAttribute("RastroBonus") or 0))                                -- PATCH_RASTRO_BREU (03/11): passiva do Sombrio
 		elseif e.f < -0.1 then alvo = -Cfg.recuarVel end
 	end
 	local a = math.abs(alvo) > math.abs(M.vel) and (arr and ARR.acelChao or Cfg.acelChao) or Cfg.freioChao
@@ -444,7 +450,7 @@ local function passoVooLivre(M, dt)
 	M.gama = M.gama or 0
 	M.gama += math.clamp(gAlvo - M.gama, -math.rad(V.gamaTaxa) * dt, math.rad(V.gamaTaxa) * dt)
 	-- velocidade: W leva ao alvo; sem W freia suave ate zero; subir custa e mergulhar ganha (moderado)
-	local alvoVel = arr and ARR.velAr or f > 0.1 and (e.correr and Cfg.vooRapidoVel or Cfg.vooVel) * f or 0
+	local alvoVel = arr and ARR.velAr or f > 0.1 and (e.correr and Cfg.vooRapidoVel or Cfg.vooVel) * f * (1 + (m:GetAttribute("RastroBonus") or 0)) or 0   -- PATCH_RASTRO_BREU
 	local acel
 	local mergulhando = M.gama < -math.rad(V.mergulhoInicio)
 	if M.planar then acel = -Cfg.planeioPerda
