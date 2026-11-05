@@ -189,7 +189,8 @@ Pedido.OnServerEvent:Connect(function(plr, m, acao, arg, dir, alvo)
 		local alvoOk
 		if typeof(alvo) == "Instance" and alvo:IsA("Model") and alvo:IsDescendantOf(workspace) then
 			local rr = alvo:FindFirstChild("HumanoidRootPart") or alvo.PrimaryPart
-			if rr and (rr.Position - m:GetPivot().Position).Magnitude <= 420 then
+			local inv = alvo:GetAttribute("PassoInvisivel")                   -- PATCH_PASSO_SOMBRIO_V2: invisivel nao vira alvo
+			if rr and (rr.Position - m:GetPivot().Position).Magnitude <= 420 and not (typeof(inv) == "number" and inv > workspace:GetServerTimeNow()) then
 				for _, a in ipairs(c:alvosValidos()) do if a == alvo then alvoOk = alvo; break end end
 			end
 		end

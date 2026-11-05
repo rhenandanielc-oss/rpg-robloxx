@@ -31,7 +31,7 @@ for k, v in pairs(base:GetAttributes()) do if not k:find("^RBX_") then m:SetAttr
 m:SetAttribute("FormaRegional", "Sombrio"); m:SetAttribute("ElementoNato", "Sombra"); m:SetAttribute("ElementosDesbloqueados", "")
 m:SetAttribute("NomeExibicao", "Dragao Sombrio"); m:SetAttribute("PastaAnimacoes", "Sombrio"); m:SetAttribute("PerfilMovimento", "Silverwing")
 m:SetAttribute("TesteScriptsMontanhas", nil)
-m:SetAttribute("HabilidadesForma", "Sopro,Arremetida,Coracao")   -- kit de sombra (04/11): Sopro Umbral, Correntes, Eclipse (patch_sombrio_montado_rastro)
+m:SetAttribute("HabilidadesForma", "Sopro,Arremetida,Tempestade,Coracao")   -- kit de sombra (04/11): Sopro Umbral, Correntes, Eclipse (patch_sombrio_montado_rastro)
 m:SetAttribute("Versao", "Sombrio v9 (03/11: acabamento, crina, boca com paredes internas)")
 m:SetAttribute("Origem", "Modelo proprio (Blender, dragao_sombra/criar_sombrio.py) + esqueleto Silverwing; TESTE")
 -- pivo -> pes igual ao do Silverwing (montaria e IA movem por PivotTo contando com essa altura)

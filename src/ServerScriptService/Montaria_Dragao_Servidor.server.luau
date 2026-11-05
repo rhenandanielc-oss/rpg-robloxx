@@ -259,7 +259,7 @@ local function passoChao(M, dt)
 	if arr and not fixo then alvo = ARR.velChao                           -- investida: corre para frente; A/D e camera dirigem
 	elseif not fixo then
 		if e.f > 0.1 then alvo = (e.correr and (m:GetAttribute("VelCorrer") or Cfg.correrVel) or (m:GetAttribute("VelAndar") or Cfg.andarVel)) * math.min(e.f, 1)
-			* (1 + (m:GetAttribute("RastroBonus") or 0))                                -- PATCH_RASTRO_BREU (03/11): passiva do Sombrio
+			* (1 + (m:GetAttribute("RastroBonus") or 0) + (m:GetAttribute("PassoBonus") or 0))   -- PATCH_RASTRO_BREU (03/11) + PATCH_PASSO_SOMBRIO_V2
 		elseif e.f < -0.1 then alvo = -Cfg.recuarVel end
 	end
 	local a = math.abs(alvo) > math.abs(M.vel) and (arr and ARR.acelChao or Cfg.acelChao) or Cfg.freioChao
@@ -450,7 +450,7 @@ local function passoVooLivre(M, dt)
 	M.gama = M.gama or 0
 	M.gama += math.clamp(gAlvo - M.gama, -math.rad(V.gamaTaxa) * dt, math.rad(V.gamaTaxa) * dt)
 	-- velocidade: W leva ao alvo; sem W freia suave ate zero; subir custa e mergulhar ganha (moderado)
-	local alvoVel = arr and ARR.velAr or f > 0.1 and (e.correr and Cfg.vooRapidoVel or Cfg.vooVel) * f * (1 + (m:GetAttribute("RastroBonus") or 0)) or 0   -- PATCH_RASTRO_BREU
+	local alvoVel = arr and ARR.velAr or f > 0.1 and (e.correr and Cfg.vooRapidoVel or Cfg.vooVel) * f * (1 + (m:GetAttribute("RastroBonus") or 0) + (m:GetAttribute("PassoBonus") or 0)) or 0   -- PATCH_RASTRO_BREU + PATCH_PASSO_SOMBRIO_V2
 	local acel
 	local mergulhando = M.gama < -math.rad(V.mergulhoInicio)
 	if M.planar then acel = -Cfg.planeioPerda

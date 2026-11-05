@@ -10,6 +10,7 @@
 -- Nucleo preto estreito + halo violeta largo e transparente. Pontos: 3 por asa (ponta + penas 2 e 4) e a cauda.
 -- Valores artisticos NAO_APROVADO (prototipo para revisao do usuario).
 local RunService = game:GetService("RunService")
+local lp = game:GetService("Players").LocalPlayer
 local cam = workspace.CurrentCamera
 local FORMAS = {Sombrio = true}
 local LOD = 350                                         -- studs: alem disto as linhas ficam desligadas
@@ -55,6 +56,8 @@ RunService.RenderStepped:Connect(function(dt)
 		local root = m.PrimaryPart
 		if root and (root.Position - cam.CFrame.Position).Magnitude < LOD then
 			if m:GetAttribute("RastroModo") then nivel = 2 elseif (m:GetAttribute("RastroCarga") or 0) > 0 then nivel = 1 end
+			local inv = m:GetAttribute("PassoInvisivel")                 -- PATCH_PASSO_SOMBRIO_V2: invisivel = sem linhas para os outros
+			if typeof(inv) == "number" and inv > workspace:GetServerTimeNow() and m:GetAttribute("DonoUserId") ~= lp.UserId then nivel = 0 end
 		end
 		for _, pt in ipairs(R.pontos) do                                -- a cauda de cada linha persegue a ponta do osso
 			local p = pt.osso.TransformedWorldCFrame.Position

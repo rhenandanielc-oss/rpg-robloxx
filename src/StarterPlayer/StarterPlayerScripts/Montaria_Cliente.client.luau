@@ -260,13 +260,14 @@ soltarTrava = function()
 	if trava.hl then trava.hl:Destroy() end; if trava.bb then trava.bb:Destroy() end
 	trava = nil
 end
+local function invisivel(x) local v = x and x:GetAttribute("PassoInvisivel"); return typeof(v) == "number" and v > workspace:GetServerTimeNow() end   -- PATCH_PASSO_SOMBRIO_V2
 local function candidatosTrava()
 	local l, vistos = {}, {}
 	local function por(md)
 		if vistos[md] or md == m or md == lp.Character or not md:IsA("Model") then return end
 		vistos[md] = true
 		if md:GetAttribute("DonoUserId") == lp.UserId then return end           -- nunca os proprios dragoes
-		if raizAlvo(md) and alvoVivo(md) then table.insert(l, md) end
+		if raizAlvo(md) and alvoVivo(md) and not invisivel(md) then table.insert(l, md) end
 	end
 	for _, d in ipairs(workspace:GetDescendants()) do if d:IsA("Humanoid") and d.Parent then por(d.Parent) end end
 	for _, md in ipairs(workspace:GetChildren()) do if md:IsA("Model") and (md:GetAttribute("FormaRegional") or md:GetAttribute("GuardiaoNinho")) then por(md) end end
@@ -307,7 +308,7 @@ end
 travaAtual = function()                                              -- alvo travado ainda valido? (solta sozinho se nao)
 	if not trava then return nil end
 	local r = raizAlvo(trava.alvo)
-	if not (m and r and alvoVivo(trava.alvo)) or (r.Position - m:GetPivot().Position).Magnitude > TRAVA.quebra then soltarTrava(); return nil end
+	if not (m and r and alvoVivo(trava.alvo)) or invisivel(trava.alvo) or (r.Position - m:GetPivot().Position).Magnitude > TRAVA.quebra then soltarTrava(); return nil end
 	trava.raiz = r; return trava
 end
 RunService.RenderStepped:Connect(function()

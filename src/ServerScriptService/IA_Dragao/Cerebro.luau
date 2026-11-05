@@ -106,13 +106,14 @@ end
 
 -- ===== percepcao ==============================================================================================
 function raizDe(m) return m and (m:FindFirstChild("HumanoidRootPart") or m.PrimaryPart) end
+local function invisivel(x) local v = x and x:GetAttribute("PassoInvisivel"); return typeof(v) == "number" and v > workspace:GetServerTimeNow() end   -- PATCH_PASSO_SOMBRIO_V2
 function C:alvos()
 	local l = {}
 	for _, p in ipairs(Players:GetPlayers()) do
 		local ch = p.Character; local h = ch and ch:FindFirstChildOfClass("Humanoid")
-		if ch and h and h.Health > 0 and raizDe(ch) then table.insert(l, ch) end
+		if ch and h and h.Health > 0 and raizDe(ch) and not invisivel(ch) then table.insert(l, ch) end
 	end
-	for _, m in ipairs(CollectionService:GetTagged("Invasor_Teste")) do if raizDe(m) then table.insert(l, m) end end
+	for _, m in ipairs(CollectionService:GetTagged("Invasor_Teste")) do if raizDe(m) and not invisivel(m) then table.insert(l, m) end end
 	return l
 end
 function C:ameaca(alvo, nivel, motivo)
@@ -179,7 +180,8 @@ function C:perceber()
 		local r = raizDe(alvo)
 		local longe = r and plano(r.Position - self.casa).Magnitude > (a.pessoal and cfg.territorio or cfg.perseguicaoMax)
 		local cansou = a.motivo == "proximo" and a.nivel < 2 and agora - (a.inicio or agora) > 25     -- parado perto sem avancar
-		if not r or not alvo.Parent or agora - a.t > cfg.lembrarAmeaca or (longe and agora - a.t > 1) or (r and zonaSegura(r.Position)) or cansou then
+		if not r or not alvo.Parent or agora - a.t > cfg.lembrarAmeaca or (longe and agora - a.t > 1) or (r and zonaSegura(r.Position)) or cansou
+			or invisivel(alvo) then                                          -- PATCH_PASSO_SOMBRIO_V2: sumiu em breu
 			if a.motivo == "proximo" then self.habituado = self.habituado or {}; self.habituado[alvo] = agora end
 			self.ameacas[alvo] = nil; self:registrar("ameaca encerrada: " .. alvo.Name); self.proximoDesde[alvo] = nil
 			-- presenca que sumiu sem confronto: vai conferir a ultima posicao conhecida (por tempo limitado)
@@ -347,7 +349,7 @@ local function aleatorioNoTerritorio(self)
 end
 -- ataque: perto sempre; a distancia (sopro/arremetida) so com linha de visao; nunca em zona segura
 function C:podeAtacar(alvo)
-	local r = raizDe(alvo); if not r or zonaSegura(r.Position) then return false end
+	local r = raizDe(alvo); if not r or zonaSegura(r.Position) or invisivel(alvo) then return false end
 	local d = plano(self.L:pos() - r.Position).Magnitude
 	local dy = math.abs(r.Position.Y - (self.L:pos().Y - self.L.alturaPivo))
 	if d <= self.cfg.distAtaque and dy < 25 then return true end           -- perto e no mesmo nivel

@@ -14,11 +14,11 @@ return {
 	-- elemento UNICO por forma (oficial 30/10). Glacial = Gelo e Sombrio = Sombra: kits ainda nao definidos (nao ativar)
 	elementosForma = {Montanhas = {"Fogo"}, Glacial = {"Gelo"}, Sombrio = {"Sombra"}},   -- PATCH_MARCA_SOMBRIA (03/11): Sombrio = Sombra
 	habilidadesForma = {Montanhas = {"Sopro", "Arremetida", "Tempestade", "Coracao"}, Glacial = {"Sopro", "Arremetida", "Tempestade", "Coracao"},
-		Sombrio = {"Sopro", "Arremetida", "Coracao"}},            -- PATCH_SOPRO_UMBRAL / CORRENTES_NOITE / ECLIPSE_DRACONICO (04/11): kit completo do Sombrio
+		Sombrio = {"Sopro", "Arremetida", "Tempestade", "Coracao"}},   -- PATCH_SOPRO_UMBRAL / CORRENTES / ECLIPSE / PASSO_SOMBRIO (04/11): kit do Sombrio
 	passivasForma = {Montanhas = {"SangueDeMagma", "Burning"}, Glacial = {"SangueGlacial", "Frostbite"}, Sombrio = {"MarcaSombria", "RastroBreu"}},
 	-- PATCH_KIT_GELO (oficial 02/11): o slot (tecla/HUD/IA) continua com o mesmo id; a forma decide a habilidade real
 	kitForma = {Glacial = {Sopro = "SoproGlacial", Arremetida = "Rajadas", Tempestade = "ZeroAbsoluto", Coracao = "Nevasca"},
-		Sombrio = {Sopro = "SoproUmbral", Arremetida = "Correntes", Coracao = "Eclipse"}},
+		Sombrio = {Sopro = "SoproUmbral", Arremetida = "Correntes", Tempestade = "PassoSombrio", Coracao = "Eclipse"}},
 	maxElementos = 1,                                            -- sem elementos secundarios (o Nucleo nao le desbloqueios)
 	energiaMax = 100, energiaRegen = 6,                         -- por segundo
 	basicos = {
@@ -100,6 +100,10 @@ return {
 			-- PATCH_ECLIPSE_VOO (04/11, pedido do usuario): decola (altura), ruge (rugir s), solta no ar e pousa (descida s)
 			altura = 24, subidaAr = 10, rugir = 1.2, descida = 1.1,
 			pertoChao = 40},   -- PATCH_CORRENTES_AR: mais alto que isto, a area do Eclipse fica em volta do dragao no ar
+		-- Passo Sombrio (PATCH_PASSO_SOMBRIO_V2, 04/11): dragao e cavaleiro ficam invisiveis aos outros por `duracao` s com
+		-- +`bonus` de velocidade (chao e voo); nao e invulneravel; sem dano. ativar = s ocupado na ativacao. NAO_APROVADO
+		PassoSombrio = {recarga = 20, energia = 25, elemental = true, intensidade = "leve", clipe = "Hab_Investida",
+			duracao = 5, bonus = 0.6, ativar = 0.4},
 		-- ===== KIT DO GELO (Dragao Glacial, oficial 02/11; numeros PROVISORIOS) =====
 		-- Sopro Glacial: jato continuo de frio (mesma mecanica do sopro segurado), dano por tick + Frostbite por tick
 		SoproGlacial = {recarga = 10, energia = 25, emissao = 1.8, tick = 0.3, elemental = true, emissaoMax = 5, energiaSeg = 8,
