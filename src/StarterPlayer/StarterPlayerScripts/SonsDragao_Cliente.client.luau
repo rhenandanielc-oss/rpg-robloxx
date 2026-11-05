@@ -57,9 +57,9 @@ local TOM_RUGIDO_FOGO = 0.92                                    -- pouco rebaixa
 local VOZ_MONTANHAS = {
 	Rugido_Territorial = {{0.12, "inspira", 1, 0.55, 0.62}, {0.30, "rugidoTerritorial", 1, 1.15, TOM_RUGIDO_FOGO}, {0.86, "bafo", 0.8, 0.22, 0.8}},
 	-- (03/11) clipe v2: boca fechada ate 0,30 e aberta junto com o som (antes abria num rosnado mudo antes do rugido)
-	Rugido_Ameaca = {{0.30, "rugidoAmeaca", 1, 1.05, TOM_RUGIDO_FOGO}},
-	Rugido_Vitoria = {{0.18, "inspira", 1, 0.5, 0.6}, {0.36, "rugidoVitoria", 1, 1.0, TOM_RUGIDO_FOGO}, {0.8, "bafo", 0.7, 0.2, 0.85}},
-	Ninho_Ameaca = {{0.34, "rugidoAmeaca", 1, 1.0, TOM_RUGIDO_FOGO}},
+	Rugido_Ameaca = {{0.30, "rugidoAmeaca", 1, 1.05, 0.95}},                -- PATCH_VOZES_CAMADAS: tom por tipo
+	Rugido_Vitoria = {{0.18, "inspira", 1, 0.5, 0.6}, {0.36, "rugidoVitoria", 1, 1.0, 0.88}, {0.8, "bafo", 0.7, 0.2, 0.85}},
+	Ninho_Ameaca = {{0.34, "rugidoAmeaca", 1, 1.0, 0.95}},
 	Intimidar = {{0.18, "intimidar", 0.8, 0.6, 0.78}, {0.68, "rosnado", 0.5, 0.5, 0.82}},
 	Reagir_Estimulo = {{0.12, "alerta", 0.8, 0.6, 0.95}}, Ninho_Alerta = {{0.2, "alerta", 0.8, 0.6, 0.9}},
 	Idle_Alerta_Mantido = {{0.5, "grunhido", 0.35, 0.45, 0.9}}, Preparar_Combate = {{0.3, "rosnado", 0.45, 0.5, 0.8}},
@@ -71,8 +71,23 @@ local VOZ_MONTANHAS = {
 	Dano_Leve = {{0.05, "danoLeve", 1, 0.65, 1.0}}, Dano_Leve_Ar = {{0.05, "danoLeve", 1, 0.65, 1.0}},
 	Dano_Forte = {{0.05, "dano", 1, 0.8, 0.9}}, Dano_Forte_Ar = {{0.05, "dano", 1, 0.8, 0.9}},
 }
-local VOZ_FORMA = {Montanhas = VOZ_MONTANHAS, Glacial = {
-	Ninho_Ameaca = {{0.34, "rugidoAmeaca", 1, 1.0, 1.0}},   -- (03/11) uma tomada fixa e longa (o "intimidar" sorteava uma curta) Rugido_Territorial = {{0.3, "rugido", 1, 1.25, 1.0}},
+-- PATCH_VOZES_CAMADAS (05/11): Sombrio — tons por tipo (aprovados de ouvido); fases = as do Montanhas (mesmo sistema
+-- universal de clipes). Chaves que o perfil nao tem (farejar, beber...) ficam mudas. O Rugido_Combate NAO tem voz aqui: e o clipe da
+-- habilidade Rugido, cujo som vem do evento FX (rugidoCombate + camadas), senao rugiria duas vezes.
+local VOZ_SOMBRIO = {
+	Rugido_Territorial = {{0.30, "rugidoTerritorial", 1, 1.1, 0.72}},
+	Rugido_Ameaca = {{0.30, "rugidoAmeaca", 1, 1.05, 0.78}}, Ninho_Ameaca = {{0.34, "rugidoAmeaca", 1, 1.0, 0.78}},
+	Intimidar = {{0.18, "intimidar", 0.9, 0.85, 0.75}},
+	Reagir_Estimulo = {{0.12, "alerta", 0.8, 0.65, 0.8}}, Ninho_Alerta = {{0.2, "alerta", 0.8, 0.65, 0.78}},
+	Idle_Alerta_Mantido = {{0.5, "grunhido", 0.35, 0.5, 0.75}}, Preparar_Combate = {{0.3, "esforco", 0.5, 0.65, 0.75}},
+	Curiosidade = {{0.45, "respiro", 0.8, 0.5, 1.0}}, Deitar = {{0.7, "respiro", 0.7, 0.4, 0.95}},
+	Comer = {{0.1, "mordida", 1, 0.7, 0.8}, {0.433, "mordida", 1, 0.7, 0.8}, {0.766, "mordida", 1, 0.7, 0.8}},
+	Dano_Leve = {{0.05, "danoLeve", 1, 0.65, 0.8}}, Dano_Leve_Ar = {{0.05, "danoLeve", 1, 0.65, 0.8}},
+	Dano_Forte = {{0.05, "dano", 1, 0.9, 0.72}}, Dano_Forte_Ar = {{0.05, "dano", 1, 0.9, 0.72}},
+}
+local VOZ_FORMA = {Montanhas = VOZ_MONTANHAS, Sombrio = VOZ_SOMBRIO, Glacial = {
+	Ninho_Ameaca = {{0.34, "rugidoAmeaca", 1, 1.0, 1.0}},   -- (03/11) uma tomada fixa e longa (o "intimidar" sorteava uma curta)
+	Rugido_Territorial = {{0.3, "rugido", 1, 1.25, 1.0}},   -- PATCH_VOZES_CAMADAS: antes ficava dentro do comentario acima
 	Intimidar = {{0.15, "intimidar", 0.9, 0.85, 1.0}, {0.65, "grunhido", 0.6, 0.6, 0.95}},
 	Reagir_Estimulo = {{0.12, "alerta", 0.8, 0.65, 1.05}}, Ninho_Alerta = {{0.2, "alerta", 0.8, 0.65, 1.0}},
 	Idle_Alerta_Mantido = {{0.5, "grunhido", 0.35, 0.5, 1.0}}, Preparar_Combate = {{0.3, "esforco", 0.5, 0.65, 0.95}},
@@ -100,10 +115,11 @@ local function asasDe(m, nome)
 end
 local INTERVALO_VOZ = {rugido = 12, esforco = 7, mordida = 0.5, intimidar = 8, grunhido = 5, alerta = 5, farejar = 2.5,
 	mastigar = 0.5, beber = 1.5, respiroSono = 4, despertar = 10, dano = 1.2, danoLeve = 0.8,
-	rugidoTerritorial = 8, rugidoCorpo = 2, rugidoAmeaca = 4, rugidoAmeacaCorpo = 2, rugidoVitoria = 20, rosnado = 2.5, bafo = 3, inspira = 2}
+	rugidoTerritorial = 8, rugidoCorpo = 2, rugidoAmeaca = 4, rugidoAmeacaCorpo = 2, rugidoVitoria = 20, rosnado = 2.5, bafo = 3, inspira = 2,
+	rugidoCombate = 6}                                               -- PATCH_VOZES_CAMADAS
 local CORTE_VOZ = {esforco = 1.2, grunhido = 1.5, alerta = 1.2, farejar = 1.4, mastigar = 1.1, beber = 1.3, respiroSono = 4.5, respiro = 1.8,
 	rugidoTerritorial = 3.9, rugidoCorpo = 3.2, rugidoAmeaca = 2.7, rugidoAmeacaCorpo = 2.0, rugidoVitoria = 3.3, rosnado = 1.1, bafo = 1.2,
-	inspira = 1.1, dano = 0.9, despertar = 1.4, intimidar = 1.8, rugido = 3.4}
+	inspira = 1.1, dano = 0.9, despertar = 1.4, intimidar = 1.8, rugido = 3.4, rugidoCombate = 1.9}
 local LONGE = {rugido = true, intimidar = true, rugidoCombate = true, dano = true, rugidoTerritorial = true, rugidoCorpo = true,
 	rugidoAmeaca = true, rugidoAmeacaCorpo = true, rugidoVitoria = true}
 local RUGIDOS = {rugido = true, rugidoTerritorial = true, rugidoAmeaca = true, rugidoVitoria = true, rugidoCombate = true}
@@ -147,6 +163,17 @@ local function tocar(pai, sid, vol, tom, corte, dist, rugido)
 	else s.Ended:Once(function() s:Destroy() end); task.delay(12, function() if s.Parent then s:Destroy() end end) end
 end
 local function sorteia(t) return type(t) == "table" and t[math.random(#t)] or t end
+-- PATCH_VOZES_CAMADAS (05/11): camadas da voz (SonsConfig.formas[..].camadas[k] = {{som, vol rel, tom rel, atraso}}):
+-- tocam junto com a voz principal, no mesmo tom relativo (inclui a variacao), e acabam junto com ela
+local function camadas(pp, C, k, vol, tom, corte, dist)
+	local l = C.camadas and C.camadas[k]; if not l then return end
+	for _, c in ipairs(l) do
+		local atraso = c[4] or 0
+		local dur = corte and math.max(0.6, corte - atraso) or nil
+		local function vai() if pp.Parent then tocar(pp, c[1], vol * c[2], tom * c[3], dur, dist, atraso == 0 and ENVELOPE[k]) end end
+		if atraso > 0 then task.delay(atraso, vai) else vai() end
+	end
+end
 -- PATCH_VOZ_FORMA: tom de voz da forma regional (atributo TomVoz no modelo; 1 = padrao)
 local function tomVoz(pai) local mm = pai and pai:FindFirstAncestorWhichIsA("Model"); return (mm and mm:GetAttribute("TomVoz")) or 1 end
 local function faixa(f) return f and (f[1] + (f[2] - f[1]) * math.random()) or 1 end
@@ -163,8 +190,11 @@ local function tocarVoz(m, pp, nome, fase)
 					if donoUltimoRugido ~= m and os.clock() - ultimoRugidoGlobal < 1.6 then vol *= 0.35 end
 					ultimoRugidoGlobal, donoUltimoRugido = os.clock(), m
 				end
-				local varia = RUGIDOS[k] and 1 or (0.95 + math.random() * 0.1)      -- rugido: sempre o mesmo tom
-				tocar(pp, sorteia(C[k]), vol, ev[5] * varia * tomVoz(pp), CORTE_VOZ[k], dist, ENVELOPE[k])
+				-- PATCH_VOZES_CAMADAS: rugido varia pouco (+-3%) em volta do tom do tipo; o resto +-5%
+				local varia = RUGIDOS[k] and (0.97 + math.random() * 0.06) or (0.95 + math.random() * 0.1)
+				local tom = ev[5] * varia * tomVoz(pp)
+				tocar(pp, sorteia(C[k]), vol, tom, CORTE_VOZ[k], dist, ENVELOPE[k])
+				camadas(pp, C, k, vol, tom, CORTE_VOZ[k], dist)
 			end
 		end
 	end
@@ -255,7 +285,9 @@ RunService.Heartbeat:Connect(function(dt)
 								tocar(pp, sorteia(C.asa), C.asaVolume * math.clamp(t.WeightCurrent, 0.4, 1), faixa(C.asaTom), nil, C.distAsa)
 							elseif PASSOS[nome] and not m:GetAttribute("NoAr") then
 								tocar(pp, sorteia(C.passo), C.passoVolume, faixa(C.passoTom), 0.6, C.distPasso)   -- corte curto: corrida rapida nao esgota a cota de sons
-								tocar(pp, C.passoPeso, C.passoPesoVolume * (nome == "Correr" and 1.4 or 1), 0.9 + math.random() * 0.2, C.passoPesoCorte, C.distPasso)
+								if (C.passoPesoVolume or 0) > 0 then                 -- PATCH_VOZES_CAMADAS: 0 = sem baque
+									tocar(pp, C.passoPeso, C.passoPesoVolume * (nome == "Correr" and 1.4 or 1), 0.9 + math.random() * 0.2, C.passoPesoCorte, C.distPasso)
+								end
 							elseif voz then
 								tocarVoz(m, pp, nome, alvo)
 							end
@@ -361,6 +393,9 @@ if FX then
 			task.delay(0.45, function() tocar(pp, C.garra, C.garraVolume, 0.85 + math.random() * 0.1) end)
 		elseif h == "Garra" and f == "impacto" and e.acertou then tocar(pp, C.impacto, 0.8, 0.9, C.impactoCorte)
 		elseif h == "Cauda" and f == "impacto" then tocar(pp, C.garra, 1.0, 0.7)
-		elseif h == "Rugido" and f == "emissao" then tocar(pp, C.rugidoCombate or C.rugido, 1.5, 0.95 * tomVoz(pp), 1.9, C.distVoz, true) end
+		elseif h == "Rugido" and f == "emissao" then
+			local k = C.rugidoCombate and "rugidoCombate" or "rugido"; local tom = 0.95 * tomVoz(pp)
+			tocar(pp, C[k], 1.5, tom, 1.9, C.distVoz, true); camadas(pp, C, k, 1.5, tom, 1.9, C.distVoz)   -- PATCH_VOZES_CAMADAS
+		end
 	end)
 end

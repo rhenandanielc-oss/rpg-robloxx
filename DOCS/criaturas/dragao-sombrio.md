@@ -224,7 +224,7 @@ Todos estão marcados **[PROPOSTA]**. Dano, alcance, duração, custo, recarga e
 
 ### 5.y Sons do kit (04/11, DOCS/estado CP; aprovados pelo usuário em 04/11)
 - Módulo `SonsSombra` (só Pro Sound Effects): sucção reversa, vozes de espírito, zumbido maligno e respiração oca; correntes de metal nas Correntes; golpes graves na detonação do Eclipse; Passo com respiração baixa e de curto alcance enquanto invisível.
-- Pendente: voz própria do Sombrio (hoje herda a voz padrão) e aprovação de ouvido.
+- Voz própria do Sombrio (05/11, DOCS/estado CQ, aprovada de ouvido): tigre grave (Tiger Roars/Hiss/Growls) com rosnado oco de espírito em camada, respiração de boi, dano de urso-polar; asas de membrana suave e passos acolchoados (padrão calmo de todos os dragões).
 
 ## 6. Etapa 1 executada (03/11): ciclo de chão
 
