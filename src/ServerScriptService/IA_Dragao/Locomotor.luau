@@ -115,6 +115,7 @@ function L:passoChao(alvo, correr, vivo, tol)
 	-- outro rig informa as proprias velocidades: anda no ritmo natural do clipe (RitmoAndarBase), corre em VelCorrer
 	local vel = correr and (self.m:GetAttribute("VelCorrer") or cfg.correrVel * cfg.correrRitmo)
 		or (self.m:GetAttribute("RitmoAndarBase") or cfg.andarVel * cfg.andarRitmo)
+	vel *= 1 + (self.m:GetAttribute("PassoBonus") or 0)                  -- PATCH_IA_KIT_SOMBRA: Passo Sombrio da IA
 	local giro = correr and cfg.giroCorrer or cfg.giroAndar
 	local ultimoTeste = 0
 	while vivo() do
@@ -242,7 +243,7 @@ function L:voarAte(destino, rapido, vivo, tol)
 			self.altAlvo = gmax + self.alturaPivo + (dist < 120 and cfg.folgaVoo or cfg.alturaCruzeiro) + extra
 		end
 		local dy = math.clamp((self.altAlvo or p.Y) - p.Y, -cfg.vSubida * dt, cfg.vSubida * dt)
-		local vel = rapido and cfg.vooRapidoVel or cfg.vooVel
+		local vel = (rapido and cfg.vooRapidoVel or cfg.vooVel) * (1 + (self.m:GetAttribute("PassoBonus") or 0))   -- PATCH_IA_KIT_SOMBRA
 		local falta = (self.altAlvo or p.Y) - p.Y
 		if self.bloqueadoVoo or falta > 40 then vel *= 0.25 end                 -- rocha a frente ou muito abaixo: sobe antes de avancar
 		if erro > math.rad(35) then self:clipe(difAng(self.psi, yawDe(d) - yawDe(self.f0)) > 0 and "Curva_Aerea_E" or "Curva_Aerea_D", true); vel *= 0.7

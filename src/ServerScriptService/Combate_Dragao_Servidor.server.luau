@@ -53,6 +53,9 @@ local function mundo(c)
 	gpMundo.FilterDescendantsInstances = ex; return gpMundo
 end
 local function alcSopro(c)
+	if c:real("Coracao") == "Eclipse" then                             -- PATCH_IA_KIT_SOMBRA: Sopro Umbral tem alcance proprio
+		local e = Cfg.habilidades.SoproUmbral.porElemento.Sombra; return e and e.alcance or 95
+	end
 	local e = Cfg.habilidades.Sopro.porElemento[c.m:GetAttribute("ElementoAtivo") or ""]; return e and e.alcance or 100
 end
 local function escolher(c, alvo)
@@ -65,6 +68,7 @@ local function escolher(c, alvo)
 	local pePos = c.peE and c.peE.TransformedWorldCFrame.Position.Y or (p.Y - 10)
 	local dyPe = r.Position.Y - pePos; local mesmoNivel = dyPe > -12 and dyPe < 20       -- garras/cauda/ruptura: alvo no chao do dragao
 	local noAr = c.m:GetAttribute("NoAr") == true
+	local kitS = c:real("Coracao") == "Eclipse"                             -- PATCH_IA_KIT_SOMBRA
 	local perto, atrasN = 0, 0
 	for _, a in ipairs(c:alvosValidos()) do
 		local ra = raiz(a).Position
@@ -87,7 +91,7 @@ local function escolher(c, alvo)
 	end
 	-- Coracao Infernal: alvo(s) dentro do raio da lamina e na faixa de altura do plano dela (solo ou ar)
 	local CI = Cfg.habilidades.Coracao
-	if c:temHabilidade("Coracao") and os.clock() - (ultimoCoracao[c.m] or -99) > CI.recarga * 1.5 then
+	if not kitS and c:temHabilidade("Coracao") and os.clock() - (ultimoCoracao[c.m] or -99) > CI.recarga * 1.5 then
 		local naLamina = 0
 		for _, a in ipairs(c:alvosValidos()) do
 			local ra = raiz(a).Position
@@ -98,7 +102,7 @@ local function escolher(c, alvo)
 		elseif naLamina == 0 and d < CI.raioExterno then table.insert(bloqueio, "Coracao: alvo fora do plano da lamina") end
 	end
 	-- Tempestade: grupo de verdade (3+, ou 2 cercando/aleatorio), espaco livre acima para o impulso
-	if perto >= 3 or (perto >= 2 and (atrasN >= 1 or math.random() < 0.35)) then
+	if not kitS and (perto >= 3 or (perto >= 2 and (atrasN >= 1 or math.random() < 0.35))) then
 		if not noAr and workspace:Raycast(p + Vector3.new(0, 10, 0), Vector3.new(0, 45, 0), mundo(c)) then table.insert(bloqueio, "Tempestade: teto baixo")
 		else add("Tempestade", 1.1) end
 	end
@@ -110,10 +114,34 @@ local function escolher(c, alvo)
 	end
 	-- Arremetida: trajeto livre ate o alvo e sem desnivel grande (no solo)
 	local Ar = Cfg.habilidades.Arremetida
-	if d >= 50 and d < 170 then
+	if not kitS and d >= 50 and d < 170 then
 		if workspace:Spherecast(p + Vector3.new(0, 20, 0), 14, v.Unit * math.min(d, Ar.distancia), mundo(c)) then table.insert(bloqueio, "Arremetida: obstaculo")
 		elseif math.abs(acima) > 30 and not noAr then table.insert(bloqueio, "Arremetida: desnivel")
 		else add("Arremetida", d > alcSopro(c) and 1.0 or 0.75) end
+	end
+	-- PATCH_IA_KIT_SOMBRA (04/11): kit do Sombrio com tatica propria (slots: Arremetida = Correntes, Tempestade = Passo,
+	-- Coracao = Eclipse). NAO_APROVADO
+	if kitS then
+		local CO, EC = Cfg.habilidades.Correntes, Cfg.habilidades.Eclipse
+		-- Correntes: media/longa distancia, com linha de visao; vem do chao, entao serve contra alvo no ar (prioridade
+		-- maior se ele voa acima ou esta alem do sopro)
+		if d >= 22 and d < CO.alcance then
+			if not c:visivel(b, alvo) then table.insert(bloqueio, "Correntes: sem linha de visao")
+			else add("Arremetida", (acima > 15 or d > alcSopro(c)) and 1.05 or 0.8) end
+		end
+		-- Eclipse: alvos dentro da area; grupo (2+) ou um alvo com 3+ marcas desta origem (mais marcas, mais vontade)
+		if os.clock() - (ultimoCoracao[c.m] or -99) > EC.recarga * 1.5 then
+			local naArea, marcas = 0, 0
+			for _, a in ipairs(c:alvosValidos()) do
+				if (raiz(a).Position - p).Magnitude < EC.raio * 0.8 then naArea += 1; marcas += a:GetAttribute("MarcaSombria_" .. c.m.Name) or 0 end
+			end
+			if naArea >= 2 or (naArea == 1 and marcas >= 3) then add("Coracao", 1.15 + math.min(marcas, 5) * 0.03)
+			elseif naArea == 1 then table.insert(bloqueio, "Eclipse: poucas marcas (" .. marcas .. ")") end
+		end
+		-- Passo Sombrio: some e acelera para escapar ferido ou para encurtar a distancia de um alvo longe
+		local vida, vmax = c.m:GetAttribute("Vida"), c.m:GetAttribute("VidaMax")
+		local ferido = vida and vmax and vmax > 0 and vida / vmax < 0.35
+		if not c.m:GetAttribute("PassoInvisivel") and (ferido or d > 110) then add("Tempestade", ferido and 1.3 or 0.7) end
 	end
 	-- PATCH_RUGIDOS_FOGO: rugido de combate ocasional a media distancia (forma com rugido proprio), nunca colado
 	local RG = Cfg.basicos.Rugido

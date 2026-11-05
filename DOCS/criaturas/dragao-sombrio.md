@@ -216,6 +216,12 @@ Todos estão marcados **[PROPOSTA]**. Dano, alcance, duração, custo, recarga e
 | Véu Crepuscular | cortar rotas / pressão | Hab_Area(_Ar) (existem) | médio (zona temporária) | contornar ou esperar | bloqueia só visão?; duração; limite por servidor |
 | Eclipse Dracônico (opcional) | ultimate de pressão | Hab_Concentracao + rugido (existem) | alto | sair da área | se é 4ª ativa; depende da Marca |
 
+### 5.x IA selvagem com o kit (04/11, DOCS/estado CO; tática NAO_APROVADO)
+- `Sombrio_Guardiao` (ninho `Ninho_Sombrio`, Laboratorio_IA) usa o kit inteiro: Correntes à distância ou contra alvo
+  no ar; Eclipse com 2+ alvos na área ou 1 alvo com 3+ marcas; Passo Sombrio ferido (< 35%) ou para alcançar alvo a
+  mais de 110 studs (o Locomotor recebe o +60%); Sopro Umbral até 95; garra/mordida/cauda de perto.
+- Limite atual: ferido ele fica invisível mas não recua (o Cerebro não tem regra de fuga).
+
 ## 6. Etapa 1 executada (03/11): ciclo de chão
 
 - **Parado, Andar, Correr:** testados em Play no `workspace.Sombrio`, com o corpo movido nas velocidades de ritmo (7,9 e 18,94 studs/s). Pé no apoio a ~11% da velocidade do corpo, igual ao Glacial certificado medido no mesmo teste. No Parado, o pé desliza 0,02–0,05 stud.
