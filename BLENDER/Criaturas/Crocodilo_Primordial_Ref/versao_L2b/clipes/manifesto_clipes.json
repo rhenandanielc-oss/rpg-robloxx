@@ -1,0 +1,250 @@
+{
+ "Repouso": {
+  "duracao": 4.0,
+  "loop": true,
+  "quadros": 120,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.18
+ },
+ "Andar": {
+  "duracao": 1.5,
+  "loop": true,
+  "quadros": 45,
+  "velocidade_studs_s": 1.85,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.068
+ },
+ "Corrida": {
+  "duracao": 0.5333333333333333,
+  "loop": true,
+  "quadros": 16,
+  "velocidade_studs_s": 8.75,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.056
+ },
+ "Nado": {
+  "duracao": 2.0,
+  "loop": true,
+  "quadros": 60,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 1.123
+ },
+ "Mordida": {
+  "duracao": 1.0,
+  "loop": false,
+  "quadros": 31,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.18
+ },
+ "Ameaca": {
+  "duracao": 2.0,
+  "loop": false,
+  "quadros": 61,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.18
+ },
+ "VirarEsquerda": {
+  "duracao": 1.5,
+  "loop": true,
+  "quadros": 45,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.073,
+  "sincronizacao": {
+   "giro_graus_s": 13.33,
+   "pivo_y": -4.191
+  },
+  "sola_malha_max_studs_s": 0.119,
+  "versao_qa": "L2b"
+ },
+ "VirarDireita": {
+  "duracao": 1.5,
+  "loop": true,
+  "quadros": 45,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.073,
+  "sincronizacao": {
+   "giro_graus_s": -13.33,
+   "pivo_y": -4.191
+  },
+  "sola_malha_max_studs_s": 0.135,
+  "versao_qa": "L2b"
+ },
+ "Arrancada": {
+  "duracao": 1.4,
+  "loop": false,
+  "quadros": 43,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.054,
+  "sincronizacao": {
+   "deslocamento_studs": "por quadro no JSON",
+   "v_inicio": 0.0,
+   "v_fim": 8.75
+  }
+ },
+ "Frenagem": {
+  "duracao": 1.6,
+  "loop": false,
+  "quadros": 49,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.059,
+  "sincronizacao": {
+   "deslocamento_studs": "por quadro no JSON",
+   "v_inicio": 8.75,
+   "v_fim": 0.0
+  }
+ },
+ "RepousoParaAndar": {
+  "duracao": 1.4,
+  "loop": false,
+  "quadros": 43,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.072,
+  "sincronizacao": {
+   "deslocamento_studs": "por quadro no JSON",
+   "v_inicio": 0.0,
+   "v_fim": 1.85
+  }
+ },
+ "AndarParaRepouso": {
+  "duracao": 1.8,
+  "loop": false,
+  "quadros": 55,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.09,
+  "sincronizacao": {
+   "deslocamento_studs": "por quadro no JSON",
+   "v_inicio": 1.85,
+   "v_fim": 0.0
+  }
+ },
+ "AndarParaCorrida": {
+  "duracao": 1.1,
+  "loop": false,
+  "quadros": 34,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.052,
+  "sincronizacao": {
+   "deslocamento_studs": "por quadro no JSON",
+   "v_inicio": 1.85,
+   "v_fim": 8.75
+  }
+ },
+ "CorridaParaAndar": {
+  "duracao": 1.1,
+  "loop": false,
+  "quadros": 34,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0125,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.059,
+  "sincronizacao": {
+   "deslocamento_studs": "por quadro no JSON",
+   "v_inicio": 8.75,
+   "v_fim": 1.85
+  }
+ },
+ "NadoParado": {
+  "duracao": 3.0,
+  "loop": true,
+  "quadros": 90,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": -0.446
+ },
+ "CurvaAquaticaEsquerda": {
+  "duracao": 2.0,
+  "loop": true,
+  "quadros": 60,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 1.123,
+  "sincronizacao": {
+   "giro_graus_s_proposto": 25.0
+  }
+ },
+ "CurvaAquaticaDireita": {
+  "duracao": 2.0,
+  "loop": true,
+  "quadros": 60,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 1.123,
+  "sincronizacao": {
+   "giro_graus_s_proposto": -25.0
+  }
+ },
+ "Mergulho": {
+  "duracao": 1.5,
+  "loop": false,
+  "quadros": 46,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.526
+ },
+ "Emersao": {
+  "duracao": 1.5,
+  "loop": false,
+  "quadros": 46,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": -0.627
+ },
+ "EntradaAgua": {
+  "duracao": 2.2,
+  "loop": false,
+  "quadros": 67,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": -0.702,
+  "sincronizacao": {
+   "deslocamento_studs": "por quadro no JSON"
+  }
+ },
+ "SaidaAgua": {
+  "duracao": 2.4,
+  "loop": false,
+  "quadros": 73,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": -0.41,
+  "sincronizacao": {
+   "deslocamento_studs": "por quadro no JSON"
+  }
+ },
+ "definicao_metricas": {
+  "erro_ik_max": "distancia alvo IK x punho/tornozelo (studs)",
+  "desliza_pe_max_studs_s": "velocidade no mundo do osso Mao/Pe em apoio (2 quadros seguidos), com giro/pivo/deslocamento do bloco sincronizacao aplicado",
+  "sola_malha_max_studs_s": "velocidade do centroide dos vertices da sola (peso>0,5, z<0,35) no mundo; inclui deformacao da pele; medido so onde indicado (scripts/qa_pe_mundo.py)"
+ }
+}

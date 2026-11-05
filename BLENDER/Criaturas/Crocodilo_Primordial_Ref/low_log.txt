@@ -1,0 +1,28 @@
+00:02.859  blend            | Read blend: "C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Crocodilo_Primordial_Ref\CR_Crocodilo_Meshy_v2.blend"
+C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Crocodilo_Primordial_Ref\scripts\preparar_low.py:97: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  lm = bpy.data.materials.new("M_Croc_LOW"); lm.use_nodes = True
+00:17.500  cycles           | WARNING CUEW initialization failed: Error opening the library
+00:17.500  cycles           | WARNING HIPEW initialization failed: Error opening HIP dynamic library
+BlenderMCP addon registered
+
+Wiggle Bones registered
+MASCARA ventre/flanco/mandibula: verts com peso >0,5: 87285  faixa rosada: 5654 de 369828
+Info: Saved as "CR_Crocodilo_Meshy_v2.blend"
+HIGH_CORRIGIDA salva 0.6 s
+LOW tris 19000 (de 692320 ) verts 9487 14.1 s
+Info: Circular dependency for image "CR_Croc_cor" from object "CR_Croc_LOW"
+Info: Baking map saved to internal image, save it externally or pack it
+BAKE cor 3.4 s
+Info: Circular dependency for image "CR_Croc_normal" from object "CR_Croc_LOW"
+Info: Baking map saved to internal image, save it externally or pack it
+BAKE normal 3.3 s
+Info: Circular dependency for image "CR_Croc_rugosidade" from object "CR_Croc_LOW"
+Info: Baking map saved to internal image, save it externally or pack it
+BAKE rugosidade 4.0 s
+Info: Saved as "CR_Crocodilo_LOW.blend"
+LOW_OK 26.8 s
+BlenderMCP addon unregistered
+Wiggle Bones unregistered
+Blender 5.2.2 LTS (hash d13f752e3b9c built 2026-09-15 01:37:04)
+
+Blender quit

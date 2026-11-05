@@ -1,0 +1,56 @@
+{
+ "Repouso": {
+  "duracao": 4.0,
+  "loop": true,
+  "quadros": 120,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.18
+ },
+ "Andar": {
+  "duracao": 1.5,
+  "loop": true,
+  "quadros": 45,
+  "velocidade_studs_s": 1.85,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.068
+ },
+ "Corrida": {
+  "duracao": 0.5333333333333333,
+  "loop": true,
+  "quadros": 16,
+  "velocidade_studs_s": 8.75,
+  "erro_ik_max": 0.0048,
+  "desliza_pe_max_studs_s": 0.058,
+  "ponta_pe_min_z": 0.056
+ },
+ "Nado": {
+  "duracao": 2.0,
+  "loop": true,
+  "quadros": 60,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 1.153
+ },
+ "Mordida": {
+  "duracao": 1.0,
+  "loop": false,
+  "quadros": 31,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.18
+ },
+ "Ameaca": {
+  "duracao": 2.0,
+  "loop": false,
+  "quadros": 61,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.18
+ }
+}

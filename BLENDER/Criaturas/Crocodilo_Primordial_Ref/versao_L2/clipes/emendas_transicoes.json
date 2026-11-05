@@ -1,0 +1,66 @@
+{
+ "RepousoParaAndar": {
+  "vem_de": "Repouso",
+  "quadro_origem_mais_parecido": 68,
+  "dif_inicio_graus": 8.4,
+  "vai_para": "Andar",
+  "entrar_no_quadro": 39,
+  "dif_fim_graus": 13.6
+ },
+ "AndarParaRepouso": {
+  "vem_de": "Andar",
+  "quadro_origem_mais_parecido": 0,
+  "dif_inicio_graus": 1.4,
+  "vai_para": "Repouso",
+  "entrar_no_quadro": 70,
+  "dif_fim_graus": 10.0
+ },
+ "AndarParaCorrida": {
+  "vem_de": "Andar",
+  "quadro_origem_mais_parecido": 1,
+  "dif_inicio_graus": 3.3,
+  "vai_para": "Corrida",
+  "entrar_no_quadro": 9,
+  "dif_fim_graus": 18.2
+ },
+ "CorridaParaAndar": {
+  "vem_de": "Corrida",
+  "quadro_origem_mais_parecido": 0,
+  "dif_inicio_graus": 13.5,
+  "vai_para": "Andar",
+  "entrar_no_quadro": 18,
+  "dif_fim_graus": 8.2
+ },
+ "Arrancada": {
+  "vem_de": "Repouso",
+  "quadro_origem_mais_parecido": 68,
+  "dif_inicio_graus": 8.4,
+  "vai_para": "Corrida",
+  "entrar_no_quadro": 11,
+  "dif_fim_graus": 21.2
+ },
+ "Frenagem": {
+  "vem_de": "Corrida",
+  "quadro_origem_mais_parecido": 0,
+  "dif_inicio_graus": 13.5,
+  "vai_para": "Repouso",
+  "entrar_no_quadro": 68,
+  "dif_fim_graus": 8.4
+ },
+ "EntradaAgua": {
+  "vem_de": "Andar",
+  "quadro_origem_mais_parecido": 0,
+  "dif_inicio_graus": 1.4,
+  "vai_para": "Nado",
+  "entrar_no_quadro": 0,
+  "dif_fim_graus": 11.8
+ },
+ "SaidaAgua": {
+  "vem_de": "Nado",
+  "quadro_origem_mais_parecido": 56,
+  "dif_inicio_graus": 8.0,
+  "vai_para": "Andar",
+  "entrar_no_quadro": 33,
+  "dif_fim_graus": 13.3
+ }
+}
