@@ -25,6 +25,7 @@ Fontes oficiais lidas em 03/11/2026: `RPG_02_Criaturas_Elementos_e_Poderes_ATUAL
   - `PastaAnimacoes = "Sombrio"`, `FormaRegional = "Sombrio"`, `ElementoNato = "Sombra"`.
 - O importado original está guardado em `ServerStorage.Dragoes_Retirados.Sombrio_Importado_v4_<data>` (recuperável).
 - Atributo `MigracaoPendente` = "ElementoNato Sombra fora da forma". Motivo: o `ConfigCombate` ainda não tem o Sombrio (o kit está pendente). Isso é esperado, não é erro.
+- **05/11 — malha v10 / GLB v5 com boca interna** (DOCS/estado CR): nova peça `Silverwing_Boca` (3.794 tris, gengivas, 32 dentes, céu, língua, garganta); Detalhes agora 13.024. Trocada em `Sombrio` e `Sombrio_Guardiao` com `V14/ia/studio_trocar_sombrio_boca.luau` (atributos e altura dos pés mantidos; antigos em `ServerStorage.Dragoes_Retirados.*_antesBoca_*`).
 - **O Studio não foi salvo pelas ferramentas.** Salvar (Ctrl+S) é passo do usuário.
 
 ## 3. Inventário real dos clipes (`ReplicatedStorage.Animacoes_Sombrio`, 68 + Apelidos)

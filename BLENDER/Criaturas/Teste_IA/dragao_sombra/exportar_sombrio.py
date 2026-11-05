@@ -4,7 +4,8 @@ Exporta o Dragao Glacial rigado para o Roblox (derivado de dragao_novo/exportar_
 detalhes (chifres, espinhos, garras, dentes, olhos, boca) como malhas separadas, cada MeshPart <= 20k tris; esqueleto
 do Silverwing com os nomes do jogo (o Roblox liga malha e osso PELO NOME); texturas <= 1024; sem animacoes no GLB (os
 clipes vao pela ponte JSON). NAO mexe no Studio: a importacao 3D e o passo manual do usuario.
-Uso: blender -b SB_Dragao_M2M.blend -P exportar_sombrio.py -- <saida.glb>"""
+Uso: blender -b SB_Dragao_M2M.blend -P exportar_sombrio.py -- <saida.glb>
+(05/11) Se o .blend tiver Silverwing_Boca (rig/SB_Dragao_M2M_v10_boca.blend), ela sai como 4a MeshPart com textura propria."""
 import bpy, bmesh, sys, os
 SAIDA = os.path.abspath(sys.argv[sys.argv.index("--") + 1]); os.makedirs(os.path.dirname(SAIDA), exist_ok=True)
 A = bpy.data.objects["Silverwing_Rig"]; corpo = bpy.data.objects["Silverwing"]
@@ -44,7 +45,8 @@ bpy.ops.object.select_all(action="DESELECT"); A.select_set(True); bpy.context.vi
 bpy.ops.object.mode_set(mode="EDIT")
 for s in ("l", "r"): A.data.edit_bones["horn_base_" + s].parent = A.data.edit_bones["head"]
 bpy.ops.object.mode_set(mode="OBJECT")
-malhas = (corpo, asas, detalhes)
+boca = bpy.data.objects.get("Silverwing_Boca")             # (05/11) interior da boca proprio (boca_interior_sombrio.py, v10)
+malhas = (corpo, asas, detalhes) + ((boca,) if boca else ())
 def usados():
     u = set()
     for o in malhas:
