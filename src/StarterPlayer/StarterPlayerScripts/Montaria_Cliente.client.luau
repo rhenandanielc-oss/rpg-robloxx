@@ -472,7 +472,13 @@ RunService.RenderStepped:Connect(function(dt)
 		local stick = false
 		for _, st in ipairs(UIS:GetGamepadState(Enum.UserInputType.Gamepad1)) do if st.KeyCode == Enum.KeyCode.Thumbstick2 and st.Position.Magnitude > 0.15 then stick = true end end
 		if not (orbAtivo or stick or not UIS.MouseEnabled) then cy, cp = nil, 0 end
-		Entrada:FireServer({f = -mv.Z, t = mv.X, up = (seg.subir and 1 or 0) - (seg.descer and 1 or 0), c = seg.correr, cy = cy, cp = cp})
+		local fAv = -mv.Z
+		local tA = travaAtual()                                         -- PATCH_TRAVA_ARREMETIDA: a investida persegue o alvo travado
+		if tA and m:GetAttribute("EmAtaque") == "Arremetida" then
+			local v = tA.raiz.Position - m:GetPivot().Position
+			if v.Magnitude > 2 then v = v.Unit; cy = math.atan2(v.X, v.Z); cp = math.asin(math.clamp(v.Y, -1, 1)); fAv = math.max(fAv, 0.3) end
+		end
+		Entrada:FireServer({f = fAv, t = mv.X, up = (seg.subir and 1 or 0) - (seg.descer and 1 or 0), c = seg.correr, cy = cy, cp = cp})
 		local dm = dirMira(); m:SetAttribute("MiraLocal", dm)                   -- cabeca do dragao olha a mira (MovimentoVivo)
 		if (soproSegurado or os.clock() < miraAte) and Pedido then Pedido:FireServer(m, "mira", nil, dm) end
 	end
