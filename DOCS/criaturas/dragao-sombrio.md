@@ -222,6 +222,10 @@ Todos estão marcados **[PROPOSTA]**. Dano, alcance, duração, custo, recarga e
   mais de 110 studs (o Locomotor recebe o +60%); Sopro Umbral até 95; garra/mordida/cauda de perto.
 - Limite atual: ferido ele fica invisível mas não recua (o Cerebro não tem regra de fuga).
 
+### 5.y Sons do kit (04/11, DOCS/estado CP; aprovados pelo usuário em 04/11)
+- Módulo `SonsSombra` (só Pro Sound Effects): sucção reversa, vozes de espírito, zumbido maligno e respiração oca; correntes de metal nas Correntes; golpes graves na detonação do Eclipse; Passo com respiração baixa e de curto alcance enquanto invisível.
+- Pendente: voz própria do Sombrio (hoje herda a voz padrão) e aprovação de ouvido.
+
 ## 6. Etapa 1 executada (03/11): ciclo de chão
 
 - **Parado, Andar, Correr:** testados em Play no `workspace.Sombrio`, com o corpo movido nas velocidades de ritmo (7,9 e 18,94 studs/s). Pé no apoio a ~11% da velocidade do corpo, igual ao Glacial certificado medido no mesmo teste. No Parado, o pé desliza 0,02–0,05 stud.

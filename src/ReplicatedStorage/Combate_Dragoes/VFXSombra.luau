@@ -840,6 +840,8 @@ end
 
 function S.evento(d, f)
 	local m = d.d
+	local SN = script.Parent:FindFirstChild("SonsSombra")               -- PATCH_SONS_SOMBRA: audio antes do LOD visual
+	if SN and d.fase ~= "reacao" then local ok, e = pcall(require(SN).evento, d); if not ok then warn("SonsSombra: " .. tostring(e)) end end
 	if d.hab == "Correntes" and d.fase == "soltar" then correntesEvento(m, d, f); return true end   -- soltar mesmo sem o dragao
 	if not m or not m.Parent then return false end
 	if d.fase == "reacao" then reacao(d, f); return true end           -- vinheta mesmo sem LOD visual
