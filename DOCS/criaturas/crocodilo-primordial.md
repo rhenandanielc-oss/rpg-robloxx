@@ -216,6 +216,13 @@ Três gerações, nenhuma aprovada artisticamente pelo criador:
 - Evidências: `review/L5/` — `PRANCHA_sela_forma.png`, `PRANCHA_dois_lados.png`, `forma/`, `demo/` (folhas e GIFs dos 4 clipes), `seq/`, `reuso/`, `qa3/`, `qa_sela_clipes.txt`, `qa_demo_L5.json`, `RESUMO_L5.txt`. Cena: `CR_Crocodilo_Montaria_L5.blend`. Versão aprovada do Lote 4 em `versao_L4b/`.
 - Limites: sela com materiais procedurais do Blender (5 materiais) — falta assar textura em um atlas e exportar o GLB da sela para o Roblox (só após aprovação da forma); manequim em caixas (R15 real é mais fino); sem controles, câmera, física, regra de lado no jogo; Roblox, celular e FPS sem teste; mergulho montado pendente.
 
+**06/11/2026 — Lote 5b: textura em atlas e GLB da sela (só Blender). Aprovado pelo usuário em 06/11/2026 ("Aprovar e commitar").**
+- `scripts/exportar_sela.py` (sobre `CR_Crocodilo_Sela.blend`): UV novo em atlas único (margem ~4 px) e os 5 materiais procedurais assados em 4 mapas 1024 num material só (`M_Sela_Atlas`): `tex/CR_Sela_cor_1024.png`, `_normal_1024`, `_rugosidade_1024`, `_metal_1024`. A cor é assada pela emissão (o passe difuso do Cycles deixava o bronze preto).
+- `export/CR_Crocodilo_Sela.glb` (2,0 MB): só o esqueleto do crocodilo (mesmos 28 ossos, rig sem mudança) + a malha da sela (5.824 tris), sem animação. O GLB do crocodilo **não mudou** (md5 conferido).
+- Conferência por reimportação: 1 malha no arquivo (a "Icosphere" que aparece é o desenho de osso criado pelo importador do Blender), 28 juntas, até 4 influências, ossos com peso: Pelve, Coluna1/2, Pescoço, BraçoE/D, CoxaE/D, Cauda1; medidas 5,74 × 3,39 × 5,84. Numa pose de teste (Pelve, Coluna1, Coluna2 e BraçoE girados) a sela reimportada fica a no máximo 0,000002 da original.
+- No jogo: a sela entra como MeshPart DENTRO do modelo do crocodilo e usa os ossos dele (o Roblox liga a pele pelo nome do osso); os ossos que a sela não usa somem ao importar o GLB da sela, sem efeito. Importação (Import 3D) é manual; **Roblox não testado**.
+- Evidências: `review/L5/PRANCHA_atlas.png` (procedural × atlas), `review/L5/atlas/`, `export/CR_Crocodilo_Sela_conferencia.json`. Cena de revisão: `CR_Crocodilo_Sela_Atlas.blend`.
+
 ## 6. Pendências
 1. **Decisões do criador:**
    - **conflito do agarrão PvP** (só empurra × agarrão mais longo interrompível por aliados);

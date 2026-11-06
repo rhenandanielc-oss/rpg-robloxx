@@ -1,0 +1,52 @@
+{
+ "ossos": 28,
+ "malhas": 2,
+ "tris": 5824,
+ "vertices": 5119,
+ "vertices_original": 2934,
+ "max_influencias": 4,
+ "ossos_com_peso": [
+  "BracoD",
+  "BracoE",
+  "Cauda1",
+  "Coluna1",
+  "Coluna2",
+  "CoxaD",
+  "CoxaE",
+  "Pelve",
+  "Pescoco"
+ ],
+ "materiais": [
+  "M_Sela_Atlas"
+ ],
+ "imagens": [
+  [
+   "CR_Sela_cor_1024",
+   [
+    1024,
+    1024
+   ]
+  ],
+  [
+   "CR_Sela_metal_1024-CR_Sela_rugosidade_1024",
+   [
+    1024,
+    1024
+   ]
+  ],
+  [
+   "CR_Sela_normal_1024",
+   [
+    1024,
+    1024
+   ]
+  ]
+ ],
+ "dims": [
+  5.744,
+  3.39,
+  5.844
+ ],
+ "casamento_repouso_max": 2.387164158790256e-06,
+ "pose_teste_dif_max": 2.136693502087646e-06
+}
