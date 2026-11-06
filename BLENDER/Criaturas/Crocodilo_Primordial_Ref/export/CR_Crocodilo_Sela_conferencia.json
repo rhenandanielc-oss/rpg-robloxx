@@ -1,9 +1,9 @@
 {
  "ossos": 28,
  "malhas": 2,
- "tris": 5824,
- "vertices": 5119,
- "vertices_original": 2934,
+ "tris": 6156,
+ "vertices": 5484,
+ "vertices_original": 3104,
  "max_influencias": 4,
  "ossos_com_peso": [
   "BracoD",
@@ -45,8 +45,8 @@
  "dims": [
   5.744,
   3.39,
-  5.844
+  5.853
  ],
  "casamento_repouso_max": 2.387164158790256e-06,
- "pose_teste_dif_max": 2.136693502087646e-06
+ "pose_teste_dif_max": 2.1426605544112553e-06
 }

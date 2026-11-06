@@ -1,5 +1,9 @@
 """Lote 5: SELA DEFINITIVA do Crocodilo Primordial (proposta para aprovacao; substitui o volume de teste do Lote 4).
-Pecas (uma malha 'CR_Croc_Sela', 3 materiais):
+Materiais do Pantano Nebuloso (06/11, pedido do usuario; regras 25.3.1 / 25.10 / 25.22.7; nomes da fauna sao PROPOSTA):
+couro de Javali-do-Brejo (assento, aba, cilha), manta trancada de Fibra de Mangue (material estrutural oficial do bioma),
+ferro escurecido pela umidade (sem bronze: nao e material basico), borda do arcao em madeira de Mangue Cinzento, alca de
+couro trancado com tendao de Javali-do-Brejo. Adorno regional: nenhum por enquanto (penas testadas e retiradas).
+Pecas (uma malha 'CR_Croc_Sela', 8 materiais no Blender; o exportador assa tudo num atlas):
  - manta de tecido grosso que veste o dorso: no meio passa por cima das cristas (envelope suave), na borda cai sobre a
    pele como pano (acompanha as cristas);
  - assento de couro com cabeca (frente, com alca de bronze para a mao) e patilha (atras), apoiado na manta;
@@ -176,10 +180,29 @@ def criar(croc, lo, colecao=None, pes_cavaleiro=None):
     vs, fs, fr = _placa(assento_fundo, assento_topo, a["nu"], a["nv"], forma_a); pecas.append((vs, fs, 0, "pele", None))
     z_fundo_c = aba_top_z(0.0, ASSENTO_Y) - 0.004; z_assento = z_fundo_c + espessura(0.0, ASSENTO_Y, 0.0)
     Zq = z_assento + DZ_QUADRIL
-    # alca de bronze na cabeca do assento
+    # alca de couro trancado com tendao na cabeca do assento
     yh = a["yc"] - 0.80 * a["ay"]; zc = assento_topo(0.0, yh, 0.0).z
-    arco = [V((0.30 * math.cos(math.pi * k / 10), yh - 0.04, zc - 0.10 + 0.30 * math.sin(math.pi * k / 10))) for k in range(11)]
-    vs, fs = _tubo(arco, 0.065, 6); pecas.append((vs, fs, 2, "rigido", V((0, yh, zc))))
+    arco = [V((0.30 * math.cos(math.pi * k / 12), yh - 0.04, zc - 0.10 + 0.30 * math.sin(math.pi * k / 12))) for k in range(13)]
+    vs, fs = _tubo(arco, 0.07, 8); pecas.append((vs, fs, 6, "rigido", V((0, yh, zc))))
+    # arcao: borda de madeira de Mangue Cinzento na crista da patilha e da cabeca (a estrutura aparece por fora do couro)
+    def rho_a(x, y): return ((abs(x) / a["ax"]) ** a["n"] + (abs(y - a["yc"]) / a["ay"]) ** a["n"]) ** (1.0 / a["n"])
+    def crista(us_, v0, v1):
+        pts = []
+        for u in us_:
+            x = u * a["ax"]; melhor = None
+            for v in np.linspace(v0, v1, 40):
+                y = a["yc"] + v * a["ay"]; r_ = rho_a(x, y)
+                if r_ >= 0.995: continue
+                p = assento_topo(x, y, r_)
+                if melhor is None or p.z > melhor.z: melhor = p
+            pts.append(melhor)
+        return pts
+    ponta_patilha = {}
+    for us_, v0, v1 in ((np.linspace(-0.80, 0.80, 15), 0.55, 0.99), (np.linspace(-0.30, 0.30, 7), -0.99, -0.60)):
+        pts = [p for p in crista(us_, v0, v1) if p is not None]
+        vs, fs = _tubo(pts, 0.06, 6); pecas.append((vs, fs, 5, "pele", None))
+        if v0 > 0: ponta_patilha = {1: pts[-1], -1: pts[0]}
+    # adorno regional (Pena de Garca): testado em 06/11 e retirado - as penas pareciam presas/espinhos saindo da sela
     # ---------------------------------------------------------------- cilha (barriga) + argolas na borda da manta
     c = CILHA; cy = c["y"]; zc0 = 3.0
     def raio_corte(phi):
@@ -261,9 +284,13 @@ def criar(croc, lo, colecao=None, pes_cavaleiro=None):
     bm = bmesh.new(); bm.from_mesh(me); bmesh.ops.recalc_face_normals(bm, faces=bm.faces); bm.to_mesh(me); bm.free()
     ob = bpy.data.objects.new(NOME, me); col.objects.link(ob)
     for p in me.polygons: p.use_smooth = True
-    for nm, cor, rug, met in (("M_Sela_Couro", (0.16, 0.085, 0.04), 0.55, 0.0), ("M_Sela_Manta", (0.055, 0.075, 0.045), 0.92, 0.0),
-                              ("M_Sela_Bronze", (0.55, 0.38, 0.16), 0.42, 1.0), ("M_Sela_Debrum", (0.26, 0.15, 0.05), 0.88, 0.0),
-                              ("M_Sela_CouroEscuro", (0.07, 0.045, 0.03), 0.6, 0.0)):
+    for nm, cor, rug, met in (("M_Sela_CouroJavali", (0.115, 0.072, 0.042), 0.62, 0.0),       # 0 assento, cilha
+                              ("M_Sela_FibraMangue", (0.145, 0.13, 0.072), 0.93, 0.0),       # 1 manta trancada
+                              ("M_Sela_Ferro", (0.16, 0.155, 0.15), 0.62, 0.85),            # 2 argolas, alcas dos pes
+                              ("M_Sela_Cordao", (0.21, 0.165, 0.10), 0.85, 0.0),             # 3 debrum: cordao de fibra/tendao
+                              ("M_Sela_CouroJavaliEscuro", (0.065, 0.045, 0.032), 0.66, 0.0),  # 4 aba, apoios de pe, tiras
+                              ("M_Sela_MangueCinzento", (0.20, 0.185, 0.16), 0.8, 0.0),     # 5 borda do arcao
+                              ("M_Sela_Tendao", (0.34, 0.26, 0.16), 0.7, 0.0)):             # 6 alca trancada
         mt = bpy.data.materials.get(nm) or _material(nm, cor, rug, met); me.materials.append(mt)
     bpy.context.view_layer.objects.active = ob
     for o_ in bpy.context.selected_objects: o_.select_set(False)
@@ -290,25 +317,47 @@ def criar(croc, lo, colecao=None, pes_cavaleiro=None):
     return ob, Zq, info
 
 def _material(nome, cor, rug, met):
+    """materiais procedurais (so para revisao no Blender; o exportador assa tudo em 4 mapas)"""
     mt = bpy.data.materials.new(nome); mt.use_nodes = True; nt = mt.node_tree; b = nt.nodes["Principled BSDF"]
     b.inputs["Roughness"].default_value = rug; b.inputs["Metallic"].default_value = met
-    tc = nt.nodes.new("ShaderNodeTexCoord"); nz = nt.nodes.new("ShaderNodeTexNoise"); nz.inputs["Scale"].default_value = 9.0
-    nt.links.new(tc.outputs["Object"], nz.inputs["Vector"])
-    ramp = nt.nodes.new("ShaderNodeValToRGB"); nt.links.new(nz.outputs["Fac"], ramp.inputs["Fac"])
-    ramp.color_ramp.elements[0].color = tuple(c * 0.70 for c in cor) + (1,); ramp.color_ramp.elements[1].color = tuple(min(1, c * 1.30) for c in cor) + (1,)
-    if nome in ("M_Sela_Manta", "M_Sela_Debrum"):                # tecido: trama fina (bump de ondas cruzadas) + variacao
-        nz.inputs["Scale"].default_value = 4.0
-        nt.links.new(ramp.outputs["Color"], b.inputs["Base Color"])
-        w1 = nt.nodes.new("ShaderNodeTexWave"); w1.inputs["Scale"].default_value = 60; w1.bands_direction = "X"
-        w2 = nt.nodes.new("ShaderNodeTexWave"); w2.inputs["Scale"].default_value = 60; w2.bands_direction = "Y"
-        for w_ in (w1, w2): nt.links.new(tc.outputs["Object"], w_.inputs["Vector"])
-        mx = nt.nodes.new("ShaderNodeMath"); mx.operation = "MULTIPLY"; nt.links.new(w1.outputs["Fac"], mx.inputs[0]); nt.links.new(w2.outputs["Fac"], mx.inputs[1])
-        bump = nt.nodes.new("ShaderNodeBump"); bump.inputs["Strength"].default_value = 0.18; nt.links.new(mx.outputs[0], bump.inputs["Height"])
-        nt.links.new(bump.outputs["Normal"], b.inputs["Normal"])
-    else:
-        nt.links.new(ramp.outputs["Color"], b.inputs["Base Color"])
-        bump = nt.nodes.new("ShaderNodeBump"); bump.inputs["Strength"].default_value = 0.15; nt.links.new(nz.outputs["Fac"], bump.inputs["Height"])
-        nt.links.new(bump.outputs["Normal"], b.inputs["Normal"])
+    L = nt.links.new; N = nt.nodes.new
+    tc = N("ShaderNodeTexCoord")
+    def ruido(esc, det=4.0):
+        n = N("ShaderNodeTexNoise"); n.inputs["Scale"].default_value = esc; n.inputs["Detail"].default_value = det; L(tc.outputs["Object"], n.inputs["Vector"]); return n
+    def onda(esc, direc="X", tipo="BANDS", dist=0.0):
+        w = N("ShaderNodeTexWave"); w.wave_type = tipo
+        if tipo == "BANDS": w.bands_direction = direc
+        else: w.rings_direction = direc
+        w.inputs["Scale"].default_value = esc; w.inputs["Distortion"].default_value = dist; L(tc.outputs["Object"], w.inputs["Vector"]); return w
+    def rampa(fac, c0, c1):
+        r = N("ShaderNodeValToRGB"); L(fac, r.inputs["Fac"]); r.color_ramp.elements[0].color = tuple(c0) + (1,); r.color_ramp.elements[1].color = tuple(c1) + (1,); return r
+    def mult(a_, b_):
+        m = N("ShaderNodeMath"); m.operation = "MULTIPLY"; L(a_, m.inputs[0]); L(b_, m.inputs[1]); return m.outputs[0]
+    def relevo(alt, forca):
+        bp = N("ShaderNodeBump"); bp.inputs["Strength"].default_value = forca; L(alt, bp.inputs["Height"]); L(bp.outputs["Normal"], b.inputs["Normal"])
+    esc = lambda f: [min(1.0, c * f) for c in cor]
+    if "Couro" in nome:                                   # couro de javali: manchas de lama escuras + poros finos
+        cr = rampa(ruido(3.0).outputs["Fac"], esc(0.65), esc(1.25)); L(cr.outputs["Color"], b.inputs["Base Color"])
+        relevo(ruido(38.0, 2.0).outputs["Fac"], 0.22)
+    elif nome == "M_Sela_FibraMangue":                    # fibra vegetal trancada (trama larga visivel) com fios de dois tons
+        w1 = onda(45, "X"); w2 = onda(45, "Y")              # trama fina: fios cruzados (le como tecido, nao listra)
+        cr = rampa(ruido(14.0).outputs["Fac"], esc(0.8), esc(1.12)); cv = rampa(ruido(5.0).outputs["Fac"], (0.6, 0.62, 0.5), (1.0, 1.0, 1.0))
+        mx = N("ShaderNodeMix"); mx.data_type = "RGBA"; mx.blend_type = "MULTIPLY"; mx.inputs["Factor"].default_value = 1.0
+        L(cr.outputs["Color"], mx.inputs["A"]); L(cv.outputs["Color"], mx.inputs["B"]); L(mx.outputs["Result"], b.inputs["Base Color"])
+        relevo(mult(w1.outputs["Fac"], w2.outputs["Fac"]), 0.3)
+    elif nome == "M_Sela_Ferro":                          # ferro escuro com ferrugem nas falhas (umidade do brejo)
+        nf = ruido(7.0, 6.0); cr = rampa(nf.outputs["Fac"], (0.30, 0.15, 0.07), esc(1.1))
+        cr.color_ramp.elements[0].position = 0.38; cr.color_ramp.elements[1].position = 0.52; L(cr.outputs["Color"], b.inputs["Base Color"])
+        relevo(nf.outputs["Fac"], 0.25)
+    elif nome == "M_Sela_MangueCinzento":                 # veio da madeira
+        w = onda(9, "Z", tipo="RINGS", dist=4.0); cr = rampa(w.outputs["Fac"], esc(0.75), esc(1.15)); L(cr.outputs["Color"], b.inputs["Base Color"])
+        relevo(w.outputs["Fac"], 0.3)
+    elif nome in ("M_Sela_Tendao", "M_Sela_Cordao"):      # trancado: faixas diagonais
+        w = onda(30, "DIAGONAL"); cr = rampa(w.outputs["Fac"], esc(0.7), esc(1.2)); L(cr.outputs["Color"], b.inputs["Base Color"])
+        relevo(w.outputs["Fac"], 0.4)
+    else:                                                 # pena: barbas finas e ponta mais escura
+        w = onda(70, "X"); cr = rampa(ruido(2.0).outputs["Fac"], esc(0.8), esc(1.05)); L(cr.outputs["Color"], b.inputs["Base Color"])
+        relevo(w.outputs["Fac"], 0.15)
     return mt
 
 if __name__ == "__main__":

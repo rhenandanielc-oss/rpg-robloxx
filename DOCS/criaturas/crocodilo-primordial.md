@@ -223,6 +223,14 @@ Três gerações, nenhuma aprovada artisticamente pelo criador:
 - No jogo: a sela entra como MeshPart DENTRO do modelo do crocodilo e usa os ossos dele (o Roblox liga a pele pelo nome do osso); os ossos que a sela não usa somem ao importar o GLB da sela, sem efeito. Importação (Import 3D) é manual; **Roblox não testado**.
 - Evidências: `review/L5/PRANCHA_atlas.png` (procedural × atlas), `review/L5/atlas/`, `export/CR_Crocodilo_Sela_conferencia.json`. Cena de revisão: `CR_Crocodilo_Sela_Atlas.blend`.
 
+**06/11/2026 — Lote 5c: materiais da sela pelos do Pântano Nebuloso (pedido do usuário). Aprovado pelo usuário em 06/11/2026 ("Aprovar e commitar").**
+- Motivo: a sela aprovada usava materiais genéricos (bronze, que não é material básico, e manta de feltro tingido), fora da regra de materiais por bioma/fauna (RPG_01 25.3.1, 25.10, 25.22.7; base de peças em `DOCS/equipamentos/sela-dragoes.md`, que é [PROPOSTA] e feita para os dragões).
+- Agora: assento, aba, cilha e apoios em couro de **Javali-do-Brejo** (escuro, lamacento); manta trançada de **Fibra de Mangue** (material estrutural oficial do bioma); argolas e alças dos pés em **ferro** escurecido com ferrugem (sem bronze); borda do arção em madeira de **Mangue Cinzento** na cabeça e na patilha; alça da mão em couro trançado com **tendão de Javali-do-Brejo**. Os nomes da fauna (Couro/Tendão de Javali-do-Brejo) são [PROPOSTA] da ficha de fauna.
+- Adorno regional: Pena de Garça foi testada e **retirada** (as penas pareciam presas/espinhos saindo da sela). Fica [PENDENTE]; o material especial (Essência do Brejo) não tem visual definido.
+- Forma, encaixe e pesos iguais aos do Lote 5. Peças novas só na borda de madeira (6.156 tris no GLB, antes 5.824). Medições refeitas iguais: sela × pele nos 33 clipes (terra ≥ −0,04; cilha −0,11/−0,13 nos clipes de água, como antes) e cavaleiro dos dois lados com os mesmos números do Lote 5.
+- Atlas e GLB refeitos: `export/CR_Crocodilo_Sela.glb` (2,3 MB, 28 ossos, 1 malha, até 4 influências, pose de teste com diferença ≤ 0,000002); GLB do crocodilo sem mudança (md5). Versão anterior (aprovada) em `versao_L5b/`.
+- Evidências: `review/L5c/PRANCHA_atual_x_pantano.png`, `review/L5c/forma/`, `review/L5c/atlas/`, `qa_sela_clipes.txt`, `qa_demo_L5c.json`. Roblox não testado.
+
 ## 6. Pendências
 1. **Decisões do criador:**
    - **conflito do agarrão PvP** (só empurra × agarrão mais longo interrompível por aliados);
