@@ -16,7 +16,7 @@ MODO = A[1]; CLIPES = A[2].split(","); CAMS_Q = A[3].split(","); PASSO = int(A[4
 CICLOS = int(A[5]) if len(A) > 5 else 1; SEM_RENDER = len(A) > 6 and A[6] == "sem_render"
 sc = bpy.context.scene; FPS = 30
 croc = bpy.data.objects["CR_Croc_Rig"]; lo = bpy.data.objects["CR_Croc_LOW"]; cam = sc.camera; cd = cam.data
-ra = bpy.data.objects[mq.NOME + "_Rig"]; sela = bpy.data.objects["TESTE_Sela_PROPOSTA"]
+ra = bpy.data.objects[mq.NOME + "_Rig"]; sela = bpy.data.objects.get("CR_Croc_Sela") or bpy.data.objects["TESTE_Sela_PROPOSTA"]
 for o in (croc, ra):
     for pb in o.pose.bones:
         for c in pb.constraints: c.mute = True
@@ -51,9 +51,10 @@ def junta(nome, q0, n, cav, qc0=None, mov=False):
         rot.append((nome, f0 + q, cav, None if qc0 is None else qc0 + i, dq, giro * t, pivo_y))
 if MODO == "demo":
     for nome in CLIPES: junta(nome, 0, int(round(manif[nome]["duracao"] * FPS)) + 1, "DEMO_Cav_" + nome, 1)
-elif MODO == "seq":
-    junta("Repouso", 0, 30, None); junta("Montar", 0, 121, "DEMO_Cav_Montar", 1); junta("Repouso", 0, 60, "DEMO_Cav_Sentado")
-    junta("Desmontar", 0, 109, "DEMO_Cav_Desmontar", 1); junta("Repouso", 0, 30, None)
+elif MODO in ("seq", "seq_d"):                            # seq_d (Lote 5): o mesmo pelo lado direito
+    d_ = "Direita" if MODO == "seq_d" else ""
+    junta("Repouso", 0, 30, None); junta("Montar" + d_, 0, 121, "DEMO_Cav_Montar" + d_, 1); junta("Repouso", 0, 60, "DEMO_Cav_Sentado")
+    junta("Desmontar" + d_, 0, 109, "DEMO_Cav_Desmontar" + d_, 1); junta("Repouso", 0, 30, None)
 else:
     for nome in CLIPES:
         act = bpy.data.actions["Croc_" + nome]; nq = int(act.frame_range[1] - act.frame_range[0]) + 1
@@ -65,6 +66,8 @@ CAMS = {"lado": (V((30, -3, 9.0)), V((0, -3, 4.0)), 36, None), "34": (V((24, -22
         "tras": (V((-10, 26, 13)), V((0, -4.6, 5.0)), 34, None), "close": (V((12, -11, 9.5)), V((0, -4.8, 6.0)), 34, None),
         "lado_agua": (V((30, -3, 6.5)), V((0, -3, 5.0)), 36, None),
         "subida": (V((17, -15, 5.5)), V((3.2, -5.6, 3.4)), 30, None), "flanco": (V((17, -2.5, 4.5)), V((3.0, -5.2, 3.2)), 30, None)}
+for k_ in list(CAMS):                                        # Lote 5: as mesmas cameras pelo lado direito (x espelhado), sufixo _d
+    p_, a_, l_, o_ = CAMS[k_]; CAMS[k_ + "_d"] = (V((-p_.x, p_.y, p_.z)), V((-a_.x, a_.y, a_.z)), l_, o_)
 log = []; prev_cena = None; ult = {}
 for i, (nome, f, cav, qc, dq, ang, pivo_y) in enumerate(rot):
     acao(croc, "Croc_" + nome); sc.frame_set(f)
@@ -91,7 +94,6 @@ for i, (nome, f, cav, qc, dq, ang, pivo_y) in enumerate(rot):
         pb = croc.pose.bones[mq.OSSO_ASSENTO]; Mb = croc.matrix_world @ pb.matrix @ bl.inverted()
         reg["quadril_no_osso"] = [round(c, 4) for c in Mb.inverted() @ pel]            # deriva = variacao disto
         reg["quadril"] = [round(c, 3) for c in pel]
-        sela_c = sela.matrix_world @ V((0, mq.ASSENTO_Y, 5.6)); reg["quadril_menos_sela_z"] = round(pel.z - sela_c.z, 4)
         if nome in AGUA:
             tor = ra.matrix_world @ ra.pose.bones["UpperTorso"].head; cab = ra.matrix_world @ ra.pose.bones["Head"].head
             reg["agua"] = {"base_tronco_sobre_agua": round(tor.z - W_AGUA, 3), "pescoco_sobre_agua": round(cab.z - W_AGUA, 3),
@@ -106,6 +108,6 @@ for i, (nome, f, cav, qc, dq, ang, pivo_y) in enumerate(rot):
         if orto: cd.type = "ORTHO"; cd.ortho_scale = orto
         else: cd.type = "PERSP"; cd.lens = lente
         tag = MODO if MODO != "demo" and MODO != "reuso" else nome
-        sc.render.filepath = os.path.join(OUT, "%s_%s_%03d.png" % (tag if MODO != "seq" else "Sequencia", cn, i // PASSO)); bpy.ops.render.render(write_still=True)
-json.dump(log, open(os.path.join(OUT, "medidas_%s_%s.json" % (MODO, "_".join(CLIPES) if MODO != "seq" else "seq")), "w"))
+        sc.render.filepath = os.path.join(OUT, "%s_%s_%03d.png" % (tag if not MODO.startswith("seq") else {"seq": "Sequencia", "seq_d": "SequenciaDireita"}[MODO], cn, i // PASSO)); bpy.ops.render.render(write_still=True)
+json.dump(log, open(os.path.join(OUT, "medidas_%s_%s.json" % (MODO, "_".join(CLIPES) if not MODO.startswith("seq") else MODO)), "w"))
 print("RENDER_MONTARIA_OK", MODO, len(rot))

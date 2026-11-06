@@ -499,28 +499,35 @@ for nome_, fn_, dur_, loop_, ext_ in (
     if ext_: EXTRA[nome_] = ext_
 # ================================================================== Lote 4: montaria (so apresentacao; o cavaleiro e demonstracao separada)
 BAIXA_MONT = 0.20                                                  # baixa a postura para receber o peso (patas plantadas)
-def montaria(t, baixa, rola, olha, amortece):
-    """corpo estavel: baixa nas patas, rola de leve para o lado do apoio (+X, lado do teste), cabeca acompanha o cavaleiro;
-    cauda parada (contrapeso); termina no quadro 0 do Repouso"""
+def montaria(t, baixa, rola, olha, amortece, lado=1.0):
+    """corpo estavel: baixa nas patas, rola de leve para o lado do apoio (lado = +1: esquerdo/+X; -1: direito/-X), cabeca
+    acompanha o cavaleiro; cauda parada (contrapeso); termina no quadro 0 do Repouso"""
     r = mix(REP0, {}, 0.0)
-    soma(r, "Pescoco", Z_, 4.0 * olha); soma_cab(r, Z_, 6.0 * olha); soma(r, "Pescoco", X_, 1.5 * olha)
-    for i, nm in enumerate(CAUDA): soma(r, nm, Z_, -1.0 * olha * (i / 7))
-    r["Raiz"] = [(Y_, math.radians(1.5 * rola))]
+    soma(r, "Pescoco", Z_, 4.0 * olha * lado); soma_cab(r, Z_, 6.0 * olha * lado); soma(r, "Pescoco", X_, 1.5 * olha)
+    for i, nm in enumerate(CAUDA): soma(r, nm, Z_, -1.0 * olha * lado * (i / 7))
+    r["Raiz"] = [(Y_, math.radians(1.5 * rola * lado))]
     soma(r, "Coluna1", X_, -0.5 * amortece)                       # dorso cede atras (frente nao afunda o cotovelo)
     return r, V((0, 0, -BAIXA_MONT * baixa - 0.03 * amortece)), {}
-def clipe_montar(t):
+def clipe_montar(t, lado=1.0):
     baixa = kf(t, [(0, 0), (0.7, 1), (3.0, 1), (3.75, 0)]); rola = kf(t, [(1.0, 0), (1.5, 1), (2.4, 1), (2.8, 0)])
     olha = kf(t, [(0.1, 0), (0.7, 1), (1.9, 1), (2.9, 0)]); amort = kf(t, [(2.75, 0), (2.95, 1), (3.3, 0)])
-    return montaria(t, baixa, rola, olha, amort)
-def clipe_desmontar(t):
+    return montaria(t, baixa, rola, olha, amort, lado)
+def clipe_desmontar(t, lado=1.0):
     baixa = kf(t, [(0, 0), (0.6, 1), (2.8, 1), (3.5, 0)]); rola = kf(t, [(0.8, 0), (1.4, 1), (2.3, 1), (2.7, 0)])
     olha = kf(t, [(0.3, 0), (1.0, 1), (2.5, 1), (3.2, 0)]); amort = kf(t, [(2.3, 0), (2.5, -0.5), (2.8, 0)])   # alivio do peso ao soltar
-    return montaria(t, baixa, rola, olha, amort)
+    return montaria(t, baixa, rola, olha, amort, lado)
+# Lote 5: subida e descida pelos DOIS lados (decisao do usuario 05/11). Montar/Desmontar = lado esquerdo (+X), sem mudanca.
+def clipe_montar_d(t): return clipe_montar(t, -1.0)
+def clipe_desmontar_d(t): return clipe_desmontar(t, -1.0)
 for nome_, fn_, dur_, ext_ in (
         ("Montar", clipe_montar, 4.0, {"eventos": {"maos_no_ombro": 1.0, "pe_no_cotovelo_E": 1.4, "pe_atras_do_cotovelo_D": 1.85, "perna_sobre_o_dorso": 2.4, "sentado": 3.1},
                                        "de": "Repouso", "para": "Repouso (montado)", "lado_do_teste": "esquerdo (+X)", "obs": "eventos = demonstracao do cavaleiro de teste; sem regra de jogo"}),
         ("Desmontar", clipe_desmontar, 3.6, {"eventos": {"maos_na_sela": 0.7, "perna_sobre_o_dorso": 1.1, "solta": 2.15, "pes_no_chao": 2.5},
-                                             "de": "Repouso (montado)", "para": "Repouso", "lado_do_teste": "esquerdo (+X)", "obs": "eventos = demonstracao do cavaleiro de teste; sem regra de jogo"})):
+                                             "de": "Repouso (montado)", "para": "Repouso", "lado_do_teste": "esquerdo (+X)", "obs": "eventos = demonstracao do cavaleiro de teste; sem regra de jogo"}),
+        ("MontarDireita", clipe_montar_d, 4.0, {"eventos": {"maos_no_ombro": 1.0, "pe_no_cotovelo_D": 1.4, "pe_atras_do_cotovelo_E": 1.85, "perna_sobre_o_dorso": 2.4, "sentado": 3.1},
+                                                "de": "Repouso", "para": "Repouso (montado)", "lado": "direito (-X)", "espelho_de": "Montar", "obs": "eventos = demonstracao do cavaleiro de teste"}),
+        ("DesmontarDireita", clipe_desmontar_d, 3.6, {"eventos": {"maos_na_sela": 0.7, "perna_sobre_o_dorso": 1.1, "solta": 2.15, "pes_no_chao": 2.5},
+                                                      "de": "Repouso (montado)", "para": "Repouso", "lado": "direito (-X)", "espelho_de": "Desmontar", "obs": "eventos = demonstracao do cavaleiro de teste"})):
     CLIPES[nome_] = (boca_acompanha(fn_), dur_, False, 0.0); EXTRA[nome_] = ext_
 QUAIS = A[1].split(",") if len(A) > 1 else list(CLIPES)
 

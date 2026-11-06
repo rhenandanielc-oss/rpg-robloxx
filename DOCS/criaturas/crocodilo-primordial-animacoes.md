@@ -82,6 +82,16 @@ Versão L3 preservada em `versao_L3/`. Rig e GLB **não mudaram** (md5 iguais); 
 
 Cavaleiro (demonstração, não publicado): ações `DEMO_Cav_Montar`, `DEMO_Cav_Desmontar`, `DEMO_Cav_Sentado` em `CR_Crocodilo_Montaria_Teste.blend`. Evidências e números em `review/L4/` e na ficha principal.
 
+### 1.1e Lote 5 — sela definitiva e os dois lados (05/11/2026, aprovado pelo usuário em 06/11)
+| Movimento | Situação | Duração | Laço | Observação |
+|---|---|---:|---|---|
+| MontarDireita | **variante nova** (espelho do Montar) | 4,0 s (121 q) | não | rola/olha para −X; cavaleiro sobe pelo cotovelo D |
+| DesmontarDireita | **variante nova** (espelho do Desmontar) | 3,6 s (109 q) | não | desce em y −4,1, afastado do joelho traseiro D |
+| Montar / Desmontar | sem mudança (lado esquerdo) | — | — | JSON idênticos |
+| Montado* (reutilizados) | reconferidos com a sela definitiva | — | sim | deriva 0 |
+
+Sela: `CR_Croc_Sela` (`scripts/sela_crocodilo.py`), pesada na pele do crocodilo. Cavaleiro: ações `DEMO_Cav_MontarDireita` / `DEMO_Cav_DesmontarDireita` em `CR_Crocodilo_Montaria_L5.blend`. Números na ficha principal e em `review/L5/RESUMO_L5.txt`.
+
 ### 1.2 Históricos (outros rigs — NÃO transplantar sem retarget e inspeção)
 | Arquivo | Rig | Ações | Status |
 |---|---|---|---|
@@ -96,6 +106,7 @@ Os 31 históricos **não** são 31 clipes prontos do modelo atual: a malha, as p
 | 2 — locomoção e transições (**aprovado 03/11**) | VirarEsquerda/Direita (com passos), Arrancada, Frenagem, Repouso↔Andar↔Corrida, EntradaAgua, SaidaAgua, NadoParado, NadoCruzeiro (= Nado atual), CurvaAquaticaE/D, Mergulho, Emersao | NadoRapido só se houver necessidade demonstrada (proposta) |
 | 3 — reações e vida | ReacaoGolpe, Morte (incapacitação visual), Comer, Deitar, DescansoDeitado (laço), Levantar, Observar, Alerta | feito 03/11; conferido pela supervisão antes do Lote 4; GuardarNinho só como proposta visual; sem IA/reprodução |
 | 4 — montaria (apresentação) | Montar, Desmontar; conferir reaproveitamento dos clipes com cavaleiro de teste | **aprovado 04/11**; nenhum Montado* novo (reutilização bastou); sem mergulho com jogador, oxigênio, câmera, sela definitiva |
+| 5 — sela definitiva e dois lados | sela no Blender; MontarDireita, DesmontarDireita | **aprovado 06/11**; depois: textura/atlas e GLB da sela; mergulho montado pendente |
 
 ## 3. Poderes — especificação para revisão (NÃO implementar antes da aprovação)
 **[OFICIAL 30/10]** Um elemento natural, ≥ 1 passiva, ≥ 3 ativas. **[PENDENTE]** Elemento, passiva e kit final do Crocodilo. As quatro habilidades da Etapa 15.1 são **referência histórica**; abaixo, só cobertura de animação proposta. Ataque básico (Mordida) fica fora dos slots.

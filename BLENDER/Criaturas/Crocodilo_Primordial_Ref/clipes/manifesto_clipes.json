@@ -407,5 +407,50 @@
    "lado_do_teste": "esquerdo (+X)",
    "obs": "eventos = demonstracao do cavaleiro de teste; sem regra de jogo"
   }
+ },
+ "MontarDireita": {
+  "duracao": 4.0,
+  "loop": false,
+  "quadros": 121,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.18,
+  "sincronizacao": {
+   "eventos": {
+    "maos_no_ombro": 1.0,
+    "pe_no_cotovelo_D": 1.4,
+    "pe_atras_do_cotovelo_E": 1.85,
+    "perna_sobre_o_dorso": 2.4,
+    "sentado": 3.1
+   },
+   "de": "Repouso",
+   "para": "Repouso (montado)",
+   "lado": "direito (-X)",
+   "espelho_de": "Montar",
+   "obs": "eventos = demonstracao do cavaleiro de teste"
+  }
+ },
+ "DesmontarDireita": {
+  "duracao": 3.6,
+  "loop": false,
+  "quadros": 109,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.18,
+  "sincronizacao": {
+   "eventos": {
+    "maos_na_sela": 0.7,
+    "perna_sobre_o_dorso": 1.1,
+    "solta": 2.15,
+    "pes_no_chao": 2.5
+   },
+   "de": "Repouso (montado)",
+   "para": "Repouso",
+   "lado": "direito (-X)",
+   "espelho_de": "Desmontar",
+   "obs": "eventos = demonstracao do cavaleiro de teste"
+  }
  }
 }
