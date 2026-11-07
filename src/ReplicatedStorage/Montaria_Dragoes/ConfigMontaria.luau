@@ -11,7 +11,9 @@ return {
 	},
 	formasGrandes = {Montanhas = true},              -- pre-adulto so monta em especie grande
 	distMontar = 38,                                 -- studs do jogador ate o dorso
-	assento = {osso = "Coluna2", acima = 10.6, frente = 0.6, seguirOsso = 0.75},   -- sela entre as asas (sem cristas/pescoco)
+	-- (06/11, usuario: "O cavaleiro ainda nao sobe, ele fica no mesmo lugar, e entra no corpo do dragao") com 0,75 o cavaleiro
+	-- ficava 25% para tras do dorso (ao levantar do Abaixado, 0,4 stud dentro do corpo); com a sela ele segue o dorso inteiro
+	assento = {osso = "Coluna2", acima = 10.6, frente = 0.6, seguirOsso = 1.0},   -- sela entre as asas (sem cristas/pescoco)
 	-- chao (studs/s, graus/s)
 	andarVel = 4.8, correrVel = 17, recuarVel = 2.4,
 	acelChao = 9, freioChao = 15, giroAndar = 30, giroCorrer = 40, giroParado = 24,

@@ -61,15 +61,52 @@ local function assentoCF(m)
 	local pos = Vector3.new(centro.X, p.Y + acima(m), centro.Z) + f * (m:GetAttribute("AssentoFrente") or Cfg.assento.frente)
 	return CFrame.lookAt(pos, pos + f)
 end
+-- PATCH_ENTRADAS_MONTAR (06/11, usuario: "Deve ser disponivel montar somente por tras e na frente das asas, para o
+-- jogador nao entrar nas asas. O jogador deve chegar perto e ai sim aparece o botao montar"): dois pontos no chao, um
+-- na frente do peito (antes das asas) e um atras, na cauda; o botao "Montar" so aparece a DIST_ENTRADA de um deles
+local DIST_ENTRADA = 9
+local function pontosEntrada(m)
+	local root = m.PrimaryPart; local f = plano((repouso(osso(m, "Cabeca")).Position - repouso(osso(m, "Quadril")).Position)).Unit
+	local chao = math.huge
+	for _, b in ipairs(m:GetDescendants()) do if b:IsA("Bone") and b.Name:find("toes_tip") then chao = math.min(chao, b.WorldPosition.Y) end end
+	local function noChao(p) return Vector3.new(p.X, chao + 3, p.Z) end
+	-- (06/11, usuario: "ele deve pular pela frente da asa, no cantinho"): nada de pular pelo pescoco; um ponto em cada
+	-- canto, a frente da raiz de cada asa (ombro) e um pouco para fora
+	local dir = f:Cross(Y).Unit; local cauda = osso(m, "tail_tip") or osso(m, "tail_6") or osso(m, "Cauda3")
+	local out = {}
+	for nome, s_ in pairs({frenteE = "l", frenteD = "r"}) do
+		local om = osso(m, "wing_1_" .. s_) or osso(m, "shoulder_" .. s_)
+		local lado = (s_ == "l") and -dir or dir
+		local p = noChao((om and repouso(om).Position or root.Position) + f * 3.5 + lado * 2.5)
+		out[nome] = CFrame.lookAt(p, p - f)
+	end
+	local tras = noChao((cauda and repouso(cauda).Position or root.Position) - f * 3)   -- atras da ponta da cauda (nao embaixo dela)
+	out.tras = CFrame.lookAt(tras, tras + f)
+	return out
+end
 local function prepararAssento(m)
 	local root = m.PrimaryPart
 	local a = root:FindFirstChild("Assento") or Instance.new("Attachment")
 	a.Name = "Assento"; a.Parent = root; a.WorldCFrame = assentoCF(m)
-	local pp = a:FindFirstChild("Montar") or Instance.new("ProximityPrompt")
-	pp.Name = "Montar"; pp.ActionText = "Montar"; pp.ObjectText = m:GetAttribute("NomeExibicao") or "Dragao das Montanhas"; pp.HoldDuration = 0.3
-	pp.MaxActivationDistance = Cfg.distMontar; pp.RequiresLineOfSight = false; pp.KeyboardKeyCode = Enum.KeyCode.E
-	pp.GamepadKeyCode = Enum.KeyCode.ButtonX; pp.Parent = a
-	return a, pp
+	local velho = a:FindFirstChild("Montar"); if velho then velho:Destroy() end        -- o botao saiu do dorso
+	local pps = {}
+	for nome, cf in pairs(pontosEntrada(m)) do
+		local e = root:FindFirstChild("Entrada_" .. nome) or Instance.new("Attachment")
+		e.Name = "Entrada_" .. nome; e.Parent = root; e.WorldCFrame = cf; e:SetAttribute("Entrada", nome)
+		local pp = e:FindFirstChild("Montar") or Instance.new("ProximityPrompt")
+		pp.Name = "Montar"; pp.ActionText = "Montar"; pp.ObjectText = m:GetAttribute("NomeExibicao") or "Dragao das Montanhas"; pp.HoldDuration = 0.3
+		pp.MaxActivationDistance = DIST_ENTRADA; pp.RequiresLineOfSight = false; pp.KeyboardKeyCode = Enum.KeyCode.E
+		pp.GamepadKeyCode = Enum.KeyCode.ButtonX; pp.Parent = e; pps[nome] = pp
+	end
+	return a, pps
+end
+local function entradaPerto(m, pos)                                     -- "frente"/"tras" mais perto do jogador, ou nil
+	local root = m.PrimaryPart; local melhor, dm = nil, DIST_ENTRADA + 4
+	for _, nome in ipairs({"frenteE", "frenteD", "tras"}) do
+		local e = root:FindFirstChild("Entrada_" .. nome)
+		if e then local d = (e.WorldPosition - pos).Magnitude; if d <= dm then melhor, dm = nome, d end end
+	end
+	return melhor
 end
 
 -- ===== validacao =================================================================================================
@@ -87,7 +124,8 @@ local function podeMontar(plr, m)
 	if cavaleiros[plr] then return false, "Voce ja esta montado" end
 	local ch = plr.Character; local hrp = ch and ch:FindFirstChild("HumanoidRootPart"); local hum = ch and ch:FindFirstChildOfClass("Humanoid")
 	if not (hrp and hum and hum.Health > 0) then return false, "personagem indisponivel" end
-	if (hrp.Position - assentoCF(m).Position).Magnitude > Cfg.distMontar + 4 then return false, "Chegue mais perto" end
+	if not m.PrimaryPart:FindFirstChild("Entrada_frenteE") then prepararAssento(m) end
+	if not entradaPerto(m, hrp.Position) then return false, "Chegue perto da frente ou da cauda do dragao" end   -- PATCH_ENTRADAS_MONTAR
 	return true, ch, hrp, hum
 end
 
@@ -130,14 +168,29 @@ local function montar(plr, m)
 	local M = {m = m, plr = plr, ch = ch, hrp = hrp, hum = hum, L = L, E = E, modo = "transicao", vel = 0, vy = 0, roll = 0,
 		ent = {f = 0, t = 0, up = 0, correr = false}, ultEnt = 0, planar = false, conns = {}, clipeAte = 0}
 	montarias[m] = M; cavaleiros[plr] = M
-	local a, pp = prepararAssento(m); pp.Enabled = false
+	local entrada = entradaPerto(m, hrp.Position) or "frenteE"
+	local a, pps = prepararAssento(m); for _, pp in pairs(pps) do pp.Enabled = false end
 	-- 1) o dragao se abaixa (Montaria_Abaixar -> Aguardar)
 	E:Mudar("MontariaEspera"); esperarTrilha(E, "Montaria_Abaixar")
 	if montarias[m] ~= M then return end
 	-- 2) o cavaleiro sobe em arco ate a sela e senta
-	local sela = assentoCF(m) * CFrame.new(0, -acima(m) * 0.25, 0)          -- dragao abaixado: sela mais baixa
+	-- (06/11) a subida termina no assento ANIMADO (osso do dorso no Abaixado), o mesmo ponto em que o cliente poe o cavaleiro
+	-- depois da solda (seguirOsso 1) -> sem salto ao sentar; sem o osso, o antigo (assento - 25% do acima)
+	local bS = osso(m, Cfg.assento.osso)
+	local sela = bS and (bS.TransformedWorldCFrame * repouso(bS):ToObjectSpace(assentoCF(m))) or (assentoCF(m) * CFrame.new(0, -acima(m) * 0.25, 0))
 	hrp.Anchored = true; hum.Sit = false
-	arco(hrp, hrp.CFrame, sela, 0.9, 8)
+	local AC = pasta:FindFirstChild("AnimCavaleiro")                 -- PATCH_ANIM_CAVALEIRO: sobe animado (agacha, salta, agarra, passa a perna)
+	local okA, trilhaA = false, nil
+	if AC then okA, trilhaA = pcall(function()
+		local Ac = require(AC)
+		if entrada == "tras" and Ac.subirCauda then                    -- PATCH_ENTRADAS_MONTAR: pula na cauda e corre ate a sela
+			local pts = Ac.caminhoCauda(function(n) local b = osso(m, n); return b and b.TransformedWorldCFrame.Position end)
+			if pts then return Ac.subirCauda(hrp, hum, sela, pts) end
+		end
+		return Ac.subir(hrp, hum, sela)                                -- frente (canto a frente da asa): pulo
+	end) end
+	if not okA then if AC then warn("AnimCavaleiro: " .. tostring(trilhaA)) end; arco(hrp, hrp.CFrame, sela, 0.9, 8); trilhaA = nil end
+	M.trilhaCav = trilhaA
 	local w = Instance.new("Weld"); w.Name = "SelaWeld"; w.Part0 = m.PrimaryPart; w.Part1 = hrp
 	w.C0 = m.PrimaryPart.CFrame:ToObjectSpace(assentoCF(m)); w.Parent = hrp; M.weld = w
 	M.pulo = {hum.JumpPower, hum.JumpHeight}; hum.JumpPower = 0; hum.JumpHeight = 0
@@ -178,6 +231,7 @@ local function desmontar(M)
 	M.E:Mudar("MontariaEspera"); esperarTrilha(M.E, "Montaria_Abaixar")
 	local hrp = M.hrp
 	if M.weld then M.weld:Destroy(); M.weld = nil end
+	if M.trilhaCav then M.trilhaCav:Stop(0.2); M.trilhaCav = nil end   -- PATCH_ANIM_CAVALEIRO
 	if hrp and hrp.Parent then hrp.Anchored = true; M.hum.Sit = false; arco(hrp, hrp.CFrame, destino, 0.7, 6); hrp.Anchored = false end
 	soltar(M, "desmontou")
 end
@@ -189,6 +243,7 @@ soltar = function(M, motivo)
 	M.encerrando = true
 	for _, c in ipairs(M.conns) do c:Disconnect() end
 	if M.weld then M.weld:Destroy(); M.weld = nil end
+	if M.trilhaCav then M.trilhaCav:Stop(0.2); M.trilhaCav = nil end   -- PATCH_ANIM_CAVALEIRO
 	local hum = M.hum
 	if hum and hum.Parent then
 		if M.pulo then hum.JumpPower, hum.JumpHeight = M.pulo[1], M.pulo[2] end
@@ -205,7 +260,7 @@ soltar = function(M, motivo)
 		m:SetAttribute("NoAr", false); M.L.noAr = false
 		M.E:Mudar("Idle")
 		montarias[m] = nil; m:SetAttribute("Controlador", nil)
-		local a = m.PrimaryPart:FindFirstChild("Assento"); if a and a:FindFirstChild("Montar") then a.Montar.Enabled = true end
+		for _, e in ipairs(m.PrimaryPart:GetChildren()) do if e.Name:find("^Entrada_") and e:FindFirstChild("Montar") then e.Montar.Enabled = true end end
 	end)
 end
 
@@ -792,10 +847,12 @@ Players.PlayerRemoving:Connect(function(plr) local M = cavaleiros[plr]; if M the
 local function registrar(m)
 	if not (m:IsA("Model") and m:GetAttribute("FormaRegional") and m:GetAttribute("DonoUserId") and not m:GetAttribute("GuardiaoNinho")) then return end
 	if not m.PrimaryPart then return end
-	local _, pp = prepararAssento(m)
-	if not pp:GetAttribute("Ligado") then
-		pp:SetAttribute("Ligado", true)
-		pp.Triggered:Connect(function(plr) task.spawn(montar, plr, m) end)
+	local _, pps = prepararAssento(m)
+	for _, pp in pairs(pps) do
+		if not pp:GetAttribute("Ligado") then
+			pp:SetAttribute("Ligado", true)
+			pp.Triggered:Connect(function(plr) task.spawn(montar, plr, m) end)
+		end
 	end
 end
 local function observar(m)

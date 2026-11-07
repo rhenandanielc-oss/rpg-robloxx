@@ -25,13 +25,14 @@ def ilhas(o):
             for e in x.link_edges: pilha.append(e.other_vert(x))
         out.append(ilha)
     xs = {i: abs(bm.verts[i].co.x) for i in range(len(bm.verts))}; bm.free(); return out, xs
-def separar(o, idx, nome):
-    bm = bmesh.new(); bm.from_mesh(o.data); bm.verts.ensure_lookup_table()
-    for v in bm.verts: v.select = v.index in idx
-    bm.select_flush(True); bm.to_mesh(o.data); bm.free()
-    bpy.ops.object.select_all(action="DESELECT"); o.select_set(True); bpy.context.view_layer.objects.active = o
-    bpy.ops.object.mode_set(mode="EDIT"); bpy.ops.mesh.separate(type="SELECTED"); bpy.ops.object.mode_set(mode="OBJECT")
-    novo = [x for x in bpy.context.selected_objects if x is not o][0]; novo.name = nome; return novo
+def separar(o, idx, nome):                                     # (06/11) por bmesh: o operador separate falhava no rig v11
+    novo = o.copy(); novo.data = o.data.copy(); novo.name = nome; novo.data.name = nome
+    for c in o.users_collection: c.objects.link(novo)
+    for ob, manter in ((o, False), (novo, True)):
+        bm = bmesh.new(); bm.from_mesh(ob.data); bm.verts.ensure_lookup_table()
+        bmesh.ops.delete(bm, geom=[v for v in bm.verts if (v.index in idx) != manter], context="VERTS")
+        bm.to_mesh(ob.data); bm.free(); ob.data.update()
+    return novo
 grupos, xs = ilhas(corpo)
 grupos.sort(key=len, reverse=True)
 memb = [i for g in grupos[1:] if max(xs[i] for i in g) - min(xs[i] for i in g) > 0.25 and len(g) < 3000 for i in g]
@@ -63,6 +64,21 @@ for bn in A.data.bones:                                       # ossos sem peso s
     for g in o.vertex_groups: g.remove([v.index])
     (o.vertex_groups.get(bn.name) or o.vertex_groups.new(name=bn.name)).add([v.index], 1.0, "REPLACE")
     print("OSSO_GARANTIDO", bn.name, "->", o.name)
+# (06/11) sela (sela/sela_dragao.py, rig v11): entra depois da garantia de ossos (nao recebe vertice "emprestado");
+# cores do tema por material (sem textura ainda); o grupo _interno e so de QA e sai
+sela = bpy.data.objects.get("Silverwing_Sela")
+if sela:
+    g_ = sela.vertex_groups.get("_interno")
+    if g_: sela.vertex_groups.remove(g_)
+    TEMA = {"couro": (0.24, 0.15, 0.22), "metal": (0.42, 0.40, 0.46), "madeira": (0.26, 0.17, 0.16), "adorno": (0.55, 0.28, 0.90)}
+    for mt in sela.data.materials:
+        k = mt.name.replace("M_Sela_", ""); c = TEMA.get(k)
+        bs = mt.node_tree.nodes.get("Principled BSDF") if mt.node_tree else None
+        if c and bs:
+            bs.inputs["Base Color"].default_value = (*[((x + 0.055) / 1.055) ** 2.4 for x in c], 1)
+            bs.inputs["Metallic"].default_value = 1.0 if k == "metal" else 0.0
+            bs.inputs["Roughness"].default_value = 0.35 if k == "metal" else 0.6
+    malhas = malhas + (sela,)
 for velho, novo in MAPA.items():
     A.data.bones[velho].name = novo
     for o in malhas:

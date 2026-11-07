@@ -210,6 +210,10 @@ def _giro_em(p, R): return Matrix.Translation(p) @ R.to_4x4() @ Matrix.Translati
 # (antebraco para frente, dedos para tras), fecha os dedos em leque. ARMADA (andar/parado) e ERGUIDA (sentado)
 # usuario 31/10: no andar as asas estavam altas e perto do montador -> mais baixas e abertas para os lados
 P_ARMADA = dict(ergue=18, recua=14, cotovelo=-8, punho=24, leque=0.2)
+# (usuario 06/11: "nao quero a asa do dragao dobrada em nenhuma animacao"; andando/correndo = meio termo entre baixas
+# quase no chao e abertas para os lados; sentado um pouco para cima) -> a pose de chao vem por env sem mexer no padrao
+if os.environ.get("P_ARMADA"):
+    import json as _js0; P_ARMADA.update(_js0.loads(os.environ["P_ARMADA"]))
 # sentado (usuario 31/10: de frente parecia borboleta): menos vertical, mais para tras e com leve dobra para o lado
 P_ERGUIDA = dict(ergue=58, recua=48, cotovelo=-34, punho=58, leque=0.5)
 if os.environ.get("P_ERGUIDA"):                       # outro dragao (ex.: Glacial) ajusta o sentado sem mudar o CR
@@ -221,17 +225,19 @@ P_DESCANSO = None
 if os.environ.get("P_DESCANSO"):
     import json as _js2; P_DESCANSO = dict(P_ARMADA); P_DESCANSO.update(_js2.loads(os.environ["P_DESCANSO"]))
 ALVO_DESCANSO = float(os.environ.get("ALVO_DESCANSO", "0.062"))     # altura da ponta da asa no descanso (unid. do rig)
-def asas_armadas(ergue=0.0, resp=0.0, Pfix=None):
+def asas_armadas(ergue=0.0, resp=0.0, Pfix=None, Plado=None):
     """Asas ARMADAS a partir do PLANEIO (pose validada, membrana sem lascas): giros RIGIDOS de subarvores (punho,
     cotovelo, ombro) em vez de direcoes osso a osso -> a membrana entre os dedos nao torce. ergue 0 = armada,
-    1 = erguida acima do corpo (sentado); resp = respiracao (pequena variacao)"""
-    P = Pfix or {k: lerp(P_ARMADA[k], P_ERGUIDA[k], ergue) for k in P_ARMADA}
+    1 = erguida acima do corpo (sentado); resp = respiracao (pequena variacao); Plado = {"l"/"r": P} pose propria de
+    um lado (06/11: asa em rampa para montar)"""
+    P0 = Pfix or {k: lerp(P_ARMADA[k], P_ERGUIDA[k], ergue) for k in P_ARMADA}; P = P0
     G = asas("Silverwing_Fly_Glide", 0.2); W = {}
     for n in ORD:                                                   # planeio com o corpo em repouso
         pai = PAI[n]; Mc = (W[pai] @ REL[n]) if pai else REL[n].copy()
         W[n] = Mc @ G[n] if n in G else Mc
     Wt = dict(W)
     for s_, sg in (("l", 1), ("r", -1)):
+        P = (Plado or {}).get(s_, P0)
         def gira(raiz, piv_osso, R, extra=()):
             pv = Wt[piv_osso].translation.copy(); Mg = _giro_em(pv, R)
             for n in _sub(raiz) | set(extra): Wt[n] = Mg @ Wt[n]
@@ -633,6 +639,9 @@ def _min_lado(p, lado):
 def asas_rente_chao(p, a=1.0):
     """rola cada asa no ombro (eixo frente-tras do corpo) ate a ponta ficar em ALVO_DESCANSO; peso a (transicoes)"""
     if not P_DESCANSO or a <= 0.001: return
+    # (06/11) com as asas abertas do descanso novo, o rolamento ate o chao empurrava as pontas ~4 studs para dentro do
+    # piso nas transicoes; DESCANSO_RENTE=0 deixa o limite padrao do gerar() manter as pontas acima do chao
+    if os.environ.get("DESCANSO_RENTE") == "0": return
     p.descanso = True                      # gerar() nao ergue estas asas (a ponta encosta no chao de proposito)
     Rb = p.Rb()
     for lado, sg in (("l", 1), ("r", -1)):
@@ -655,7 +664,13 @@ def asas_rente_chao(p, a=1.0):
         poe(ang * a)
         if os.environ.get("DBG_DESC"): print("DESC", lado, "z0=%.3f lim=%.0f ang=%.1f zf=%.3f" % (z0, lim, ang, _min_lado(p, lado)))
 
-def f_agachar(ini, fim, ag=0.09):
+# ASA EM RAMPA para montar (usuario 06/11: "para o jogador montar, a animacao deve abrir a asa ao montar (como uma
+# rampa)"): a asa do lado do cavaleiro abre esticada e desce ate o chao (sem dobra no cotovelo/punho, dedos juntos);
+# a ponta encosta no chao pelo asas_rente_chao. Lado "l" = esquerda do dragao (+X). Clipes *_Rampa_E / *_Rampa_D.
+P_RAMPA = dict(ergue=-48, recua=-6, cotovelo=0, punho=6, leque=0.35)
+if os.environ.get("P_RAMPA"):
+    import json as _js3; P_RAMPA.update(_js3.loads(os.environ["P_RAMPA"]))
+def f_agachar(ini, fim, ag=0.09, rampa=None):
     def fn(u):
         a = lerp(ini, fim, smooth(u)) if ini != fim else ini
         p = Pose(); em_pe(p, agach=ag * a)
@@ -663,6 +678,9 @@ def f_agachar(ini, fim, ag=0.09):
         p.off += Vector((0, 0, 0.003 * r))
         pescoco_alto(p, cima=-8 * a + 2 * r)
         p.asas = asas_descanso(a, r) if P_DESCANSO else asas("Silverwing_Idle", u)
+        if rampa:                                                            # a asa do lado do cavaleiro vira rampa
+            base = {k: lerp(P_ARMADA[k], P_DESCANSO[k], a) for k in P_ARMADA} if P_DESCANSO else dict(P_ARMADA)
+            p.asas = asas_armadas(0.0, 0.3 * r, base, Plado={rampa: {k: lerp(base[k], P_RAMPA[k], a) for k in base}})
         # deitado: cauda enrola devagar para um lado (descanso) e a ponta mexe pouco; transicoes levam a curva junto
         enrola = [6.0 * a * PESO_CAUDA[k_] for k_ in range(7)]
         viva = onda_cauda(u, [(2.5, 1, 0.3, 0.9), (1.0, 2, 1.7, 1.3)]) if ini == fim else [0] * 7
@@ -2083,6 +2101,10 @@ gerar("Sentar", n(1.6), f_sentar, loop=False)
 gerar("Sentado", n(8.0), f_sentado)
 gerar("Levantar_Sentado", n(1.2), f_levantar_sentado, loop=False)
 gerar("Levantar", n(0.7), f_agachar(1, 0), loop=False)
+for lado_, suf_ in (("l", "E"), ("r", "D")):                         # (06/11) montar: asa do lado do cavaleiro em rampa
+    gerar("Abaixar_Rampa_" + suf_, n(1.0), f_agachar(0, 1, rampa=lado_), loop=False)
+    gerar("Abaixado_Rampa_" + suf_, n(3.0), f_agachar(1, 1, rampa=lado_))
+    gerar("Levantar_Rampa_" + suf_, n(1.0), f_agachar(1, 0, rampa=lado_), loop=False)
 # voo: 4 batidas por clipe (mesmo ritmo de antes) para a cauda/patas terem movimento LENTO e nao repetitivo
 gerar("Voo", n(T_VOO), lambda u: f_voo(u, NB_VOO, u))
 gerar("Voo_Rapido", n(3.2), lambda u: f_voo_rapido(u, 5, u))
