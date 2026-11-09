@@ -2,6 +2,15 @@
 
 **APROVADO (aparência, no Blender) em 03/11/2026: `Leao_Solar_Ref_E2_v11.blend`.** Ainda falta: mandíbula e interior da boca, as 573 bordas abertas, as manchas dos antebraços, a malha de jogo, o rig e o teste no Roblox.
 
+## S2 subida na sela (06/11/2026): APROVADA
+- `Leao_Montar_E/D`: o leão agacha e o cavaleiro de teste sobe em salto apoiado atrás da juba (pé no flanco, mãos na aba e na alça, perna pela garupa).
+- Cena `Leao_Solar_Ref_S2_montaria.blend`; clipes `Leao_Solar_Ref_E5_clipes_r7.blend`; relatório `S2-RELATORIO.md`.
+
+## S1 sela felina (06/11/2026): r4 APROVADA, com foco em Âmbar Solar e Couro das Planícies (`Leao_Solar_Ref_S1r4_sela.blend`; a r3 tem a folga medida)
+- `Leao_Solar_Ref_S1_sela.blend`: malha `Leao_Solar_Sela`, 5.970 triângulos, pesada na pele.
+- Materiais oficiais das Planícies: Couro das Planícies, Pele de Antílope, Tendão de Antílope, Chifre Leve, Âmbar Solar e Ferro.
+- Relatório: `S1-RELATORIO.md`. A S2 (subida pelos dois lados) vem depois da aprovação da sela.
+
 ## E5 Fase B (05/11/2026): atitude agressiva e ataques — FASE B ACEITA em 05/11 (patadas r3; oficial `Leao_Solar_Ref_E5_clipes_r3.blend`)
 - **Bote r4 (05/11), APROVADO; arquivo oficial dos clipes: `Leao_Solar_Ref_E5_clipes_r6.blend`:** agacha mais fundo antes do bote (2,9 studs; 3,2 encostava o peito no chão).
   - Arquivo `Leao_Solar_Ref_E5_clipes_r6.blend` (r3, r2 e v1 guardados); `E5-RELATORIO.md`, seção 8.5.

@@ -222,6 +222,7 @@ CLIPES = {
     "Corrida": dict(dur=38 / 30, loop=True, marcha=lambda t: MARCHA["corrida"], vel=lambda t: V_CORRIDA, rumo=lambda t: 0.0, corpo=c_locomocao("corrida")),
 }
 exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "e5_21_faseB.py"), encoding="utf-8").read())   # clipes da Fase B
+exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "e5_22_montaria.py"), encoding="utf-8").read())   # S2: montaria
 # ------------------------------------------------------------------ simulacao de um clipe
 PRE = 3.0   # segundos de pre-rolagem (o ciclo entra ja estabilizado)
 def catmull(P, k, s_):

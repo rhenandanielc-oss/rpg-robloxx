@@ -130,6 +130,19 @@ Ficha criada em 03/11/2026, só com leitura. Nada foi alterado no Studio, em `sr
   - Relatório: `BLENDER/Criaturas/Leao_Solar_Ref/E4-RELATORIO.md`. Prancha: `review/E4_prancha.png`.
   - Nada testado no Roblox.
   - Supervisor: aparência aceita como direção, mas não como malha pronta para rig.
+- **S1 sela r4 (06/11) — APROVADA pelo usuário (Blender):** foco nos materiais regionais oficiais, a pedido do usuário.
+  - Couro das Planícies no assento, aba, manta (tom claro), alça, cilha e apoios.
+  - Âmbar Solar no adorno solar (maior), na patilha, nos apoios de pé e nas argolas.
+  - Ferro nas ferragens e Tendão de Antílope só na costura.
+  - Arquivo `Leao_Solar_Ref_S1r4_sela.blend`.
+- **S2 subida na sela (06/11) — APROVADA pelo usuário (Blender):** `Montar_E` / `Montar_D` (4,6 s), com o cavaleiro de teste em salto apoiado atrás da juba.
+  - Sela r4 sem entrar no corpo nos 28 clipes (pior 0,003).
+  - Arquivos `Leao_Solar_Ref_S2_montaria.blend` e `Leao_Solar_Ref_E5_clipes_r7.blend`; relatórios `S1-RELATORIO.md` (r3) e `S2-RELATORIO.md`. Nada testado no Roblox.
+- **S1 sela felina (06/11) — EM REVISÃO [PROPOSTA]:** sela de Couro das Planícies sobre manta de Pele de Antílope.
+  - Debrum de Tendão de Antílope, alça de Chifre Leve, adorno solar de Âmbar Solar em ferro.
+  - Cilha atrás dos cotovelos e apoios de pé fixos; sem peitoral (a juba cobre o peito).
+  - Centrada no corpo (malha 0,45 para +X da coluna); assento em y 0,2, quadril do cavaleiro a 12,23.
+  - Arquivo `Leao_Solar_Ref_S1_sela.blend`; relatório `BLENDER/Criaturas/Leao_Solar_Ref/S1-RELATORIO.md`. Nada testado no Roblox.
 - **E5 Bote r4 (05/11) — APROVADO pelo usuário (Blender).** Arquivo oficial dos clipes: `Leao_Solar_Ref_E5_clipes_r6.blend` (28 ações da Fase A + B). Ainda pendentes: a mira no jogo e o teste no Roblox.
   - Detalhes: agachamento mais fundo (2,9 studs), com o mesmo impulso e o alcance máximo de 45 studs.
   - Arquivo `Leao_Solar_Ref_E5_clipes_r6.blend`. Nada testado no Roblox.
