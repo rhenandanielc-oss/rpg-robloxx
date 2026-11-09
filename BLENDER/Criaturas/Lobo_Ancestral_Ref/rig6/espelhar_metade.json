@@ -1,0 +1,15 @@
+{
+ "antes": {
+  "vertices": 9374,
+  "faces": 18554
+ },
+ "depois": {
+  "vertices": 9097,
+  "faces": 17592,
+  "tris": 18138,
+  "vertices_costura": 687,
+  "erro_espelho_max": 0.0,
+  "vertices_sem_peso": 0,
+  "zmin": -8.493661880493164e-07
+ }
+}

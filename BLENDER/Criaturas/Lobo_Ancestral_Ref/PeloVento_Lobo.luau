@@ -1,0 +1,35 @@
+-- PeloVento_Lobo (ModuleScript) - GERADO por BLENDER/Criaturas/Lobo_Ancestral_Ref/vento_pelo_comum.py (nao editar a mao).
+-- Ossos de pelo do Lobo Ancestral: amplitude base (graus), fase e direcao da mecha no REPOUSO, no espaco do modelo
+-- (glTF, Y para cima; frente do lobo = +Z no glTF - o importador do Roblox pode girar: conferir no Studio).
+return {
+	curva = {minimo = 0.1, ref = 12, expoente = 0.85, maximo = 1.75, arMovimento = 0.12},
+	ossos = {
+	PeloNuca1 = {amp = 11, fase = 0, dir = Vector3.new(0.0000, -0.3162, -0.9487)},
+	PeloNuca2 = {amp = 14, fase = 0.9, dir = Vector3.new(0.0000, -0.4229, -0.9062)},
+	PeloJubaE1 = {amp = 11, fase = 0.4, dir = Vector3.new(0.4258, -0.7984, -0.4258)},
+	PeloJubaD1 = {amp = 11, fase = 0.7, dir = Vector3.new(-0.4258, -0.7984, -0.4258)},
+	PeloJubaE2 = {amp = 14, fase = 1.3, dir = Vector3.new(0.2182, -0.8729, -0.4364)},
+	PeloJubaD2 = {amp = 14, fase = 1.6, dir = Vector3.new(-0.2182, -0.8729, -0.4364)},
+	PeloBochechaE = {amp = 6, fase = 0.2, dir = Vector3.new(0.6238, -0.6862, -0.3743)},
+	PeloBochechaD = {amp = 6, fase = 0.5, dir = Vector3.new(-0.6238, -0.6862, -0.3743)},
+	PeloPeito1 = {amp = 9, fase = 0.6, dir = Vector3.new(0.0000, -0.9983, 0.0587)},
+	PeloPeito2 = {amp = 12, fase = 1.4, dir = Vector3.new(0.0000, -0.9734, -0.2290)},
+	PeloDorso1 = {amp = 6, fase = 1, dir = Vector3.new(0.0000, -0.2169, -0.9762)},
+	PeloDorso2 = {amp = 6, fase = 1.8, dir = Vector3.new(0.0000, -0.2216, -0.9751)},
+	PeloBarriga = {amp = 9, fase = 2.2, dir = Vector3.new(0.0000, -0.9923, 0.1240)},
+	PeloCotoveloE = {amp = 8, fase = 0.3, dir = Vector3.new(0.0000, -0.9285, -0.3714)},
+	PeloCotoveloD = {amp = 8, fase = 0.8, dir = Vector3.new(0.0000, -0.9285, -0.3714)},
+	PeloCoxaE = {amp = 6, fase = 2.6, dir = Vector3.new(0.0000, -0.8716, -0.4903)},
+	PeloCoxaD = {amp = 6, fase = 2.9, dir = Vector3.new(0.0000, -0.8716, -0.4903)},
+	JubaE = {amp = 4, fase = 0.5, dir = Vector3.new(0.2506, -0.9023, -0.3509)},
+	JubaD = {amp = 4, fase = 0.8, dir = Vector3.new(-0.2506, -0.9023, -0.3509)},
+	JubaPeito = {amp = 3, fase = 1.1, dir = Vector3.new(0.0000, -0.9950, 0.0995)},
+	Cauda1 = {amp = 2, fase = 0, dir = Vector3.new(0.0000, -0.9758, -0.2186)},
+	Cauda2 = {amp = 3, fase = 0.45, dir = Vector3.new(0.0000, -0.5479, -0.8365)},
+	Cauda3 = {amp = 4, fase = 0.9, dir = Vector3.new(0.0000, -0.2468, -0.9691)},
+	Cauda4 = {amp = 5, fase = 1.35, dir = Vector3.new(0.0000, -0.1599, -0.9871)},
+	Cauda5 = {amp = 6, fase = 1.8, dir = Vector3.new(0.0000, -0.0632, -0.9980)},
+	Cauda6 = {amp = 7, fase = 2.25, dir = Vector3.new(0.0000, -0.2673, -0.9636)},
+	Cauda7 = {amp = 7.5, fase = 2.7, dir = Vector3.new(0.0000, -0.3169, -0.9485)},
+	},
+}

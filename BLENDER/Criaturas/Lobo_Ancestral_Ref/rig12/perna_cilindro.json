@@ -1,0 +1,26 @@
+{
+ "E": {
+  "eixo_x": 0.9891,
+  "eixo_y": -4.1134,
+  "vertices_nucleo": 80,
+  "vertices_movidos": 123
+ },
+ "D": {
+  "eixo_x": -0.9891,
+  "eixo_y": -4.1134,
+  "vertices_nucleo": 80,
+  "vertices_movidos": 123
+ },
+ "desloc_max": 0.192,
+ "polo": {
+  "MaoE": [
+   85.3,
+   3e-05
+  ],
+  "MaoD": [
+   94.7,
+   3e-05
+  ]
+ },
+ "desvio_repouso_ik": 0.0008300542831420898
+}

@@ -1,0 +1,11 @@
+{
+ "faces_regiao": 353,
+ "faces_corrigidas": 55,
+ "texels": 2567,
+ "delta_lum_max": 0.129,
+ "delta_lum_medio": 0.015,
+ "GMAX": 4.0,
+ "R_REF": 0.85,
+ "PCT": 50.0,
+ "DMAX": 0.4
+}

@@ -1,0 +1,10 @@
+{
+ "iteracoes": 40,
+ "levanta": 0.8,
+ "achata": 0.7,
+ "suaviza_cor": 0.5,
+ "vertices_regiao": 417,
+ "desloc_max": 0.644,
+ "desloc_med_regiao": 0.102,
+ "texels": 6881
+}

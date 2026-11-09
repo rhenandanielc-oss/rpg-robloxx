@@ -1,0 +1,243 @@
+{
+ "malhas": [
+  {
+   "nome": "Lobo_Ancestral_LOW",
+   "tris": 19614,
+   "uv": 1,
+   "materiais": [
+    "M_Lobo_Ancestral"
+   ],
+   "grupos": 58,
+   "verts_sem_peso": 0,
+   "verts_mais_4": 0
+  },
+  {
+   "nome": "Icosphere",
+   "tris": 80,
+   "uv": 1,
+   "materiais": [],
+   "grupos": 0,
+   "verts_sem_peso": 42,
+   "verts_mais_4": 0
+  }
+ ],
+ "ossos": [
+  "Raiz",
+  "Pelve",
+  "Cauda1",
+  "Cauda2",
+  "Cauda3",
+  "Cauda4",
+  "Cauda5",
+  "Cauda6",
+  "Cauda7",
+  "Coluna1",
+  "Coluna2",
+  "Peito",
+  "EscapulaD",
+  "BracoD",
+  "AntebracoD",
+  "MaoD",
+  "DedosD",
+  "PeloCotoveloD",
+  "EscapulaE",
+  "BracoE",
+  "AntebracoE",
+  "MaoE",
+  "DedosE",
+  "PeloCotoveloE",
+  "JubaPeito",
+  "PeloDorso1",
+  "PeloPeito1",
+  "PeloPeito2",
+  "Pescoco1",
+  "JubaD",
+  "JubaE",
+  "PeloJubaD1",
+  "PeloJubaD2",
+  "PeloJubaE1",
+  "PeloJubaE2",
+  "PeloNuca1",
+  "PeloNuca2",
+  "Pescoco2",
+  "Cabeca",
+  "Mandibula",
+  "OrelhaD",
+  "OrelhaE",
+  "PalpebraD",
+  "PalpebraE",
+  "PeloBochechaD",
+  "PeloBochechaE",
+  "PeloBarriga",
+  "PeloDorso2",
+  "CoxaD",
+  "CanelaD",
+  "MetatarsoD",
+  "PeD",
+  "PeloCoxaD",
+  "CoxaE",
+  "CanelaE",
+  "MetatarsoE",
+  "PeE",
+  "PeloCoxaE"
+ ],
+ "acoes": {
+  "Lobo_Adormecer": {
+   "quadros": 73,
+   "duracao_s": 2.4
+  },
+  "Lobo_Andar": {
+   "quadros": 36,
+   "duracao_s": 1.167
+  },
+  "Lobo_Corrida": {
+   "quadros": 14,
+   "duracao_s": 0.433
+  },
+  "Lobo_Deitado": {
+   "quadros": 120,
+   "duracao_s": 3.967
+  },
+  "Lobo_Deitar": {
+   "quadros": 94,
+   "duracao_s": 3.1
+  },
+  "Lobo_Descanso": {
+   "quadros": 165,
+   "duracao_s": 5.467
+  },
+  "Lobo_Despertar": {
+   "quadros": 91,
+   "duracao_s": 3.0
+  },
+  "Lobo_Freada": {
+   "quadros": 41,
+   "duracao_s": 1.333
+  },
+  "Lobo_Garra": {
+   "quadros": 33,
+   "duracao_s": 1.067
+  },
+  "Lobo_Impacto": {
+   "quadros": 21,
+   "duracao_s": 0.667
+  },
+  "Lobo_LevantarDeitado": {
+   "quadros": 70,
+   "duracao_s": 2.3
+  },
+  "Lobo_LevantarSentado": {
+   "quadros": 43,
+   "duracao_s": 1.4
+  },
+  "Lobo_Mordida": {
+   "quadros": 31,
+   "duracao_s": 1.0
+  },
+  "Lobo_Observar": {
+   "quadros": 136,
+   "duracao_s": 4.5
+  },
+  "Lobo_Partida": {
+   "quadros": 41,
+   "duracao_s": 1.333
+  },
+  "Lobo_Repouso": {
+   "quadros": 120,
+   "duracao_s": 3.967
+  },
+  "Lobo_Rosnar": {
+   "quadros": 73,
+   "duracao_s": 2.4
+  },
+  "Lobo_Salto": {
+   "quadros": 45,
+   "duracao_s": 1.467
+  },
+  "Lobo_Sentado": {
+   "quadros": 120,
+   "duracao_s": 3.967
+  },
+  "Lobo_Sentar": {
+   "quadros": 49,
+   "duracao_s": 1.6
+  },
+  "Lobo_Trote": {
+   "quadros": 20,
+   "duracao_s": 0.633
+  },
+  "Lobo_Uivo": {
+   "quadros": 121,
+   "duracao_s": 4.0
+  },
+  "Lobo_VirarD": {
+   "quadros": 73,
+   "duracao_s": 2.4
+  },
+  "Lobo_VirarE": {
+   "quadros": 73,
+   "duracao_s": 2.4
+  }
+ },
+ "pose": {
+  "Lobo_Andar": {
+   "Cabeca": 0.0,
+   "Mandibula": 0.0,
+   "MaoE": 0.0,
+   "PeD": 0.0,
+   "Cauda6": 0.0,
+   "Pelve": 0.0
+  },
+  "Lobo_Corrida": {
+   "Cabeca": 0.0,
+   "Mandibula": 0.0,
+   "MaoE": 0.0,
+   "PeD": 0.0,
+   "Cauda6": 0.0,
+   "Pelve": 0.0
+  },
+  "Lobo_Uivo": {
+   "Cabeca": 0.0,
+   "Mandibula": 0.0,
+   "MaoE": 0.0,
+   "PeD": 0.0,
+   "Cauda6": 0.0,
+   "Pelve": 0.0
+  },
+  "Lobo_Deitado": {
+   "Cabeca": 0.0,
+   "Mandibula": 0.0,
+   "MaoE": 0.0,
+   "PeD": 0.0,
+   "Cauda6": 0.0,
+   "Pelve": 0.0
+  },
+  "Lobo_Mordida": {
+   "Cabeca": 0.0,
+   "Mandibula": 0.0,
+   "MaoE": 0.0,
+   "PeD": 0.0,
+   "Cauda6": 0.0,
+   "Pelve": 0.0
+  }
+ },
+ "problemas": [
+  "Icosphere: 42 vertices sem peso"
+ ],
+ "imagens": [
+  [
+   "T_Lobo_Cor",
+   [
+    1024,
+    1024
+   ]
+  ],
+  [
+   "T_Lobo_Normal",
+   [
+    1024,
+    1024
+   ]
+  ]
+ ]
+}

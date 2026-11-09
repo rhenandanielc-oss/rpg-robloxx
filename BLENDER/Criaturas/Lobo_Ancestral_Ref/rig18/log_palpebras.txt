@@ -1,0 +1,17 @@
+00:03.094  blend            | Read blend: "C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Lobo_Ancestral_Ref\rig17\Lobo_Ancestral_Rig.blend"
+BlenderMCP addon registered
+
+Wiggle Bones registered
+PELE faces 1856
+PALPEBRA E verts 105 uv px (167, 831) R 0.250 giro 41.3 graus cor baixo [0.369 0.333 0.306] cima [0.216 0.192 0.173]
+PALPEBRA D verts 105 uv px (19, 883) R 0.250 giro -41.3 graus cor baixo [0.369 0.333 0.306] cima [0.247 0.227 0.208]
+OSSO PalpebraE X local . eixo do olho = -1.000
+OSSO PalpebraD X local . eixo do olho = -1.000
+JUNTOU 10997 -> 11207 verts; tris 19614
+Info: Saved as "Lobo_Ancestral_Rig.blend"
+PALPEBRAS_OK fecha {'E': -41.25296263253264, 'D': 41.25296263253264}
+BlenderMCP addon unregistered
+Wiggle Bones unregistered
+Blender 5.2.2 LTS (hash d13f752e3b9c built 2026-09-15 01:37:04)
+
+Blender quit

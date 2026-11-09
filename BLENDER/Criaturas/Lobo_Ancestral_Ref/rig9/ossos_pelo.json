@@ -1,0 +1,91 @@
+{
+ "ossos": {
+  "PeloNuca1": {
+   "vertices": 497,
+   "peso_max": 0.779,
+   "pai": "Pescoco1"
+  },
+  "PeloNuca2": {
+   "vertices": 166,
+   "peso_max": 0.602,
+   "pai": "PeloNuca1"
+  },
+  "PeloJubaE1": {
+   "vertices": 314,
+   "peso_max": 0.756,
+   "pai": "Pescoco1"
+  },
+  "PeloJubaD1": {
+   "vertices": 314,
+   "peso_max": 0.756,
+   "pai": "Pescoco1"
+  },
+  "PeloJubaE2": {
+   "vertices": 88,
+   "peso_max": 0.392,
+   "pai": "PeloJubaE1"
+  },
+  "PeloJubaD2": {
+   "vertices": 88,
+   "peso_max": 0.392,
+   "pai": "PeloJubaD1"
+  },
+  "PeloBochechaE": {
+   "vertices": 371,
+   "peso_max": 0.76,
+   "pai": "Cabeca"
+  },
+  "PeloBochechaD": {
+   "vertices": 371,
+   "peso_max": 0.76,
+   "pai": "Cabeca"
+  },
+  "PeloPeito1": {
+   "vertices": 194,
+   "peso_max": 0.749,
+   "pai": "Peito"
+  },
+  "PeloPeito2": {
+   "vertices": 105,
+   "peso_max": 0.864,
+   "pai": "PeloPeito1"
+  },
+  "PeloDorso1": {
+   "vertices": 99,
+   "peso_max": 0.432,
+   "pai": "Peito"
+  },
+  "PeloDorso2": {
+   "vertices": 46,
+   "peso_max": 0.645,
+   "pai": "Coluna2"
+  },
+  "PeloBarriga": {
+   "vertices": 79,
+   "peso_max": 0.74,
+   "pai": "Coluna2"
+  },
+  "PeloCotoveloE": {
+   "vertices": 16,
+   "peso_max": 0.332,
+   "pai": "AntebracoE"
+  },
+  "PeloCotoveloD": {
+   "vertices": 16,
+   "peso_max": 0.332,
+   "pai": "AntebracoD"
+  },
+  "PeloCoxaE": {
+   "vertices": 64,
+   "peso_max": 0.536,
+   "pai": "CoxaE"
+  },
+  "PeloCoxaD": {
+   "vertices": 64,
+   "peso_max": 0.536,
+   "pai": "CoxaD"
+  }
+ },
+ "vertices_com_pelo": 2390,
+ "total_ossos": 56
+}
