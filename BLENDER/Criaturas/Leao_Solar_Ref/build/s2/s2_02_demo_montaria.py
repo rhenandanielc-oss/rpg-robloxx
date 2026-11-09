@@ -21,7 +21,7 @@ for lado_, sx in (("LeftFoot", 1), ("RightFoot", -1)):  # pes no mesmo lugar abs
 A = sys.argv[sys.argv.index("--") + 1:]
 sc = bpy.context.scene; FPS = 30; sc.render.fps = FPS
 arm = bpy.data.objects["Leao_Solar_Rig"]; lo = [o for o in bpy.data.objects if o.name.startswith("Leao_Solar_E4")][0]; sela = bpy.data.objects[sl.NOME]
-with bpy.data.libraries.load(os.path.abspath(A[0])) as (src, dst): dst.actions = [n for n in src.actions if n in ("Leao_Montar_E", "Leao_Montar_D")]
+with bpy.data.libraries.load(os.path.abspath(A[0])) as (src, dst): dst.actions = [n for n in src.actions if n in ("Leao_Montar_E", "Leao_Montar_D", "Leao_Desmontar_E", "Leao_Desmontar_D")]
 for a_ in dst.actions: a_.use_fake_user = True
 XC = sl.XC
 def leao_quadro(nome, t):
@@ -107,7 +107,7 @@ for lado_l, s in (("E", -1), ("D", 1)):
         "flanco": apoio(lo, V((XC + s * 5.0, 0.15, 6.3)), "Coluna1"),                      # parte mais larga do flanco (pe empurra; mais baixo a canela batia na barriga do flanco)
         "aba": apoio(sela, q_ + V((s * 1.2, 0.65, -0.4)), "Coluna1"),                      # borda da aba do lado da subida (mao de tras)
         "aba_f": apoio(sela, q_ + V((s * 1.2, -0.35, -0.4)), "Coluna1"),                   # borda da aba, frente (1o agarre da mao da frente)
-        "alca": apoio(sela, q_ + V((s * 0.18, -1.15, 0.25)), "Coluna1"),                   # alca de Chifre Leve (mao da frente)
+        "alca": apoio(sela, q_ + V((s * 0.18, -1.15, 0.25)), "Coluna1"),                   # alca de couro (mao da frente)
     }
     print("APOIOS", lado_l, {k: [round(c, 2) for c in no_osso(v)] for k, v in AP[lado_l].items()})
 # ------------------------------------------------------------------ MONTAR (4,6 s)
@@ -159,6 +159,56 @@ def montar(t, lado_l):
     E["alvos"][("Polo", frente + "Foot")] = (Mp @ (V((1.4 * sf, 2.5, 1.2)) if 1.4 < t < 2.4 else V((0.6 * sf, -3.0, 0.8))), R)   # pe no flanco: joelho dobra para FORA do leao
     E["alvos"][("Polo", tras + "Foot")] = (Mp @ (V((2.0 * st, -1.0, 2.0)) if t > 2.0 else V((0.6 * st, -3.0, 0.8))), R)
     return mq.mistura(E, S, s_((t - 2.5) / 0.35))
+# ------------------------------------------------------------------ DESMONTAR (3,8 s): o leao agacha com o cavaleiro sentado; a perna de fora
+# passa pela garupa, o corpo vira para o leao e desliza pelo flanco segurando a aba; pousa amortecendo e se afasta dois passos
+def desmontar(t, lado_l):
+    s = -1 if lado_l == "E" else 1; ap = AP[lado_l]
+    psi0 = 90.0 if s < 0 else -90.0                                          # no fim de frente para o leao
+    perto, longe = ("Right", "Left") if s < 0 else ("Left", "Right")        # perna do lado da descida / perna que passa pela garupa
+    def L(x, y, z): return V((XC + s * x, y, z))
+    S = mq.estado_sentado(assento()); Ms = S["pelve"]
+    if t < 1.15: return S
+    P = herm(t, [(1.15, Ms.translation), (1.45, Ms.translation + V((0, 0.1, 0.45))), (1.75, Ms.translation + V((s * 0.8, 0.2, 0.4))),
+                 (1.92, L(2.55, 0.35, 8.6)), (2.06, L(3.4, 0.4, 6.7)), (2.19, L(4.05, 0.45, 4.4)), (2.3, L(4.35, 0.5, 2.3)), (2.42, L(4.45, 0.5, 1.75)),
+                 (2.62, L(4.5, 0.5, 2.0)), (3.0, L(5.4, 0.5, 2.0)), (3.4, L(6.5, 0.5, 2.0))])
+    psi = herm(t, [(1.15, 0.0), (1.4, 0.0), (1.75, psi0 * 0.85), (1.95, psi0)])
+    tronco = herm(t, [(1.15, 8.0), (1.45, 24.0), (1.75, 24.0), (2.06, 14.0), (2.3, 10.0), (2.42, 16.0), (2.7, 6.0), (3.4, 2.0)])
+    cab = herm(t, [(1.15, -5.0), (1.6, -12.0), (2.4, -14.0), (3.2, 0.0)])
+    Mp = M.Translation(P) @ Rz(psi).to_matrix().to_4x4(); R = Rz(psi)
+    sH = {k: S["alvos"][("IK", k + "Hand")] for k in ("Left", "Right")}
+    # maos: alca/coxas -> mao do lado da descida na borda da aba (frente), a outra na aba (tras) -> soltam por fora e descem
+    def mao(lado_m, apoio_, t_ag):
+        if t < t_ag: return sH[lado_m]
+        if t < 2.02:
+            p_, q_ = trilha(t, [(t_ag, sH[lado_m][0]), (t_ag + 0.12, no_osso(apoio_, MAO) + V((0, 0, 0.5))), (t_ag + 0.24, apoio_), (2.02, apoio_)], R, MAO)
+            return (p_, q_)
+        a_ = no_osso(apoio_, MAO); sl_ = 1 if lado_m == "Left" else -1
+        return trilha(t, [(2.02, a_), (2.12, a_ + V((s * 0.9, 0, 0.4))), (2.3, Mp @ V((1.3 * sl_, 0.45, 1.1))), (2.6, solto(Mp, lado_m))], R, MAO)   # solta para longe do leao
+    mP, mL = mao(perto, ap["aba_f"], 1.25), mao(longe, ap["aba"], 1.45)
+    # pes: perna de fora passa por tras (garupa) no referencial do quadril; as duas pendem do lado da descida, fora do flanco;
+    # pousam no chao (2,3) e dao dois passos para tras
+    sP = 1 if perto == "Left" else -1; sL = -sP
+    pS = {k: S["alvos"][("IK", k + "Foot")] for k in ("Left", "Right")}
+    gP = L(4.35, -0.15, TORN); gL = L(4.45, 1.15, TORN)
+    def pendurado(lado_m):
+        sl_ = 1 if lado_m == "Left" else -1; return fora(Mp @ V((0.55 * sl_, 0.9, -1.5)), s, 0.9)
+    if t < 1.3: pL = pS[longe]
+    elif t < 1.85:
+        Lc = herm(t, [(1.3, Ms.inverted() @ pS[longe][0]), (1.48, V((1.6 * sL, 1.3, 0.45))), (1.66, V((0.4 * sL, 1.75, 0.5))), (1.85, Mp.inverted() @ pendurado(longe))])
+        pL = (Mp @ Lc if t >= 1.66 else Ms @ Lc, R.slerp(R @ Rx(20), s_((t - 1.3) / 0.3)))
+    elif t < 2.3: pL = (pendurado(longe), R @ Rx(20))
+    else: pL = (passo(t, 2.85, 3.25, gL, L(6.65, 1.15, TORN), 0.4) if t > 2.85 else gL.lerp(gL, 1.0), R)
+    if t < 1.75: pP = pS[perto]
+    elif t < 2.3:
+        u = s_((t - 1.75) / 0.2); a_, b_ = pS[perto][0], pendurado(perto)          # sai do apoio de pe por FORA e por cima (passava no bloco)
+        pP = (herm(u, [(0.0, a_), (0.5, a_.lerp(b_, 0.5) + V((s * 0.7, 0, 0.45))), (1.0, b_)]), pS[perto][1].slerp(R @ Rx(20), u))
+    else: pP = (passo(t, 2.65, 3.05, gP, L(6.55, -0.15, TORN), 0.4) if t > 2.65 else gP, R)
+    if 2.18 <= t < 2.3:      # chega ao chao: os pes descem do pendurado para o ponto de pouso
+        u = s_((t - 2.18) / 0.12); pL = (pendurado(longe).lerp(gL, u), R); pP = (pendurado(perto).lerp(gP, u), R)
+    E = livre(P, psi, tronco, cab, {("IK", perto + "Hand"): mP, ("IK", longe + "Hand"): mL, ("IK", perto + "Foot"): pP, ("IK", longe + "Foot"): pL})
+    E["alvos"][("Polo", perto + "Foot")] = (Mp @ V((1.4 * sP, 2.5, 1.2)) if t < 2.3 else Mp @ V((0.6 * sP, -3.0, 0.8)), R)
+    E["alvos"][("Polo", longe + "Foot")] = (Mp @ V((2.0 * sL, -1.0, 2.0)) if t < 1.8 else Mp @ V((1.4 * sL, 2.5, 1.2)) if t < 2.3 else Mp @ V((0.6 * sL, -3.0, 0.8)), R)
+    return mq.mistura(S, E, s_((t - 1.15) / 0.3))
 # ------------------------------------------------------------------ assar em FK + medicoes
 amo = mq.amostras_partes(0.2)
 DOBRA_JOELHO = float(os.environ.get("S2_DOBRA", "15"))
@@ -198,6 +248,7 @@ QA = {}
 QA["Sentado"] = assar("DEMO_Cav_Sentado", None, lambda t: mq.estado_sentado(assento()), 0.0)
 for lado_l in ("E", "D"):
     QA["Montar_" + lado_l] = assar("DEMO_Cav_Montar_" + lado_l, "Montar_" + lado_l, lambda t, l=lado_l: montar(t, l), 4.6)
+    QA["Desmontar_" + lado_l] = assar("DEMO_Cav_Desmontar_" + lado_l, "Desmontar_" + lado_l, lambda t, l=lado_l: desmontar(t, l), 3.8)
 resumo = {}
 for k, med in QA.items():
     r = {"folga_leao_min": {}, "folga_sela_min": {}}

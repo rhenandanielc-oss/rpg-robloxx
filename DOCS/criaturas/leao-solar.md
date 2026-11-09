@@ -130,6 +130,9 @@ Ficha criada em 03/11/2026, só com leitura. Nada foi alterado no Studio, em `sr
   - Relatório: `BLENDER/Criaturas/Leao_Solar_Ref/E4-RELATORIO.md`. Prancha: `review/E4_prancha.png`.
   - Nada testado no Roblox.
   - Supervisor: aparência aceita como direção, mas não como malha pronta para rig.
+- **Descida + textura/GLB da sela (09/11) — APROVADOS pelo usuário (Blender):** `Desmontar_E/D` (3,8 s) sem o cavaleiro de teste entrar no leão.
+  - Sela com textura de jogo 1024 (cor, normal, metal/rugosidade) e GLB `BLENDER/Criaturas/Leao_Solar_Ref/export/sela/Leao_Solar_Sela.glb` (6.780 triângulos, 63 ossos, 4 influências).
+  - Nada testado no Roblox.
 - **S1 sela r4 (06/11) — APROVADA pelo usuário (Blender):** foco nos materiais regionais oficiais, a pedido do usuário.
   - Couro das Planícies no assento, aba, manta (tom claro), alça, cilha e apoios.
   - Âmbar Solar no adorno solar (maior), na patilha, nos apoios de pé e nas argolas.

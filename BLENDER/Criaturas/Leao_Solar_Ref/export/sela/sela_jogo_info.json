@@ -1,0 +1,15 @@
+{
+ "tris": 6780,
+ "vertices": 3468,
+ "texturas": {
+  "cor": "T_Leao_Sela_Cor.png",
+  "normal": "T_Leao_Sela_Normal.png",
+  "rug": "T_Leao_Sela_Rug.png",
+  "metal": "T_Leao_Sela_Metal.png",
+  "mr": "T_Leao_Sela_MetalRug.png"
+ },
+ "resolucao": 1024,
+ "glb": "Leao_Solar_Sela.glb",
+ "glb_bytes": 1899192,
+ "grupos": 26
+}

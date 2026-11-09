@@ -19,3 +19,20 @@ CLIPES.update({
     "Montar_E": dict(dur=4.6, loop=False, pose_repouso=True, marcha=lambda t: MARCHA["parado"], vel=lambda t: 0.0, rumo=lambda t: 0.0, corpo=c_montar("E")),
     "Montar_D": dict(dur=4.6, loop=False, pose_repouso=True, marcha=lambda t: MARCHA["parado"], vel=lambda t: 0.0, rumo=lambda t: 0.0, corpo=c_montar("D")),
 })
+# Desmontar (09/11): o leao agacha com o cavaleiro sentado (0,3-1,1), espera ele passar a perna pela garupa (1,2-1,7) e deslizar
+# pelo flanco do lado da descida (1,7-2,3, alivia o peso: o dorso sobe um pouco e rola para o outro lado), olha para ele e
+# levanta (2,6-3,4); termina no repouso. Nao e o Montar invertido (tempos e caminho proprios do cavaleiro).
+def c_desmontar(lado):
+    sg = -1 if lado == "E" else 1
+    def f(t, fase):
+        c = base_foco(t, fase); ag = janela(t, 0.3, 3.45, 0.8, 0.85); olha = janela(t, 1.45, 3.2, 0.45, 0.6)
+        perna = janela(t, 1.2, 1.75, 0.15, 0.25); sai = janela(t, 1.75, 2.35, 0.1, 0.35)
+        c.update(z=-MONT_AG * ag - 0.06 * perna + 0.08 * sai, roll=sg * R(3.0) * ag - sg * R(1.5) * sai,
+                 col1=R(2) * ag, col2=R(-2) * ag, pesc=R(6) * ag, pesc_yaw=sg * R(14) * olha, cab_yaw=sg * R(20) * olha, cab_pitch=R(3) * ag,
+                 orelha=(R(-10) * olha, R(-10) * olha), cauda_base=R(4) + R(3) * ag, cauda_amp=R(3), cauda_f=1 / 3.2)
+        return c
+    return f
+CLIPES.update({
+    "Desmontar_E": dict(dur=3.8, loop=False, pose_repouso=True, marcha=lambda t: MARCHA["parado"], vel=lambda t: 0.0, rumo=lambda t: 0.0, corpo=c_desmontar("E")),
+    "Desmontar_D": dict(dur=3.8, loop=False, pose_repouso=True, marcha=lambda t: MARCHA["parado"], vel=lambda t: 0.0, rumo=lambda t: 0.0, corpo=c_desmontar("D")),
+})

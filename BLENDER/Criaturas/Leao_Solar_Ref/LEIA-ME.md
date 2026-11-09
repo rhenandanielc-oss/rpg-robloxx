@@ -2,6 +2,10 @@
 
 **APROVADO (aparência, no Blender) em 03/11/2026: `Leao_Solar_Ref_E2_v11.blend`.** Ainda falta: mandíbula e interior da boca, as 573 bordas abertas, as manchas dos antebraços, a malha de jogo, o rig e o teste no Roblox.
 
+## S3 descida da sela + textura/GLB da sela (09/11/2026): APROVADOS
+- `Desmontar_E/D` (leão e cavaleiro de teste): clipes em `Leao_Solar_Ref_E5_clipes_r8.blend`, cena `Leao_Solar_Ref_S2_montaria.blend`.
+- Textura de jogo 1024 e GLB da sela em `export/sela/` (`Leao_Solar_Sela.glb`). Detalhes em `S2-RELATORIO.md` e `S1-RELATORIO.md`.
+
 ## S2 subida na sela (06/11/2026): APROVADA
 - `Leao_Montar_E/D`: o leão agacha e o cavaleiro de teste sobe em salto apoiado atrás da juba (pé no flanco, mãos na aba e na alça, perna pela garupa).
 - Cena `Leao_Solar_Ref_S2_montaria.blend`; clipes `Leao_Solar_Ref_E5_clipes_r7.blend`; relatório `S2-RELATORIO.md`.

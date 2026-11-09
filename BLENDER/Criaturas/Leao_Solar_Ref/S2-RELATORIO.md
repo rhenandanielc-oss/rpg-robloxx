@@ -90,3 +90,38 @@ Folga com sinal: negativa = a caixa do manequim entra.
 - No jogo, o cavaleiro real é um R15 (as caixas são só teste). A animação do jogador e a câmera ficam para o Studio, com autorização.
 - Faltam textura de jogo e GLB da sela.
 - Nada testado no Roblox.
+
+## Desmontar pelos dois lados (09/11/2026), APROVADO pelo usuário em 09/11/2026 (Blender)
+
+**Pedido do usuário:** fazer a descida da sela.
+
+**Clipes do leão** (`e5_22_montaria.py`): `Desmontar_E` e `Desmontar_D`, com 115 quadros (3,8 s) cada. Os dois têm erro de IK 0, escorregamento ≤ 0,0002 e altura mínima −0,01.
+- O leão agacha com o cavaleiro sentado (0,3–1,1 s).
+- Alivia o peso quando o cavaleiro sai (1,75–2,35 s): o dorso sobe um pouco e rola para o outro lado.
+- Olha para o cavaleiro e levanta (2,6–3,4 s), terminando no repouso.
+
+**Cavaleiro de teste** (`s2_02_demo_montaria.py`, `desmontar()`). Não é o Montar invertido:
+1. **Até 1,15 s:** sentado.
+2. **1,25 s:** a mão do lado da descida vai para a borda da aba. A outra, para a aba de trás.
+3. **1,3–1,85 s:** a perna de fora passa por cima da garupa, alta, sem tocar a patilha, enquanto o corpo vira de frente para o leão.
+4. **1,75–2,3 s:** as duas pernas pendem para fora do flanco. A perna de dentro sai do apoio de pé por fora e por cima.
+5. **1,9–2,3 s:** desliza pelo flanco com pouca inclinação. As mãos soltam a aba para longe do leão.
+6. **2,3–2,42 s:** pousa e amortece.
+7. **2,65–3,25 s:** dá dois passos para trás.
+
+**QA** (folga com sinal; negativa = a caixa do manequim entra):
+
+| Clipe | Pior contra o leão | Pior contra a sela | Pés no chão | Velocidade máx. do quadril |
+|---|---|---|---|---|
+| Desmontar_E | LeftLowerLeg 0.14 (q35), LeftUpperLeg 0.16 (q34) | RightUpperLeg -0.09 (q59), LeftUpperLeg -0.09 (q42) | 0.03 | 21.3 |
+| Desmontar_D | LeftLowerLeg 0.13 (q41), LeftUpperLeg 0.15 (q34) | LeftUpperLeg -0.10 (q59), RightLowerArm -0.08 (q58) | 0.03 | 21.3 |
+
+- **Leão:** nenhuma entrada em nenhum quadro.
+- **Pés:** não afundam no chão.
+- **Sela:** o único toque é a coxa encostando na aba ao sair, no lado D (−0,10, um quadro).
+- **Ajustes até chegar aqui:** caminho do deslize mais afastado, menos inclinação, mãos soltando para fora, pernas pendendo mais para fora e perna de fora mais alta na garupa. A primeira versão entrava até 0,49 no leão.
+
+**Arquivos:**
+- `Leao_Solar_Ref_S2_montaria.blend`: cena com `DEMO_Cav_Desmontar_E/D`.
+- `Leao_Solar_Ref_E5_clipes_r8.blend`: as 28 ações oficiais mais Montar_E/D e Desmontar_E/D (32). O r7 ficou como estava.
+- **Vídeos:** `review/s2/videos/Desmontar_{E,D}_*.mp4` e a folha `review/s2/_folha_desmontar.png`.

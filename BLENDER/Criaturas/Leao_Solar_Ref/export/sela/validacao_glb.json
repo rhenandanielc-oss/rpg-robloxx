@@ -1,0 +1,76 @@
+{
+ "malhas": [
+  {
+   "nome": "Icosphere",
+   "tris": 80,
+   "vertices": 42,
+   "materiais": [],
+   "uv": [
+    "UVMap"
+   ],
+   "max_influencias": 0,
+   "sem_peso": 42,
+   "grupos": 0,
+   "z_min_max": [
+    -1.0,
+    1.0
+   ],
+   "pai": null
+  },
+  {
+   "nome": "Leao_Solar_Sela",
+   "tris": 6780,
+   "vertices": 6241,
+   "materiais": [
+    "M_Leao_Sela_Jogo"
+   ],
+   "uv": [
+    "UVMap"
+   ],
+   "max_influencias": 4,
+   "sem_peso": 0,
+   "grupos": 63,
+   "z_min_max": [
+    4.94,
+    12.56
+   ],
+   "pai": "Leao_Solar_Rig"
+  }
+ ],
+ "armaduras": [
+  {
+   "nome": "Leao_Solar_Rig",
+   "ossos": 63
+  }
+ ],
+ "imagens": [
+  {
+   "nome": "T_Leao_Sela_Cor",
+   "tamanho": [
+    1024,
+    1024
+   ]
+  },
+  {
+   "nome": "T_Leao_Sela_MetalRug",
+   "tamanho": [
+    1024,
+    1024
+   ]
+  },
+  {
+   "nome": "T_Leao_Sela_Normal",
+   "tamanho": [
+    1024,
+    1024
+   ]
+  },
+  {
+   "nome": "Viewer Node",
+   "tamanho": [
+    256,
+    256
+   ]
+  }
+ ]
+}

@@ -28,15 +28,16 @@ def video(pasta, prefixo, nq, saida, fps):
     except Exception: pass
     im.file_format = "FFMPEG"; s2.render.ffmpeg.format = "MPEG4"; s2.render.ffmpeg.codec = "H264"; s2.render.ffmpeg.constant_rate_factor = "HIGH"
     s2.render.filepath = saida; bpy.ops.render.render(animation=True, scene=s2.name); bpy.data.scenes.remove(s2)
-for lado in LADOS:
+CLIPES_S2 = os.environ.get("S2_CLIPES", "Montar").split(",")
+for clip_, lado in [(c_, l_) for c_ in CLIPES_S2 for l_ in LADOS]:
     s = -1 if lado == "E" else 1; az_lado = 90 if s < 0 else -90          # camera do lado da subida (x- = az +90)
-    la = bpy.data.actions["Leao_Montar_" + lado]; ma = bpy.data.actions["DEMO_Cav_Montar_" + lado]
+    la = bpy.data.actions["Leao_%s_%s" % (clip_, lado)]; ma = bpy.data.actions["DEMO_Cav_%s_%s" % (clip_, lado)]
     arm.animation_data.action = la; ra.animation_data.action = ma; nq = int(la.frame_range[1])
     vistas = {"lado": (az_lado, 6, 36, (0.45 + s * 2.0, -0.5, 6.0), 45), "34": (az_lado * 0.5, 14, 36, (0.45 + s * 1.5, -1.0, 6.5), 45),
               "frente": (0, 8, 42, (0.45, -1.0, 6.5), 45), "tras_34": (az_lado * 1.55, 16, 30, (0.45 + s * 1.0, 0.5, 7.5), 45),
               "close": (az_lado * 0.8, 18, 19, (0.45 + s * 1.8, 0.3, 8.2), 45)}
     sel = [int(x) for x in os.environ["S2_QUADROS"].split(",")] if os.environ.get("S2_QUADROS") else range(1, nq + 1)
-    pasta = os.path.join(OUT, "Montar_" + lado); os.makedirs(pasta, exist_ok=True)
+    pasta = os.path.join(OUT, "%s_%s" % (clip_, lado)); os.makedirs(pasta, exist_ok=True)
     for vista, (az, el, dist, alvo, lens) in vistas.items():
         cd.lens = lens; al = V(alvo)
         cam.location = al + V((-math.sin(R(az)) * math.cos(R(el)), -math.cos(R(az)) * math.cos(R(el)), math.sin(R(el)))) * dist
@@ -44,6 +45,6 @@ for lado in LADOS:
         for f in sel:
             sc.frame_set(f); sc.render.filepath = os.path.join(pasta, "%s_%04d.png" % (vista, f)); bpy.ops.render.render(write_still=True)
         if not os.environ.get("S2_QUADROS"):
-            video(pasta, vista, nq, os.path.join(OUT, "Montar_%s_%s.mp4" % (lado, vista)), 30)
-            video(pasta, vista, nq, os.path.join(OUT, "Montar_%s_%s_lento.mp4" % (lado, vista)), 10)
-    print("RENDER_S2_OK", lado, flush=True)
+            video(pasta, vista, nq, os.path.join(OUT, "%s_%s_%s.mp4" % (clip_, lado, vista)), 30)
+            video(pasta, vista, nq, os.path.join(OUT, "%s_%s_%s_lento.mp4" % (clip_, lado, vista)), 10)
+    print("RENDER_S2_OK", clip_, lado, flush=True)

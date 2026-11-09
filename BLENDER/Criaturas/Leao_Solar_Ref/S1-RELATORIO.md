@@ -189,3 +189,28 @@ Feito sobre a sela r3 sem reconstruir (`build/s1/s1_06_materiais_regionais.py`),
 - **Pior entrada na pele: 0,003 stud.** Nenhum vértice-quadro acima de 0,05, e nenhum fio da juba dentro da sela.
 - **Primeira tentativa:** a pedra da patilha ficou na borda de baixo, colada na manta, e entrava 0,15 no galope. Subi a pedra para o alto da traseira da patilha.
 - **Subida:** a cena da subida foi refeita com a r4 e deu os mesmos números da r3 (`S2-RELATORIO.md`).
+
+## Textura de jogo e GLB (09/11/2026), APROVADOS pelo usuário em 09/11/2026 (Blender)
+
+`build/s1/s1_07_textura_glb.py`, sobre a sela r4 aprovada:
+1. **UV:** mapa único `UV_Jogo`, com projeção inteligente e empacotamento. As pedras da r4 não tinham UV.
+2. **Bake Cycles em 1024×1024:**
+   - **cor:** por emissão da cor de base. O bake difuso devolve cor 0 nos metais e o ferro saía preto;
+   - **normal:** tangente, padrão OpenGL;
+   - **rugosidade;**
+   - **metal:** por emissão com o valor metálico de cada material.
+
+   Os mapas são de 8 bits. Na primeira tentativa, as imagens de ponto flutuante foram salvas vazias e o normal preto deixava a sela cinza.
+3. **Material único** `M_Leao_Sela_Jogo`. Metal e rugosidade ficam empacotados no padrão glTF (G = rugosidade, B = metal).
+4. **GLB** `export/sela/Leao_Solar_Sela.glb` (1899192 bytes): só a sela e a armadura do leão, sem animações, com as texturas embutidas.
+
+**Validação** (reimportado numa cena limpa, `s1_08_validar_glb.py`):
+- **Malha:** 6780 triângulos, 1 material, UV presente.
+- **Pesos:** no máximo 4 influências por vértice e 0 vértices sem peso.
+- **Armadura:** 63 ossos, com os mesmos nomes do rig do leão.
+- **Texturas:** cor, metal/rugosidade e normal, todas de 1024.
+- **Altura:** de 4.94 a 12.56 studs no repouso.
+
+**Comparação visual:** com as texturas de jogo, a sela fica praticamente igual à de material procedural (`review/s1/jogo/_compara_*.png`).
+
+**Uso no Roblox (ainda não feito):** importar junto com o leão (mesmo esqueleto) ou como MeshPart com Bones de mesmo nome. Não renomear os Bones no Studio (memória do projeto). Arquivos em `export/sela/`; o `.blend` de jogo é `export/sela/Leao_Solar_Sela_Jogo.blend`.
