@@ -39,6 +39,14 @@ function L:_filtro()
 	for _, m in ipairs(game:GetService("CollectionService"):GetTagged("Invasor_Teste")) do table.insert(lista, m) end
 	-- outros dragoes nao sao "terreno" (chao/parede/obstaculo de voo); a convivencia cuida da distancia entre eles
 	for _, d in ipairs(workspace:GetChildren()) do if d ~= self.m and d:IsA("Model") and d:GetAttribute("FormaRegional") then table.insert(lista, d) end end
+	-- PATCH_NINHO_FORA_DO_CHAO (10/11): a peca Base do ninho (solida, ate ~21 studs de altura) entrava nos raios de chao;
+	-- na borda do ninho o guardiao "subia a rampa" (inclinacao ate 14 graus) e os dedos da frente afundavam 2-3 studs no
+	-- terreno. O proprio ninho do guardiao nao e chao/parede para ele. Montarias (sem GuardiaoNinho) nao mudam.
+	local nn = self.m:GetAttribute("GuardiaoNinho")
+	if nn then
+		if not (self._ninho and self._ninho.Parent) then self._ninho = workspace:FindFirstChild(nn, true) end
+		if self._ninho then table.insert(lista, self._ninho) end
+	end
 	self.params.FilterDescendantsInstances = lista
 end
 function L:chaoEm(p)
