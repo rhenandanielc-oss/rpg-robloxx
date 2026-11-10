@@ -11,6 +11,11 @@ MAPA = {"head": "Cabeca", "hips": "Quadril", "spine_1": "Coluna2", "mouth_lower"
 sc = bpy.context.scene; A = bpy.data.objects["Silverwing_Rig"]
 fps_cena = sc.render.fps
 PREFIXO = os.environ.get("PREFIXO_SAIDA", "Silverwing_")
+# (10/11, Sombrio) medido no Teste-animacoes: nos dragoes M2M importados, cada osso do jogo = osso do Blender girado 180
+# no proprio Y -> o basis bruto toca ESPELHADO (pitch/rolagem invertidos; cauda que devia cair sobe). CONVENCAO_ROBLOX=giro180y
+# grava q (x,y,z,w) -> (-x,y,-z,w) e t -> (-x,y,-z) (erro 0,0 stud contra o Blender no teste do Pairar). Sem a variavel:
+# como antes (os clipes ja montados das outras formas nao mudam).
+GIRO = os.environ.get("CONVENCAO_ROBLOX") == "giro180y"
 for nome in nomes:
     act = bpy.data.actions["Silverwing_" + nome]
     A.animation_data.action = act; A.animation_data.action_slot = act.slots[0]
@@ -24,8 +29,9 @@ for nome in nomes:
         for b in A.pose.bones:
             if b.name in ("root", "DRV_root"): continue
             m = b.matrix_basis; q = m.to_quaternion(); t = m.translation
-            ossos[MAPA.get(b.name, b.name)].extend([round(q.x, 5), round(q.y, 5), round(q.z, 5), round(q.w, 5),
-                                                     round(t.x, 5), round(t.y, 5), round(t.z, 5)])
+            sx = -1 if GIRO else 1
+            ossos[MAPA.get(b.name, b.name)].extend([round(sx * q.x, 5), round(q.y, 5), round(sx * q.z, 5), round(q.w, 5),
+                                                     round(sx * t.x, 5), round(t.y, 5), round(sx * t.z, 5)])
     dado = {"nome": PREFIXO + nome, "fps": FPS_OUT, "loop": bool(act.get("loop", True)), "quadros": n, "duracao": dur, "ossos": ossos}
     caminho = os.path.join(out, PREFIXO + nome + ".json")
     with open(caminho, "w") as fh: json.dump(dado, fh, separators=(",", ":"))

@@ -164,6 +164,7 @@ local function montar(plr, m)
 	m:SetAttribute("VooDev", vooDev(plr) or nil)                                                   -- so exibicao no HUD
 	local E = estados[m] or EstadosDragao.novo(m); estados[m] = E
 	local L = locos[m] or Locomotor.novo(m, E, cfgLoc); locos[m] = L
+	L:_filtro()                                                    -- PATCH_FILTRO_RENASCER: o L fica em cache; refaz a lista com o personagem ATUAL
 	L.noAr = false
 	local M = {m = m, plr = plr, ch = ch, hrp = hrp, hum = hum, L = L, E = E, modo = "transicao", vel = 0, vy = 0, roll = 0,
 		ent = {f = 0, t = 0, up = 0, correr = false}, ultEnt = 0, planar = false, conns = {}, clipeAte = 0}
@@ -238,6 +239,7 @@ end
 
 -- encerra a montaria (pedido, morte, desconexao). No ar, o dragao plana e pousa sozinho antes de liberar.
 local pousarAuto
+local passoVoo                                                          -- PATCH_MERGULHO_PICADO: usado no soltar (definido abaixo)
 soltar = function(M, motivo)
 	if M.encerrando then return end
 	M.encerrando = true
@@ -253,7 +255,10 @@ soltar = function(M, motivo)
 	if M.ov then M.ov:Destroy() end
 	cavaleiros[M.plr] = nil
 	local m = M.m
+	if M.picado then M.picado.cancelar = true end                                  -- PATCH_MERGULHO_PICADO
 	task.spawn(function()
+		while M.picado and m.Parent do passoVoo(M, RunService.Heartbeat:Wait()) end   -- PATCH_MERGULHO_PICADO: freia e termina
+		if m.Parent then m:SetAttribute("MergulhoFase", nil) end
 		if m.Parent and M.modo ~= "chao" and M.modo ~= "transicao" then pousarAuto(M) end          -- nunca larga no ar
 		if not m.Parent then montarias[m] = nil; return end
 		m:SetAttribute("Cavaleiro", nil); m:SetAttribute("MontariaModo", nil); m:SetAttribute("Montaria_Transicao", nil); m:SetAttribute("VooDev", nil)
@@ -412,7 +417,7 @@ end
 local function iniciarMordida(M)
 	local m = M.m; local MA = Cfg.mordidaAerea
 	if M.modo ~= "voo" or not m:GetAttribute("VooLivre") then avisar(M.plr, "Mordida aerea: so em voo"); return end
-	if m:GetAttribute("EmAtaque") or M.mordida then return end
+	if m:GetAttribute("EmAtaque") or M.mordida or M.picado then return end   -- PATCH_MERGULHO_PICADO
 	local agora = workspace:GetServerTimeNow()
 	if (m:GetAttribute("RecargaFim_MordidaAerea") or 0) > agora then return end
 	if not M.E:_kfs("Mordida_Aerea") then return end
@@ -476,6 +481,207 @@ local function passoMordida(M, dt, e)
 	return true
 end
 
+-- ===== PATCH_MERGULHO_PICADO (10/11, TESTE, NAO_APROVADO): mergulho de bico controlado pelo jogador ===============
+-- Usuario: "fecha as asas em torno do proprio corpo, compacto como bala de canhao, desce de focinho para o chao e, ao se
+-- aproximar, abre e bate as asas para frear". Locomocao, NAO ativa: sem dano, custo, recarga, stun ou invulnerabilidade.
+-- So formas em Cfg.mergulhoPicado.formas (hoje: Sombrio). Fases deterministicas: virada -> queda -> freio -> fim (voo
+-- baixo estavel); cancelar (V de novo, Espaco/E, incapacitado, desmontar/morte) leva direto ao freio. O freio comeca pela
+-- distancia de parada da velocidade REAL (abertura + desaceleracao + margem) medida do PONTO MAIS BAIXO do corpo animado
+-- (focinho/asas/cauda) ao longo da trajetoria (Spherecast a cada quadro, sem atravessar o chao entre quadros).
+-- Pitch: em aplicar(), POSITIVO ergue o focinho -> queda = pitch NEGATIVO (medido 09/11 e de novo no teste de 10/11).
+local MP = Cfg.mergulhoPicado
+-- (10/11 v2) revisao da pose: clipes proprios Mergulho_Entrada (recolhe em sequencia) e Mergulho_Freio (abre, 2 batidas,
+-- chega no Pairar) quando existem; pitch da raiz no freio volta em curva CONTINUA presa a desaceleracao (antes saltava de
+-- -84 para +18 em ~0,2 s). Sem os clipes novos: comportamento v1 (Pairar acelerado + Mergulho_Saida).
+local OSSOS_BAIXO = {"mouth_upper_tip", "Cabeca", "wing_tip_l", "wing_tip_r", "tail_tip", "back_toes_tip_l", "back_toes_tip_r"}
+local function pontoBaixo(M)
+	if not M.ossosBaixo then
+		M.ossosBaixo = {}
+		for _, n in ipairs(OSSOS_BAIXO) do local b = osso(M.m, n); if b then table.insert(M.ossosBaixo, b) end end
+	end
+	local menor = M.L:pos()
+	for _, b in ipairs(M.ossosBaixo) do local q = b.TransformedWorldCFrame.Position; if q.Y < menor.Y then menor = q end end
+	return menor
+end
+-- espaco livre (studs) do ponto mais baixo ao longo de dir, ate alcance
+local function folgaCaminho(M, dir, alcance)
+	local b = pontoBaixo(M); local r = 2.5
+	local h = workspace:Spherecast(b - dir * r, r, dir * (alcance + r), M.L.params)
+	return h and math.max(h.Distance - r, 0) or math.huge, h
+end
+local function podePicado(M)
+	local m = M.m
+	if not (MP and MP.formas[m:GetAttribute("FormaRegional") or ""]) then return false, nil end   -- forma sem a manobra: ignora
+	if M.modo ~= "voo" or not m:GetAttribute("VooLivre") then return false, "Mergulho: so em voo" end
+	if not (M.E:_kfs("Mergulho_Picado") and M.mix and M.mix.ativo) then return false, "Mergulho indisponivel neste dragao" end
+	if m:GetAttribute("EmAtaque") or M.mordida or arremetendo(m) or m:GetAttribute("CorpoElevado") then return false, "Mergulho: aguarde o ataque terminar" end
+	if m:GetAttribute("Incapacitado") then return false, "O dragao esta incapacitado" end
+	if m:GetAttribute("PresoFator") then return false, "Preso: nao da para mergulhar" end
+	if m:GetAttribute("Montaria_Transicao") or os.clock() < (M.picadoLivreEm or 0) then return false, nil end
+	local livre = folgaCaminho(M, -Y, MP.alturaMin + 10)
+	if livre < MP.alturaMin then return false, ("Baixo demais para mergulhar (%d de %d studs livres)"):format(math.floor(livre), MP.alturaMin) end
+	return true
+end
+local function mudarFase(M, fase)
+	local P = M.picado; P.fase = fase; P.tFase = os.clock(); M.m:SetAttribute("MergulhoFase", fase)
+end
+local function iniciarPicado(M)
+	local ok, motivo = podePicado(M)
+	if not ok then if motivo then avisar(M.plr, motivo) end; return end
+	local g = M.gama or 0
+	M.planar = false; M.candidatoPouso = false; M.yawRate = 0
+	M.picado = {fase = "virada", t0 = os.clock(), tFase = os.clock(), vh = M.vel * math.cos(g), vy = M.vel * math.sin(g) + (M.vyH or 0),
+		dir = M.L:frente(), offNivel = M.L:pos().Y - pontoBaixo(M).Y, st = {y0 = M.L:pos().Y, vMax = 0, folgaMin = math.huge, travas = 0, cabAbaixo = 0, amostras = 0, pitchMin = 0}}
+	M.m:SetAttribute("Montaria_Transicao", true)                       -- o Nucleo recusa as ativas durante a manobra
+	M.m:SetAttribute("MergulhoFase", "virada"); M.m:SetAttribute("VooEstado", "picado")
+	local P = M.picado
+	P.v2 = M.E:_kfs("Mergulho_Entrada") ~= nil and M.E:_kfs("Mergulho_Freio") ~= nil
+	P.offNivel = math.max(P.offNivel, MP.offFinal or 0)               -- pose final (Pairar: cauda caida) e a mais baixa
+	if P.v2 then
+		local t = M.E:_trilha("Mergulho_Entrada"); t.Priority = Enum.AnimationPriority.Action; t.Looped = false
+		t:Play(0.12); P.entrada = t
+	end
+end
+local function iniciarFreio(M)
+	local P = M.picado; mudarFase(M, "freio")
+	P.pq0 = M.L.pitch; P.vy0 = math.min(P.vy, -1)
+	if P.entrada then P.entrada:Stop(0.1); P.entrada = nil end
+	if P.v2 then
+		-- o Freio entra rapido e o Picado sai devagar: a soma dos pesos Action nunca cai abaixo de 1 (senao o Pairar
+		-- de baixo aparece por 1 quadro: medido tronco -84 -> -60 -> -84)
+		local t = M.E:_trilha("Mergulho_Freio"); t.Priority = Enum.AnimationPriority.Action; t.Looped = false
+		local durEsp = MP.tAbrir + math.abs(P.vy) / MP.freioAcel + 0.25                  -- duracao prevista do freio
+		t:Play(0.05); t:AdjustSpeed(math.clamp(1.2 / math.max(durEsp, 0.5), 0.8, 1.4)); P.saida = t
+		if P.trilha then P.trilha:Stop(0.3) end
+	else
+		if P.trilha then P.trilha:Stop(MP.tAbrir) end
+		local ok, t = pcall(function() return M.E:_trilha("Mergulho_Saida") end)        -- v1: abre as asas e passa a bater
+		if ok and t then t.Priority = Enum.AnimationPriority.Action; t.Looped = false; t:Play(MP.tAbrir * 0.8); t:AdjustSpeed(1.2); P.saida = t end
+	end
+	P.st.vFreio = math.floor(Vector3.new(P.vh, P.vy, 0).Magnitude); P.st.folgaFreio = math.floor(select(1, folgaCaminho(M, -Y, 400)))
+	P.st.altFreio = math.floor(M.L:pos().Y - P.st.y0)
+end
+local function terminarPicado(M, motivo)
+	local P = M.picado; if not P then return end
+	if P.trilha then P.trilha:Stop(0.3) end
+	if P.entrada then P.entrada:Stop(0.25) end
+	if P.saida then
+		local s = P.saida
+		if P.v2 and s.IsPlaying and s.Length > 0 then                                -- v2: o freio termina na pose do Pairar
+			local resto = (s.Length - s.TimePosition) / math.max(s.Speed, 0.1)
+			task.delay(math.max(resto - 0.35, 0), function() if s.IsPlaying then s:Stop(0.35) end end)
+		else s:Stop(0.6) end
+	end
+	local tp = M.mix and M.mix.t.Pairar_AFK; if tp then tp:AdjustSpeed(1) end; M.ritmoPairar = 1
+	M.picado = nil
+	M.gama = 0; M.vel = math.max(P.vh, 0); M.vyH = 0; M.planar = false; M.yawRate = 0
+	M.picadoLivreEm = os.clock() + MP.antiSpam; M.recupAte = os.clock() + MP.recuperacao
+	M.m:SetAttribute("Montaria_Transicao", nil); M.m:SetAttribute("MergulhoFase", "recuperacao")
+	P.st.motivo = motivo; P.st.dur = os.clock() - P.t0; P.st.queda = math.floor(P.st.y0 - M.L:pos().Y); M.ultPicado = P.st
+end
+local function passoPicado(M, dt, e)
+	local m, L, P = M.m, M.L, M.picado
+	local t = os.clock() - P.tFase
+	local upNovo = (e.up or 0) > 0.5 and (M.upAnt or 0) <= 0.5
+	M.upAnt = e.up or 0; M.fAnt = math.max(e.f, 0); M.candidatoPouso = false
+	if (P.fase == "virada" or P.fase == "queda") and (upNovo or P.cancelar or m:GetAttribute("Incapacitado")) then
+		P.cancelar = false; P.st.cancelado = true
+		if not P.trilha then terminarPicado(M, "cancelado"); return end         -- ainda nao fechou as asas: segue voando (v2: para a Entrada)
+		iniciarFreio(M); t = 0
+	end
+	if os.clock() - P.t0 > MP.maxDur then terminarPicado(M, "tempo"); return end
+	local pitchAlvo, resp, ritmo, taxa = 0, 7, 1, nil
+	if P.fase == "virada" and P.v2 then                                        -- v2: antecipacao curta, sem empinar
+		P.vh *= math.exp(-1.5 * dt)
+		local A0 = MP.antecipa or 0.12
+		if t < A0 then
+			P.vy += (MP.subidaVirada * 0.5 - P.vy) * math.min(1, 6 * dt); pitchAlvo = math.rad(MP.pitchAntecipa or 5); resp = 8
+			P.offNivel = math.max(P.offNivel, L:pos().Y - pontoBaixo(M).Y)
+		else
+			local f = math.clamp((t - A0) / MP.viradaFecha, 0, 1); local s = f * f * (3 - 2 * f)
+			local p0 = math.rad(MP.pitchAntecipa or 5)
+			pitchAlvo = p0 + (-math.rad(MP.pitchQueda) - p0) * s; resp = 10
+			P.vy += (-MP.empurrao * s - P.vy) * math.min(1, 8 * dt)
+			if not P.trilha and f >= 0.7 then                                    -- a Entrada termina na pose do picado
+				local t2 = M.E:_trilha("Mergulho_Picado"); t2.Priority = Enum.AnimationPriority.Action; t2.Looped = true
+				t2:Play(0.2); P.trilha = t2
+			end
+			if f >= 1 then P.vy = math.min(P.vy, -MP.empurrao); mudarFase(M, "queda") end
+		end
+	elseif P.fase == "virada" then
+		P.vh *= math.exp(-1.5 * dt)
+		if t < MP.viradaAbre then                                             -- abre e bate as asas, bico um pouco acima
+			P.vy += (MP.subidaVirada - P.vy) * math.min(1, 6 * dt); pitchAlvo = math.rad(15); ritmo = 2
+			P.offNivel = math.max(P.offNivel, L:pos().Y - pontoBaixo(M).Y)        -- asa batendo: pior caso do corpo nivelado
+		else                                                                   -- FECHA as asas tombando de bico
+			if not P.trilha then
+				local t2 = M.E:_trilha("Mergulho_Picado"); t2.Priority = Enum.AnimationPriority.Action; t2.Looped = true
+				t2:Play(MP.viradaFecha * 0.9); P.trilha = t2
+			end
+			local f = math.clamp((t - MP.viradaAbre) / MP.viradaFecha, 0, 1); local s = f * f * (3 - 2 * f)
+			pitchAlvo = math.rad(15) + (-math.rad(MP.pitchQueda) - math.rad(15)) * s; resp = 10
+			P.vy += (-MP.empurrao * s - P.vy) * math.min(1, 8 * dt)
+			if f >= 1 then P.vy = math.min(P.vy, -MP.empurrao); mudarFase(M, "queda") end
+		end
+	elseif P.fase == "queda" then
+		P.vy = math.max(P.vy - MP.acel * dt, -MP.vMax)
+		P.vh *= math.exp(-MP.derivaHoriz * dt)
+		pitchAlvo = -math.min(math.rad(MP.pitchQueda), math.atan2(-P.vy, math.max(P.vh, 0.1))); resp = 8
+		-- distancia que o PIVO ainda percorre ate parar: abertura (freio parcial) + desaceleracao plena. O corpo volta a
+		-- nivelar no freio: o ponto mais baixo deixa de ser o focinho e passa a ser a asa (offNivel, medido na entrada)
+		local vel = P.dir * P.vh + Y * P.vy; local v = vel.Magnitude; local dirV = vel.Unit
+		local tA, a1 = MP.tAbrir, MP.freioAcel * 0.35
+		local v1 = math.max(v - a1 * tA, 0)
+		local parada = v * tA - 0.5 * a1 * tA * tA + v1 * v1 / (2 * MP.freioAcel)
+		local acima = (L:pos() - pontoBaixo(M)):Dot(-dirV)                       -- pivo atras do ponto mais baixo
+		local livre = folgaCaminho(M, dirV, parada + v * dt + MP.margem + 12)
+		local sobra = livre + acima - P.offNivel - MP.margem                       -- quanto o pivo pode andar
+		if sobra <= parada then P.st.folgaDecisao = math.floor(livre); P.st.paradaPrevista = math.floor(parada); iniciarFreio(M); t = 0 end
+	end
+	if P.fase == "freio" then
+		local a = t < MP.tAbrir and MP.freioAcel * 0.35 or MP.freioAcel               -- asas ainda abrindo: freia pouco
+		P.vy = math.min(P.vy + a * dt, 0)
+		if P.vy > -MP.vSaida then P.vy += (0 - P.vy) * math.min(1, 4 * dt) end
+		P.vh *= math.exp(-2.5 * dt)
+		if P.v2 then                                                           -- v2: corpo nivela junto com a desaceleracao
+			local prog = math.clamp(1 - P.vy / P.vy0, 0, 1); local s = prog * prog * (3 - 2 * prog)
+			pitchAlvo = P.pq0 + (math.rad(MP.pitchFreio) - P.pq0) * s; resp = 12; taxa = math.rad(MP.taxaPitch or 170)
+		else
+			pitchAlvo = math.rad(MP.pitchFreio); resp = 5; ritmo = MP.ritmoFreio
+		end
+		if P.vy >= -MP.vSaida and t >= MP.durFreioMin then terminarPicado(M, P.st.cancelado and "cancelado" or "ok"); return end
+	end
+	-- deslocamento com varredura: nunca passa do obstaculo entre um quadro e outro (sem teleporte)
+	local vel = P.dir * P.vh + Y * P.vy; local passo = vel * dt
+	if passo.Magnitude > 1e-3 then
+		local livre = folgaCaminho(M, passo.Unit, passo.Magnitude + MP.margem)
+		if livre < passo.Magnitude + 1 then
+			passo = passo.Unit * math.max(livre - 1, 0); P.st.travas += 1
+			if P.vy < 0 then P.vy = 0 end
+			if P.fase ~= "freio" then iniciarFreio(M) end
+		end
+	end
+	local dP = (pitchAlvo - L.pitch) * math.min(1, resp * dt)
+	if taxa then dP = math.clamp(dP, -taxa * dt, taxa * dt) end               -- v2: sem virada brusca no freio
+	L.pitch += dP
+	M.roll += (0 - M.roll) * math.min(1, 6 * dt)
+	aplicar(M, L:pos() + passo)
+	local vAtual = vel.Magnitude
+	m:SetAttribute("Velocidade", math.floor(vAtual))
+	-- leituras de teste (servidor): velocidade, folga minima, cabeca abaixo do quadril na queda
+	P.st.vMax = math.max(P.st.vMax, vAtual); P.st.pitchMin = math.min(P.st.pitchMin, math.deg(L.pitch))
+	if P.fase ~= "virada" then P.st.folgaMin = math.min(P.st.folgaMin, (folgaCaminho(M, -Y, 300))) end
+	if P.fase == "queda" and t > 0.15 then
+		P.cb = P.cb or osso(m, "Cabeca"); P.qd = P.qd or osso(m, "Quadril"); local cb, qd = P.cb, P.qd
+		if cb and qd then P.st.amostras += 1; if cb.TransformedWorldCFrame.Position.Y < qd.TransformedWorldCFrame.Position.Y then P.st.cabAbaixo += 1 end end
+	end
+	-- asas: Pairar com ritmo forte na virada (abrindo) e no freio; na queda o Picado (Action) cobre a base
+	pesos(M, {Pairar_AFK = 1})
+	local tp = M.mix.t.Pairar_AFK
+	if tp and math.abs((M.ritmoPairar or 1) - ritmo) > 0.05 then tp:AdjustSpeed(ritmo); M.ritmoPairar = ritmo end
+	m:SetAttribute("VooEstado", P.fase == "freio" and "freio" or "picado")
+end
+
 -- ===== ar: VOO LIVRE (atributo VooLivre no modelo; teste do Dragao Glacial) =======================================
 -- Camera = direcao (com W o pitch da camera vira subida/descida). W acelera; S NAO faz nada no ar; sem W desacelera
 -- ate PARAR no ar (voo estacionario, batidas de sustentacao); Espaco/Ctrl sobem/descem parado. Pouso automatico:
@@ -485,6 +691,8 @@ local function passoVooLivre(M, dt)
 	local e = entrada(M)
 	local ataque = m:GetAttribute("EmAtaque")
 	if not (M.mix and M.mix.ativo) then iniciarMix(M) end
+	if M.picado then return passoPicado(M, dt, e) end                                  -- PATCH_MERGULHO_PICADO
+	if M.recupAte and os.clock() > M.recupAte then M.recupAte = nil; m:SetAttribute("MergulhoFase", nil) end
 	local V, VL = Cfg.voo, Cfg.vooLivre
 	local arr = arremetendo(m); impactoArremetida(M)                                -- PATCH_ARREMETIDA_5S
 	local f = arr and 1 or math.max(e.f, 0)                                           -- S sem funcao no ar; investida = empuxo pleno
@@ -593,7 +801,7 @@ end
 -- Rumo e inclinacao da trajetoria seguem a CAMERA (yaw/pitch enviados pelo cliente, limitados no servidor);
 -- W acelera, S desacelera ate a velocidade minima de sustentacao, sem nada mantem a velocidade. Curvas progressivas
 -- (taxa e aceleracao de giro limitadas), inclinacao do corpo pela curva, nariz acompanha a trajetoria.
-local function passoVoo(M, dt)
+function passoVoo(M, dt)                                                -- atribui o local declarado antes do soltar
 	local m, L = M.m, M.L
 	local e = entrada(M)
 	local ataque = m:GetAttribute("EmAtaque")
@@ -800,6 +1008,7 @@ local function descerEPousar(M, g)
 end
 local function pousar(M)
 	if M.modo ~= "voo" then return end
+	if M.picado then avisar(M.plr, "Aguarde o fim do mergulho"); return end            -- PATCH_MERGULHO_PICADO
 	local g, motivo = localPouso(M); if not g then avisar(M.plr, motivo); return end
 	descerEPousar(M, g)
 end
@@ -826,7 +1035,7 @@ RunService.Heartbeat:Connect(function(dt)
 					local g = localPouso(M)
 					if g then M.modo = "pousando"; task.spawn(descerEPousar, M, g) end
 				end
-				if m:GetAttribute("Incapacitado") and localPouso(M) then task.spawn(descerEPousar, M, (localPouso(M))) end
+				if m:GetAttribute("Incapacitado") and not M.picado and localPouso(M) then task.spawn(descerEPousar, M, (localPouso(M))) end
 			end
 		end
 	end
@@ -838,8 +1047,9 @@ Comando.OnServerEvent:Connect(function(plr, acao, m)
 	if acao == "desmontar" then task.spawn(desmontar, M)
 	elseif acao == "decolar" then task.spawn(decolar, M)
 	elseif acao == "pousar" then task.spawn(pousar, M)
-	elseif acao == "planar" then if M.modo == "voo" then M.planar = not M.planar; M.planarDesde = os.clock() end
-	elseif acao == "mordida" then iniciarMordida(M) end
+	elseif acao == "planar" then if M.modo == "voo" and not M.picado then M.planar = not M.planar; M.planarDesde = os.clock() end
+	elseif acao == "mordida" then iniciarMordida(M)
+	elseif acao == "mergulho" then if M.picado then M.picado.cancelar = true else iniciarPicado(M) end end   -- PATCH_MERGULHO_PICADO
 end)
 Players.PlayerRemoving:Connect(function(plr) local M = cavaleiros[plr]; if M then soltar(M, "desconexao") end end)
 
@@ -880,10 +1090,16 @@ dbg.OnInvoke = function(cmd, plr, a)
 		return ("f=%s cp=%s cy=%s gama=%.1f yawRate=%.1f teto=%s parede=%s minY=%s y=%.1f"):format(tostring(e.f), tostring(e.cp), tostring(e.cy),
 			math.deg(M.gama or 0), math.deg(M.yawRate or 0), tostring(M.teto), tostring(M.parede), tostring(M.minY and math.floor(M.minY)), M.m:GetPivot().Position.Y)
 	end
-	if cmd == "simularDesconexao" and M then soltar(M, "desconexao"); return "ok" end         -- mesmo caminho do PlayerRemoving
+	if cmd == "simularDesconexao" and M then soltar(M, "desconexao"); return "ok" end
+	if cmd == "picado" then                                                                   -- PATCH_MERGULHO_PICADO: leitura de teste
+		local st = M and (M.picado and M.picado.st or M.ultPicado); if not st then return "sem mergulho" end
+		local t = {}; for k, v in pairs(st) do table.insert(t, k .. "=" .. (type(v) == "number" and ("%.1f"):format(v) or tostring(v))) end
+		table.sort(t); return (M.picado and ("ATIVO fase=" .. M.picado.fase .. " ") or "") .. table.concat(t, " ")
+	end         -- mesmo caminho do PlayerRemoving
 	if cmd == "acao" and M then
 		if a == "desmontar" then desmontar(M) elseif a == "decolar" then decolar(M) elseif a == "pousar" then pousar(M) elseif a == "planar" then M.planar = not M.planar
-		elseif a == "mordida" then iniciarMordida(M) end
+		elseif a == "mordida" then iniciarMordida(M)
+		elseif a == "mergulho" then if M.picado then M.picado.cancelar = true else iniciarPicado(M) end end
 		return M.modo
 	end
 end

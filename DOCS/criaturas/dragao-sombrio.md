@@ -227,6 +227,18 @@ Todos estão marcados **[PROPOSTA]**. Dano, alcance, duração, custo, recarga e
 - Módulo `SonsSombra` (só Pro Sound Effects): sucção reversa, vozes de espírito, zumbido maligno e respiração oca; correntes de metal nas Correntes; golpes graves na detonação do Eclipse; Passo com respiração baixa e de curto alcance enquanto invisível.
 - Voz própria do Sombrio (05/11, DOCS/estado CQ, aprovada de ouvido): tigre grave (Tiger Roars/Hiss/Growls) com rosnado oco de espírito em camada, respiração de boi, dano de urso-polar; asas de membrana suave e passos acolchoados (padrão calmo de todos os dragões).
 
+### 5.z Mergulho de bico jogável (10/11, DOCS/estado CY; TESTE, NAO_APROVADO)
+- Montado em voo: **V** (ou botão de toque) = virada → asas fechadas, queda de bico → freio batendo as asas perto do chão/obstáculo → voo parado baixo. V de novo ou Espaço/E cancelam (freia). Locomoção, sem dano/custo/recarga; ativas bloqueadas durante a manobra. Só o Sombrio (`ConfigMontaria.mergulhoPicado.formas`).
+- Vento no chão nas batidas do freio (`VentoMergulho_Cliente`): ar transparente radial; poeira só em material solto; spray em água.
+- Evidência: `BLENDER/Criaturas/Teste_IA/dragao_sombra/review/mergulho_jogavel/`. Gamepad sem botão livre (não mapeado).
+
+### 5.z2 Mergulho v2 (10/11, DOCS/estado CZ; TESTE, NAO_APROVADO)
+- Clipes próprios: Mergulho_Entrada (recolhe em sequência), Mergulho_Picado v2 e Mergulho_Freio (abre, 2 batidas, chega no Pairar). O Pairar foi reexportado na convenção do jogo (antes tocava espelhado: peito para baixo, cauda para cima) e sem o tranco de cabeça a cada batida.
+- Gerar: `source env_clipes_sombrio.sh` + `MERGULHO_V2=1 SINAL_FIXO=1 PIC2='{"cab":18,"cima":-26,"cauda":3}'`; exportar com `CONVENCAO_ROBLOX=giro180y`. Os demais clipes do Sombrio ainda tocam espelhados (pendente de aprovação).
+
+### 5.z3 Clipes na convenção do jogo (10/11, DOCS/estado DA)
+- Todos os KFS do Sombrio no Studio agora tocam como no Blender (antes espelhados em pitch/rolagem). Exportar sempre com `CONVENCAO_ROBLOX=giro180y`. Desfazer = aplicar a mesma conversão de novo.
+
 ## 6. Etapa 1 executada (03/11): ciclo de chão
 
 - **Parado, Andar, Correr:** testados em Play no `workspace.Sombrio`, com o corpo movido nas velocidades de ritmo (7,9 e 18,94 studs/s). Pé no apoio a ~11% da velocidade do corpo, igual ao Glacial certificado medido no mesmo teste. No Parado, o pé desliza 0,02–0,05 stud.

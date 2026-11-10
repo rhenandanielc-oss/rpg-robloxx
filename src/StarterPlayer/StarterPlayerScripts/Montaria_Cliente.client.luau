@@ -178,6 +178,14 @@ local function ligarAcoes()
 			return Enum.ContextActionResult.Sink
 		end, C.rugido, "Rugir")
 	end
+	-- PATCH_MERGULHO_PICADO: V (e botao de toque) pede o mergulho de bico; de novo cancela (o servidor valida tudo)
+	local MPc = Cfg.mergulhoPicado
+	if C.mergulho and MPc and m and MPc.formas[m:GetAttribute("FormaRegional") or ""] then
+		acao("Mont_Mergulho", function(st)
+			if st == Enum.UserInputState.Begin and m and m:GetAttribute("MontariaModo") == "voo" then Comando:FireServer("mergulho") end
+			return Enum.ContextActionResult.Sink
+		end, C.mergulho, "Mergulho")
+	end
 	acao("Mont_Pousar", function(st) if st == Enum.UserInputState.Begin then Comando:FireServer("pousar") end; return Enum.ContextActionResult.Sink end, C.pousar, "Pousar")
 	if C.travar then acao("Mont_Trava", function(st) if st == Enum.UserInputState.Begin then if trava then soltarTrava(); avisoTrava("Alvo solto") else travar() end end; return Enum.ContextActionResult.Sink end, C.travar, "Alvo") end   -- PATCH_TRAVA_ALVO
 	acao("Mont_Desmontar", function(st) if st == Enum.UserInputState.Begin then Comando:FireServer("desmontar") end; return Enum.ContextActionResult.Sink end, C.desmontar, "Sair")
@@ -208,7 +216,7 @@ local function ligarAcoes()
 	end
 end
 local function desligarAcoes()
-	for _, n in ipairs({"Mont_Subir", "Mont_Descer", "Mont_Correr", "Mont_Planar", "Mont_Pousar", "Mont_Desmontar", "Mont_Elemento", "Mont_Mordida", "Mont_Garra", "Mont_Rugido", "Mont_Trava"}) do CAS:UnbindAction(n) end
+	for _, n in ipairs({"Mont_Subir", "Mont_Descer", "Mont_Correr", "Mont_Planar", "Mont_Pousar", "Mont_Desmontar", "Mont_Elemento", "Mont_Mordida", "Mont_Garra", "Mont_Rugido", "Mont_Trava", "Mont_Mergulho"}) do CAS:UnbindAction(n) end
 	soltarTrava()                                                       -- PATCH_TRAVA_ALVO
 	for _, h in ipairs(C.habilidades) do CAS:UnbindAction("Mont_" .. h[1]) end
 end
@@ -344,7 +352,15 @@ local function cameraOrbital(dt)
 		local d = UIS:GetMouseDelta()
 		local sens = 0.0042 * UserSettings():GetService("UserGameSettings").MouseSensitivity
 		orb.yaw -= d.X * sens; orb.pitch -= d.Y * sens
+	elseif m:GetAttribute("MergulhoFase") and m:GetAttribute("MergulhoFase") ~= "recuperacao" then
+		-- PATCH_MERGULHO_PICADO: de bico para baixo o LookVector quase nao tem componente horizontal (o rumo "pularia");
+		-- a camera mantem o rumo e inclina para ver o chao chegando; devolve a inclinacao anterior no fim
+		orb.pitchAntes = orb.pitchAntes or orb.pitch
+		local fase = m:GetAttribute("MergulhoFase")
+		local alvoP = fase == "queda" and -0.85 or fase == "freio" and -0.6 or orb.pitch
+		orb.pitch += (alvoP - orb.pitch) * math.min(1, 2.5 * dt)
 	elseif (m:GetAttribute("Velocidade") or 0) > 2 or m:GetAttribute("NoAr") then
+		if orb.pitchAntes then orb.pitch += (orb.pitchAntes - orb.pitch) * math.min(1, 2 * dt); if math.abs(orb.pitch - orb.pitchAntes) < 0.02 then orb.pitchAntes = nil end end
 		local lv = m:GetPivot().LookVector
 		local alvoYaw = math.atan2(-lv.X, -lv.Z)
 		local dif = (alvoYaw - orb.yaw + math.pi) % (2 * math.pi) - math.pi
@@ -430,6 +446,7 @@ local function entrar(dragao)
 	for id, s in pairs(slots) do if s.nome then s.nome.Text = (rf and rf[id]) or s.padrao end end
 	if C.dicaForma and C.dicaForma[fr] then dica.Text ..= C.dicaForma[fr] end
 	if C.travar then dica.Text ..= " | C / clique do meio: travar alvo" end   -- PATCH_TRAVA_ALVO
+	if C.mergulho and Cfg.mergulhoPicado and Cfg.mergulhoPicado.formas[fr] then dica.Text ..= " | V: mergulho de bico (V/Espaco cancela)" end   -- PATCH_MERGULHO_PICADO
 	energia.BackgroundColor3 = (C.corEnergiaForma and C.corEnergiaForma[fr]) or Color3.fromRGB(255, 150, 60)
 	gui.Enabled = true; if reticula then reticula.Visible = UIS.MouseEnabled end
 	ligarAcoes()
@@ -485,7 +502,10 @@ RunService.RenderStepped:Connect(function(dt)
 	end
 	-- camera: alvo suavizado no pivo (sem tremer com as asas); FOV abre um pouco com a velocidade
 	local alvo = m:GetPivot().Position + Vector3.yAxis * (camCfg("alturaAlvo") + (m:GetAttribute("NoAr") and camCfg("alturaVoo") or 0))
-	alvoCam.CFrame = CFrame.new(alvoCam.Position:Lerp(alvo, math.min(1, Cfg.camera.suav * dt)))
+	-- PATCH_MERGULHO_PICADO: na queda (ate 110 studs/s) o alvo suave ficaria ~18 studs atras e o dragao sairia do quadro
+	local fasePic = m:GetAttribute("MergulhoFase")
+	local suav = (fasePic == "queda" or fasePic == "freio") and Cfg.camera.suav * 3 or Cfg.camera.suav
+	alvoCam.CFrame = CFrame.new(alvoCam.Position:Lerp(alvo, math.min(1, suav * dt)))
 	local v = m:GetAttribute("Velocidade") or 0
 	local cam = workspace.CurrentCamera
 	cam.FieldOfView += ((Cfg.camera.fovBase + Cfg.camera.fovVel * math.clamp(v / Cfg.vooRapidoVel, 0, 1)) - cam.FieldOfView) * math.min(1, 2 * dt)

@@ -109,6 +109,10 @@ local function passo(e, dt)
 		local cab = e.cabeca
 		if h and cab then alvoDir = (h.Position - cab.TransformedWorldCFrame.Position).Unit end
 	end
+	-- PATCH_MERGULHO_PICADO (10/11): no picado/freio o clipe manda no pescoco (cabeca na direcao da queda): sem olhar a
+	-- mira, sem curvar pela trajetoria vertical e sem giro (rumo travado); as molas voltam ao neutro suave
+	local fasePic = m:GetAttribute("MergulhoFase")
+	if fasePic and fasePic ~= "recuperacao" then alvoDir = nil; traj = 0; giro = 0 end
 	if alvoDir then
 		local rel = cf:VectorToObjectSpace(alvoDir)
 		oYaw = clamp(math.deg(math.atan2(-rel.X, -rel.Z)), -P.maxOlharYaw, P.maxOlharYaw) * P.olharYaw

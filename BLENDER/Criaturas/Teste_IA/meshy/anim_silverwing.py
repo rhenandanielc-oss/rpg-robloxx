@@ -312,6 +312,14 @@ def _fixar_ombro(p):
         if sh in p.extra:
             e = p.extra.pop(sh); p.extra[w1] = e @ p.extra[w1] if w1 in p.extra else e
     p.asas = novo
+# SINAL_FIXO (10/11, Sombrio: so com a variavel): o sinal do giro de cada osso vinha da direcao JA POSADA (dirb . ey); com
+# o corpo muito erguido (Pairar, arf ~55) a cabeca cruzava 90 graus do eixo do corpo, o sinal invertia e a cabeca dava um
+# tranco de ~60 graus para baixo a cada batida (medido: head -9 -> -71 -> -9 em 0,2 s). Fixo pelo osso em REPOUSO.
+SINAL_FIXO = os.environ.get("SINAL_FIXO") == "1"
+_SINAL = {}
+def _sinal_repouso(n):
+    if n not in _SINAL: _SINAL[n] = 1 if (A.data.bones[n].matrix_local.to_3x3() @ Y).dot(Y) > 0 else -1
+    return _SINAL[n]
 def resolver(p):
     _fixar_ombro(p)
     Rb = p.Rb(); ex, ey, ez = Rb @ X, Rb @ Y, Rb @ Z
@@ -330,6 +338,7 @@ def resolver(p):
             cima, esq = p.curva[n]
             dirb = rot(Mc) @ Y
             sinal = 1 if dirb.dot(ey) > 0 else -1             # osso para tras (cauda) ou para frente (pescoco)
+            if SINAL_FIXO: sinal = _sinal_repouso(n)          # (10/11) sem inverter no meio do clipe
             R = Rax(ez, esq * (-sinal)) @ Rax(ex, cima * sinal)
             if n in p.extra: R = p.extra[n] @ R                  # giro extra em mundo (ex.: cabeca inclinada de lado)
             Md = Matrix.Translation(Mc.translation) @ (R @ rot(Mc)).to_4x4()
@@ -1063,8 +1072,12 @@ def f_pairar(u, nb=1, ut=None):        # voo estacionario: corpo inclinado, bati
                 cab=-p.arf * (0.2 + 0.25 * PENDULO) - 4 * bp * AMP * 0.6, onda=onda_pescoco(w, 1.6 * AMP))
     lat = onda_cauda(ut, [(12.0, 1, 0.5, 1.0), (5.5, 2, 2.0, 1.3), (2.2, 3, 0.9, 1.6)])
     vert = somar([6 * (0.45 + 0.12 * k) * ponta(w - 0.16 - 0.07 * k) for k in range(7)], onda_cauda(ut, [(3.0, 1, 1.0, 0.9)]))
-    cauda_ar(p, -14 - 14 * PENDULO, lat, vert)
+    # (10/11, Sombrio: CAUDA_PAIRAR) com os clipes na convencao certa a cauda do hover caia a prumo (~85 graus, 18,5 studs
+    # abaixo do quadril) e entrava no chao no Eclipse (corpo a 24 do chao) e no voo parado baixo; CAUDA_PAIRAR = base da
+    # cauda (graus) -> segue mais a linha do corpo inclinado. Sem a variavel: como antes.
+    cauda_ar(p, CAUDA_PAIRAR if CAUDA_PAIRAR is not None else -14 - 14 * PENDULO, lat, vert)
     return p
+CAUDA_PAIRAR = float(os.environ["CAUDA_PAIRAR"]) if os.environ.get("CAUDA_PAIRAR") else None
 
 def f_subida(u, nb=1, ut=None):
     w = u * nb; p = Pose(); b = ponta(w)
@@ -1260,12 +1273,112 @@ def f_dano(forte=False, ar=False):
         return p
     return fn
 
+# MERGULHO PICADO (usuario 09/11: "no mergulho o dragao va rapidamente ao chao, que junte as asas e desca com tudo"):
+# excecao pedida a regra de 06/11 (asas nunca dobradas) SO para este clipe: asas JUNTAS ao corpo, varridas para tras,
+# cotovelo e punho fechados e dedos em leque fechado (giros rigidos das asas armadas: a membrana nao torce); pescoco e
+# cabeca esticados a frente, patas bem recolhidas, cauda reta com tremor rapido. A inclinacao de bico para baixo vem do
+# motor de voo (pitch do corpo), nao do clipe. P_PICADO por env ajusta a pose.
+P_PICADO = dict(ergue=-14, recua=88, cotovelo=-86, punho=118, leque=1.0)  # (v3 09/11, usuario: "de cabeca para baixo, com as asas
+# fechadas" = bico para o chao) variante F1: asas FECHADAS coladas ao corpo, sem tremor
+# (v2 E3 enrolada: ergue -6, recua 88, cotovelo -98, punho 132 com EMBOLA=1)
+# (variante A anterior: ergue -18, recua 85, cotovelo -80, punho 110 = coladas, varridas para tras)
+if os.environ.get("P_PICADO"):
+    import json as _js3; P_PICADO.update(_js3.loads(os.environ["P_PICADO"]))
+# (v2, usuario 09/11: "eu quero que ele va rapidamente de cabeca, meio embolado com as asas, e quando tiver se aproximando
+# do chao volte a bater as asas"): EMBOLA (0..1) = asas ENROLADAS em volta do corpo (nao varridas para tras), um pouco
+# assimetricas e tremendo no vento (lado direito defasado), cauda curvada, pescoco esticado de cabeca para a queda.
+# A frenagem batendo asas perto do chao e do motor de voo (troca para o Pairar/Subida), nao deste clipe.
+EMBOLA = float(os.environ.get("EMBOLA", "0"))                  # (v3) padrao = asas fechadas e paradas; 1 = embolado (v2)
+def f_mergulho_picado(u):
+    p = Pose()
+    trem = math.sin(2 * math.pi * 4 * u)                              # vibracao do ar nas asas fechadas
+    if EMBOLA > 0:
+        tr2 = math.sin(2 * math.pi * 4 * u + 1.7)
+        def var(t, s):                                                # asa enrolada que tremula (cotovelo/punho batem no vento)
+            return {k: v + {"ergue": 3.0 * t + s * 5 * EMBOLA, "cotovelo": 6.0 * t * EMBOLA, "punho": -5.0 * t * EMBOLA}.get(k, 0.0)
+                    for k, v in P_PICADO.items()}
+        p.asas = asas_armadas(0.0, 0.0, Pfix=var(trem, 0), Plado={"l": var(trem, 0), "r": var(tr2, 1)})
+    else:
+        p.asas = asas_armadas(0.0, 0.0, Pfix={k: v + (1.5 * trem if k == "ergue" else 0.0) for k, v in P_PICADO.items()})
+    p.arf = -8
+    ENCOLHE_EXTRA["v"] = 0.85 - 0.15 * EMBOLA
+    recolhidas(p, 0.3)
+    ENCOLHE_EXTRA["v"] = 1.0
+    patas_vivas(p, u, 0.25, h=2)
+    pescoco_voo(p, cima=-10 - 6 * EMBOLA, cab=-6 - 4 * EMBOLA)
+    cauda_ar(p, 2 - 16 * EMBOLA, onda_cauda(u, [(3.0, 4, 0.0, 0.5 + 0.6 * EMBOLA)]), [(0.8 + 1.2 * EMBOLA) * PESO_CAUDA[k] for k in range(7)])
+    return p
+
 def f_mergulho_saida(u):
     """Recuperacao do mergulho 1,2 s: abre as asas (frenagem do ar), ergue o peito e o pescoco e passa a bater asas
     (Voo); patas descem um pouco com a desaceleracao."""
     t = smooth(u); flare = pulso(u, 0.1, 0.35, 0.55, 0.95)
     p = mistura_pose(f_mergulho(u), f_voo(u, 1, u), t)
     p.arf += 14 * flare
+    return p
+
+# MERGULHO V2 (10/11, SO o Sombrio liga com MERGULHO_V2=1; sem a variavel nada muda): "o rabo pra cima a cabeca pra cima
+# e o corpo pra baixo" (usuario). Causa medida no Studio: os JSON tocavam ESPELHADOS (osso do jogo = osso do Blender
+# girado 180 no Y) -> o exportador converte com CONVENCAO_ROBLOX=giro180y. Clipes proprios da manobra, pensados para o
+# pitch da RAIZ vindo do motor (entrada ~0 -> -80, queda -84, freio volta a 0 em curva continua):
+#  Mergulho_Entrada: antecipacao curta (a asa sobe meia batida, sem empinar) e recolhe em SEQUENCIA ombro -> cotovelo ->
+#    punho -> dedos ate a pose do picado; patas encolhem; pescoco alonga na linha do corpo.
+#  Mergulho_Picado (V2): silhueta longitudinal focinho-pescoco-peito-quadril-cauda; patas traseiras coladas ao ventre.
+#  Mergulho_Freio: abre as asas em sequencia, 2 batidas fortes de frenagem e termina na pose do Pairar (corpo erguido,
+#    cauda caida atras/abaixo); pescoco e cauda seguem com atraso amortecido (sem chicote).
+MERG_V2 = os.environ.get("MERGULHO_V2") == "1"
+PIC2 = dict(arf=-6, cima=-22, cab=4, enc=0.62, cauda=0.0, peito=-3)
+if os.environ.get("PIC2"):
+    import json as _js4; PIC2.update(_js4.loads(os.environ["PIC2"]))
+GRUPOS_ASA = (("shoulder", "wing_1"), ("wing_2",), ("wing_3",), ("wing_4", "wing_5", "wing_tip", "wing_feather"))
+def _grupo_asa(n):
+    for i, g in enumerate(GRUPOS_ASA):
+        if n.startswith(g) or (n[:-2] in g): return i
+    return 3
+def _mistura_asas_escalonada(a, b, ts):
+    """mistura por grupo (ombro, cotovelo, punho, dedos) com tempos proprios: recolhe/abre em sequencia"""
+    out = {}
+    for n in a:
+        t = ts[_grupo_asa(n)]
+        out[n] = Matrix.Translation(a[n].translation.lerp(b[n].translation, t)) @ a[n].to_quaternion().slerp(b[n].to_quaternion(), t).to_matrix().to_4x4()
+    return out
+def _lerp_curvas(p, a, b, nomes, t):
+    for n_ in nomes:
+        ca, cb = a.curva.get(n_, (0, 0)), b.curva.get(n_, (0, 0)); p.curva[n_] = (lerp(ca[0], cb[0], t), lerp(ca[1], cb[1], t))
+def f_picado_v2(u):
+    p = Pose()
+    trem = math.sin(2 * math.pi * 4 * u)
+    p.asas = asas_armadas(0.0, 0.0, Pfix={k: v + (1.0 * trem if k == "ergue" else 0.0) for k, v in P_PICADO.items()})
+    p.arf = PIC2["arf"]
+    p.curva["spine_1"] = (PIC2["peito"], 0); p.curva["spine_0"] = (PIC2["peito"] * 0.6, 0)
+    ENCOLHE_EXTRA["v"] = PIC2["enc"]
+    recolhidas(p, 0.3)
+    ENCOLHE_EXTRA["v"] = 1.0
+    patas_vivas(p, u, 0.12, h=2)
+    pescoco_voo(p, cima=PIC2["cima"], cab=PIC2["cab"])
+    cauda_ar(p, PIC2["cauda"], onda_cauda(u, [(1.2, 4, 0.0, 0.5)]), [0.5 * PESO_CAUDA[k] for k in range(7)])
+    return p
+def f_mergulho_entrada(u):
+    """0,55 s: asa sobe meia batida (antecipacao) e recolhe em sequencia ate o picado"""
+    fb = (FA + 0.5) % 1.0; sobe = (FA - fb) % 1.0
+    a = f_voo(fb + sobe * min(1.0, u / 0.35), 1, u * 0.2)
+    b = f_picado_v2(u)
+    p = mistura_pose(a, b, janela(u, 0.12, 0.85))
+    p.asas = _mistura_asas_escalonada(a.asas, b.asas, [janela(u, 0.22, 0.62), janela(u, 0.30, 0.72), janela(u, 0.38, 0.84), janela(u, 0.46, 0.96)])
+    _lerp_curvas(p, a, b, PESCOCO + ["head"], janela(u, 0.05, 0.70))
+    _lerp_curvas(p, a, b, CAUDA, janela(u, 0.25, 1.0))
+    return p
+def f_mergulho_freio(u):
+    """1,2 s: abre em sequencia (0-0,32), batidas fortes (2) e chega no Pairar; corpo ergue com o freio"""
+    a = f_picado_v2(u)
+    w = FA + max(0.0, u - 0.30) / 0.70 * 2.0                      # 1o golpe comeca com a asa no alto
+    b = f_pairar(w, 1, u)
+    p = mistura_pose(a, b, janela(u, 0.04, 0.78))
+    p.asas = _mistura_asas_escalonada(a.asas, b.asas, [janela(u, 0.0, 0.24), janela(u, 0.05, 0.28), janela(u, 0.09, 0.31), janela(u, 0.13, 0.34)])
+    _lerp_curvas(p, a, b, PESCOCO + ["head"], janela(u, 0.10, 0.75))
+    tc = janela(u, 0.22, 0.95)                                    # cauda: atraso amortecido, sem chicote
+    for k_, n_ in enumerate(CAUDA):
+        ca, cb = a.curva.get(n_, (0, 0)), b.curva.get(n_, (0, 0)); p.curva[n_] = (lerp(ca[0], cb[0], tc), lerp(ca[1], cb[1] * 0.6, tc))
     return p
 
 # ---------------------------------------------------------------- transicoes
@@ -2163,6 +2276,10 @@ gerar("Dano_Forte", n(1.1), f_dano(True), loop=False)
 gerar("Dano_Leve_Ar", n(0.6), f_dano(False, True), loop=False)
 gerar("Dano_Forte_Ar", n(1.1), f_dano(True, True), loop=False)
 gerar("Mergulho_Saida", n(1.2), f_mergulho_saida, loop=False)
+gerar("Mergulho_Picado", n(1.0), f_picado_v2 if MERG_V2 else f_mergulho_picado)
+if MERG_V2:                                                          # (10/11) so o Sombrio: clipes proprios da manobra
+    gerar("Mergulho_Entrada", n(0.55), f_mergulho_entrada, loop=False)
+    gerar("Mergulho_Freio", n(1.2), f_mergulho_freio, loop=False)
 # certificacao 02/11: estados da IA sem clipe proprio + animacoes genericas de habilidade (nenhum poder ligado)
 gerar("Deitar", n(2.2), f_deitar, loop=False)
 gerar("Deitado_Acordado", n(8.0), f_deitado_acordado)

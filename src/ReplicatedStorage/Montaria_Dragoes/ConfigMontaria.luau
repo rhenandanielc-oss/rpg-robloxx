@@ -41,6 +41,18 @@ return {
 	mordidaAerea = {recarga = 4, duracao = 1.0, disparo = 0.28, fimDisparo = 0.62, inicioMordida = 0.40, fimMordida = 0.66,
 		velocidade = 78, gamaMaxSubida = 25, gamaMaxDescida = 45, raioHitbox = 5.5, avancoHitbox = 2.5, dano = 40,
 		empurrao = 55, freioImpacto = 0.6},
+	-- PATCH_MERGULHO_PICADO (10/11, TESTE, NAO_APROVADO): manobra de LOCOMOCAO (sem dano/custo/recarga de ativa) so
+	-- nas formas listadas. Virada (abre e bate as asas, depois FECHA tombando de bico) -> queda de bico para baixo ->
+	-- freio batendo asas antes do chao/obstaculo (distancia de parada pela velocidade real) -> voo baixo estavel.
+	-- studs, s, studs/s, studs/s2, graus. alturaMin = espaco livre abaixo do ponto mais baixo do corpo para aceitar.
+	mergulhoPicado = {formas = {Sombrio = true}, alturaMin = 45, viradaAbre = 0.3, viradaFecha = 0.45, subidaVirada = 6,
+		empurrao = 25, acel = 90, vMax = 110, derivaHoriz = 2.2, pitchQueda = 84,
+		freioAcel = 160, tAbrir = 0.25, margem = 8, pitchFreio = 4, vSaida = 3, ritmoFreio = 1.8, durFreioMin = 0.45,
+		recuperacao = 0.9, antiSpam = 1.0, maxDur = 10,
+		-- (10/11 v2, clipes Mergulho_Entrada/Freio): antecipacao curta sem empinar (s, graus); giro maximo da raiz no
+		-- freio (graus/s); offFinal = studs do pivo ao ponto mais baixo na pose FINAL (Pairar, cauda caida) medido no Studio.
+		-- pitchFreio (v1 era 18) = pitch da raiz no fim do freio: o peito erguido vem do clipe
+		antecipa = 0.12, pitchAntecipa = 5, taxaPitch = 170, offFinal = 24},
 	folgaChao = 8, tetoDecolagem = 60,               -- espaco livre exigido acima para decolar
 	alturaMinPouso = 3, vPouso = 18, pousoInclinacaoMin = 0.72, pousoAlcance = 160,
 	-- rede
@@ -58,6 +70,7 @@ return {
 		rugido = {Enum.KeyCode.T, Enum.KeyCode.DPadRight},               -- PATCH_RUGIDOS_FOGO: rugir (chao parado/andando ou voando)
 		elemento = {Enum.KeyCode.Z, Enum.KeyCode.DPadUp},                  -- so liga em forma com MAIS de um elemento (nenhuma hoje)
 		travar = {Enum.KeyCode.C, Enum.UserInputType.MouseButton3, Enum.KeyCode.ButtonR3},   -- PATCH_TRAVA_ALVO: alvo dinamico (liga/solta)
+		mergulho = {Enum.KeyCode.V},                                       -- PATCH_MERGULHO_PICADO: inicia/cancela (+ botao de toque); gamepad sem botao livre
 		habilidades = {                                                   -- ordem oficial das 4 ativas (oficial 30/10): {id, tecla, gamepad, rotulo}
 			{"Sopro", Enum.KeyCode.One, Enum.KeyCode.ButtonR2, "Sopro"},
 			{"Arremetida", Enum.KeyCode.Two, Enum.KeyCode.ButtonR1, "Arremetida"},
