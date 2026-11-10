@@ -1,0 +1,398 @@
+{
+ "Repouso": {
+  "duracao_s": 4.0,
+  "loop": true,
+  "quadros": 120,
+  "velocidade_studs_s": 0.0,
+  "marcadores": {},
+  "rotacao_raiz_graus": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "dedo_min_z": 0.1,
+  "malha_min_z_fora_das_patas": 0.27,
+  "onde": [
+   1.22,
+   -3.62,
+   0.27
+  ],
+  "patas_dist_min": 1.9,
+  "erro_ik_por_pe": {
+   "MaoE": 0.0,
+   "MaoD": 0.0,
+   "MetatarsoE": 0.0,
+   "MetatarsoD": 0.0
+  },
+  "alinhamento": {
+   "tronco_x_meio": {
+    "min": 0.0,
+    "max": 0.0,
+    "media": 0.0
+   },
+   "tronco_x_media": {
+    "min": -0.0,
+    "max": 0.0,
+    "media": 0.0
+   },
+   "apoio_dian_x_centro": {
+    "min": -0.0,
+    "max": 0.0,
+    "media": 0.0
+   },
+   "apoio_tras_x_centro": {
+    "min": -0.0,
+    "max": 0.0,
+    "media": 0.0
+   },
+   "apoio_dian_dy": {
+    "min": -0.0,
+    "max": 0.0,
+    "media": -0.0
+   },
+   "apoio_tras_dy": {
+    "min": -0.0,
+    "max": 0.0,
+    "media": -0.0
+   },
+   "ombros_dz": {
+    "min": 0.0,
+    "max": 0.0,
+    "media": 0.0
+   },
+   "quadris_dz": {
+    "min": -0.0,
+    "max": 0.0,
+    "media": 0.0
+   },
+   "ombros_x_centro": {
+    "min": 0.0,
+    "max": 0.0,
+    "media": 0.0
+   },
+   "quadris_x_centro": {
+    "min": 0.0,
+    "max": 0.0,
+    "media": 0.0
+   }
+  }
+ },
+ "Montar_E": {
+  "duracao_s": 3.0,
+  "loop": false,
+  "quadros": 91,
+  "velocidade_studs_s": 0.0,
+  "marcadores": {
+   "Agarra": 1.32,
+   "Pulo": 1.6,
+   "Sentado": 2.4
+  },
+  "rotacao_raiz_graus": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "dedo_min_z": 0.1,
+  "malha_min_z_fora_das_patas": 0.268,
+  "onde": [
+   -1.22,
+   -3.62,
+   0.27
+  ],
+  "patas_dist_min": 1.9,
+  "erro_ik_por_pe": {
+   "MaoE": 0.0,
+   "MaoD": 0.0,
+   "MetatarsoE": 0.0,
+   "MetatarsoD": 0.0
+  },
+  "alinhamento": {
+   "tronco_x_meio": {
+    "min": -0.003,
+    "max": 0.006,
+    "media": 0.001
+   },
+   "tronco_x_media": {
+    "min": -0.009,
+    "max": 0.028,
+    "media": 0.005
+   },
+   "apoio_dian_x_centro": {
+    "min": -0.0,
+    "max": 0.0,
+    "media": -0.0
+   },
+   "apoio_tras_x_centro": {
+    "min": 0.0,
+    "max": 0.0,
+    "media": 0.0
+   },
+   "apoio_dian_dy": {
+    "min": -0.0,
+    "max": 0.0,
+    "media": -0.0
+   },
+   "apoio_tras_dy": {
+    "min": -0.0,
+    "max": 0.0,
+    "media": -0.0
+   },
+   "ombros_dz": {
+    "min": -0.043,
+    "max": 0.157,
+    "media": 0.03
+   },
+   "quadris_dz": {
+    "min": 0.0,
+    "max": 0.0,
+    "media": 0.0
+   },
+   "ombros_x_centro": {
+    "min": -0.01,
+    "max": 0.032,
+    "media": 0.006
+   },
+   "quadris_x_centro": {
+    "min": 0.0,
+    "max": 0.0,
+    "media": 0.0
+   }
+  }
+ },
+ "Montar_D": {
+  "duracao_s": 3.0,
+  "loop": false,
+  "quadros": 91,
+  "velocidade_studs_s": 0.0,
+  "marcadores": {
+   "Agarra": 1.32,
+   "Pulo": 1.6,
+   "Sentado": 2.4
+  },
+  "rotacao_raiz_graus": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "dedo_min_z": 0.1,
+  "malha_min_z_fora_das_patas": 0.268,
+  "onde": [
+   1.22,
+   -3.62,
+   0.27
+  ],
+  "patas_dist_min": 1.9,
+  "erro_ik_por_pe": {
+   "MaoE": 0.0,
+   "MaoD": 0.0,
+   "MetatarsoE": 0.0,
+   "MetatarsoD": 0.0
+  },
+  "alinhamento": {
+   "tronco_x_meio": {
+    "min": -0.006,
+    "max": 0.003,
+    "media": -0.001
+   },
+   "tronco_x_media": {
+    "min": -0.028,
+    "max": 0.009,
+    "media": -0.005
+   },
+   "apoio_dian_x_centro": {
+    "min": -0.0,
+    "max": 0.0,
+    "media": 0.0
+   },
+   "apoio_tras_x_centro": {
+    "min": 0.0,
+    "max": 0.0,
+    "media": 0.0
+   },
+   "apoio_dian_dy": {
+    "min": -0.0,
+    "max": 0.0,
+    "media": 0.0
+   },
+   "apoio_tras_dy": {
+    "min": -0.0,
+    "max": 0.0,
+    "media": -0.0
+   },
+   "ombros_dz": {
+    "min": -0.157,
+    "max": 0.043,
+    "media": -0.03
+   },
+   "quadris_dz": {
+    "min": 0.0,
+    "max": 0.0,
+    "media": 0.0
+   },
+   "ombros_x_centro": {
+    "min": -0.032,
+    "max": 0.01,
+    "media": -0.006
+   },
+   "quadris_x_centro": {
+    "min": 0.0,
+    "max": 0.0,
+    "media": 0.0
+   }
+  }
+ },
+ "Desmontar_E": {
+  "duracao_s": 3.2,
+  "loop": false,
+  "quadros": 97,
+  "velocidade_studs_s": 0.0,
+  "marcadores": {
+   "Pendurado": 1.25,
+   "Solta": 1.55,
+   "NoChao": 1.85
+  },
+  "rotacao_raiz_graus": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "dedo_min_z": 0.1,
+  "malha_min_z_fora_das_patas": 0.268,
+  "onde": [
+   -1.22,
+   -3.62,
+   0.27
+  ],
+  "patas_dist_min": 1.9,
+  "erro_ik_por_pe": {
+   "MaoE": 0.0,
+   "MaoD": 0.0,
+   "MetatarsoE": 0.0,
+   "MetatarsoD": 0.0
+  },
+  "alinhamento": {
+   "tronco_x_meio": {
+    "min": -0.002,
+    "max": 0.006,
+    "media": 0.001
+   },
+   "tronco_x_media": {
+    "min": -0.007,
+    "max": 0.028,
+    "media": 0.004
+   },
+   "apoio_dian_x_centro": {
+    "min": -0.0,
+    "max": 0.0,
+    "media": -0.0
+   },
+   "apoio_tras_x_centro": {
+    "min": 0.0,
+    "max": 0.0,
+    "media": 0.0
+   },
+   "apoio_dian_dy": {
+    "min": -0.0,
+    "max": 0.0,
+    "media": -0.0
+   },
+   "apoio_tras_dy": {
+    "min": -0.0,
+    "max": 0.0,
+    "media": -0.0
+   },
+   "ombros_dz": {
+    "min": -0.033,
+    "max": 0.157,
+    "media": 0.025
+   },
+   "quadris_dz": {
+    "min": 0.0,
+    "max": 0.0,
+    "media": 0.0
+   },
+   "ombros_x_centro": {
+    "min": -0.008,
+    "max": 0.032,
+    "media": 0.005
+   },
+   "quadris_x_centro": {
+    "min": 0.0,
+    "max": 0.0,
+    "media": 0.0
+   }
+  }
+ },
+ "Desmontar_D": {
+  "duracao_s": 3.2,
+  "loop": false,
+  "quadros": 97,
+  "velocidade_studs_s": 0.0,
+  "marcadores": {
+   "Pendurado": 1.25,
+   "Solta": 1.55,
+   "NoChao": 1.85
+  },
+  "rotacao_raiz_graus": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "dedo_min_z": 0.1,
+  "malha_min_z_fora_das_patas": 0.268,
+  "onde": [
+   1.22,
+   -3.62,
+   0.27
+  ],
+  "patas_dist_min": 1.9,
+  "erro_ik_por_pe": {
+   "MaoE": 0.0,
+   "MaoD": 0.0,
+   "MetatarsoE": 0.0,
+   "MetatarsoD": 0.0
+  },
+  "alinhamento": {
+   "tronco_x_meio": {
+    "min": -0.006,
+    "max": 0.002,
+    "media": -0.001
+   },
+   "tronco_x_media": {
+    "min": -0.028,
+    "max": 0.007,
+    "media": -0.004
+   },
+   "apoio_dian_x_centro": {
+    "min": -0.0,
+    "max": 0.0,
+    "media": -0.0
+   },
+   "apoio_tras_x_centro": {
+    "min": 0.0,
+    "max": 0.0,
+    "media": 0.0
+   },
+   "apoio_dian_dy": {
+    "min": -0.0,
+    "max": 0.0,
+    "media": 0.0
+   },
+   "apoio_tras_dy": {
+    "min": -0.0,
+    "max": 0.0,
+    "media": -0.0
+   },
+   "ombros_dz": {
+    "min": -0.157,
+    "max": 0.033,
+    "media": -0.025
+   },
+   "quadris_dz": {
+    "min": 0.0,
+    "max": 0.0,
+    "media": 0.0
+   },
+   "ombros_x_centro": {
+    "min": -0.032,
+    "max": 0.008,
+    "media": -0.005
+   },
+   "quadris_x_centro": {
+    "min": 0.0,
+    "max": 0.0,
+    "media": 0.0
+   }
+  }
+ }
+}

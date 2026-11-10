@@ -1057,6 +1057,79 @@ A busca não trouxe referência anatômica do jarrete no chão ao sentar. A pose
 
 **APROVADO pelo usuário em 09/11/2026 ("Aprovado"):** pose de dormir v26 (`rig18` + `clipes26/` + `export26/` + `videos26/`) — dormindo copiado da foto (v23), cara encostada no chão (v24), pálpebras fechando/abrindo (v25) e patas traseiras apoiadas (v26). Base para próximas mudanças: `rig18` + `anim_lobo.py` atual. Studio ainda não testado.
 
+## 6aa. Montaria M1: sela leve (10/11/2026, APROVADA pelo usuário em 10/11: "Aprovado, siga") → `montaria/`
+**Pedido do usuário:** "Pode fazer a montaria, a sela de acordo com o visual de seus ingredientes, a animação de subida e de descida."
+- **Oficial (§1):** montável desde o Adulto com **sela leve**. A referência mostra a pelagem com musgo e folhas; o lobo tem marcas verdes.
+- **M0 (`montaria/m0_medir_dorso.py` → `m0_dorso.json`):**
+  - o dorso é estreito (meia largura ~0,8–1,1) e o meio dele fica em z 5,8 (y −1,5…0,5);
+  - a juba sobe até 8,2 na frente;
+  - a barriga fica em ~3,3–3,8.
+- **M1 (`montaria/m1_sela_lobo.py` → `LA_M1_sela.blend`, `m1_sela.json`):**
+  - mesmo método da sela do Urso (campo de alturas por raios + pesos copiados da pele, sem os ossos Pelo*/Juba*/Palpebra);
+  - nada do lobo foi alterado.
+  - **Peças e materiais:**
+    - manta fina de Pele de Cervo;
+    - aba, assento baixo e cilha fina (y −2,05, atrás das patas da frente) de Couro de Javali;
+    - folhas de couro verde-musgo na borda da manta (as folhas da pelagem);
+    - debrum e costuras de Tendão de Cervo;
+    - pegada de galho fino de Madeira Ancestral, enrolada em tendão, com folhinhas e gota de Resina Viva verde (as marcas do lobo);
+    - fivelas pequenas de Ferro com Resina Viva;
+    - estribos leves: cordão de tendão e degrau de Madeira Ancestral.
+  - **Números:**
+    - assento z 6,07, quadril do cavaleiro z 6,57 (y −0,62);
+    - tornozelo do R15 em (±1,10, −0,92, 5,09), perna 1,62;
+    - 8.440 tris; estribos rígidos no osso do assento (Coluna2 0,55 / Coluna1 0,43).
+  - **Renders:** `montaria/review_m1/Sela_Lobo_M1.png`, com e sem o manequim R15 aproximado.
+- **Próximo (aguardando aprovação da sela):**
+  - M2: subida e descida pelos dois lados (o lobo deita, como o Urso, pois o dorso de 5,8 é mais alto que o R15);
+  - M3: textura e GLB da sela.
+- Studio não testado.
+
+## 6ab. Montaria M2 r3: subida e descida COM PULO, segurando na sela, pelos dois lados (10/11/2026, APROVADA pelo usuário em 10/11) → `montaria/`
+- **Pedidos do usuário (10/11):**
+  - "em vez do lobo subir assim e descer assim, faça com que o jogador pule" → o lobo não deita mais (r2);
+  - "quero que ele encene que está segurando no lobo para pular, porque agora está irreal" → o cavaleiro se agarra na sela (r3).
+  - A versão com o lobo deitando ficou em `montaria/v1_deitado/` (scripts e QA), com os vídeos em `montaria/review_m2/`.
+- **Sela (r2, mantida):** estribos a 0,62 fora do flanco; tornozelo em (±1,36, −0,92, 5,23). Sentado, a canela e o pé ficam de −0,13 a −0,27 no pelo.
+- **Clipes do lobo (`montaria/clipes_montaria.py`, carregado com `LOBO_MONTARIA=1`):**
+  - `Montar_E/D` (3,0 s): em pé, olha para o cavaleiro; enquanto ele se agarra e se puxa, rola 2,5° para o lado dele e cede 0,05; cede 0,08 quando ele assenta. Marcadores Agarra 1,32 / Pulo 1,6 / Sentado 2,4.
+  - `Desmontar_E/D` (3,2 s): rola 2,5° para o lado e cede 0,05 com ele pendurado; volta quando ele solta. Marcadores Pendurado 1,25 / Solta 1,55 / NoChao 1,85.
+  - QA dos clipes: erro de IK 0 e deslize de pata 0.
+  - Gravado em `rig18/Lobo_Ancestral_Anim_Montaria.blend` e `montaria/clipes_m2/`. Os clipes aprovados não mudam.
+- **Cavaleiro de teste (`montaria/m2_demo_montaria.py`, manequim R15 aproximado):**
+  - **Subida:** chega ao lado; agarra a face de fora da aba com as duas mãos (agarres medidos por raio, z 5,47); flexiona os joelhos segurando, com o tronco para trás; pula se puxando, o pé da frente entra no estribo; a perna de fora passa pela garupa e cai no outro estribo; senta.
+  - **Descida:** mãos na aba; a perna de fora passa pela garupa e ele vira para o lobo; desce pendurado no flanco segurando a aba; solta, cai agachado e se afasta dois passos.
+  - QA em `montaria/m2_qa.json`:
+    - tronco e cabeça sempre fora do lobo e da sela;
+    - mãos e antebraços afundam de 0,25 a 0,39 nos tufos de pelo em volta da aba nos quadros do puxão e da soltura;
+    - pernas até −0,33 no pelo por poucos quadros (sentado −0,27);
+    - sola ≥ 0,03; velocidade máxima do quadril 19 (subida) e 14 studs/s (descida).
+- **Vídeos:** `montaria/review_m2_pulo/` (Montar/Desmontar × E/D, 3/4, normal e lento). Folhas: `folha_pulo_E.png`, `folha_pulo_D.png`.
+- **Pendente:**
+  - M3: textura e GLB da sela;
+  - cavaleiro nos clipes de locomoção;
+  - Studio (no jogo: animação do jogador + solda no servidor; não testado).
+
+## 6ac. Montaria M3: textura de jogo e GLB da sela (10/11/2026, APROVADA pelo usuário em 10/11) → `montaria/export_sela/`
+- **Script:** `montaria/m3_textura_glb.py`, adaptado do M3 aprovado do Urso (mesmo método). O `.blend` de entrada não é salvo; nada do lobo muda.
+  - Correção: o `LA_M1_sela.blend` veio com o bake "selecionado para ativo" ligado ("No valid selected objects"); o script agora desliga.
+- **Resultado:**
+  - UV única de jogo (projeção inteligente, densidade igual, margem 0,003);
+  - bake Cycles 1024×1024 dos 7 materiais: `T_LoboAncestral_Sela_Cor.png`, `_Normal.png` e `_MetalRug.png` (glTF: G = rugosidade, B = metal), além de `_Rug.png` e `_Metal.png` separados;
+  - material único `M_LoboAncestral_Sela_Jogo`;
+  - `Lobo_Ancestral_Sela.glb` (2,2 MB): só a sela + a armadura do lobo, sem animação, texturas embutidas;
+  - `Lobo_Ancestral_Sela_Jogo.blend` para conferência.
+- **Validação por reimportação (`montaria/m3_validar_glb.py` → `export_sela/validacao_glb.json`):**
+  - 8.440 triângulos, 1 material, 3 imagens de 1024;
+  - armadura com os 58 ossos do rig18, com os mesmos nomes do export26;
+  - no máximo 4 influências por vértice, 0 vértices sem peso;
+  - sela de z 3,08 a 6,56.
+  - A `Icosphere` de 80 triângulos é a forma de exibição dos ossos; já aparece no export26.
+- **Comparação procedural × jogo:** `montaria/review_m3/comparar_m1_m3.png` (e as vistas em `review_m3/`). A cor, o couro, as folhas, a resina e o ferro ficam iguais; as costuras ficam um pouco mais suaves no 1024.
+- **Pendente:**
+  - Studio: importar o GLB e prender a sela no lobo (não testado);
+  - cavaleiro nos clipes de locomoção.
+
 ## 7. Próximos passos sugeridos (aguardam aprovação)
 1. **Revisar a V5** com uma prancha lado a lado com o painel 01 (só leitura e renders) e listar as correções.
 2. **Decidir a base para o Roblox:** importar a V5 com pele deformável no lugar do modelo Motor6D rígido de 26/10. Fazer o teste num place vazio local, sem tocar no mapa.

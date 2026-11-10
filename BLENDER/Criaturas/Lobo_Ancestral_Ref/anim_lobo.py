@@ -869,6 +869,9 @@ CLIPES = {  # nome: (funcao, duracao s, loop, velocidade de deslocamento studs/s
     "Garra": (clipe_garra, 1.05, False, 0.0, {"Antecipacao": 0.30, "Contato": 0.50, "Recuperacao": 0.64}),
     "Impacto": (clipe_impacto, 0.65, False, 0.0, {"Impacto": 0.10}),
 }
+if os.environ.get("LOBO_MONTARIA"):                  # montaria (10/11): Montar_E/D e Desmontar_E/D (montaria/clipes_montaria.py)
+    APOIO_P = APOIO
+    exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "montaria", "clipes_montaria.py"), encoding="utf-8").read(), globals())
 QUAIS = A[1].split(",") if len(A) > 1 else list(CLIPES)
 ROT_RAIZ = {"VirarE": 90.0, "VirarD": -90.0}
 
@@ -993,5 +996,5 @@ caminho_m = os.path.join(OUT, "manifesto_clipes.json")
 if os.path.exists(caminho_m): antigo = json.load(open(caminho_m, encoding="utf-8"))
 antigo.update(manifesto)
 json.dump(antigo, open(caminho_m, "w", encoding="utf-8"), indent=1, ensure_ascii=False)
-bpy.ops.wm.save_as_mainfile(filepath=os.path.join(os.path.dirname(bpy.data.filepath), "Lobo_Ancestral_Anim.blend"))
+bpy.ops.wm.save_as_mainfile(filepath=os.path.join(os.path.dirname(bpy.data.filepath), os.environ.get("LOBO_ANIM_SAIDA", "Lobo_Ancestral_Anim.blend")))
 print("ANIM_OK", list(QUADROS))

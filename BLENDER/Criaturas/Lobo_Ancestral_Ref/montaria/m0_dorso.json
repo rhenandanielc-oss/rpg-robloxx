@@ -1,0 +1,586 @@
+{
+ "bbox_min": [
+  -1.85,
+  -7.02,
+  -0.0
+ ],
+ "bbox_max": [
+  1.85,
+  6.37,
+  8.49
+ ],
+ "perfil": [
+  {
+   "y": -7.0,
+   "topo_x-1.50": null,
+   "topo_x-0.75": null,
+   "topo_x+0.00": 6.42,
+   "topo_x+0.75": null,
+   "topo_x+1.50": null,
+   "barriga": 6.31,
+   "lados_0.5abaixo": [
+    null,
+    null
+   ],
+   "lados_1.0abaixo": [
+    null,
+    null
+   ],
+   "lados_2.0abaixo": [
+    null,
+    null
+   ]
+  },
+  {
+   "y": -6.5,
+   "topo_x-1.50": null,
+   "topo_x-0.75": null,
+   "topo_x+0.00": 6.75,
+   "topo_x+0.75": null,
+   "topo_x+1.50": null,
+   "barriga": 5.98,
+   "lados_0.5abaixo": [
+    0.34,
+    -0.34
+   ],
+   "lados_1.0abaixo": [
+    null,
+    null
+   ],
+   "lados_2.0abaixo": [
+    null,
+    null
+   ]
+  },
+  {
+   "y": -6.0,
+   "topo_x-1.50": null,
+   "topo_x-0.75": null,
+   "topo_x+0.00": 7.4,
+   "topo_x+0.75": null,
+   "topo_x+1.50": null,
+   "barriga": 6.14,
+   "lados_0.5abaixo": [
+    0.67,
+    -0.67
+   ],
+   "lados_1.0abaixo": [
+    0.44,
+    -0.44
+   ],
+   "lados_2.0abaixo": [
+    null,
+    null
+   ]
+  },
+  {
+   "y": -5.5,
+   "topo_x-1.50": 6.49,
+   "topo_x-0.75": 8.19,
+   "topo_x+0.00": 7.88,
+   "topo_x+0.75": 8.19,
+   "topo_x+1.50": 6.49,
+   "barriga": 4.16,
+   "lados_0.5abaixo": [
+    1.11,
+    -1.11
+   ],
+   "lados_1.0abaixo": [
+    0.9,
+    -0.9
+   ],
+   "lados_2.0abaixo": [
+    1.03,
+    -1.03
+   ]
+  },
+  {
+   "y": -5.0,
+   "topo_x-1.50": 6.28,
+   "topo_x-0.75": 7.73,
+   "topo_x+0.00": 8.16,
+   "topo_x+0.75": 7.73,
+   "topo_x+1.50": 6.28,
+   "barriga": 3.59,
+   "lados_0.5abaixo": [
+    0.81,
+    -0.81
+   ],
+   "lados_1.0abaixo": [
+    1.01,
+    -1.01
+   ],
+   "lados_2.0abaixo": [
+    1.4,
+    -1.4
+   ]
+  },
+  {
+   "y": -4.5,
+   "topo_x-1.50": 6.39,
+   "topo_x-0.75": 7.79,
+   "topo_x+0.00": 8.09,
+   "topo_x+0.75": 7.79,
+   "topo_x+1.50": 6.39,
+   "barriga": 3.37,
+   "lados_0.5abaixo": [
+    0.99,
+    -0.99
+   ],
+   "lados_1.0abaixo": [
+    1.32,
+    -1.32
+   ],
+   "lados_2.0abaixo": [
+    1.63,
+    -1.63
+   ]
+  },
+  {
+   "y": -4.0,
+   "topo_x-1.50": 6.58,
+   "topo_x-0.75": 7.54,
+   "topo_x+0.00": 7.97,
+   "topo_x+0.75": 7.54,
+   "topo_x+1.50": 6.58,
+   "barriga": 3.15,
+   "lados_0.5abaixo": [
+    0.88,
+    -0.88
+   ],
+   "lados_1.0abaixo": [
+    1.09,
+    -1.09
+   ],
+   "lados_2.0abaixo": [
+    1.0,
+    -1.0
+   ]
+  },
+  {
+   "y": -3.5,
+   "topo_x-1.50": null,
+   "topo_x-0.75": 7.14,
+   "topo_x+0.00": 7.4,
+   "topo_x+0.75": 7.14,
+   "topo_x+1.50": null,
+   "barriga": 3.09,
+   "lados_0.5abaixo": [
+    0.76,
+    -0.76
+   ],
+   "lados_1.0abaixo": [
+    0.92,
+    -0.92
+   ],
+   "lados_2.0abaixo": [
+    1.16,
+    -1.16
+   ]
+  },
+  {
+   "y": -3.0,
+   "topo_x-1.50": null,
+   "topo_x-0.75": 6.32,
+   "topo_x+0.00": 6.79,
+   "topo_x+0.75": 6.32,
+   "topo_x+1.50": null,
+   "barriga": 3.09,
+   "lados_0.5abaixo": [
+    0.79,
+    -0.79
+   ],
+   "lados_1.0abaixo": [
+    1.12,
+    -1.12
+   ],
+   "lados_2.0abaixo": [
+    1.29,
+    -1.29
+   ]
+  },
+  {
+   "y": -2.5,
+   "topo_x-1.50": null,
+   "topo_x-0.75": 5.91,
+   "topo_x+0.00": 6.39,
+   "topo_x+0.75": 5.91,
+   "topo_x+1.50": null,
+   "barriga": 3.15,
+   "lados_0.5abaixo": [
+    0.77,
+    -0.77
+   ],
+   "lados_1.0abaixo": [
+    0.93,
+    -0.93
+   ],
+   "lados_2.0abaixo": [
+    1.2,
+    -1.2
+   ]
+  },
+  {
+   "y": -2.0,
+   "topo_x-1.50": null,
+   "topo_x-0.75": 5.69,
+   "topo_x+0.00": 6.07,
+   "topo_x+0.75": 5.69,
+   "topo_x+1.50": null,
+   "barriga": 3.26,
+   "lados_0.5abaixo": [
+    0.77,
+    -0.77
+   ],
+   "lados_1.0abaixo": [
+    1.12,
+    -1.12
+   ],
+   "lados_2.0abaixo": [
+    1.05,
+    -1.05
+   ]
+  },
+  {
+   "y": -1.5,
+   "topo_x-1.50": null,
+   "topo_x-0.75": 5.49,
+   "topo_x+0.00": 5.9,
+   "topo_x+0.75": 5.49,
+   "topo_x+1.50": null,
+   "barriga": 3.38,
+   "lados_0.5abaixo": [
+    0.82,
+    -0.82
+   ],
+   "lados_1.0abaixo": [
+    1.07,
+    -1.07
+   ],
+   "lados_2.0abaixo": [
+    0.77,
+    -0.77
+   ]
+  },
+  {
+   "y": -1.0,
+   "topo_x-1.50": null,
+   "topo_x-0.75": 5.24,
+   "topo_x+0.00": 5.8,
+   "topo_x+0.75": 5.24,
+   "topo_x+1.50": null,
+   "barriga": 3.75,
+   "lados_0.5abaixo": [
+    0.71,
+    -0.71
+   ],
+   "lados_1.0abaixo": [
+    0.87,
+    -0.87
+   ],
+   "lados_2.0abaixo": [
+    1.26,
+    -1.26
+   ]
+  },
+  {
+   "y": -0.5,
+   "topo_x-1.50": 3.73,
+   "topo_x-0.75": 5.39,
+   "topo_x+0.00": 5.8,
+   "topo_x+0.75": 5.39,
+   "topo_x+1.50": 3.73,
+   "barriga": 3.55,
+   "lados_0.5abaixo": [
+    0.81,
+    -0.81
+   ],
+   "lados_1.0abaixo": [
+    0.92,
+    -0.92
+   ],
+   "lados_2.0abaixo": [
+    1.47,
+    -1.47
+   ]
+  },
+  {
+   "y": 0.0,
+   "topo_x-1.50": null,
+   "topo_x-0.75": 5.44,
+   "topo_x+0.00": 5.79,
+   "topo_x+0.75": 5.44,
+   "topo_x+1.50": null,
+   "barriga": 3.7,
+   "lados_0.5abaixo": [
+    0.86,
+    -0.86
+   ],
+   "lados_1.0abaixo": [
+    0.97,
+    -0.97
+   ],
+   "lados_2.0abaixo": [
+    1.18,
+    -1.18
+   ]
+  },
+  {
+   "y": 0.5,
+   "topo_x-1.50": null,
+   "topo_x-0.75": 5.29,
+   "topo_x+0.00": 5.69,
+   "topo_x+0.75": 5.29,
+   "topo_x+1.50": null,
+   "barriga": 3.82,
+   "lados_0.5abaixo": [
+    0.79,
+    -0.79
+   ],
+   "lados_1.0abaixo": [
+    0.77,
+    -0.77
+   ],
+   "lados_2.0abaixo": [
+    0.85,
+    -0.85
+   ]
+  },
+  {
+   "y": 1.0,
+   "topo_x-1.50": 0.61,
+   "topo_x-0.75": 4.36,
+   "topo_x+0.00": 5.47,
+   "topo_x+0.75": 4.36,
+   "topo_x+1.50": 0.61,
+   "barriga": 3.73,
+   "lados_0.5abaixo": [
+    0.48,
+    -0.48
+   ],
+   "lados_1.0abaixo": [
+    0.67,
+    -0.67
+   ],
+   "lados_2.0abaixo": [
+    1.14,
+    -1.14
+   ]
+  },
+  {
+   "y": 1.5,
+   "topo_x-1.50": 3.46,
+   "topo_x-0.75": 4.7,
+   "topo_x+0.00": 5.32,
+   "topo_x+0.75": 4.7,
+   "topo_x+1.50": 3.46,
+   "barriga": 3.02,
+   "lados_0.5abaixo": [
+    0.63,
+    -0.63
+   ],
+   "lados_1.0abaixo": [
+    1.05,
+    -1.05
+   ],
+   "lados_2.0abaixo": [
+    1.28,
+    -1.28
+   ]
+  },
+  {
+   "y": 2.0,
+   "topo_x-1.50": 3.36,
+   "topo_x-0.75": 4.43,
+   "topo_x+0.00": 5.01,
+   "topo_x+0.75": 4.43,
+   "topo_x+1.50": 3.36,
+   "barriga": 1.93,
+   "lados_0.5abaixo": [
+    0.68,
+    -0.68
+   ],
+   "lados_1.0abaixo": [
+    0.94,
+    -0.94
+   ],
+   "lados_2.0abaixo": [
+    1.49,
+    -1.49
+   ]
+  },
+  {
+   "y": 2.5,
+   "topo_x-1.50": 2.79,
+   "topo_x-0.75": 4.37,
+   "topo_x+0.00": 4.71,
+   "topo_x+0.75": 4.37,
+   "topo_x+1.50": 2.79,
+   "barriga": 1.39,
+   "lados_0.5abaixo": [
+    0.69,
+    -0.69
+   ],
+   "lados_1.0abaixo": [
+    1.15,
+    -1.15
+   ],
+   "lados_2.0abaixo": [
+    1.54,
+    -1.54
+   ]
+  },
+  {
+   "y": 3.0,
+   "topo_x-1.50": null,
+   "topo_x-0.75": 3.9,
+   "topo_x+0.00": 4.41,
+   "topo_x+0.75": 3.9,
+   "topo_x+1.50": null,
+   "barriga": 1.31,
+   "lados_0.5abaixo": [
+    0.73,
+    -0.73
+   ],
+   "lados_1.0abaixo": [
+    0.91,
+    -0.91
+   ],
+   "lados_2.0abaixo": [
+    1.03,
+    -1.03
+   ]
+  },
+  {
+   "y": 3.5,
+   "topo_x-1.50": null,
+   "topo_x-0.75": 3.55,
+   "topo_x+0.00": 4.12,
+   "topo_x+0.75": 3.55,
+   "topo_x+1.50": null,
+   "barriga": 1.15,
+   "lados_0.5abaixo": [
+    0.66,
+    -0.66
+   ],
+   "lados_1.0abaixo": [
+    0.77,
+    -0.77
+   ],
+   "lados_2.0abaixo": [
+    0.84,
+    -0.84
+   ]
+  },
+  {
+   "y": 4.0,
+   "topo_x-1.50": null,
+   "topo_x-0.75": 3.08,
+   "topo_x+0.00": 4.01,
+   "topo_x+0.75": 3.08,
+   "topo_x+1.50": null,
+   "barriga": 1.27,
+   "lados_0.5abaixo": [
+    0.57,
+    -0.57
+   ],
+   "lados_1.0abaixo": [
+    0.76,
+    -0.76
+   ],
+   "lados_2.0abaixo": [
+    0.87,
+    -0.87
+   ]
+  },
+  {
+   "y": 4.5,
+   "topo_x-1.50": null,
+   "topo_x-0.75": 2.37,
+   "topo_x+0.00": 3.79,
+   "topo_x+0.75": 2.37,
+   "topo_x+1.50": null,
+   "barriga": 1.18,
+   "lados_0.5abaixo": [
+    0.52,
+    -0.52
+   ],
+   "lados_1.0abaixo": [
+    0.55,
+    -0.55
+   ],
+   "lados_2.0abaixo": [
+    0.29,
+    -0.29
+   ]
+  },
+  {
+   "y": 5.0,
+   "topo_x-1.50": null,
+   "topo_x-0.75": null,
+   "topo_x+0.00": 3.77,
+   "topo_x+0.75": null,
+   "topo_x+1.50": null,
+   "barriga": 1.4,
+   "lados_0.5abaixo": [
+    0.31,
+    -0.31
+   ],
+   "lados_1.0abaixo": [
+    0.47,
+    -0.47
+   ],
+   "lados_2.0abaixo": [
+    0.67,
+    -0.67
+   ]
+  }
+ ],
+ "ossos": {
+  "Pelve": [
+   0.0,
+   1.8,
+   4.75
+  ],
+  "Coluna1": [
+   0.0,
+   1.2,
+   4.7
+  ],
+  "Coluna2": [
+   0.0,
+   -0.5,
+   4.92
+  ],
+  "Peito": [
+   0.0,
+   -2.2,
+   5.35
+  ],
+  "Pescoco1": [
+   0.0,
+   -3.9,
+   6.27
+  ],
+  "Cabeca": [
+   0.0,
+   -4.97,
+   7.76
+  ],
+  "EscapulaE": [
+   0.82,
+   -3.35,
+   5.81
+  ],
+  "BracoE": [
+   1.22,
+   -4.5,
+   4.35
+  ],
+  "CoxaE": [
+   0.72,
+   1.2,
+   4.47
+  ]
+ }
+}

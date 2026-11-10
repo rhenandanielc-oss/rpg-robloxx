@@ -1,0 +1,15 @@
+{
+ "tris": 8440,
+ "vertices": 4356,
+ "texturas": {
+  "cor": "T_LoboAncestral_Sela_Cor.png",
+  "normal": "T_LoboAncestral_Sela_Normal.png",
+  "rug": "T_LoboAncestral_Sela_Rug.png",
+  "metal": "T_LoboAncestral_Sela_Metal.png",
+  "mr": "T_LoboAncestral_Sela_MetalRug.png"
+ },
+ "resolucao": 1024,
+ "glb": "Lobo_Ancestral_Sela.glb",
+ "glb_bytes": 2178672,
+ "grupos": 22
+}

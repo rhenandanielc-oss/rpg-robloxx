@@ -1,0 +1,59 @@
+{
+ "z_quadril": 6.569092750549316,
+ "z_assento_centro": 6.069092750549316,
+ "quadril": [
+  0.0,
+  -0.62,
+  6.569092750549316
+ ],
+ "estribos": {
+  "Left": {
+   "tornozelo": [
+    1.363,
+    -0.92,
+    5.229
+   ],
+   "perna": 1.622,
+   "sola_z": 4.929
+  },
+  "Right": {
+   "tornozelo": [
+    -1.363,
+    -0.92,
+    5.229
+   ],
+   "perna": 1.622,
+   "sola_z": 4.929
+  }
+ },
+ "pegada": [
+  0.0,
+  -1.5296,
+  6.4916784286499025
+ ],
+ "tris": 8440,
+ "vertices": 4356,
+ "materiais": [
+  "M_SelaLobo_CouroJavali",
+  "M_SelaLobo_PeleCervo",
+  "M_SelaLobo_TendaoCervo",
+  "M_SelaLobo_MadeiraAncestral",
+  "M_SelaLobo_ResinaViva",
+  "M_SelaLobo_Ferro",
+  "M_SelaLobo_CouroFolha"
+ ],
+ "peso_assento": [
+  [
+   "Coluna2",
+   0.5470591272192791
+  ],
+  [
+   "Coluna1",
+   0.42597515224273313
+  ],
+  [
+   "Peito",
+   0.026938698683529282
+  ]
+ ]
+}

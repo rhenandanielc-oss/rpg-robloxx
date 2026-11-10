@@ -1,0 +1,76 @@
+{
+ "malhas": [
+  {
+   "nome": "Icosphere",
+   "tris": 80,
+   "vertices": 42,
+   "materiais": [],
+   "uv": [
+    "UVMap"
+   ],
+   "max_influencias": 0,
+   "sem_peso": 42,
+   "grupos": 0,
+   "z_min_max": [
+    -1.0,
+    1.0
+   ],
+   "pai": null
+  },
+  {
+   "nome": "Lobo_Ancestral_Sela",
+   "tris": 8440,
+   "vertices": 8113,
+   "materiais": [
+    "M_LoboAncestral_Sela_Jogo"
+   ],
+   "uv": [
+    "UVMap"
+   ],
+   "max_influencias": 4,
+   "sem_peso": 0,
+   "grupos": 58,
+   "z_min_max": [
+    3.08,
+    6.56
+   ],
+   "pai": "Lobo_Ancestral_Rig"
+  }
+ ],
+ "armaduras": [
+  {
+   "nome": "Lobo_Ancestral_Rig",
+   "ossos": 58
+  }
+ ],
+ "imagens": [
+  {
+   "nome": "T_LoboAncestral_Sela_Cor",
+   "tamanho": [
+    1024,
+    1024
+   ]
+  },
+  {
+   "nome": "T_LoboAncestral_Sela_MetalRug",
+   "tamanho": [
+    1024,
+    1024
+   ]
+  },
+  {
+   "nome": "T_LoboAncestral_Sela_Normal",
+   "tamanho": [
+    1024,
+    1024
+   ]
+  },
+  {
+   "nome": "Viewer Node",
+   "tamanho": [
+    256,
+    256
+   ]
+  }
+ ]
+}
