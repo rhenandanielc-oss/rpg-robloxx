@@ -5,6 +5,24 @@
   "quadros": 120,
   "velocidade_studs_s_PROPOSTA": 0.0,
   "erro_ik_max": 0.0,
+  "erro_ik_por_pata": {
+   "MaoE": [
+    0.0,
+    119
+   ],
+   "MaoD": [
+    0.0,
+    119
+   ],
+   "PeE": [
+    0.0,
+    119
+   ],
+   "PeD": [
+    0.0,
+    119
+   ]
+  },
   "malha_z_min": -0.001
  },
  "Observar": {
@@ -13,6 +31,24 @@
   "quadros": 133,
   "velocidade_studs_s_PROPOSTA": 0.0,
   "erro_ik_max": 0.0,
+  "erro_ik_por_pata": {
+   "MaoE": [
+    0.0,
+    132
+   ],
+   "MaoD": [
+    0.0,
+    132
+   ],
+   "PeE": [
+    0.0,
+    132
+   ],
+   "PeD": [
+    0.0,
+    132
+   ]
+  },
   "malha_z_min": -0.001
  },
  "Andar": {
@@ -21,6 +57,24 @@
   "quadros": 36,
   "velocidade_studs_s_PROPOSTA": 3.23,
   "erro_ik_max": 0.0207,
+  "erro_ik_por_pata": {
+   "MaoE": [
+    0.0131,
+    13
+   ],
+   "MaoD": [
+    0.0207,
+    31
+   ],
+   "PeE": [
+    0.0,
+    35
+   ],
+   "PeD": [
+    0.0,
+    35
+   ]
+  },
   "malha_z_min": -0.006
  },
  "Corrida": {
@@ -29,6 +83,24 @@
   "quadros": 14,
   "velocidade_studs_s_PROPOSTA": 16.8,
   "erro_ik_max": 0.0004,
+  "erro_ik_por_pata": {
+   "MaoE": [
+    0.0003,
+    3
+   ],
+   "MaoD": [
+    0.0004,
+    5
+   ],
+   "PeE": [
+    0.0002,
+    10
+   ],
+   "PeD": [
+    0.0003,
+    9
+   ]
+  },
   "malha_z_min": -0.011
  },
  "Arrancada": {
@@ -37,6 +109,24 @@
   "quadros": 54,
   "velocidade_studs_s_PROPOSTA": 0.0,
   "erro_ik_max": 0.0005,
+  "erro_ik_por_pata": {
+   "MaoE": [
+    0.0004,
+    10
+   ],
+   "MaoD": [
+    0.0005,
+    43
+   ],
+   "PeE": [
+    0.0002,
+    49
+   ],
+   "PeD": [
+    0.0003,
+    48
+   ]
+  },
   "malha_z_min": -0.016,
   "v_perfil_PARAMETRO": [
    0.0,
@@ -101,6 +191,24 @@
   "quadros": 46,
   "velocidade_studs_s_PROPOSTA": 0.0,
   "erro_ik_max": 0.0004,
+  "erro_ik_por_pata": {
+   "MaoE": [
+    0.0003,
+    3
+   ],
+   "MaoD": [
+    0.0004,
+    4
+   ],
+   "PeE": [
+    0.0001,
+    10
+   ],
+   "PeD": [
+    0.0001,
+    8
+   ]
+  },
   "malha_z_min": -0.011,
   "v_perfil_PARAMETRO": [
    16.7954,
@@ -157,6 +265,24 @@
   "quadros": 36,
   "velocidade_studs_s_PROPOSTA": 0.0,
   "erro_ik_max": 0.0001,
+  "erro_ik_por_pata": {
+   "MaoE": [
+    0.0,
+    35
+   ],
+   "MaoD": [
+    0.0001,
+    3
+   ],
+   "PeE": [
+    0.0,
+    35
+   ],
+   "PeD": [
+    0.0,
+    35
+   ]
+  },
   "malha_z_min": -0.003,
   "giro_graus_s_PROPOSTA": 60.0
  },
@@ -166,6 +292,24 @@
   "quadros": 36,
   "velocidade_studs_s_PROPOSTA": 0.0,
   "erro_ik_max": 0.0002,
+  "erro_ik_por_pata": {
+   "MaoE": [
+    0.0,
+    35
+   ],
+   "MaoD": [
+    0.0002,
+    1
+   ],
+   "PeE": [
+    0.0,
+    35
+   ],
+   "PeD": [
+    0.0,
+    35
+   ]
+  },
   "malha_z_min": -0.003,
   "giro_graus_s_PROPOSTA": -60.0
  },
@@ -174,16 +318,52 @@
   "loop": false,
   "quadros": 43,
   "velocidade_studs_s_PROPOSTA": 0.0,
-  "erro_ik_max": 0.0005,
-  "malha_z_min": -0.001
+  "erro_ik_max": 0.0002,
+  "erro_ik_por_pata": {
+   "MaoE": [
+    0.0,
+    42
+   ],
+   "MaoD": [
+    0.0002,
+    23
+   ],
+   "PeE": [
+    0.0,
+    42
+   ],
+   "PeD": [
+    0.0002,
+    39
+   ]
+  },
+  "malha_z_min": -0.244
  },
  "LevantarSentado": {
   "duracao": 1.4,
   "loop": false,
   "quadros": 43,
   "velocidade_studs_s_PROPOSTA": 0.0,
-  "erro_ik_max": 0.0005,
-  "malha_z_min": -0.001
+  "erro_ik_max": 0.0002,
+  "erro_ik_por_pata": {
+   "MaoE": [
+    0.0,
+    42
+   ],
+   "MaoD": [
+    0.0002,
+    0
+   ],
+   "PeE": [
+    0.0,
+    42
+   ],
+   "PeD": [
+    0.0002,
+    11
+   ]
+  },
+  "malha_z_min": -0.244
  },
  "Deitar": {
   "duracao": 2.0,
@@ -191,6 +371,24 @@
   "quadros": 61,
   "velocidade_studs_s_PROPOSTA": 0.0,
   "erro_ik_max": 0.0005,
+  "erro_ik_por_pata": {
+   "MaoE": [
+    0.0004,
+    51
+   ],
+   "MaoD": [
+    0.0004,
+    43
+   ],
+   "PeE": [
+    0.0005,
+    47
+   ],
+   "PeD": [
+    0.0005,
+    43
+   ]
+  },
   "malha_z_min": -0.1
  },
  "LevantarDeitado": {
@@ -199,6 +397,24 @@
   "quadros": 61,
   "velocidade_studs_s_PROPOSTA": 0.0,
   "erro_ik_max": 0.0005,
+  "erro_ik_por_pata": {
+   "MaoE": [
+    0.0004,
+    9
+   ],
+   "MaoD": [
+    0.0004,
+    8
+   ],
+   "PeE": [
+    0.0005,
+    13
+   ],
+   "PeD": [
+    0.0005,
+    10
+   ]
+  },
   "malha_z_min": -0.1
  },
  "Comer": {
@@ -207,6 +423,24 @@
   "quadros": 72,
   "velocidade_studs_s_PROPOSTA": 0.0,
   "erro_ik_max": 0.0002,
+  "erro_ik_por_pata": {
+   "MaoE": [
+    0.0002,
+    0
+   ],
+   "MaoD": [
+    0.0001,
+    0
+   ],
+   "PeE": [
+    0.0,
+    71
+   ],
+   "PeD": [
+    0.0,
+    71
+   ]
+  },
   "malha_z_min": -0.011
  },
  "Rugir": {
@@ -215,6 +449,24 @@
   "quadros": 73,
   "velocidade_studs_s_PROPOSTA": 0.0,
   "erro_ik_max": 0.0003,
+  "erro_ik_por_pata": {
+   "MaoE": [
+    0.0001,
+    9
+   ],
+   "MaoD": [
+    0.0003,
+    10
+   ],
+   "PeE": [
+    0.0,
+    72
+   ],
+   "PeD": [
+    0.0,
+    72
+   ]
+  },
   "malha_z_min": -0.009
  },
  "Ameaca": {
@@ -223,6 +475,24 @@
   "quadros": 97,
   "velocidade_studs_s_PROPOSTA": 0.0,
   "erro_ik_max": 0.0002,
+  "erro_ik_por_pata": {
+   "MaoE": [
+    0.0002,
+    8
+   ],
+   "MaoD": [
+    0.0002,
+    5
+   ],
+   "PeE": [
+    0.0,
+    96
+   ],
+   "PeD": [
+    0.0,
+    96
+   ]
+  },
   "malha_z_min": -0.014
  },
  "GolpePata": {
@@ -231,6 +501,24 @@
   "quadros": 40,
   "velocidade_studs_s_PROPOSTA": 0.0,
   "erro_ik_max": 0.0006,
+  "erro_ik_por_pata": {
+   "MaoE": [
+    0.0006,
+    11
+   ],
+   "MaoD": [
+    0.0003,
+    25
+   ],
+   "PeE": [
+    0.0,
+    39
+   ],
+   "PeD": [
+    0.0,
+    39
+   ]
+  },
   "malha_z_min": -0.001
  },
  "Mordida": {
@@ -239,6 +527,24 @@
   "quadros": 31,
   "velocidade_studs_s_PROPOSTA": 0.0,
   "erro_ik_max": 0.0,
+  "erro_ik_por_pata": {
+   "MaoE": [
+    0.0,
+    30
+   ],
+   "MaoD": [
+    0.0,
+    30
+   ],
+   "PeE": [
+    0.0,
+    30
+   ],
+   "PeD": [
+    0.0,
+    30
+   ]
+  },
   "malha_z_min": -0.006
  },
  "ReacaoImpacto": {
@@ -247,6 +553,24 @@
   "quadros": 31,
   "velocidade_studs_s_PROPOSTA": 0.0,
   "erro_ik_max": 0.0001,
+  "erro_ik_por_pata": {
+   "MaoE": [
+    0.0001,
+    4
+   ],
+   "MaoD": [
+    0.0001,
+    12
+   ],
+   "PeE": [
+    0.0,
+    30
+   ],
+   "PeD": [
+    0.0,
+    30
+   ]
+  },
   "malha_z_min": -0.012
  }
 }

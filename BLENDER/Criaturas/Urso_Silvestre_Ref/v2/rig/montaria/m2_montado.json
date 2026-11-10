@@ -1,0 +1,110 @@
+{
+ "Repouso": {
+  "urso_min": [
+   -0.091,
+   1
+  ],
+  "urso_parte": "LeftLowerLeg",
+  "sela_min": [
+   -0.084,
+   21
+  ],
+  "sela_parte": "LeftHand"
+ },
+ "Observar": {
+  "urso_min": [
+   -0.099,
+   81
+  ],
+  "urso_parte": "LeftLowerLeg",
+  "sela_min": [
+   -0.092,
+   17
+  ],
+  "sela_parte": "RightHand"
+ },
+ "Andar": {
+  "urso_min": [
+   -0.143,
+   27
+  ],
+  "urso_parte": "LeftLowerLeg",
+  "sela_min": [
+   -0.093,
+   15
+  ],
+  "sela_parte": "RightHand"
+ },
+ "Corrida": {
+  "urso_min": [
+   -0.176,
+   9
+  ],
+  "urso_parte": "RightLowerLeg",
+  "sela_min": [
+   -0.108,
+   9
+  ],
+  "sela_parte": "LeftHand"
+ },
+ "Arrancada": {
+  "urso_min": [
+   -0.185,
+   31
+  ],
+  "urso_parte": "LeftLowerLeg",
+  "sela_min": [
+   -0.094,
+   29
+  ],
+  "sela_parte": "RightHand"
+ },
+ "Frenagem": {
+  "urso_min": [
+   -0.173,
+   5
+  ],
+  "urso_parte": "LeftLowerLeg",
+  "sela_min": [
+   -0.093,
+   9
+  ],
+  "sela_parte": "LeftHand"
+ },
+ "VirarE": {
+  "urso_min": [
+   -0.145,
+   27
+  ],
+  "urso_parte": "LeftLowerLeg",
+  "sela_min": [
+   -0.093,
+   13
+  ],
+  "sela_parte": "RightHand"
+ },
+ "VirarD": {
+  "urso_min": [
+   -0.135,
+   27
+  ],
+  "urso_parte": "LeftLowerLeg",
+  "sela_min": [
+   -0.094,
+   23
+  ],
+  "sela_parte": "RightHand"
+ },
+ "Rugir": {
+  "urso_min": [
+   -0.091,
+   1
+  ],
+  "urso_parte": "LeftLowerLeg",
+  "sela_min": [
+   -0.081,
+   1
+  ],
+  "sela_parte": "LeftHand"
+ }
+}

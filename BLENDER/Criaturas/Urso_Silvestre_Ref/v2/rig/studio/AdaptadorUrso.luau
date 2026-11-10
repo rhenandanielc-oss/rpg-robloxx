@@ -30,6 +30,15 @@ function M.clipe(nome)
 	local L = string.split(txt, "\n")
 	local h = string.split(L[1], "|")
 	local c = {nome = h[1], fps = tonumber(h[2]), loop = h[3] == "1", quadros = tonumber(h[4]), ossos = {}}
+	-- formato compacto (lote 2, 04/11): o cabecalho lista os ossos e os canais constantes iguais ao padrao
+	-- (quaternion identidade, translacao zero) sao omitidos; aqui eles sao preenchidos
+	local PADRAO = {0, 0, 0, 1, 0, 0, 0}
+	if h[5] then
+		for _, b in ipairs(string.split(h[5], ",")) do
+			c.ossos[b] = {}
+			for k = 1, 7 do c.ossos[b][k] = table.create(c.quadros, PADRAO[k]) end
+		end
+	end
 	for i = 2, #L do
 		local p = string.split(L[i], "|")
 		local b, k, v = p[1], tonumber(p[2]), p[3]
@@ -44,9 +53,20 @@ function M.clipe(nome)
 	return c
 end
 
-function M.cframe(c, osso, i)                       -- i = 0..quadros-1
+-- CONVENCAO DOS OSSOS (10/11/2026): o Import 3D do Roblox mudou desde 04/11. O mesmo GLB importado hoje chega com cada
+-- osso = antigo * giro de 180 graus no Y do proprio osso (medido: 180,0 em todos os 31 ossos; a sela v3 importada hoje
+-- bate com o urso de hoje em 0,03). Os clipes (matrix_basis do Blender) foram validados no import ANTIGO (04/11); num
+-- import NOVO o canal local precisa ser conjugado por Ry(180): q (x,y,z,w) -> (-x, y, -z, w) e t (x,y,z) -> (-x, y, -z).
+-- Deteccao pelo Raiz em repouso (local a parte): antigo RightVector.X = +1, novo = -1.
+function M.convencaoNova(modelo)
+	local raiz = modelo:FindFirstChild("Raiz", true)
+	return raiz ~= nil and raiz:IsA("Bone") and raiz.CFrame.RightVector.X < 0
+end
+
+function M.cframe(c, osso, i, nova)                 -- i = 0..quadros-1; nova = modelo importado na convencao nova
 	local ch = c.ossos[osso]; if not ch then return nil end
 	local j = i + 1
+	if nova then return CFrame.new(-ch[5][j], ch[6][j], -ch[7][j], -ch[1][j], ch[2][j], -ch[3][j], ch[4][j]) end
 	return CFrame.new(ch[5][j], ch[6][j], ch[7][j], ch[1][j], ch[2][j], ch[3][j], ch[4][j])
 end
 
@@ -82,6 +102,7 @@ function M.montar(modelo, nome, prioridade)
 	local c = M.clipe(nome)
 	local kfs = Instance.new("KeyframeSequence"); kfs.Name = c.nome; kfs.Loop = c.loop; kfs.Priority = prioridade
 	local faltam, n = {}, 0
+	local nova = M.convencaoNova(modelo)
 	-- loop: os JSON do urso NAO repetem o quadro final (quadros = duracao*fps); o Roblox fecha o loop no ultimo
 	-- keyframe, entao acrescenta-se um keyframe em quadros/fps igual ao quadro 0 (duracao certa e sem salto na volta)
 	local ultimo = c.loop and c.quadros or c.quadros - 1
@@ -89,7 +110,7 @@ function M.montar(modelo, nome, prioridade)
 		local kf = Instance.new("Keyframe"); kf.Time = i / c.fps
 		local t = M.arvore(modelo)
 		for _, p in ipairs(t:GetDescendants()) do
-			local cf = M.cframe(c, p.Name, i % c.quadros)
+			local cf = M.cframe(c, p.Name, i % c.quadros, nova)
 			if cf then p.CFrame = cf; n += 1 elseif i == 0 then table.insert(faltam, p.Name) end
 		end
 		t.Parent = kf; kf.Parent = kfs
@@ -99,9 +120,9 @@ end
 
 -- aplica um quadro direto nos Bones (Bone.Transform), para conferir a conversao com poses conhecidas do Blender
 function M.aplicarQuadro(modelo, nome, i)
-	local c = M.clipe(nome)
+	local c = M.clipe(nome); local nova = M.convencaoNova(modelo)
 	for _, b in ipairs(modelo:GetDescendants()) do
-		if b:IsA("Bone") then b.Transform = M.cframe(c, b.Name, i) or CFrame.identity end
+		if b:IsA("Bone") then b.Transform = M.cframe(c, b.Name, i, nova) or CFrame.identity end
 	end
 end
 function M.zerar(modelo)

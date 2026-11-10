@@ -1,0 +1,202 @@
+{
+ "peso_max": 0.55,
+ "ossos": {
+  "PeloBarrigaColuna2": {
+   "pai": "Coluna2",
+   "cabeca": [
+    -0.081,
+    -0.503,
+    3.468
+   ],
+   "normal": [
+    0.035,
+    -0.004,
+    -0.999
+   ],
+   "vertices": 57
+  },
+  "PeloBarrigaColuna3": {
+   "pai": "Coluna3",
+   "cabeca": [
+    -0.019,
+    -2.21,
+    4.251
+   ],
+   "normal": [
+    -0.009,
+    -0.046,
+    -0.999
+   ],
+   "vertices": 44
+  },
+  "PeloOmbroBracoD": {
+   "pai": "BracoD",
+   "cabeca": [
+    -2.232,
+    -0.943,
+    5.512
+   ],
+   "normal": [
+    -0.926,
+    0.023,
+    -0.377
+   ],
+   "vertices": 61
+  },
+  "PeloDorsoEscapulaD": {
+   "pai": "EscapulaD",
+   "cabeca": [
+    -1.141,
+    -1.787,
+    7.632
+   ],
+   "normal": [
+    -0.436,
+    0.101,
+    0.894
+   ],
+   "vertices": 127
+  },
+  "PeloOmbroEscapulaD": {
+   "pai": "EscapulaD",
+   "cabeca": [
+    -1.526,
+    -1.956,
+    7.155
+   ],
+   "normal": [
+    -0.973,
+    -0.15,
+    -0.175
+   ],
+   "vertices": 70
+  },
+  "PeloDorsoColuna2": {
+   "pai": "Coluna2",
+   "cabeca": [
+    -0.036,
+    0.538,
+    7.615
+   ],
+   "normal": [
+    0.014,
+    0.322,
+    0.947
+   ],
+   "vertices": 225
+  },
+  "PeloDorsoEscapulaE": {
+   "pai": "EscapulaE",
+   "cabeca": [
+    1.118,
+    -1.797,
+    7.687
+   ],
+   "normal": [
+    0.424,
+    0.033,
+    0.905
+   ],
+   "vertices": 123
+  },
+  "PeloBarrigaColuna1": {
+   "pai": "Coluna1",
+   "cabeca": [
+    -0.044,
+    1.825,
+    3.281
+   ],
+   "normal": [
+    0.023,
+    0.123,
+    -0.992
+   ],
+   "vertices": 211
+  },
+  "PeloOmbroBracoE": {
+   "pai": "BracoE",
+   "cabeca": [
+    2.239,
+    -1.051,
+    5.482
+   ],
+   "normal": [
+    0.909,
+    -0.221,
+    -0.354
+   ],
+   "vertices": 58
+  },
+  "PeloOmbroEscapulaE": {
+   "pai": "EscapulaE",
+   "cabeca": [
+    1.481,
+    -1.861,
+    7.395
+   ],
+   "normal": [
+    0.971,
+    -0.098,
+    -0.218
+   ],
+   "vertices": 84
+  },
+  "PeloBarrigaPelve": {
+   "pai": "Pelve",
+   "cabeca": [
+    0.007,
+    4.45,
+    2.78
+   ],
+   "normal": [
+    0.046,
+    0.164,
+    -0.985
+   ],
+   "vertices": 64
+  },
+  "PeloDorsoColuna1": {
+   "pai": "Coluna1",
+   "cabeca": [
+    -0.021,
+    2.702,
+    6.605
+   ],
+   "normal": [
+    -0.038,
+    0.41,
+    0.911
+   ],
+   "vertices": 180
+  },
+  "PeloDorsoCoxaD": {
+   "pai": "CoxaD",
+   "cabeca": [
+    -1.524,
+    3.806,
+    5.792
+   ],
+   "normal": [
+    -0.454,
+    0.317,
+    0.833
+   ],
+   "vertices": 52
+  },
+  "PeloDorsoCoxaE": {
+   "pai": "CoxaE",
+   "cabeca": [
+    1.444,
+    4.026,
+    5.894
+   ],
+   "normal": [
+    0.343,
+    0.332,
+    0.879
+   ],
+   "vertices": 81
+  }
+ },
+ "max_influencias": 4
+}

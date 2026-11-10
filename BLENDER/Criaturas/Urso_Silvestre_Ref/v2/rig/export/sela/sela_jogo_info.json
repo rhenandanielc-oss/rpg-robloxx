@@ -1,0 +1,15 @@
+{
+ "tris": 11084,
+ "vertices": 5654,
+ "texturas": {
+  "cor": "T_Urso_Sela_Cor.png",
+  "normal": "T_Urso_Sela_Normal.png",
+  "rug": "T_Urso_Sela_Rug.png",
+  "metal": "T_Urso_Sela_Metal.png",
+  "mr": "T_Urso_Sela_MetalRug.png"
+ },
+ "resolucao": 1024,
+ "glb": "Urso_Silvestre_Sela.glb",
+ "glb_bytes": 2522788,
+ "grupos": 22
+}

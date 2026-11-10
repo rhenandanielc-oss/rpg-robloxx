@@ -1,0 +1,45 @@
+{
+ "z_quadril": 9.315040397644044,
+ "z_assento_centro": 8.765040397644043,
+ "quadril": [
+  0.0,
+  0.85,
+  9.315040397644044
+ ],
+ "apoios_pe": {
+  "Left": {
+   "tornozelo": [
+    1.875,
+    0.4,
+    8.61
+   ],
+   "perna": 1.609,
+   "pele_sob_pe": 6.888
+  },
+  "Right": {
+   "tornozelo": [
+    -1.89,
+    0.4,
+    8.6
+   ],
+   "perna": 1.626,
+   "pele_sob_pe": 6.828
+  }
+ },
+ "alca": [
+  0.0,
+  -0.35,
+  9.820965042114258
+ ],
+ "tris": 11084,
+ "vertices": 5654,
+ "materiais": [
+  "M_Sela_CouroJavali",
+  "M_Sela_PeleCervo",
+  "M_Sela_TendaoCervo",
+  "M_Sela_MadeiraAncestral",
+  "M_Sela_ResinaViva",
+  "M_Sela_Ferro",
+  "M_Sela_CouroFolha"
+ ]
+}

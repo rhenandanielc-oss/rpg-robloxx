@@ -22,7 +22,7 @@ if "Chao" not in bpy.data.objects:
     ch.data.materials.append(mc)                                   # xadrez: permite ver escorregao do pe
 sc.render.engine = "BLENDER_EEVEE"; sc.eevee.taa_render_samples = 12; sc.view_settings.view_transform = "AgX"
 cd = bpy.data.cameras.new("C"); cam = bpy.data.objects.new("C", cd); sc.collection.objects.link(cam); sc.camera = cam
-pos, alvo = ((-30, -1, 5.5), (0, -0.5, 4.8)) if CAM == "lado" else ((-21, -21, 9), (0, -0.5, 4.6))
+pos, alvo = {"lado": ((-30, -1, 5.5), (0, -0.5, 4.8)), "frente": ((-9, -26, 6.5), (0, -1.5, 4.2))}.get(CAM, ((-21, -21, 9), (0, -0.5, 4.6)))
 cam.location = pos; cam.rotation_euler = (V(alvo) - V(pos)).to_track_quat("-Z", "Y").to_euler(); cd.lens = 42
 if not arm.animation_data: arm.animation_data_create()
 acoes = [a for a in bpy.data.actions if a.name.startswith("Urso_")]

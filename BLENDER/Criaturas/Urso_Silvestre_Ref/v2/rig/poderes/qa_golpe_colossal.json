@@ -1,0 +1,105 @@
+{
+ "simulacao_parametros_tecnicos": {
+  "Andar": {
+   "v_studs_s": 3.23,
+   "giro_graus_s": 0.0
+  },
+  "Corrida": {
+   "v_studs_s": 17.23,
+   "giro_graus_s": 0.0
+  },
+  "VirarE": {
+   "v_studs_s": 0.0,
+   "giro_graus_s": 60.0
+  },
+  "VirarD": {
+   "v_studs_s": 0.0,
+   "giro_graus_s": -60.0
+  }
+ },
+ "clipes": {
+  "GolpeColossal": {
+   "loop": false,
+   "quadros": 97,
+   "sim_v": 0.0,
+   "sim_giro": 0.0,
+   "sola_mundo": {
+    "MaoE": {
+     "deriva_max_studs": 0.005,
+     "deriva_osso_studs": 0.0,
+     "apoios": 3
+    },
+    "MaoD": {
+     "deriva_max_studs": 0.004,
+     "deriva_osso_studs": 0.0,
+     "apoios": 3
+    },
+    "PeE": {
+     "deriva_max_studs": 0.029,
+     "deriva_osso_studs": 0.0,
+     "apoios": 1
+    },
+    "PeD": {
+     "deriva_max_studs": 0.027,
+     "deriva_osso_studs": 0.0,
+     "apoios": 1
+    }
+   },
+   "chao_por_regiao": {
+    "garra/dedo": {
+     "prof_max": 0.004,
+     "verts_max": 2,
+     "quadro": 64
+    },
+    "sola": {
+     "prof_max": 0.02,
+     "verts_max": 3,
+     "quadro": 64
+    }
+   },
+   "boca_arestas_3x": {
+    "interior": 12,
+    "exterior": 75
+   },
+   "picos_aceleracao": [
+    [
+     "BracoD",
+     59,
+     11112,
+     504.1,
+     133.7
+    ],
+    [
+     "BracoE",
+     59,
+     11045,
+     493.7,
+     125.5
+    ],
+    [
+     "Pelve",
+     59,
+     11000,
+     366.7,
+     0.0
+    ],
+    [
+     "Mandibula",
+     51,
+     9889,
+     10.1,
+     339.7
+    ]
+   ],
+   "vel_angular_max_graus_s": {
+    "BracoD": 504.1,
+    "BracoE": 493.7,
+    "AntebracoD": 476.3,
+    "AntebracoE": 474.4,
+    "MaoD": 399.7,
+    "MaoE": 397.1
+   }
+  }
+ },
+ "transicoes": {}
+}

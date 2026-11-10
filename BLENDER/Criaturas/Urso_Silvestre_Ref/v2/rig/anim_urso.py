@@ -210,22 +210,35 @@ def c_virar(sinal):
 def degrau(t, a, b, alt=0.35):
     """passo de reposicionamento: 0 -> 1 entre a e b com arco de altura alt (a pata sai do chao, nao arrasta)"""
     x = max(0.0, min(1.0, (t - a) / (b - a))); return suave(x), alt * math.sin(math.pi * x)
-SENTADO = dict(raiz=V((0, 0.9, -1.78)), pelve=R(-24))
+# 04/11 (pedido do usuario: "mais sentado no chao"): garupa e coxas apoiadas, tronco mais ereto, traseiras dao um
+# passo a frente (as coxas deitam), dianteiras recuam para baixo do peito. Valores ajustaveis por SENTADO_TESTE (json).
+# Antes (ate 04/11): raiz=(0, 0.9, -1.78), pelve=-24, col1=5, col2=9, col3=0, recuo=1.3, sem passo atras, cauda=-25,
+# passos das dianteiras em 0.10-0.50 / 0.40-0.80 (garupa 0.09 acima do chao, coxa 1.41, tronco 35 graus).
+# 04/11 r1: raiz z -2.48, pelve -43, coluna 13/15/7, calcanhar levantado (garupa so encostava; "encoste mais a bunda").
+# r2: garupa mais baixa (-0.16), pelve menos girada (a traseira desce), pe traseiro quase plano (fecha o vao sob a
+# garupa sem afundar a sola) e cauda menos dobrada (nao entra no chao).
+SENTADO = dict(raiz=(0.0, 1.4, -2.64), pelve=-40.0, col1=12.0, col2=14.0, col3=7.0, pesc=10.0, cab=4.0,
+               recuo=1.6, passo_tras=0.9, calc_z=0.16, calc_ang=-4.0, cauda=-15.0,
+               passoE=(0.38, 0.72), passoD=(0.62, 0.94))   # dianteiras recuam depois que o corpo ja desceu (IK sem erro)
+if os.environ.get("SENTADO_TESTE"): SENTADO.update(json.loads(os.environ["SENTADO_TESTE"]))
 DUR_SEN = 1.4
 def pose_sentado(t, k, r, pes):
-    r["Pelve"] = [(X, SENTADO["pelve"] * k)]; r["Coluna1"] = [(X, R(5) * k)]; r["Coluna2"] = [(X, R(9) * k)]
-    r["Pescoco"] = [(X, R(10) * k)]; r["Cabeca"] = [(X, R(4) * k)]
-    for p_, (a, b), sx in (("MaoE", (0.10, 0.50), 1), ("MaoD", (0.40, 0.80), -1)):   # dianteiras recuam uma de cada vez (passo)
-        s, h = degrau(t, a, b, 0.32); pes[p_] = V((0.1 * sx, 1.3, 0)) * s + V((0, 0, h))
-    hz, ang = CALC_Z, CALC_ANG
-    for p_ in ("PeE", "PeD"):                                                    # REVISAO: calcanhar sobe, dedos apoiados (joelho dobra fundo)
-        pes[p_] = V((0, 0, hz * k)); EXT_POSTURA.setdefault("rot_pe", {})[p_] = R(ang) * k
-    return SENTADO["raiz"] * k                                                    # traseiras ficam apoiadas onde estao
+    S = SENTADO
+    r["Pelve"] = [(X, R(S["pelve"]) * k)]; r["Coluna1"] = [(X, R(S["col1"]) * k)]; r["Coluna2"] = [(X, R(S["col2"]) * k)]
+    if S["col3"]: r["Coluna3"] = [(X, R(S["col3"]) * k)]
+    r["Pescoco"] = [(X, R(S["pesc"]) * k)]; r["Cabeca"] = [(X, R(S["cab"]) * k)]
+    for p_, (a, b), sx in (("MaoE", S.get("passoE", (0.10, 0.50)), 1), ("MaoD", S.get("passoD", (0.40, 0.80)), -1)):   # dianteiras recuam (passo)
+        s, h = degrau(t, a, b, 0.32); pes[p_] = V((0.1 * sx, S["recuo"], 0)) * s + V((0, 0, h))
+    hz = CALC_Z if S["calc_z"] is None else S["calc_z"]; ang = CALC_ANG if S["calc_ang"] is None else S["calc_ang"]
+    for p_, (a, b) in (("PeE", (0.30, 0.70)), ("PeD", (0.50, 0.90))):              # traseiras: passo a frente (coxas deitam)
+        s, h = degrau(t, a, b, 0.30) if S["passo_tras"] else (0.0, 0.0)
+        pes[p_] = V((0, -S["passo_tras"] * s, hz * k + h)); EXT_POSTURA.setdefault("rot_pe", {})[p_] = R(ang) * k
+    return V(S["raiz"]) * k
 EXT_POSTURA = {}
 CALC_Z, CALC_ANG = 0.22, -12.0                         # calcanhar sobe 0,22 e o pe gira 12 graus (dedos apoiados); testado 0,15/-20 a 0,30/+30
 def c_sentar(t):
     r = {}; pes = {}; k = suave((t - 0.30) / (DUR_SEN - 0.30)); EXT_POSTURA.clear()
-    raiz = pose_sentado(t, k, r, pes); r["Cauda1"] = [(X, R(-25) * k)]
+    raiz = pose_sentado(t, k, r, pes); r["Cauda1"] = [(X, R(SENTADO["cauda"]) * k)]
     return r, raiz + V((0, 0, 0.10 * math.sin(math.pi * k))), pes, {"rot_pe": dict(EXT_POSTURA.get("rot_pe", {}))}
 def c_levantar_sentado(t):
     return c_sentar(DUR_SEN - t)
@@ -329,6 +342,13 @@ CLIPES = {  # nome: (funcao, duracao s, loop, velocidade de simulacao [PARAMETRO
 }
 COM_ALTURA_PROPRIA = {"Andar", "Corrida", "Arrancada", "Frenagem", "VirarE", "VirarD"}      # os demais recebem BASE_Z
 GIRO_SIM = {"VirarE": 60.0, "VirarD": -60.0}
+# poderes (04/11): clipes PROPRIOS dos poderes ficam em poderes/clipes_poderes.py e so entram com URSO_PODERES=1
+# (os 18 clipes aprovados e a execucao padrao nao mudam). EVENTOS_CLIPE: instantes marcados (ex.: impacto no chao).
+EVENTOS_CLIPE = {}
+if os.environ.get("URSO_PODERES"):
+    exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "poderes", "clipes_poderes.py"), encoding="utf-8").read(), globals())
+if os.environ.get("URSO_MONTARIA"):                    # montaria (09/11): clipes Montar_E/D e Desmontar_E/D (montaria/clipes_montaria.py)
+    exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "montaria", "clipes_montaria.py"), encoding="utf-8").read(), globals())
 QUAIS = ARGS[1].split(",") if len(ARGS) > 1 else list(CLIPES)
 
 # ------------------------------------------------------------------ amostragem -> FK -> acao + JSON + QA
@@ -344,6 +364,7 @@ for o in MALHAS[:3]:                                                       # reg
     for v in o.data.vertices:
         if not v.groups: continue
         nm = nomes[max(v.groups, key=lambda g: g.weight).group]
+        if nm.startswith("Pelo") and nm in BD: nm = BD[nm].parent.name      # rig com pelo ao vento (04/11): regiao do pai
         if nm.startswith(("Mao", "Dedos")) or (nm.startswith("Pe") and not nm.startswith(("Pelve", "Pescoco"))): pat.append(v.index)
         elif nm.startswith(("Braco", "Antebraco", "Coxa", "Canela")): mem.append(v.index)
         else: tro.append(v.index)
@@ -373,12 +394,12 @@ def calibrar_deitado():
         else: hi_ = m_
     DEITADO_Z = hi_; print("DEITADO_Z calibrado", round(DEITADO_Z, 3), "z_min por regiao", {k: round(v_, 3) for k, v_ in regioes_zmin().items()})
 if os.environ.get("DEITADO_FIXO"): DEITADO_Z = float(os.environ["DEITADO_FIXO"]); print("DEITADO_Z fixo (teste)", DEITADO_Z)
-elif any(n in QUAIS for n in ("Deitar", "LevantarDeitado")): calibrar_deitado()
+elif any(n in QUAIS for n in ("Deitar", "LevantarDeitado")) or any(n.startswith(("Montar_", "Desmontar_")) for n in QUAIS): calibrar_deitado()   # montaria usa a pose deitada
 manifesto = {}; QUADROS = {}
 for nome in QUAIS:
     fn, dur, loop, vel, apoio_info = CLIPES[nome]
     nq = int(round(dur * FPS)) + (0 if loop else 1)
-    quadros = []; erro_ik = 0.0; desliza = 0.0; zmin = 9.0; prev = None; TOQUE = {}
+    quadros = []; erro_ik = 0.0; desliza = 0.0; zmin = 9.0; prev = None; TOQUE = {}; ERRO_PATA = {}
     for qi in range(nq):
         t = qi / FPS
         zerar(); rots, raiz, pes, ext = fn(t)
@@ -408,15 +429,17 @@ for nome in QUAIS:
         pose = {pb.name: arm.convert_space(pose_bone=pb, matrix=pb.matrix, from_space="POSE", to_space="LOCAL").copy() for pb in PB}
         for k in PATAS:
             if ext.get("ik", {}).get(k, 1.0) > 0.99 and ext.get("alvo_fk", {}).get(k, 0.0) < 0.01:
-                erro_ik = max(erro_ik, (PB[k].head - ALVO[k].location).length)
+                e_ = (PB[k].head - ALVO[k].location).length; erro_ik = max(erro_ik, e_)
+                if e_ > ERRO_PATA.get(k, (0, 0))[0]: ERRO_PATA[k] = (round(e_, 4), qi)
         if qi % 3 == 0: zmin = min(zmin, malha_zmin())
         quadros.append(pose)
     manifesto[nome] = {"duracao": dur, "loop": loop, "quadros": nq, "velocidade_studs_s_PROPOSTA": round(vel, 2),
-                       "erro_ik_max": round(erro_ik, 4), "malha_z_min": round(zmin, 3)}
+                       "erro_ik_max": round(erro_ik, 4), "erro_ik_por_pata": ERRO_PATA, "malha_z_min": round(zmin, 3)}
     if nome in GIRO_SIM: manifesto[nome]["giro_graus_s_PROPOSTA"] = GIRO_SIM[nome]
     if callable(apoio_info): manifesto[nome]["v_perfil_PARAMETRO"] = [round(apoio_info(q_ / FPS), 4) for q_ in range(nq)]
     print("CLIPE", nome, manifesto[nome], flush=True)
     dado = {"nome": "Urso_" + nome, "fps": FPS, "loop": loop, "quadros": nq, "duracao": dur, "velocidade": round(vel, 3), "ossos": {}}
+    if nome in EVENTOS_CLIPE: dado["eventos"] = EVENTOS_CLIPE[nome]; manifesto[nome]["eventos"] = EVENTOS_CLIPE[nome]
     for pb in PB:
         seq = []
         for pose in quadros:
@@ -444,5 +467,5 @@ ant = {}
 mp = os.path.join(OUT, "manifesto_clipes.json")
 if os.path.exists(mp) and len(QUAIS) < len(CLIPES): ant = json.load(open(mp, encoding="utf-8"))
 ant.update(manifesto); json.dump(ant, open(mp, "w", encoding="utf-8"), indent=1, ensure_ascii=False)
-bpy.ops.wm.save_as_mainfile(filepath=os.path.join(os.path.dirname(bpy.data.filepath), "CR_Urso_v2_Anim.blend"))
+bpy.ops.wm.save_as_mainfile(filepath=os.environ.get("URSO_ANIM_SAIDA") or os.path.join(os.path.dirname(bpy.data.filepath), "CR_Urso_v2_Anim.blend"))   # URSO_ANIM_SAIDA: poderes salvam a parte
 print("ANIM_OK", list(QUADROS))

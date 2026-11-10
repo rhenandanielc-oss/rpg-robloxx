@@ -23,7 +23,7 @@ SIM = {"Andar": (3.23, 0.0), "Corrida": (17.23, 0.0), "VirarE": (0.0, 60.0), "Vi
 try:
     man = json.load(open(os.path.join(os.path.dirname(bpy.data.filepath), "clipes", "manifesto_clipes.json"), encoding="utf-8"))
     for k, v in man.items():
-        if k in ("Andar", "Corrida") and v.get("velocidade_studs_s_PROPOSTA"): SIM[k] = (v["velocidade_studs_s_PROPOSTA"], 0.0)
+        if k in ("Andar", "Corrida", "CargaCorrida", "FortalezaAndar") and v.get("velocidade_studs_s_PROPOSTA"): SIM[k] = (v["velocidade_studs_s_PROPOSTA"], 0.0)
         if k in ("VirarE", "VirarD") and "giro_graus_s_PROPOSTA" in v: SIM[k] = (0.0, v["giro_graus_s_PROPOSTA"])
 except Exception: man = {}
 VPERF = {k: v["v_perfil_PARAMETRO"] for k, v in man.items() if "v_perfil_PARAMETRO" in v}       # arrancada/frenagem: v(t) por quadro

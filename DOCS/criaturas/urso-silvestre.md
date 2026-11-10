@@ -113,7 +113,34 @@ Ficha histórica de combate (aprovada antes de 30/10, ainda não revista para o 
   - 31 ossos, 4 malhas com skin, escala e texturas preservadas.
   - Repouso, Andar e Rugir tocados em Play no PC com id temporário (`RegisterAnimationClip`), sem publicar.
   - Poses iguais ao Blender (erro ≤ 0,0021 stud). Andar a 3,23 (parâmetro técnico): deriva 0,003–0,049.
-  - O place não foi salvo. Ver `v2/LEIA-ME-v2.md`, seção "Piloto".
+  - Place salvo pelo usuário em 04/11. Ver `v2/LEIA-ME-v2.md`, seção "Piloto".
+- **Lote 2 no Studio (04/11/2026, AGUARDANDO AVALIAÇÃO):** Corrida, Arrancada, Frenagem, VirarE e VirarD tocados em Play no PC com ids temporários, sem publicar.
+  - Poses iguais ao Blender (erro ≤ 0,003).
+  - Apoio firme ao vivo: deriva de 0,002–0,042.
+  - Sequência Arrancada→Corrida→Frenagem contínua; deriva de 0,007–0,143 conforme o momento da troca.
+  - Mudanças do laboratório **não salvas**. Ver `v2/LEIA-ME-v2.md`, seção "Lote 2".
+- **Lote 3 no Studio (04/11/2026, AGUARDANDO AVALIAÇÃO):** os 10 clipes restantes foram tocados em Play/PC. O Comer→Repouso ficou pendente. Ver `v2/LEIA-ME-v2.md`, seção "Lote 3".
+- **Situação dos 18 clipes** (Blender = QA da revisão aprovada; Studio = Play/PC em `rpg_roblox`; sem celular e sem publicação):
+
+| Clipe | Blender | Studio isolado | Transições testadas no Studio | Resultado | Evidência | Pendência |
+|---|---|---|---|---|---|---|
+| Repouso | ok | ok (piloto, regressão) | base das 8 sequências | ok | piloto, lote 3 | — |
+| Andar | ok | ok (3,23) | — | ok | piloto | transições Andar↔Virar (Blender) |
+| Rugir | ok | ok | — | ok | piloto | faixas escuras da boca |
+| Corrida | ok | ok | Arrancada→Corrida→Frenagem | ok | lote 2 | troca A→C (0,143) |
+| Arrancada | ok | ok | idem | ok | lote 2 | troca A→C |
+| Frenagem | ok | ok | idem | ok | lote 2 | — |
+| VirarE / VirarD | ok | ok (±60°/s) | — | ok | lote 2 | transições com Andar |
+| Observar | ok | ok | Repouso→Observar→Repouso | ok | lote 3 | — |
+| Sentar / LevantarSentado | ok | ok | Repouso→Sentar→Levantar→Repouso | ok | lote 3 | r2 (garupa assentada) no Blender e no Studio em 04/11 (pranchas 17 e 18); place salvo pelo usuário (informado) |
+| Deitar / LevantarDeitado | ok (franja −0,10) | ok | Repouso→Deitar→Levantar→Repouso | ok, com ressalva | lote 3 | franja da barriga |
+| Comer | ok | ok | Repouso→Comer→Repouso | **falha na transição** | lote 3 | passo de entrada/saída |
+| Ameaça | ok | ok | Repouso→Ameaça→Repouso | ok | lote 3 | — |
+| GolpePata | ok | ok | Repouso→GolpePata→Repouso | ok | lote 3 | — |
+| Mordida | ok | ok | Repouso→Mordida→Repouso | ok | lote 3 | faixas escuras da boca |
+| ReaçãoImpacto | ok | ok | Repouso→Reação→Repouso | ok | lote 3 | — |
+
+  - **Os 18 clipes NÃO estão finalizados.** Pendências: transição do Comer, franja do Deitar, boca, troca A→C, celular e publicação.
 - Elemento continua [PENDENTE]. A vegetação é só aparência.
 
 ## 5. O que já existe no projeto (registros anteriores; o place `rpg_roblox` não tem urso provisório — conferido no M0 de 04/11)
@@ -167,6 +194,30 @@ Ficha histórica de combate (aprovada antes de 30/10, ainda não revista para o 
 6. Catálogo do Studio (`Biblioteca_Criaturas.Catalogo`) desatualizado em relação à regra de 30/10. Atualizar só com autorização.
 7. Estágios de crescimento (proporções Bebê → Ancião), sela reforçada (modelo/ajuste), sons, IA de proteção e montaria: nada feito.
 8. Papel do "Urso Gigante" nos marcadores do mapa (ver §5).
+10. **Poderes (04/11, em andamento):** decisões do usuário registradas para os 4 poderes; números todos provisórios.
+    - Etapa 1, Golpe Colossal: clipe feito no Blender (contato em 1,10 s), módulos de servidor/cliente e testes prontos.
+    - **Ainda não instalado nem testado no Studio** (ocupado).
+    - Sem sistema oficial de PvP, alianças, energia ou sons no place.
+    - Golpe Colossal APROVADO pelo usuário em 04/11 (rugido no alto, rachaduras em volta do corpo, raio LAB 76).
+    - Etapa 2, Rugido Protetor: APROVADO pelo usuário em 04/11 (visual v3 azul).
+    - Etapa 3, Carga Selvagem: 3 clipes, servidor e cliente instalados e testados em Play/PC (04/11).
+      - Testes: travar o alvo, alvo móvel, parede, erro, impacto único, imunidade, morte na queda, spam/recarga/energia, validação do alvo, interrupção e jogador como alvo.
+      - Aguardando avaliação. Dano, empurrão e som estão pendentes.
+    - 05/11, Carga v3 no Studio: cabeça baixa e ombro exposto, ombro sobe no impacto, arrancada que racha o chão; bug do 1º uso corrigido; vídeos em `poderes/review/`. Lançamento de alvos pequenos (até 6,5 de altura; arco de 12, cortado antes de parede/barranco) aprovado e testado em Play/PC, inclusive com jogador.
+    - Etapa 4, Fortaleza Viva (05/11): decisões do usuário aplicadas (reserva 300 compartilhada, raio 12 acompanhando, golpe de dentro −75%, 8 s, recarga 25); 4 clipes e servidor instalados; v3 (05/11): DOMO de LINHAS amarelas (raio 18) que se desenham em 4 s, trincas coladas na superfície, anel de retenção e som provisório, testado em Play/PC. Aguardando avaliação.
+    - Passivas (05/11, escolha do usuário; números LAB): Fúria do Protetor (treinador ≤ 30% perto: +30% velocidade, +15% força por 6 s, recarga 30) e Faro do Protetor (marca inimigos escondidos a até 25 studs para o treinador, 3 s, recarga 15), testadas em Play/PC; visual da Fúria (aura dourada + olhos acesos) APROVADO 05/11.
+    - Ver `v2/LEIA-ME-v2.md`, seção "Poderes do Urso".
+9. **[REQUISITO FUTURO — registrado 04/11/2026, NÃO IMPLEMENTADO]** Pelo ao vento.
+   - O pelo deve se mover de forma sutil e natural com o vento, preservando a aparência aprovada.
+   - A pelagem da v2 é integrada à malha (geometria + textura assada), então a solução técnica ainda precisa ser estudada e validada no Roblox. Não há promessa de movimento independente de cada fio.
+   - **Objetivo:**
+     - mechas expostas se movem discretamente, conforme direção e intensidade do vento;
+     - corpo, rosto, boca, patas e cascas firmes;
+     - compatível com os 18 clipes e com o apoio no chão;
+     - desempenho adequado em PC e celular, com várias criaturas.
+   - **Antes de implementar:** proposta técnica (separar malha? ossos novos? pesos? como preservar o rig e os clipes) com aprovação específica.
+   - **Demonstração:** sem vento × intensidades diferentes, lado a lado, fiel a `REFERENCIAS/floresta-ancestral/urso-silvestre/urso-silvestre-referencia.png`, com o custo de desempenho.
+   - Detalhes em `v2/LEIA-ME-v2.md`, seção "Requisito futuro: pelo ao vento" (opção A feita no Blender em 04/11, variante `rig/vento/`, deformação dos clipes idêntica; aguardando avaliação; Roblox não testado).
 
 ## 7. Próximos passos sugeridos (aguardando aprovação; nada iniciado)
 - **A.** O criador define elemento + kit (passiva/ativas). Esta ficha é atualizada com [OFICIAL].

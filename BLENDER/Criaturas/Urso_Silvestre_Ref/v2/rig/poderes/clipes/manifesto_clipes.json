@@ -1,0 +1,345 @@
+{
+ "GolpeColossal": {
+  "duracao": 3.2,
+  "loop": false,
+  "quadros": 97,
+  "velocidade_studs_s_PROPOSTA": 0.0,
+  "erro_ik_max": 0.0005,
+  "erro_ik_por_pata": {
+   "MaoE": [
+    0.0005,
+    67
+   ],
+   "MaoD": [
+    0.0005,
+    27
+   ],
+   "PeE": [
+    0.0,
+    96
+   ],
+   "PeD": [
+    0.0,
+    96
+   ]
+  },
+  "malha_z_min": -0.02,
+  "eventos": {
+   "rugido_s": 1.0,
+   "impacto_s": 1.9333,
+   "impacto_quadro": 58
+  }
+ },
+ "RugidoProtetor": {
+  "duracao": 3.0,
+  "loop": false,
+  "quadros": 91,
+  "velocidade_studs_s_PROPOSTA": 0.0,
+  "erro_ik_max": 0.0022,
+  "erro_ik_por_pata": {
+   "MaoE": [
+    0.0,
+    90
+   ],
+   "MaoD": [
+    0.0022,
+    17
+   ],
+   "PeE": [
+    0.0,
+    90
+   ],
+   "PeD": [
+    0.0,
+    90
+   ]
+  },
+  "malha_z_min": -0.004,
+  "eventos": {
+   "rugido_s": 0.7,
+   "efeito_s": 1.0
+  }
+ },
+ "CargaInicio": {
+  "duracao": 1.04,
+  "loop": false,
+  "quadros": 32,
+  "velocidade_studs_s_PROPOSTA": 0.0,
+  "erro_ik_max": 0.0005,
+  "erro_ik_por_pata": {
+   "MaoE": [
+    0.0005,
+    9
+   ],
+   "MaoD": [
+    0.0005,
+    8
+   ],
+   "PeE": [
+    0.0004,
+    28
+   ],
+   "PeD": [
+    0.0004,
+    28
+   ]
+  },
+  "malha_z_min": -0.025,
+  "v_perfil_PARAMETRO": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0131,
+   0.4537,
+   1.4593,
+   2.9489,
+   4.8412,
+   7.0551,
+   9.5093,
+   12.1227,
+   14.814,
+   17.5021,
+   20.1057,
+   22.5437,
+   24.7348,
+   26.5979,
+   28.0518,
+   29.0152,
+   29.407,
+   29.4118,
+   29.4118,
+   29.4118,
+   29.4118
+  ],
+  "eventos": {
+   "empurrao_s": 0.34,
+   "empurrao_quadro": 10
+  }
+ },
+ "CargaCorrida": {
+  "duracao": 0.34,
+  "loop": true,
+  "quadros": 10,
+  "velocidade_studs_s_PROPOSTA": 29.41,
+  "erro_ik_max": 0.0005,
+  "erro_ik_por_pata": {
+   "MaoE": [
+    0.0004,
+    7
+   ],
+   "MaoD": [
+    0.0005,
+    3
+   ],
+   "PeE": [
+    0.0004,
+    7
+   ],
+   "PeD": [
+    0.0004,
+    7
+   ]
+  },
+  "malha_z_min": -0.023
+ },
+ "CargaImpacto": {
+  "duracao": 1.7,
+  "loop": false,
+  "quadros": 52,
+  "velocidade_studs_s_PROPOSTA": 0.0,
+  "erro_ik_max": 0.0004,
+  "erro_ik_por_pata": {
+   "MaoE": [
+    0.0003,
+    3
+   ],
+   "MaoD": [
+    0.0004,
+    5
+   ],
+   "PeE": [
+    0.0002,
+    7
+   ],
+   "PeD": [
+    0.0004,
+    7
+   ]
+  },
+  "malha_z_min": -0.028,
+  "v_perfil_PARAMETRO": [
+   29.4118,
+   29.4118,
+   29.4118,
+   29.4118,
+   29.4118,
+   29.3898,
+   28.6623,
+   27.0349,
+   24.6842,
+   21.7865,
+   18.5183,
+   15.056,
+   11.5761,
+   8.2549,
+   5.269,
+   2.7948,
+   1.0086,
+   0.087,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "eventos": {
+   "impacto_s": 0.2,
+   "impacto_quadro": 6
+  }
+ },
+ "FortalezaInicio": {
+  "duracao": 1.6,
+  "loop": false,
+  "quadros": 49,
+  "velocidade_studs_s_PROPOSTA": 0.0,
+  "erro_ik_max": 0.0003,
+  "erro_ik_por_pata": {
+   "MaoE": [
+    0.0003,
+    48
+   ],
+   "MaoD": [
+    0.0003,
+    48
+   ],
+   "PeE": [
+    0.0,
+    48
+   ],
+   "PeD": [
+    0.0,
+    48
+   ]
+  },
+  "malha_z_min": -0.016,
+  "eventos": {
+   "ativar_s": 0.8,
+   "ativar_quadro": 24
+  }
+ },
+ "FortalezaParado": {
+  "duracao": 3.0,
+  "loop": true,
+  "quadros": 90,
+  "velocidade_studs_s_PROPOSTA": 0.0,
+  "erro_ik_max": 0.0004,
+  "erro_ik_por_pata": {
+   "MaoE": [
+    0.0004,
+    50
+   ],
+   "MaoD": [
+    0.0004,
+    61
+   ],
+   "PeE": [
+    0.0,
+    89
+   ],
+   "PeD": [
+    0.0,
+    89
+   ]
+  },
+  "malha_z_min": -0.019
+ },
+ "FortalezaAndar": {
+  "duracao": 1.8,
+  "loop": true,
+  "quadros": 54,
+  "velocidade_studs_s_PROPOSTA": 1.59,
+  "erro_ik_max": 0.0005,
+  "erro_ik_por_pata": {
+   "MaoE": [
+    0.0005,
+    2
+   ],
+   "MaoD": [
+    0.0005,
+    20
+   ],
+   "PeE": [
+    0.0,
+    53
+   ],
+   "PeD": [
+    0.0,
+    53
+   ]
+  },
+  "malha_z_min": -0.024
+ },
+ "FortalezaFim": {
+  "duracao": 0.9,
+  "loop": false,
+  "quadros": 28,
+  "velocidade_studs_s_PROPOSTA": 0.0,
+  "erro_ik_max": 0.0004,
+  "erro_ik_por_pata": {
+   "MaoE": [
+    0.0004,
+    8
+   ],
+   "MaoD": [
+    0.0003,
+    12
+   ],
+   "PeE": [
+    0.0,
+    27
+   ],
+   "PeD": [
+    0.0,
+    27
+   ]
+  },
+  "malha_z_min": -0.016
+ }
+}
