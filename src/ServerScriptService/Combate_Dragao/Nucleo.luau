@@ -1180,11 +1180,22 @@ function N:_Eclipse(def, el, noAr, op)
 	local function trilha(nome, camada, laco, prio) local t = self:tocar(nome, camada, {}, function() end, laco); if t then t.Priority = prio end; return t end
 	local tDec = not noAr and trilha("Decolagem", false, false, P.Action2) or nil
 	local tPairar
-	task.delay(noAr and 0 or 0.8, function() if m.Parent then tPairar = trilha("Pairar", false, true, P.Action2); if tDec then tDec:Stop(0.3) end end end)
 	local tRugido; task.delay(def.rugir or 1.2, function() if m.Parent then tRugido = trilha("Rugido_Combate", true, false, P.Action3) end end)
 	local H = noAr and (def.subidaAr or 10) or (def.altura or 24)
-	local s0, s1 = noAr and 0 or 0.2, noAr and 1.0 or 1.5
+	-- PATCH_ECLIPSE_CAUDA (10/11): o Pairar tem a cauda pendente (~20 abaixo do pivo depois da conversao dos clipes);
+	-- no chao ele so entra quando o corpo ja subiu ate H - pairarFolga (antes: 0,8 s fixo, com o corpo a ~17 -> cauda
+	-- no chao) e sai na descida ao cruzar a mesma altura. So o tempo das trilhas; dano/detonacao/duracao iguais.
+	local yPairar = noAr and -math.huge or (H - (def.pairarFolga or 3))
 	local yAtual = 0
+	task.spawn(function()
+		local lim = os.clock() + 2.5
+		while m.Parent and not noAr and yAtual < yPairar and os.clock() < lim do
+			RunService.Heartbeat:Wait()
+			if tDec and tDec.Length > 0 and tDec.TimePosition >= tDec.Length - 0.06 then tDec:AdjustSpeed(0) end   -- segura o ultimo quadro (1,0 s)
+		end
+		if m.Parent then tPairar = trilha("Pairar", false, true, P.Action2); if tDec then tDec:Stop(0.3) end end
+	end)
+	local s0, s1 = noAr and 0 or 0.2, noAr and 1.0 or 1.5
 	local function subir(k)                                           -- altura do corpo no instante k (decola, paira, pousa)
 		local y
 		if k < s0 then y = 0 elseif k < s1 then local x = (k - s0) / (s1 - s0); y = H * (1 - (1 - x) ^ 2) else y = H + 0.9 * math.sin((k - s1) * 2.0) end
@@ -1204,7 +1215,14 @@ function N:_Eclipse(def, el, noAr, op)
 				RunService.Heartbeat:Wait()
 				local x = math.min(1, (os.clock() - d0) / desce); local y = y0 * (1 - x * x * (3 - 2 * x))
 				m:PivotTo(m:GetPivot() + Vector3.new(0, y - yAtual, 0)); yAtual = y
-				if not pousou and x > 0.55 then pousou = true; local tp = trilha("Pouso", false, false, P.Action2); if tPairar then tPairar:Stop(0.25) end; if tp then task.delay(0.5, function() tp:Stop(0.3) end) end end
+				if not pousou and (y < yPairar or x > 0.55) then
+					pousou = true; local tp = trilha("Pouso", false, false, P.Action2); if tPairar then tPairar:Stop(0.25) end
+					if tp then                                            -- PATCH_ECLIPSE_CAUDA: o Pouso dura ate tocar o chao
+						local resta = math.max(0.5, (1 - x) * desce)
+						if tp.Length > 0 then tp:AdjustSpeed(math.clamp(tp.Length / resta, 0.4, 1)) end
+						task.delay(resta, function() tp:Stop(0.3) end)
+					end
+				end
 			end
 			if m.Parent then m:PivotTo(m:GetPivot() - Vector3.new(0, yAtual, 0)); yAtual = 0 end   -- volta ao chao exato
 		end
