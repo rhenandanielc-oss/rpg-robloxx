@@ -1130,6 +1130,24 @@ A busca não trouxe referência anatômica do jarrete no chão ao sentar. A pose
   - Studio: importar o GLB e prender a sela no lobo (não testado);
   - cavaleiro nos clipes de locomoção.
 
+## 6ad. Montaria M4: cavaleiro de teste sentado nos clipes aprovados (10/11/2026, APROVADO pelo usuário em 10/11) → `montaria/m4_montado.py`
+- **Método** (adaptado do teste aprovado do Urso):
+  - o manequim R15 aproximado fica sentado, preso ao osso `Coluna2` no ponto do assento;
+  - roda nos 15 clipes aprovados do v26 (`rig18/Lobo_Ancestral_Anim.blend`);
+  - mede as folgas contra o lobo e a sela e o balanço do assento.
+  - Só leitura. O cavaleiro não tem animação própria nem balanço secundário.
+- **Resultados (`montaria/m4_montado.json`):**
+  - tronco, braços e cabeça a ≥ 0,73 do lobo em todos os clipes;
+  - pernas no máximo −0,28 no pelo do flanco (igual ao sentado parado, −0,27);
+  - na sela, até −0,03, e −0,15 da canela D no `Impacto`.
+  - Balanço do quadril em z: Andar 0,13, Trote 0,20, Corrida 0,14, Partida 0,31, Freada 0,36; ataques 0,21–0,27.
+  - Inclinação para a frente: no máximo ±2° na Corrida, −4°/+5° na Partida e na Freada, ±6° nos ataques.
+  - O `Salto` sobe 2,5 no próprio clipe; a inclinação vai de −7° a +10° e a aceleração vertical é alta no pouso.
+- **Vídeo:** `montaria/review_m4/Montado_lobo.mp4` (Repouso, Andar, Trote, Corrida, VirarE, Salto, Mordida). Folha: `review_m4/folha_montado.png`.
+- **Pendente:**
+  - Studio: solda do cavaleiro na sela e animação sentada do R15 (não testado);
+  - balanço secundário do cavaleiro (opcional).
+
 ## 7. Próximos passos sugeridos (aguardam aprovação)
 1. **Revisar a V5** com uma prancha lado a lado com o painel 01 (só leitura e renders) e listar as correções.
 2. **Decidir a base para o Roblox:** importar a V5 com pele deformável no lugar do modelo Motor6D rígido de 26/10. Fazer o teste num place vazio local, sem tocar no mapa.

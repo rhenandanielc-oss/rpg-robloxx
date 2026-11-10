@@ -1,0 +1,497 @@
+{
+ "Repouso": {
+  "quadros": 120,
+  "lobo_min_geral": [
+   -0.269,
+   "LeftLowerLeg"
+  ],
+  "lobo_min_tronco_bracos_cabeca": [
+   0.774,
+   "LowerTorso"
+  ],
+  "sela_min": [
+   -0.022,
+   "LeftUpperLeg"
+  ],
+  "quadril_z_amplitude": 0.018,
+  "inclinacao_frente_graus": [
+   -0.1,
+   0.1
+  ],
+  "inclinacao_lado_graus": [
+   -0.0,
+   0.0
+  ],
+  "acel_vertical_max": 0.0,
+  "pernas_min": {
+   "LeftUpperLeg": -0.151,
+   "LeftLowerLeg": -0.269,
+   "LeftFoot": -0.128,
+   "RightUpperLeg": -0.068,
+   "RightLowerLeg": -0.139,
+   "RightFoot": -0.128
+  }
+ },
+ "Observar": {
+  "quadros": 136,
+  "lobo_min_geral": [
+   -0.271,
+   "LeftLowerLeg"
+  ],
+  "lobo_min_tronco_bracos_cabeca": [
+   0.774,
+   "LowerTorso"
+  ],
+  "sela_min": [
+   -0.023,
+   "LeftUpperLeg"
+  ],
+  "quadril_z_amplitude": 0.018,
+  "inclinacao_frente_graus": [
+   -0.1,
+   0.1
+  ],
+  "inclinacao_lado_graus": [
+   -0.0,
+   0.0
+  ],
+  "acel_vertical_max": 0.0,
+  "pernas_min": {
+   "LeftUpperLeg": -0.151,
+   "LeftLowerLeg": -0.271,
+   "LeftFoot": -0.128,
+   "RightUpperLeg": -0.068,
+   "RightLowerLeg": -0.139,
+   "RightFoot": -0.127
+  }
+ },
+ "Andar": {
+  "quadros": 36,
+  "lobo_min_geral": [
+   -0.277,
+   "LeftLowerLeg"
+  ],
+  "lobo_min_tronco_bracos_cabeca": [
+   0.771,
+   "LowerTorso"
+  ],
+  "sela_min": [
+   -0.025,
+   "LeftLowerLeg"
+  ],
+  "quadril_z_amplitude": 0.128,
+  "inclinacao_frente_graus": [
+   -0.8,
+   0.8
+  ],
+  "inclinacao_lado_graus": [
+   -1.6,
+   1.6
+  ],
+  "acel_vertical_max": 6.0,
+  "pernas_min": {
+   "LeftUpperLeg": -0.152,
+   "LeftLowerLeg": -0.277,
+   "LeftFoot": -0.135,
+   "RightUpperLeg": -0.076,
+   "RightLowerLeg": -0.146,
+   "RightFoot": -0.136
+  }
+ },
+ "Trote": {
+  "quadros": 20,
+  "lobo_min_geral": [
+   -0.275,
+   "LeftLowerLeg"
+  ],
+  "lobo_min_tronco_bracos_cabeca": [
+   0.765,
+   "LeftHand"
+  ],
+  "sela_min": [
+   -0.026,
+   "LeftLowerLeg"
+  ],
+  "quadril_z_amplitude": 0.2,
+  "inclinacao_frente_graus": [
+   -0.6,
+   0.6
+  ],
+  "inclinacao_lado_graus": [
+   -1.0,
+   1.0
+  ],
+  "acel_vertical_max": 32.1,
+  "pernas_min": {
+   "LeftUpperLeg": -0.152,
+   "LeftLowerLeg": -0.275,
+   "LeftFoot": -0.136,
+   "RightUpperLeg": -0.076,
+   "RightLowerLeg": -0.153,
+   "RightFoot": -0.136
+  }
+ },
+ "Corrida": {
+  "quadros": 14,
+  "lobo_min_geral": [
+   -0.283,
+   "LeftLowerLeg"
+  ],
+  "lobo_min_tronco_bracos_cabeca": [
+   0.735,
+   "RightHand"
+  ],
+  "sela_min": [
+   -0.026,
+   "LeftFoot"
+  ],
+  "quadril_z_amplitude": 0.142,
+  "inclinacao_frente_graus": [
+   -2.1,
+   2.1
+  ],
+  "inclinacao_lado_graus": [
+   -0.6,
+   0.6
+  ],
+  "acel_vertical_max": 13.4,
+  "pernas_min": {
+   "LeftUpperLeg": -0.163,
+   "LeftLowerLeg": -0.283,
+   "LeftFoot": -0.205,
+   "RightUpperLeg": -0.077,
+   "RightLowerLeg": -0.148,
+   "RightFoot": -0.208
+  }
+ },
+ "Partida": {
+  "quadros": 41,
+  "lobo_min_geral": [
+   -0.274,
+   "LeftLowerLeg"
+  ],
+  "lobo_min_tronco_bracos_cabeca": [
+   0.765,
+   "LeftHand"
+  ],
+  "sela_min": [
+   -0.027,
+   "LeftLowerLeg"
+  ],
+  "quadril_z_amplitude": 0.314,
+  "inclinacao_frente_graus": [
+   -4.2,
+   0.0
+  ],
+  "inclinacao_lado_graus": [
+   -0.6,
+   0.9
+  ],
+  "acel_vertical_max": 30.2,
+  "pernas_min": {
+   "LeftUpperLeg": -0.152,
+   "LeftLowerLeg": -0.274,
+   "LeftFoot": -0.137,
+   "RightUpperLeg": -0.076,
+   "RightLowerLeg": -0.143,
+   "RightFoot": -0.136
+  }
+ },
+ "Freada": {
+  "quadros": 41,
+  "lobo_min_geral": [
+   -0.275,
+   "LeftLowerLeg"
+  ],
+  "lobo_min_tronco_bracos_cabeca": [
+   0.765,
+   "LeftHand"
+  ],
+  "sela_min": [
+   -0.024,
+   "LeftUpperLeg"
+  ],
+  "quadril_z_amplitude": 0.364,
+  "inclinacao_frente_graus": [
+   0.0,
+   5.2
+  ],
+  "inclinacao_lado_graus": [
+   -1.0,
+   0.7
+  ],
+  "acel_vertical_max": 29.5,
+  "pernas_min": {
+   "LeftUpperLeg": -0.152,
+   "LeftLowerLeg": -0.275,
+   "LeftFoot": -0.133,
+   "RightUpperLeg": -0.076,
+   "RightLowerLeg": -0.141,
+   "RightFoot": -0.136
+  }
+ },
+ "VirarE": {
+  "quadros": 73,
+  "lobo_min_geral": [
+   -0.269,
+   "LeftLowerLeg"
+  ],
+  "lobo_min_tronco_bracos_cabeca": [
+   0.775,
+   "LowerTorso"
+  ],
+  "sela_min": [
+   -0.027,
+   "RightFoot"
+  ],
+  "quadril_z_amplitude": 0.06,
+  "inclinacao_frente_graus": [
+   -0.0,
+   0.0
+  ],
+  "inclinacao_lado_graus": [
+   -0.0,
+   0.0
+  ],
+  "acel_vertical_max": 0.1,
+  "pernas_min": {
+   "LeftUpperLeg": -0.15,
+   "LeftLowerLeg": -0.269,
+   "LeftFoot": -0.127,
+   "RightUpperLeg": -0.078,
+   "RightLowerLeg": -0.162,
+   "RightFoot": -0.148
+  }
+ },
+ "VirarD": {
+  "quadros": 73,
+  "lobo_min_geral": [
+   -0.28,
+   "LeftLowerLeg"
+  ],
+  "lobo_min_tronco_bracos_cabeca": [
+   0.775,
+   "LowerTorso"
+  ],
+  "sela_min": [
+   -0.024,
+   "LeftUpperLeg"
+  ],
+  "quadril_z_amplitude": 0.06,
+  "inclinacao_frente_graus": [
+   -0.0,
+   0.0
+  ],
+  "inclinacao_lado_graus": [
+   -0.0,
+   0.0
+  ],
+  "acel_vertical_max": 0.1,
+  "pernas_min": {
+   "LeftUpperLeg": -0.151,
+   "LeftLowerLeg": -0.28,
+   "LeftFoot": -0.148,
+   "RightUpperLeg": -0.069,
+   "RightLowerLeg": -0.139,
+   "RightFoot": -0.127
+  }
+ },
+ "Salto": {
+  "quadros": 45,
+  "lobo_min_geral": [
+   -0.273,
+   "LeftLowerLeg"
+  ],
+  "lobo_min_tronco_bracos_cabeca": [
+   0.754,
+   "LeftHand"
+  ],
+  "sela_min": [
+   -0.024,
+   "LeftFoot"
+  ],
+  "quadril_z_amplitude": 2.517,
+  "inclinacao_frente_graus": [
+   -6.9,
+   10.0
+  ],
+  "inclinacao_lado_graus": [
+   -0.0,
+   0.0
+  ],
+  "acel_vertical_max": 386.6,
+  "pernas_min": {
+   "LeftUpperLeg": -0.15,
+   "LeftLowerLeg": -0.273,
+   "LeftFoot": -0.132,
+   "RightUpperLeg": -0.076,
+   "RightLowerLeg": -0.145,
+   "RightFoot": -0.132
+  }
+ },
+ "Uivo": {
+  "quadros": 121,
+  "lobo_min_geral": [
+   -0.269,
+   "LeftLowerLeg"
+  ],
+  "lobo_min_tronco_bracos_cabeca": [
+   0.775,
+   "LowerTorso"
+  ],
+  "sela_min": [
+   -0.022,
+   "LeftUpperLeg"
+  ],
+  "quadril_z_amplitude": 0.045,
+  "inclinacao_frente_graus": [
+   0.0,
+   5.0
+  ],
+  "inclinacao_lado_graus": [
+   -0.0,
+   0.0
+  ],
+  "acel_vertical_max": 0.6,
+  "pernas_min": {
+   "LeftUpperLeg": -0.15,
+   "LeftLowerLeg": -0.269,
+   "LeftFoot": -0.127,
+   "RightUpperLeg": -0.068,
+   "RightLowerLeg": -0.139,
+   "RightFoot": -0.127
+  }
+ },
+ "Rosnar": {
+  "quadros": 73,
+  "lobo_min_geral": [
+   -0.27,
+   "LeftLowerLeg"
+  ],
+  "lobo_min_tronco_bracos_cabeca": [
+   0.728,
+   "LeftHand"
+  ],
+  "sela_min": [
+   -0.025,
+   "LeftUpperLeg"
+  ],
+  "quadril_z_amplitude": 0.206,
+  "inclinacao_frente_graus": [
+   -6.0,
+   0.0
+  ],
+  "inclinacao_lado_graus": [
+   -0.0,
+   0.0
+  ],
+  "acel_vertical_max": 23.4,
+  "pernas_min": {
+   "LeftUpperLeg": -0.153,
+   "LeftLowerLeg": -0.27,
+   "LeftFoot": -0.13,
+   "RightUpperLeg": -0.068,
+   "RightLowerLeg": -0.139,
+   "RightFoot": -0.13
+  }
+ },
+ "Mordida": {
+  "quadros": 31,
+  "lobo_min_geral": [
+   -0.269,
+   "LeftLowerLeg"
+  ],
+  "lobo_min_tronco_bracos_cabeca": [
+   0.74,
+   "LeftHand"
+  ],
+  "sela_min": [
+   -0.021,
+   "LeftUpperLeg"
+  ],
+  "quadril_z_amplitude": 0.246,
+  "inclinacao_frente_graus": [
+   -6.0,
+   0.0
+  ],
+  "inclinacao_lado_graus": [
+   -0.0,
+   0.0
+  ],
+  "acel_vertical_max": 40.6,
+  "pernas_min": {
+   "LeftUpperLeg": -0.15,
+   "LeftLowerLeg": -0.269,
+   "LeftFoot": -0.128,
+   "RightUpperLeg": -0.068,
+   "RightLowerLeg": -0.14,
+   "RightFoot": -0.128
+  }
+ },
+ "Garra": {
+  "quadros": 33,
+  "lobo_min_geral": [
+   -0.27,
+   "LeftLowerLeg"
+  ],
+  "lobo_min_tronco_bracos_cabeca": [
+   0.764,
+   "RightHand"
+  ],
+  "sela_min": [
+   -0.021,
+   "LeftUpperLeg"
+  ],
+  "quadril_z_amplitude": 0.274,
+  "inclinacao_frente_graus": [
+   -4.0,
+   4.0
+  ],
+  "inclinacao_lado_graus": [
+   -0.0,
+   4.0
+  ],
+  "acel_vertical_max": 28.5,
+  "pernas_min": {
+   "LeftUpperLeg": -0.15,
+   "LeftLowerLeg": -0.27,
+   "LeftFoot": -0.127,
+   "RightUpperLeg": -0.068,
+   "RightLowerLeg": -0.139,
+   "RightFoot": -0.128
+  }
+ },
+ "Impacto": {
+  "quadros": 21,
+  "lobo_min_geral": [
+   -0.273,
+   "LeftLowerLeg"
+  ],
+  "lobo_min_tronco_bracos_cabeca": [
+   0.775,
+   "LowerTorso"
+  ],
+  "sela_min": [
+   -0.15,
+   "RightLowerLeg"
+  ],
+  "quadril_z_amplitude": 0.077,
+  "inclinacao_frente_graus": [
+   -1.0,
+   4.0
+  ],
+  "inclinacao_lado_graus": [
+   -6.0,
+   0.0
+  ],
+  "acel_vertical_max": 22.7,
+  "pernas_min": {
+   "LeftUpperLeg": -0.15,
+   "LeftLowerLeg": -0.273,
+   "LeftFoot": -0.133,
+   "RightUpperLeg": -0.07,
+   "RightLowerLeg": -0.139,
+   "RightFoot": -0.128
+  }
+ }
+}
