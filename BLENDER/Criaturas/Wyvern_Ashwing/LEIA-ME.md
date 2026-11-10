@@ -390,6 +390,66 @@ Arquivo: `Wyvern_E7_clipes_L4.blend` = base aprovada `Wyvern_E7_clipes_L3b.blend
 - QA (`review/l4/qa_L4.json`): loops exatos; pés e saltos idênticos aos clipes de origem (walk 66°, Corrida 70°; a "emenda" de 22° do RideRun é o mesmo artefato de amostragem da Corrida aprovada); z mín. −0,06 (= walk) nos clipes de passo, −0,022 (= idle) nos demais; Mount/Dismount até 1.328 autointerseções (agachamento fundo + asas erguidas; mesma família de prega do joelho aceita no descanso).
 - Evidências: `review/L4_folha_montar.png`, `review/L4_folha_ride.png`; `review/L4_<Clipe>.mp4` (lateral em cima, 3/4 embaixo).
 
+## Demonstração do cavaleiro: subir, descer e montado (09/11/2026; APROVADA pelo usuário em 09/11/2026 — meio deitado, cabeça erguida, segurando no dorso, com física)
+
+**Demonstração, não é a animação final do jogador.** Manequim de caixas com proporções de R15 (~5,5 studs; azul = corpo, laranja = mãos/pés). Script `build/17_demo_cavaleiro.py` (`medir` / `render`), usando `Wyvern_E7_clipes_L4.blend` **sem alterar** (o manequim não é salvo no .blend). Sela, lado oficial de entrada e regras de montaria continuam indefinidos.
+- **Assento:** preso ao osso da sela (`spine_02`), acompanha o dorso nos clipes. Busca por posição (atrás das asas), altura sobre a pele (0,6–1,2 = espaço de uma futura sela), abertura das coxas (45–70°) e dobra do joelho (55–115°), avaliada no pior quadro de RideIdle + todos os quadros de RideWalk e RideRun. Escolha: y = 1.5, **1.2 stud acima da pele**, coxas 60°, joelho 115° (pernas dobradas para trás, estilo jóquei).
+- **Montar_E / Montar_D** (com o clipe Mount): em pé ao lado do flanco → agacha → salto em curva por cima do flanco até o assento com a Wyvern agachada (t 0,8–1,25 s) → preso ao osso enquanto ela levanta. **Desmontar_E / Desmontar_D** (com o Dismount): preso → salta em curva para o lado → aterrissa agachado → em pé. Os dois lados são espelhados.
+- **Sentado:** RideIdle, RideWalk, RideRun, RideVirarEsquerda, RideVirarDireita.
+
+| Sequência | Folga mín. do corpo do manequim | Mãos/pés (apoio) | Distância mín. às asas | Quadros do corpo < −0,05 |
+|---|---|---|---|---|
+| Montar_E | -0.30 (BracoInf_D, t 0.93 s) | -0.67 | 0.93 | 2 de 37 |
+| Montar_D | -0.19 (BracoInf_E, t 0.93 s) | -0.56 | 1.20 | 2 de 37 |
+| Desmontar_E | -0.24 (BracoInf_D, t 0.80 s) | -0.64 | 1.04 | 2 de 31 |
+| Desmontar_D | -0.19 (BracoInf_E, t 0.80 s) | -0.59 | 1.24 | 2 de 31 |
+| Sentado_RideIdle | 0.33 (Canela_E, t 0.73 s) | -0.04 | 1.21 | 0 de 46 |
+| Sentado_RideWalk | 0.29 (Canela_E, t 0.80 s) | -0.14 | 0.96 | 0 de 17 |
+| Sentado_RideRun | 0.38 (Canela_E, t 0.40 s) | -0.04 | 0.95 | 0 de 11 |
+| Sentado_RideVirarEsquerda | 0.12 (Canela_E, t 0.80 s) | -0.33 | 0.86 | 0 de 17 |
+| Sentado_RideVirarDireita | 0.15 (Canela_D, t 0.13 s) | -0.29 | 0.93 | 0 de 17 |
+
+- Folga = distância de pontos das caixas à pele, negativa se o ponto está dentro (voto de 6 raios); asas por distância sem sinal.
+- **Montado: o corpo do manequim nunca entra na Wyvern**; só os pés encostam no flanco (como em estribos).
+- **Subida/descida:** no início/fim do salto o antebraço do lado da subida apoia no flanco e entra até ~0,3 stud por 2 quadros; mãos e pés tocam a pele no apoio (esperado num salto apoiado).
+- Evidências: `review/C2_folha_montar_E.png`, `review/C2_folha_sentado.png`; `review/C2_cav_<Sequência>.mp4` (lateral em cima, 3/4 embaixo); medições `review/c2/folgas_cavaleiro.json`; trajetórias das caixas por quadro `review/c2/trajetorias_cavaleiro.json` (referência para a futura animação R15).
+
+- **Pegada no dragão (09/11/2026, pedido do usuário; substitui a alça provisória, removida):** o cavaleiro fica **meio deitado para a frente** (tronco 60°), **cabeça erguida olhando à frente** (pescoço compensa a inclinação; rosto 8° abaixo do horizonte) e **segura com as duas mãos no dorso da Wyvern**, 2.6 stud à frente do assento, a 0,7 de cada lado do eixo. O ponto de cada mão **acompanha a pele** (triângulo da pele sob a mão, coordenadas baricêntricas); a cada quadro os braços (e o tronco ±3°) são reajustados por busca. Erro máximo mão × ponto de pegada: **0.203 stud**.
+- **Física (pedido do usuário):** a aceleração do assento em cada quadro (segunda diferença da posição, no espaço do assento) move o tronco por **mola amortecida** (2.2 Hz, amortecimento 0.45): subida do dorso comprime (tronco cai à frente), arranque à frente joga para trás, puxão lateral rola o tronco para fora; atraso e assentamento vêm da mola (nos loops, 3 voltas para o regime e o último quadro = primeiro). A aterrissagem no Montar dá um impulso de compressão. A **cabeça estabiliza o olhar**: compensa 80% da inclinação/rolagem do assento e do tronco. Amplitudes (tronco à frente/trás, rolagem): RideIdle [0.21, 0.0]; RideWalk [4.65, 2.42]; RideRun [8.0, 6.18]; Viradas [4.73, 2.4]; Montar [2.47, 0.0]; Desmontar [4.37, 0.0] (graus).
+
+| Sequência | Folga mín. do corpo | Quadros do corpo < −0,05 | Distância mín. às asas |
+|---|---|---|---|
+| Montar_E | -0.30 (BracoInf_D) | 2 de 37 | 0.88 |
+| Montar_D | -0.19 (BracoInf_E) | 2 de 37 | 0.88 |
+| Desmontar_E | -0.24 (BracoInf_D) | 2 de 31 | 0.89 |
+| Desmontar_D | -0.19 (BracoInf_E) | 2 de 31 | 0.89 |
+| Sentado_RideIdle | 0.10 (BracoInf_E) | 0 de 46 | 0.87 |
+| Sentado_RideWalk | -0.01 (BracoInf_D) | 0 de 17 | 0.83 |
+| Sentado_RideRun | -0.31 (BracoInf_E) | 2 de 11 | 0.75 |
+| Sentado_RideVirarEsquerda | -0.06 (BracoInf_D) | 1 de 17 | 0.78 |
+| Sentado_RideVirarDireita | -0.07 (BracoInf_E) | 1 de 17 | 0.86 |
+- Montado parado: nada do corpo entra na Wyvern. No passo/corrida/viradas o **antebraço** encosta no dorso em 1–2 quadros por ciclo (até −0,31 na corrida): contato de apoio de quem está agarrado.
+- Evidências: `review/C2_folha_pegada.png` (close que acompanha o cavaleiro), `review/C2_folha_montar_E.png`, `review/C2_folha_sentado.png`, `review/C2_cav_*.mp4` e `C2_cav_{Montar_E,Sentado_RideRun,Sentado_RideWalk}_close.mp4`.
+
+## Sela da Wyvern: só o assento (09/11/2026; APROVADA pelo usuário — materiais seguem [PROPOSTA] até regra oficial)
+
+Arquivo: `Wyvern_S1_sela.blend` = `Wyvern_E7_clipes_L4.blend` (preservado) + objeto `Wyvern_Sela` (filho do rig, modificador Armature). Script `build/18_sela_wyvern.py` (método das selas aprovadas do Leão e do Crocodilo); QA `build/18b_qa_sela.py`. Nada da Wyvern foi alterado.
+- **Peças:** manta que veste o dorso (com debrum), aba, **assento** moldado (cabeça baixa na frente, porque o cavaleiro se debruça e segura no dorso; patilha atrás), **cinta em volta da base da cauda** (atrás das pernas: na frente das coxas a cilha bateria nas pernas e nas asas) com 2 argolas. **Sem alça** (decisão do usuário: o cavaleiro segura no dorso).
+- **Posição:** sob o quadril do cavaleiro da demonstração aprovada (assento preso a `spine_02`); assento 0.27 mais alto para encostar no cavaleiro. Manta na largura do dorso e terminando antes da dobra da base da cauda.
+- **Materiais [PROPOSTA]** (Montanhas Altas): Couro (básico) no assento, aba e cinta; **Pele de Íbex** na manta; **Tendão de Íbex** no debrum e na costura; **Ferro Montanhês** nas argolas. Sem material dracônico (o elemento da Wyvern não foi decidido).
+- **Malha:** 4224 triângulos, 2148 vértices, 4 materiais; pesos copiados da pele só de `root`, `pelvis`, `spine_01..03` e `tail_01` (asas, pernas, pescoço e o resto da cauda não mexem a sela), até 4 influências.
+- **QA em todas as 38 actions** (`review/s2/qa_sela.json`; passo 2,4 quadros, clipes de montaria a cada 1,6):
+  - sela dentro da pele: pior **-0.068** fora da ferroada (a cinta nas curvas aéreas); na **FerraoAtaque**, no auge do golpe, **-0.136** no fundo do assento (a base da cauda dobra para cima sob a sela);
+  - pele dentro da sela: no máximo **0.039**;
+  - cavaleiro da demonstração × sela: quadril do cavaleiro 0,44–0,61 acima do assento no RideIdle/Walk/Run (sentado e encostado, descontada a coxa); caixas do manequim dentro da sela até 0,19 nas viradas e na subida/descida (coxa na borda do assento quando o tronco rola).
+- **Correções durante o trabalho:** a manta escorria pelos lados (onde o raio não achava pele, o mapa de alturas caía; agora os buracos herdam o vizinho e a manta tem a largura do dorso); o assento ficava baixo (cavaleiro flutuando ~0,3); a borda de trás da manta entrava 0,6 na pele na ferroada (encurtada).
+- **Evidências:** `review/S2_folha_sela.png` (RideIdle lado/3/4/cima, corrida, ferroada, deitado, planeio, Mount), `review/S2_folha_sela_cavaleiro.png`, `review/S2_sela_cav_*.mp4` (cavaleiro da demo sentado na sela).
+- **Textura de jogo e GLB (09/11/2026, APROVADOS pelo usuário em 10/11/2026):** `build/18c_textura_glb_sela.py` (adaptado do script aprovado do Leão, `s1_07_textura_glb.py`): UV única, bake Cycles **1024** (cor, normal tangente OpenGL, rugosidade, metal → empacotado em metal/rugosidade glTF G=rug, B=metal), material único `M_Wyvern_Sela_Jogo`, pesos ≤ 4 influências normalizados. Saída em `export/sela/` (fora do git): `Wyvern_Sela.glb` (1,56 MB, só sela + 61 ossos do rig, sem animação, texturas embutidas), PNGs `T_Wyvern_Sela_{Cor,Normal,MetalRug}.png` e `Wyvern_Sela_Jogo.blend`.
+  - Validação por reimportação (`build/18d_validar_glb_sela.py` → `review/s2/valida_glb_sela.json`): **4224 triângulos**, **61 ossos** (= rig), máx. **3 influências** por vértice (soma 1,0), 3 texturas embutidas, **desvio de posição em repouso 0.0** contra a sela original (3427 vértices no GLB por duplicação nas costuras, 2148 no original).
+  - Comparação procedural × jogo (mesma câmera): `review/S2_sela_procedural_x_jogo.png` — iguais à vista.
+  - Os ossos mantêm os nomes do rig do Ashwing; a renomeação para o jogo segue a exportação da própria Wyvern (pendente). O GLB não contém a malha do Ashwing.
+- **Pendentes:** teste no Roblox/Studio (com a exportação da Wyvern).
+
 ## Limitações conhecidas
 
 - (Até o E4.) O ferrão vem de uma malha de pouca resolução, com triângulos longos e irregulares. No E4 a transição ficou contínua, mas ainda se vê facetamento low-poly de perto. Restam 8 faces dobradas pequenas na ponta do gancho, as 8 da espícula original e algumas interseções internas nos ciclos (2 a 7, no nível do E1). O estiramento p95 da UV na região subiu um pouco (3,08 → 3,51), porque o bulbo tem mais área que o losango original. **No E6** a fenda e a aba foram eliminadas e as penetrações zeraram. Fica o facetamento de malha leve, e as 8 faces novas da junção usam UV copiada dos vizinhos.
