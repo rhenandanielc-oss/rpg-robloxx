@@ -260,6 +260,13 @@ Três gerações, nenhuma aprovada artisticamente pelo criador:
 - QA: IK ≤ 0,013 (o bote curto foi limitado a 0,45 porque 0,8 esticava a traseira E plantada, IK 0,14); AmeacaInflada com cauda a 0,015 do chão e pés iguais ao Repouso; dentes sem cruzar (lateral ≤ 0,07°, deslize 0).
 - Evidências: `review/R3/` (folhas, GIFs normal e lento, `qa_chao_R3.txt`, `geracao_R3.txt`). Roblox não testado.
 
+**11/11/2026 — Lote R4 (comportamento real): margem. Aprovado pelo usuário em 11/11/2026 ("Aprovar e commitar"). Só animação.**
+- 2 clipes novos (49 JSON; os 47 anteriores **idênticos**, md5 em `versao_R3/`):
+  - **FugaDeBarriga** (laço 0,8 s, 3,64 studs/s): barriga raspando o chão (0,011), patas bem abertas para os lados empurrando em pares diagonais rápidos, tronco em S forte, cabeça baixa; a cauda arrasta varrendo. Pé apoiado sem escorregar (0,0).
+  - **EscorregarBarranco** (laço 1,2 s): de barriga (0,016 do chão), patas arrastadas para trás com a sola para cima (não fincam), cauda varrendo forte de lado a lado; a descida pela rampa é do jogo.
+- QA: IK 0; cauda a 0,016 do chão; dentes sem cruzar (lateral 0,04°, deslize 0). Pés da Fuga −0,23, igual à pendência antiga do Andar.
+- Com o R4, o plano de comportamento real (R1–R4) está completo. Evidências: `review/R4/`. Roblox não testado.
+
 ## 6. Pendências
 1. **Decisões do criador:**
    - **conflito do agarrão PvP** (só empurra × agarrão mais longo interrompível por aliados);

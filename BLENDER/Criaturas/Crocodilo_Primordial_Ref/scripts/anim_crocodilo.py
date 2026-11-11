@@ -691,6 +691,40 @@ for nome_, fn_, dur_, loop_, ext_ in (
                                                 "obs": "VFX de gotas no dorso durante a vibracao (desempenho a medir)"})):
     CLIPES[nome_] = (boca_acompanha(fn_), dur_, loop_, 0.0); EXTRA[nome_] = ext_
 PES_CORPO.update({"BatidaDeCabeca": 1.0, "Bramido": 1.0})
+# ================================================================== Lote R4: margem como um crocodilo real (so animacao)
+# Referencia: Reptilis, Trishansoz, IUCN CSG - o "rastejo de barriga" e a fuga rapida para a agua: barriga e cauda deslizando,
+# patas abertas para os lados e pes virados para fora empurrando em diagonal; em barranco ingreme escorrega com as patas
+# arrastadas e a cauda empurrando de lado a lado.
+BARRIGA = 0.63                                                     # corpo baixa ate a barriga raspar o chao
+_FUGA = marcha(0.8, 1.6, 0.55, 0.30, 15.0, 22.0, 0.02)
+FUGA_V = 1.6 / (0.55 * 0.8)
+def clipe_fuga_de_barriga(t):
+    """fuga de barriga (laco 0,8 s): barriga no chao, patas bem abertas para os lados com os cotovelos altos empurrando em
+    pares diagonais rapidos, tronco em S forte, cabeca baixa para a frente; a cauda arrasta varrendo"""
+    r, raiz, pes = _FUGA(t)
+    for k, (par, sx, f_) in PATAS.items():
+        d, arf = pes[k]; pes[k] = (d + V((0.55 * sx if par == "dian" else 0.45 * sx, 0.0, 0.0)), arf)   # patas abertas (sprawl)
+    soma(r, "Pescoco", X_, 5.0); soma_cab(r, X_, 3.0)
+    return r, raiz + V((0, 0, -BARRIGA)), pes
+def clipe_escorregar_barranco(t):
+    """escorregar no barranco (laco 1,2 s): de barriga, patas arrastadas para tras rente ao corpo (sem passo), a cauda
+    varre forte de lado a lado empurrando, tronco ondula junto; a descida pela rampa e do jogo"""
+    T = 1.2; u = t / T; r = {}
+    r.update(onda_cauda(t, T, 8.0, 26.0, 0.10))
+    ang = math.radians(6.0) * math.sin(2 * math.pi * u + 0.8)
+    r["Pelve"] = [(Z_, -ang * 0.8)]; r["Coluna1"] = [(Z_, ang * 0.6)]; r["Coluna2"] = [(Z_, ang * 0.4)]
+    r["Pescoco"] = [(Z_, -ang * 0.5), (X_, math.radians(5.0))]
+    soma_cab(r, X_, 2.0); soma_cab(r, Z_, -math.degrees(ang) * 0.3)
+    r["Mandibula"] = [(X_, FECHADA)]
+    pes = {}
+    for k, (par, sx, f_) in PATAS.items():
+        rasto = 0.06 * math.sin(2 * math.pi * (u + (0.0 if sx > 0 else 0.5)))      # o pe so balanca com o corpo
+        pes[k] = ((V((0.40 * sx, 1.35 + rasto, 0.05)) if par == "dian" else V((0.30 * sx, 1.20 + rasto, 0.02))), 140.0)   # dedos para tras, sola para cima (arrastada, nao finca)
+    return r, V((0, 0, -BARRIGA - 0.02 + 0.015 * math.sin(4 * math.pi * u))), pes
+for nome_, fn_, dur_, loop_, vel_, ext_ in (
+        ("FugaDeBarriga", clipe_fuga_de_barriga, 0.8, True, FUGA_V, {"obs": "fuga rapida para a agua (barriga no chao)"}),
+        ("EscorregarBarranco", clipe_escorregar_barranco, 1.2, True, 0.0, {"obs": "descida da rampa e do jogo (deslize, sem passos)"})):
+    CLIPES[nome_] = (boca_acompanha(fn_), dur_, loop_, vel_); EXTRA[nome_] = ext_
 # ================================================================== Lote 4: montaria (so apresentacao; o cavaleiro e demonstracao separada)
 BAIXA_MONT = 0.20                                                  # baixa a postura para receber o peso (patas plantadas)
 def montaria(t, baixa, rola, olha, amortece, lado=1.0):

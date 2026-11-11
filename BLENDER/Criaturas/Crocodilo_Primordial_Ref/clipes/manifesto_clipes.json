@@ -664,5 +664,29 @@
    "para": "NadoParado",
    "obs": "VFX de gotas no dorso durante a vibracao (desempenho a medir)"
   }
+ },
+ "FugaDeBarriga": {
+  "duracao": 0.8,
+  "loop": true,
+  "quadros": 24,
+  "velocidade_studs_s": 3.64,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.096,
+  "sincronizacao": {
+   "obs": "fuga rapida para a agua (barriga no chao)"
+  }
+ },
+ "EscorregarBarranco": {
+  "duracao": 1.2,
+  "loop": true,
+  "quadros": 36,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": -0.027,
+  "sincronizacao": {
+   "obs": "descida da rampa e do jogo (deslize, sem passos)"
+  }
  }
 }

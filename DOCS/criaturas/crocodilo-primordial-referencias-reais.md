@@ -45,7 +45,7 @@ Legenda: **[REAL]** comportamento documentado em fonte citada · **[ATUAL]** o q
 1. **R1 — postura real** (aprovado 11/11; ver ficha principal): cauda arrastando em Repouso/Andar/Corrida/viradas; Repouso padrão deitado (+ DeitadoBocaAberta); patas guiando no nado lento. Afeta clipes aprovados → refazer QA de chão, emendas e montaria (cavaleiro e sela).
 2. **R2 — caça** (aprovado 11/11): Espreita, AproximacaoSubmersa, BoteAquatico, Mordida com varrida lateral, ArrastarPresa, Comer com arremesso de cabeça, RolarDaMorte (só animação).
 3. **R3 — sinais** (aprovado 11/11): Ameaça inflada com bote curto, BatidaDeCabeca, Bramido.
-4. **R4 — margem:** FugaDeBarriga, EscorregarBarranco.
+4. **R4 — margem** (aprovado 11/11): FugaDeBarriga, EscorregarBarranco.
 
 Decisões que continuam do criador: altura de flutuação com cavaleiro; se o RolarDaMorte/agarrão vira habilidade; regra do agarrão PvP; mergulho montado.
 
