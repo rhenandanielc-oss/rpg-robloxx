@@ -44,7 +44,8 @@ for nome in ACOES:
     lado = nome[-1] if nome[-2:] in ("_D", "_E") else os.environ.get("E5_LADO", "D")   # Bote etc.: lado da camera/close por env
     az = -90 if lado == "D" else 90; k = 1 if lado == "D" else -1; mao = "Mao_D" + lado
     vistas = {"perfil": (az, 5, 50, None, False), "frente": (0, 5, 50, None, False), "34": (-40 * k, 13, 52, None, False),
-              "qa_livre": (-70 * k, 3, 32, None, False), "close": (-55 * k, 8, 12, mao, False), "close_wire": (-55 * k, 8, 12, mao, True)}
+              "qa_livre": (-70 * k, 3, 32, None, False), "close": (-55 * k, 8, 12, mao, False), "close_wire": (-55 * k, 8, 12, mao, True),
+              "rosto": (-35 * k, 6, 10, "Cabeca", False)}   # Fase C r2: olhos/palpebras
     if os.environ.get("E5_TRAS"):                                            # bote: close da traseira (jarrete) com e sem wireframe
         vistas.update({"close_tras": (-75 * k, 6, 15, "Metatarso_T" + lado, False), "close_tras_wire": (-75 * k, 6, 15, "Metatarso_T" + lado, True)})
     if os.environ.get("E5_VISTAS"): vistas = {v: vistas[v] for v in os.environ["E5_VISTAS"].split(",")}

@@ -100,7 +100,8 @@ def mistura(g1, g2, w):
 # cada clipe: dur, loop, marcha(t)->dict, vel(t) studs/s, rumo_vel(t) rad/s, corpo(t, fase)->dict de angulos/alturas
 def corpo_base():
     return dict(labio=0.0, lingua=0.0, y=0.0, col1=0.0, col2=0.0, z=0.0, x=0.0, pitch=0.0, roll=0.0, col_pitch=0.0, col_yaw=0.0, peito_roll=0.0, pesc=0.0, pesc_yaw=0.0, cab_pitch=0.0, cab_yaw=0.0,
-                cab_roll=0.0, mand=0.0, orelha=(0.0, 0.0), palp=0.0, cauda_base=0.0, cauda_amp=0.0, cauda_f=0.0, cauda_yaw=0.0, resp=0.0)
+                cab_roll=0.0, mand=0.0, orelha=(0.0, 0.0), palp=0.0, cauda_base=0.0, cauda_amp=0.0, cauda_f=0.0, cauda_yaw=0.0, resp=0.0,
+                meta_dian=0.0, meta_tras=0.0, esc_sobe=0.0)                    # Fase C: metacarpo/metatarso deitados no chao (graus somados no apoio; - = ponta a frente)
 def mist(c1, c2, w):
     out = {}
     for k in c1:
@@ -223,6 +224,7 @@ CLIPES = {
 }
 exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "e5_21_faseB.py"), encoding="utf-8").read())   # clipes da Fase B
 exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "e5_22_montaria.py"), encoding="utf-8").read())   # S2: montaria
+exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "e5_23_vida.py"), encoding="utf-8").read())   # Fase C: vida
 # ------------------------------------------------------------------ simulacao de um clipe
 PRE = 3.0   # segundos de pre-rolagem (o ciclo entra ja estabilizado)
 def catmull(P, k, s_):
@@ -242,7 +244,7 @@ def agenda_pata(cl, p_, t, rp, ry, estado, raiz):
     """acoes (bote, patada, mordida, esquiva): cada balanco = dict(t0, t1, alvo=V local (soma ao ponto de repouso da pata na pose da raiz
     em t1), h=altura do arco, via=[(u, V local relativo a raiz no instante, angulo_metacarpo|None)]). Fora dos balancos a pata fica apoiada."""
     e = estado.get(p_)
-    if e is None: e = estado[p_] = dict(apoio=True, w=rp + qz(ry) @ REP_PATA[p_], yaw=ry, u=0.0, prog=0.0, dph=0.0, ang=None)
+    if e is None: e = estado[p_] = dict(apoio=True, w=rp + qz(ry) @ (REP_PATA[p_] + cl.get("pes_ini", {}).get(p_, V((0, 0, 0)))), yaw=ry + cl.get("pes_yaw", {}).get(p_, 0.0), u=0.0, prog=0.0, dph=0.0, ang=None)   # Fase C: clipe que comeca deitado/sentado
     lst = cl["agenda"].get(p_, []); sw = next((x for x in lst if x["t0"] <= t < x["t1"]), None)
     if sw is None:
         if not e["apoio"]: e.update(apoio=True, w=e["alvo"].copy(), yaw=e["yaw_alvo"], u=0.0, ang=None, sw=None, rel=None)
@@ -283,6 +285,17 @@ def agenda_pata(cl, p_, t, rp, ry, estado, raiz):
         a0, a1 = e["angs"][k], e["angs"][k + 1]
         ang = None if (a0 is None and a1 is None) else ((a0 if a0 is not None else a1) * (1 - suave(s_)) + (a1 if a1 is not None else a0) * suave(s_))
     e.update(w=w, yaw=e["yaw_ini"] + (e["yaw_alvo"] - e["yaw_ini"]) * suave(uu), u=uu, ang=ang)
+# Fase C r2 (11/11): piscadas automaticas em TODOS os clipes (o usuario: "em todas as animacoes ele arregala o olho, adicione movimento nos
+# olhos"). Convencao dos clipes: palp -42 = fechado, + = arregalado. Piscada a cada ~3,1 s (a 1a em 0,7 s), nunca cruzando o fim do clipe.
+PALP_FECHADO = math.radians(-42)
+# osso da palpebra: + no osso FECHA (+30 = fechado limpo; o - arregalava e rasgava a pele acima do olho, medido em close 11/11)
+PALP_K = -30.0 / 42.0
+def olhos(cl, t, c):
+    if not cl.get("piscar_auto", True): return c
+    d = cl["dur"]; ts_b = [0.7 + 3.1 * k for k in range(20) if 0.7 + 3.1 * k < d - 0.35]
+    b = piscar(t, ts_b, 0.18)
+    if b > 0: c["palp"] = c["palp"] + (PALP_FECHADO - c["palp"]) * b if c["palp"] > PALP_FECHADO else c["palp"]
+    return c
 def simular(cl):
     dur = cl["dur"]; N = int(round(dur * FPS)); t0 = 0.0 if (cl.get("pose_repouso") or cl.get("inicio_repouso")) else -PRE   # pre-rolagem: a marcha entra estabilizada
     ts = np.arange(t0, dur + 2.0, DT)
@@ -353,7 +366,7 @@ def simular(cl):
                     s_ = suave(uu); w = e["ini"].lerp(e["alvo"], s_); w.z = e["ini"].z + (e["alvo"].z - e["ini"].z) * s_ + h * math.sin(math.pi * uu) ** 0.7
                     e.update(w=w, yaw=e["yaw_ini"] + (e["yaw_alvo"] - e["yaw_ini"]) * s_, u=uu)
         if t >= -1e-9 and len(quadros) < N + 1:
-            quadros.append(dict(t=t, raiz=rp.copy(), yaw=ry, fase=fase, corpo=cl["corpo"](t, fase), dmin=(cl.get("dmin_dian", 0.70), cl.get("dmin_tras", 0.76)),
+            quadros.append(dict(t=t, raiz=rp.copy(), yaw=ry, fase=fase, corpo=olhos(cl, t, cl["corpo"](t, fase)), dmin=(cl.get("dmin_dian", 0.70), cl.get("dmin_tras", 0.76)),
                                 pes={p_: dict(w=e["w"].copy(), yaw=e["yaw"], apoio=e["apoio"], u=e["u"], prog=e["prog"], ang=e.get("ang"), rel=e.get("rel"), a_emp=e.get("a_emp"), a_ini=e.get("a_ini") if not e["apoio"] else None,
                                          rq=e.get("rq") if not e["apoio"] else None) for p_, e in estado.items()}))
     DPH_FINAL.clear(); DPH_FINAL.update({p_: e["dph"] for p_, e in estado.items()})
@@ -389,7 +402,7 @@ def posar(q):
         if "Labio_" + k in PB: PB["Labio_" + k].location = BD["Labio_" + k].matrix_local.to_3x3().inverted() @ V((0, 0.13 * c["labio"], c["labio"]))
     for k, a in zip(("D", "E"), c["orelha"]):
         PB["Orelha_" + k].rotation_quaternion = rot_local("Orelha_" + k, qx(a))
-        PB["Palpebra_" + k].rotation_quaternion = rot_local("Palpebra_" + k, qx(c["palp"]))
+        PB["Palpebra_" + k].rotation_quaternion = rot_local("Palpebra_" + k, qx(c["palp"] * PALP_K))   # Fase C r2: sinal corrigido
     # cauda: postura + onda atrasada (base -> ponta)
     for i, b in enumerate(CAUDA):
         lag = i * 0.11; w = math.sin(2 * math.pi * (c["cauda_f"] * q["t"] - lag)) if c["cauda_f"] else 0.0
@@ -398,9 +411,11 @@ def posar(q):
     erro = 0.0
     for p_, (tipo, ossos) in PERNAS.items():
         pe = q["pes"][p_]; P = pe["w"]; fy = pe["yaw"]
+        if tipo == "dian":   # Fase C r2: deitado o tronco desce ENTRE as escapulas (a escapula sobe em relacao ao peito; 0 = como antes)
+            PB[ossos[0]].location = BD[ossos[0]].matrix_local.to_3x3().inverted() @ V((0, 0, q["corpo"].get("esc_sobe", 0.0)))
         lat = qz(fy) @ X
         # metacarpo/metatarso: repouso girado por regra (apoio: estende no fim; balanco: flexiona e volta)
-        if pe["apoio"]: a = (pe.get("a_emp") or R(22 if tipo == "dian" else 16)) * suave((pe["prog"] - 0.55) / 0.45)   # sola plana ate ~55% do apoio; depois o calcanhar sobe
+        if pe["apoio"]: a = (pe.get("a_emp") or R(22 if tipo == "dian" else 16)) * suave((pe["prog"] - 0.55) / 0.45) + q["corpo"].get("meta_dian" if tipo == "dian" else "meta_tras", 0.0)   # sola plana ate ~55% do apoio; depois o calcanhar sobe (Fase C: + deitado)
         else:
             # positivo = ponta da pata vai para tras (dobra). Dianteira: dobra moderada no inicio do balanco e ja esticada quando a perna
             # vai a frente (a 105 graus e ate u=0,55 a pata virava a sola para cima = "contorcida"); traseira: jarrete flexiona pouco
@@ -636,7 +651,7 @@ for nome in nomes:
     erro_max = 0.0; poses = []; ERRO_GOLPE[0] = 0.0
     for q in quadros[:nq + 1] if cl["loop"] else quadros[:nq]:
         erro_max = max(erro_max, posar(q)); poses.append(({pb.name: pb.rotation_quaternion.copy() for pb in PB if pb.name not in SEC}, PB["Raiz"].location.copy(),
-                                                          {b: PB[b].location.copy() for b in ("Labio_D", "Labio_E") if b in PB}))
+                                                          {b: PB[b].location.copy() for b in ("Labio_D", "Labio_E") + (("Escapula_DD", "Escapula_DE") if cl.get("escapula_loc") else ()) if b in PB}))
     if cl["loop"]:
         bruta = max((math.degrees(poses[0][0][b].rotation_difference(poses[nq][0][b]).angle), b) for b in poses[0][0] if b != "Raiz")
         print("EMENDA_BRUTA", nome, round(bruta[0], 2), bruta[1], "dph", {p_: round(e_, 3) for p_, e_ in DPH_FINAL.items()})

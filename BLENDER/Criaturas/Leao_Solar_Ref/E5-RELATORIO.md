@@ -585,3 +585,106 @@ O usuário pediu: "Quero que ele abaixe mais antes de dar o bote".
 - Revisão visual do usuário.
 - A mira e o limite de 45 studs no jogo ainda não foram feitos.
 - Nada testado no Roblox.
+
+## 9. Fase C (11/11/2026): clipes de vida (comer, beber, deitar, dormir...), EM REVISÃO
+Pedido do usuário: "faca isto" (os clipes de vida que faltavam). Só movimento, nomes neutros, sem VFX/dano/alcance. Blender apenas; **Roblox não testado**.
+
+### Gerador
+- Novo módulo `build/e5/e5_23_vida.py` (executado pelo `e5_20_clipes.py` depois do módulo da montaria).
+- `e5_20`: novas chaves de corpo `meta_dian` / `meta_tras` (dobra do metacarpo/metatarso nas patas apoiadas, padrão 0) e `pes_ini` no clipe (pés já fora do repouso no quadro 1, para os loops deitado/sentado).
+- Convenção medida (varredura): `pesc` **negativo abaixa o pescoço**.
+- **Regressão:** os 32 clipes existentes, gerados de novo com o gerador alterado, têm diferença **0,000000** em 261/261 canais contra `Leao_Solar_Ref_E5_clipes_r8.blend` (`e5_42_comparar_acoes.py`).
+
+### Clipes novos (15) em `Leao_Solar_Ref_E5_clipes_r9.blend` (= r8 + 15, 54 ações; r8 preservado)
+| Clipe | s | loop | IK | escorr. p90 | malha zmin | obs. |
+|---|---|---|---|---|---|---|
+| Beber | 6,2 | não | 0 | 0,0002 | −0,005 | pescoço −85°, língua 2,6 Hz; cabeça a 0,58 do chão |
+| Comer | 7,2 | não | 0 | 0,0002 | −0,005 | 3 ciclos morde/puxa + mastigar |
+| Bocejar | 3,6 | não | 0 | 0,0001 | −0,006 | |
+| Lamber_Pata | 5,4 | não | 0 | 0,022 | −0,065 | boca–pata 1,95; erro do caminho da pata 1,85 (parte fora do alcance) |
+| Espreguicar | 5,4 | não | 0 | 0,025 | −0,10 | juba do peito roça o chão |
+| Reacao_Golpe_E / _D | 1,6 | não | 0 | 0,002 | −0,01 | |
+| Deitar | 4,0 | não | 0 | 0,022 | −0,44 | |
+| Descanso_Deitado | 6,0 | sim (emenda 0°) | 0 | 0 | −0,51 | |
+| Dormir | 8,0 | sim (emenda 0°) | 0 | 0 | −0,62 | olhos fechados |
+| Levantar | 3,0 | não | 0 | 0,015 | −0,42 | |
+| Sentar | 2,6 | não | 0 | 0,015 | −0,57 | |
+| Sentado | 5,0 | sim (emenda 0,07°) | 0 | 0 | −0,70 | |
+| Levantar_Sentado | 2,0 | não | 0 | 0,018 | −0,67 | |
+| Morte | 3,4 | não | 0 | 0,019 | −0,43 | cai de lado |
+
+### Achados e correções (C2)
+- 1ª geração: tufo da cauda até **−7,5** abaixo do chão (cauda reta pendurada). Corrigido: cauda deitada e curvada para o lado (`cauda_base` +12°/+26°, `cauda_yaw` +35°/+45°), subindo já no agachar.
+- Metacarpo −80° enterrava punho/mão 1,7; corpo baixo enterrava o peito 1,7. Ajustado: deitado z −3,2, metacarpo −25°, metatarso −50°; sentado z −5,0, metatarso −45°.
+- Morte: o peito batia no chão (−1,97) com o nariz para baixo na queda; pitch agora −4°.
+- Restante no chão: −0,4 a −0,7 = peito/coxa/mão **apoiados** (contato, não atravessamento visível); perna traseira dobrada encosta na barriga até 0,85 (esperado com a perna sob o corpo). Conferir nos vídeos.
+
+### Evidência
+Vídeos em `review/c/c1/` e `review/c/c2/` (perfil, 3/4, frente; tempo real e lento). Binários fora do git.
+
+### 9.1 Revisão r2 (11/11/2026), pedido do usuário com 3 referências (sentado, dormindo com a cabeça nas patas, deitado lambendo a pata)
+Pedido: sentar com a garupa no chão; dormir e morrer de olhos fechados; dormir igual à referência (antebraços deitados, cabeça entre as patas); espreguiçar com a pata da frente esticada; lamber a pata deitado; parar de arregalar o olho; movimento nos olhos.
+
+**Olhos (todos os clipes):**
+- Achado: no osso `Palpebra_*`, a rotação **negativa** arregalava o olho e rasgava a pele acima dele, e a positiva fecha (+30° fecha limpo; medido em close).
+- A convenção dos clipes continua `palp −42 = fechado`. O `posar` agora aplica `palp × PALP_K` (`PALP_K = −30/42`).
+- Piscadas automáticas em todos os clipes: a cada 3,1 s a partir de 0,7 s, com 0,18 s, sem cruzar o fim do clipe. A chave `piscar_auto=False` desliga.
+- Dormir: a dobra de ~95° entre o pescoço e a cabeça (pesc −90 / cabeça nivelada) esticava a pálpebra (há pesos do `Pescoco2` nela). Mesmo o osso a +57° não fechava. Passar o peso para a Cabeca só no teste não resolveu.
+  - Correção na pose: pesc −55 e focinho −30. Close conferido: olho fechado, queixo nas patas.
+
+**Pose deitada:**
+- Nova chave de corpo `esc_sobe`: a escápula desce em relação ao tronco, gravada só nos clipes com `escapula_loc=True` (deitado/sentado/espreguiçar/lamber).
+- Deitado: corpo z −5,7, pitch −7,5, escápula −1,0, mãos à frente (y −6,5), metacarpo −50. Antebraço quase rente ao chão, como na referência.
+- Traseiras: pés (±1,4, −4, 0), metatarso −64 (com −85 o jarrete entrava no chão).
+
+**Outros clipes:**
+- Sentar/Sentado/Levantar_Sentado: garupa no chão (z −7,4, pitch −28, escápula −1,4, pés traseiros (±1,4, −3,5), metatarso −64); cauda 40/28.
+- Espreguicar: as duas mãos dão um passo à frente (y −7,0) com a perna esticada; o corpo desce junto do passo e a garupa fica alta (pitch 15).
+- Lamber_Pata: refeito **deitado**. A pata direita sobe até a boca (punho 75°, escápula sobe 0,38), com a cabeça virada e lambidas em 1,3 Hz.
+- Morte: pose final mantida (constantes próprias `MORTE`); olhos fecham pela correção do sinal.
+
+**QA (gerador):**
+- Mínimo da malha: −1,3 a −1,5 nos deitados (peito/juba apoiados e comprimidos no chão; é o custo do antebraço rente) e ≈ −1,0 nos sentados (coxa).
+- Perna dentro do corpo até 1,08 no sentado (coxa dobrada contra a barriga).
+- Deitar: IK 0,075, escorregamento 0,054. Descanso_Deitado: emenda 0,5°.
+
+**Regressão por osso:**
+- Nos 32 clipes anteriores, só `Palpebra_D/E` mudaram (correção intencional).
+- No r10 contra o r9: Bote_r3 e os históricos ficaram idênticos; Dormir do r10 = gen4.
+
+**Arquivos:**
+- `Leao_Solar_Ref_E5_clipes_r10.blend` (54 ações = r9 com os 47 atuais trocados; históricos `_v1/_r2/_r3` mantidos; r9 preservado).
+- Script de montagem `build/e5/e5_44_versao_r10.py`.
+
+**Evidência:**
+- Vídeos em `review/c/c3/` (perfil, 3/4, rosto) e `review/c/c4/` (Dormir final).
+- Folhas `review/c/folha_C3a/b/c.png`, `folha_C3_rosto.png`, `folha_C4_dormir*.png`.
+
+**Status:** APROVADA pelo usuário em 11/11/2026 (Blender), junto com o Dormir r3 (9.2). Roblox não testado.
+
+### 9.2 Dormir r3 (11/11/2026): corpo todo no chão, pernas relaxadas, APROVADO pelo usuário em 11/11 (Blender)
+Pedido do usuário: "quero que suas pernas relaxem, não fiquem em posição de esforço... quero seu corpo todo no chão".
+
+**Pose:**
+- Quadril tombado para o lado E (`roll` −55°). O peito volta 30° (`peito_roll`) e fica de esfinge, com a cabeça nas patas.
+- Corpo 0,75 mais baixo.
+- Traseiras soltas e deitadas para o lado D (`PES_DORM`: TD (4,5, −4, 0,3), TE (6, −1, 0,3), pata girada 70°).
+- Cauda curvada junto das patas (base −20°, giro 50°).
+
+**Gerador:**
+- `e5_20` aceita `pes_yaw` por pata no início do clipe (padrão 0, sem efeito nos outros clipes).
+- A pose foi escolhida em testes estáticos (`teste_dorm`, variantes r1–r6). O sentido do tombo foi conferido: a barriga fica virada para o lado das patas.
+
+**QA:**
+- Quadril a 1,4 do chão. A coxa de baixo encosta no chão; o flanco E deita no chão.
+- O peito fica −2,0 dentro do chão (compressão do apoio).
+- Olhos continuam fechados (close).
+- Perna dentro do corpo: 2,1 / 1,5, das traseiras deitadas encostadas na barriga. A medida já se mostrou instável; conferir no vídeo.
+
+**Limitações:**
+- O tufo da cauda fica de pé entre as patas. Parte da cauda fica até −1,3 abaixo do chão; o controle da cauda é uniforme e não deita a cadeia no chão.
+- A pose do Dormir agora é diferente da do Descanso_Deitado (esfinge). A troca entre os dois depende da mistura do jogo; um clipe de transição pode ser feito depois.
+
+**Arquivos e evidência:**
+- `Leao_Solar_Ref_E5_clipes_r10.blend` (Dormir trocado; conferido igual ao gerado).
+- Vídeos em `review/c/c5/` (lado D: perfil, 3/4, rosto; lado E: perfil, 3/4).
