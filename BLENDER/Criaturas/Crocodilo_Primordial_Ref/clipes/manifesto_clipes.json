@@ -174,7 +174,7 @@
   "velocidade_studs_s": 0.0,
   "erro_ik_max": 0.0,
   "desliza_pe_max_studs_s": 0.0,
-  "ponta_pe_min_z": -0.446
+  "ponta_pe_min_z": -0.596
  },
  "CurvaAquaticaEsquerda": {
   "duracao": 2.0,
@@ -451,6 +451,46 @@
    "lado": "direito (-X)",
    "espelho_de": "Desmontar",
    "obs": "eventos = demonstracao do cavaleiro de teste"
+  }
+ },
+ "CurvaLentaEsquerda": {
+  "duracao": 3.0,
+  "loop": true,
+  "quadros": 90,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": -0.596,
+  "sincronizacao": {
+   "giro_graus_s_proposto": 12.0,
+   "obs": "nado lento: patas guiando (referencia real)"
+  }
+ },
+ "CurvaLentaDireita": {
+  "duracao": 3.0,
+  "loop": true,
+  "quadros": 90,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": -0.596,
+  "sincronizacao": {
+   "giro_graus_s_proposto": -12.0,
+   "obs": "nado lento: patas guiando (referencia real)"
+  }
+ },
+ "DeitadoBocaAberta": {
+  "duracao": 6.0,
+  "loop": true,
+  "quadros": 180,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.18,
+  "sincronizacao": {
+   "de": "DescansoDeitado (cruzar ~0,6 s)",
+   "para": "DescansoDeitado",
+   "obs": "gaping: sol/calor (referencia real)"
   }
  }
 }

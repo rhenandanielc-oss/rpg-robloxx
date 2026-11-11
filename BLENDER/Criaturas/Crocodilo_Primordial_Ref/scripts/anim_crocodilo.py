@@ -260,14 +260,38 @@ def nado_corpo(r, t, T, amp_b, amp_p, curva=0.0, flex=5.0):
     r["Coluna1"] = [(V((0, 0, 1)), ang * 0.6 + cv * 0.5)]; r["Coluna2"] = [(V((0, 0, 1)), ang * 0.3 + cv * 0.5)]
     r["Pescoco"] = [(V((0, 0, 1)), -ang * 0.6 + cv * 0.7)]; r["Cabeca"] = [(V((0, 0, 1)), -ang * 0.3 + cv * 0.5), (V((1, 0, 0)), math.radians(-2))]
     r["Mandibula"] = [(V((1, 0, 0)), FECHADA)]
-def clipe_nado_parado(t):
-    """boiando: patas abertas para os lados (prontas para remar), cauda so corrige (onda lenta e curta), cabeca parada"""
-    T = 3.0; r = {}; pes = {}
+def remada(t, T, sentido=0.0):
+    """Lote R1 (referencia real): devagar o crocodilo abre as patas para se equilibrar e guiar; as TRASEIRAS remam (puxada
+    para tras com o pe aberto, volta recolhida e de lado); as dianteiras ficam abertas, so corrigindo. Na curva lenta a
+    traseira de FORA rema mais forte e a dianteira de DENTRO segura (pivo)."""
+    pes = {}
     for k, (par, sx, fase) in PATAS.items():
-        rem = 0.12 * math.sin(2 * math.pi * (t / T + fase))
-        pes[k] = ((V((0.45 * sx, 0.6 + rem, 0.9)) if par == "dian" else V((0.35 * sx, 0.7 + rem, 0.8))), 55.0)
+        fora = 1.0 + 0.8 * sentido * sx if sentido else 1.0          # sentido +1 (esquerda): pata direita (sx -1) e a de fora
+        if par == "dian":
+            seg = 1.0 - 0.6 * max(0.0, -sentido * sx) if sentido else 1.0
+            c_ = 0.06 * seg * math.sin(2 * math.pi * (t / T + fase))
+            pes[k] = (V((0.45 * sx, 0.6 + c_, 0.9)), 55.0)
+        else:
+            u = (t / T + (0.0 if sx > 0 else 0.5)) % 1.0              # traseiras alternadas
+            if u < 0.45:                                              # puxada: pe aberto vai para tras
+                v = suave(u / 0.45); y = -0.25 + 0.75 * v; x = 0.45; z = 0.75 - 0.10 * math.sin(math.pi * v); ang = 55.0
+            else:                                                     # volta: recolhida rente ao corpo
+                v = suave((u - 0.45) / 0.55); y = 0.5 - 0.75 * v; x = 0.45 - 0.20 * math.sin(math.pi * v); z = 0.75 + 0.15 * math.sin(math.pi * v); ang = 55.0 + 60.0 * math.sin(math.pi * v)
+            amp = min(1.25, fora)
+            pes[k] = (V((x * sx, 0.7 + (y - 0.125) * amp, z)), ang)
+    return pes
+def clipe_nado_parado(t):
+    """boiando: patas abertas para os lados, as traseiras remam devagar (alternadas) para manter a posicao; cauda so corrige
+    (onda lenta e curta), cabeca parada"""
+    T = 3.0; r = {}
     nado_corpo(r, t, T, 3.0, 9.0, 0.0, 2.0)
-    return r, V((0, 0, 0.03 * math.sin(2 * math.pi * t / T))), pes
+    return r, V((0, 0, 0.03 * math.sin(2 * math.pi * t / T))), remada(t, T)
+def curva_lenta(sentido, T=3.0):
+    """curva devagar (referencia real): patas abertas guiando, traseira de fora rema forte, cauda varre de leve para o lado"""
+    def f(t):
+        r = {}; nado_corpo(r, t, T, 4.0, 12.0, 0.6 * sentido, 2.5)
+        return r, V((0, 0, 0.03 * math.sin(2 * math.pi * t / T))), remada(t, T, sentido)
+    return f
 def curva_aquatica(sentido, T=2.0):
     def f(t):
         r = {}; nado_corpo(r, t, T, 10.0, 24.0, sentido, 4.0)
@@ -332,7 +356,8 @@ CLIPES = {  # nome: (funcao, duracao s, loop, velocidade de deslocamento em stud
     "Ameaca": (clipe_ameaca, 2.0, False, 0.0),
 }
 EXTRA = {}            # nome -> dados de sincronizacao para o jogo (giro, perfil de deslocamento)
-PES_CORPO = {"Nado": 1.0, "NadoParado": 1.0, "CurvaAquaticaEsquerda": 1.0, "CurvaAquaticaDireita": 1.0, "Mergulho": 1.0, "Emersao": 1.0}
+PES_CORPO = {"Nado": 1.0, "NadoParado": 1.0, "CurvaAquaticaEsquerda": 1.0, "CurvaAquaticaDireita": 1.0, "Mergulho": 1.0, "Emersao": 1.0,
+             "CurvaLentaEsquerda": 1.0, "CurvaLentaDireita": 1.0}
 _vE, _wE = virada(+1); _vD, _wD = virada(-1)
 CLIPES["VirarEsquerda"] = (_vE, 1.5, True, 0.0); EXTRA["VirarEsquerda"] = {"giro_graus_s": round(_wE, 2), "pivo_y": round(PIVO.y, 3)}
 CLIPES["VirarDireita"] = (_vD, 1.5, True, 0.0); EXTRA["VirarDireita"] = {"giro_graus_s": round(_wD, 2), "pivo_y": round(PIVO.y, 3)}
@@ -356,6 +381,8 @@ for nome_, dur_, perf_, ini_ in (("Arrancada", 1.4, p_rampa(0.0, 8.75, 0.15, 1.1
             return r, raiz, pes, info
     CLIPES[nome_] = (_f, dur_, False, 0.0); EXTRA[nome_] = {"deslocamento_studs": _d, "v_inicio": round(perf_(0)[0], 2), "v_fim": round(perf_(dur_)[0], 2)}
 CLIPES["NadoParado"] = (clipe_nado_parado, 3.0, True, 0.0)
+CLIPES["CurvaLentaEsquerda"] = (curva_lenta(+1), 3.0, True, 0.0); EXTRA["CurvaLentaEsquerda"] = {"giro_graus_s_proposto": 12.0, "obs": "nado lento: patas guiando (referencia real)"}
+CLIPES["CurvaLentaDireita"] = (curva_lenta(-1), 3.0, True, 0.0); EXTRA["CurvaLentaDireita"] = {"giro_graus_s_proposto": -12.0, "obs": "nado lento: patas guiando (referencia real)"}
 CLIPES["CurvaAquaticaEsquerda"] = (curva_aquatica(+1), 2.0, True, 0.0); EXTRA["CurvaAquaticaEsquerda"] = {"giro_graus_s_proposto": 25.0}
 CLIPES["CurvaAquaticaDireita"] = (curva_aquatica(-1), 2.0, True, 0.0); EXTRA["CurvaAquaticaDireita"] = {"giro_graus_s_proposto": -25.0}
 _m, _md = mergulho(False); CLIPES["Mergulho"] = (_m, _md, False, 0.0)
@@ -408,6 +435,16 @@ def passo_lado(t, t0, dur=0.45, alt=0.25):
     """passo curto: 0 -> 1 com elevacao (o pe nao arrasta)"""
     u = max(0.0, min(1.0, (t - t0) / dur)); return suave(u), alt * math.sin(math.pi * u)
 def clipe_descanso_deitado(t): r, raiz = deitado(t); return r, raiz, pes_deitado({"MaoE": 1.0, "MaoD": 1.0})
+GAPE = math.degrees(ANG_BOCA) + ABRE_MAX                          # cranio sobe = abertura total aprovada: a mandibula fica parada no chao
+def clipe_deitado_boca_aberta(t):
+    """Lote R1 (referencia real, 'gaping'): deitado ao sol/calor de boca aberta. A mandibula fica apoiada no chao e quem sobe e
+    o CRANIO (cabeca); a abertura total e a maxima aprovada da boca. Respira devagar; laco de 6 s. Emenda com
+    DescansoDeitado por cruzamento de ~0,6 s (so cabeca e boca mudam)."""
+    r, raiz = deitado(t)
+    soma(r, "Cabeca", X_, -GAPE)                                   # so o cranio (a mandibula nao recebe este giro)
+    soma(r, "Pescoco2", X_, -0.6)                                  # o pivo da cabeca fica atras da dobradica: sem isto o queixo entrava 0,05 no chao
+    r["Mandibula"] = [(X_, math.radians(ABRE_MAX) + math.radians(0.8) * math.sin(2 * math.pi * t / 6.0))]
+    return r, raiz, pes_deitado({"MaoE": 1.0, "MaoD": 1.0})
 def clipe_deitar(t):
     """frente desce primeiro (pelve inclina), depois o quadril; cabeca acompanha e o queixo pousa por ultimo"""
     rz = 0.20 * suave(t / 0.9) + (DESCE - 0.20) * suave((t - 0.7) / 1.0)
@@ -492,6 +529,7 @@ for nome_, fn_, dur_, loop_, ext_ in (
         ("Comer", clipe_comer, 3.0, False, {"eventos": {"abocanha": 0.62, "engole": 1.25, "engole2": 1.95}, "de": "Repouso", "para": "Repouso"}),
         ("Deitar", clipe_deitar, 2.0, False, {"eventos": {"barriga_no_chao": 1.7}, "de": "Repouso", "para": "DescansoDeitado"}),
         ("DescansoDeitado", clipe_descanso_deitado, 6.0, True, {}),
+        ("DeitadoBocaAberta", clipe_deitado_boca_aberta, 6.0, True, {"de": "DescansoDeitado (cruzar ~0,6 s)", "para": "DescansoDeitado", "obs": "gaping: sol/calor (referencia real)"}),
         ("Levantar", clipe_levantar, 1.8, False, {"de": "DescansoDeitado", "para": "Repouso"}),
         ("Observar", clipe_observar, 4.0, False, {"de": "Repouso", "para": "Repouso"}),
         ("Alerta", clipe_alerta, 2.5, False, {"eventos": {"vira_para_estimulo": 0.18}, "de": "Repouso", "para": "Repouso"})):
@@ -545,6 +583,41 @@ def mandibula_segue_cabeca(rots):
     Lj = PB["Mandibula"].rotation_quaternion.to_matrix().to_4x4()
     Gh = RH @ Lh @ RH.inverted(); Lj2 = RJ.inverted() @ Gh @ RJ @ Lj
     PB["Mandibula"].rotation_quaternion = Lj2.to_quaternion(); PB["Mandibula"].location = Lj2.translation
+# ------------------------------------------------------------------ Lote R1: cauda arrastando no chao
+# Crocodilo real na caminhada alta: a base da cauda sai do chao e a metade de tras vai ENCOSTADA, arrastando (IUCN CSG,
+# San Diego Zoo, Londolozi). Antes: a cauda inteira ficava suspensa a ~0,8-1,2 do chao em todos os clipes de terra.
+# Aplicado depois da pose de cada quadro: cada osso da cauda (3 a 8) gira em arfagem para levar a pele de baixo da junta
+# ate a altura-alvo (Cauda3 a meio caminho, 4 a 8 no chao). k = 0 na agua; nas transicoes terra<->agua acompanha as patas.
+RAIO_CAUDA = {"Cauda2": 1.43, "Cauda3": 1.32, "Cauda4": 1.11, "Cauda5": 0.92, "Cauda6": 0.77, "Cauda7": 0.56, "Cauda8": 0.22}  # junta -> pele de baixo (repouso)
+PELE_ALVO = {"Cauda3": 0.40, "Cauda4": 0.04, "Cauda5": 0.04, "Cauda6": 0.04, "Cauda7": 0.04, "Cauda8": 0.04}
+SEM_CHAO = ("Nado", "NadoParado", "CurvaAquaticaEsquerda", "CurvaAquaticaDireita", "Mergulho", "Emersao", "CurvaLentaEsquerda", "CurvaLentaDireita")
+def k_cauda(nome, t):
+    if nome in SEM_CHAO: return 0.0
+    if nome == "EntradaAgua": return 1.0 - suave((t - 1.0) / 0.8)
+    if nome == "SaidaAgua": return suave((t - 0.3) / 0.8)
+    return 1.0
+def cauda_no_chao(rots, kc):
+    bpy.context.view_layer.update()                               # alturas NATURAIS de todas as juntas antes de corrigir
+    natural = {nm: (arm.matrix_world @ PB[nm].tail).z - RAIO_CAUDA[nm] for nm in PELE_ALVO}
+    for nm, z_pele in PELE_ALVO.items():
+        par = BD[nm].parent.name
+        alvo = natural[nm] + (z_pele - natural[nm]) * kc          # k sobre a pose natural (nao acumula pela cadeia)
+        for _ in range(4):
+            bpy.context.view_layer.update()
+            h = arm.matrix_world @ PB[nm].head; tl = arm.matrix_world @ PB[nm].tail
+            atual = tl.z - RAIO_CAUDA[nm]
+            if abs(alvo - atual) < 0.004: break
+            d = tl - h; dh = math.hypot(d.x, d.y)
+            if dh < 1e-4: break
+            # giro no plano vertical do proprio osso: eixo horizontal perpendicular a ele (com a cauda balancando de lado,
+            # o X do mundo inclinava o osso e a ponta descia demais), levado para os eixos de repouso que rot_mundo usa
+            w = V((d.x, d.y, 0)).normalized().cross(V((0, 0, 1)))
+            Pp = (PB[par].matrix @ BD[par].matrix_local.inverted()).to_3x3()
+            eixo = (Pp.inverted() @ w).normalized()
+            fi = math.atan2(d.z, dh); zt = alvo + RAIO_CAUDA[nm] - h.z
+            a = math.asin(max(-1.0, min(1.0, zt / math.hypot(dh, d.z)))) - fi
+            rots[nm] = list(rots.get(nm, [])) + [(eixo, a)]
+            PB[nm].rotation_quaternion = rot_mundo(nm, rots[nm])
 # ------------------------------------------------------------------ amostragem -> FK -> acao + JSON + QA
 pes_ponta = {k: BD[k] for k in PATAS}
 manifesto = {}
@@ -558,6 +631,8 @@ for nome in QUAIS:
         PB["Raiz"].location = (rot_mundo("Raiz", []) .to_matrix().inverted() @ BD["Raiz"].matrix_local.to_3x3().inverted() @ raiz)
         for nm, eixos in rots.items(): PB[nm].rotation_quaternion = rot_mundo(nm, eixos)
         mandibula_segue_cabeca(rots)
+        kc = k_cauda(nome, t)
+        if kc > 0: cauda_no_chao(rots, kc)
         wc = PES_CORPO.get(nome, 0.0)
         if info is not None and "pes_corpo" in info: wc = info["pes_corpo"]
         if wc > 0:                                               # agua: os alvos acompanham o corpo (Raiz arfa/afunda)

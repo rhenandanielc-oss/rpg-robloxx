@@ -231,6 +231,15 @@ Três gerações, nenhuma aprovada artisticamente pelo criador:
 - Atlas e GLB refeitos: `export/CR_Crocodilo_Sela.glb` (2,3 MB, 28 ossos, 1 malha, até 4 influências, pose de teste com diferença ≤ 0,000002); GLB do crocodilo sem mudança (md5). Versão anterior (aprovada) em `versao_L5b/`.
 - Evidências: `review/L5c/PRANCHA_atual_x_pantano.png`, `review/L5c/forma/`, `review/L5c/atlas/`, `qa_sela_clipes.txt`, `qa_demo_L5c.json`. Roblox não testado.
 
+**11/11/2026 — Lote R1 (comportamento real): postura de crocodilo de verdade. Aprovado pelo usuário em 11/11/2026 ("Aprovar e commitar").**
+- Base: `DOCS/criaturas/crocodilo-primordial-referencias-reais.md` (pesquisa com fontes). Versão anterior preservada em `versao_L5c/` (clipes, Anim.blend, cena de montaria, script, md5).
+- **Cauda arrastando** (`cauda_no_chao` em `scripts/anim_crocodilo.py`): na caminhada alta real a base da cauda sai do chão e a metade de trás vai encostada. Antes a cauda inteira ficava suspensa a 0,8–1,2 do chão. Agora, em todos os clipes de terra, Cauda4 a Cauda8 levam a pele ao chão e a Cauda3 desce até a metade; a onda lateral continua (a cauda varre o chão). Na água fica desligado; em EntradaAgua/SaidaAgua acompanha a troca das patas. Medido: cauda a 0,001–0,017 do chão em todos os 30 clipes de terra (encosta, não atravessa).
+- Só os canais Cauda3–8 mudaram nos clipes de terra (quadros, sincronização e demais ossos iguais); Nado, CurvaAquáticaE/D, Mergulho e Emersão estão **idênticos** (md5). Emendas com os mesmos ângulos (diferença ≤ 0,1°), dentes iguais (lateral ≤ 0,07°, deslize ≤ 0,07), sela × pele igual ao Lote 5c, cavaleiro dos dois lados igual.
+- **DeitadoBocaAberta** (novo, laço 6 s): *gaping* ao sol/calor — a mandíbula fica no chão e o **crânio sobe** a abertura máxima aprovada (+26°); queixo a 0,021 do chão. Emenda com DescansoDeitado por cruzamento curto.
+- **NadoParado** refeito e **CurvaLentaEsquerda/Direita** (novos, 3 s, giro proposto 12°/s): devagar, patas abertas guiando; as traseiras remam alternadas (puxada para trás aberta, volta recolhida), na curva a traseira de fora rema mais forte e a dianteira de dentro segura. As CurvaAquática rápidas continuam com as patas recolhidas (correto para nado rápido). IK 0.
+- Repouso padrão: o real fica deitado de barriga em terra. Os clipes já existem (Deitar → DescansoDeitado/DeitadoBocaAberta → Levantar); o "Repouso em pé" fica como pose de alerta/transição. **Quem escolhe deitar é a IA** (não existe ainda) — anotado para quando for feita.
+- Agora 36 JSON. Evidências: `review/R1/` (antes × depois, `qa_chao_R1.txt`, `qa_transicoes_R1.txt`, `qa_sela_clipes.txt`, `qa_demo_R1.json`, `geracao_R1.txt`). Roblox não testado.
+
 ## 6. Pendências
 1. **Decisões do criador:**
    - **conflito do agarrão PvP** (só empurra × agarrão mais longo interrompível por aliados);
