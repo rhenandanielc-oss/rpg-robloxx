@@ -240,6 +240,18 @@ Três gerações, nenhuma aprovada artisticamente pelo criador:
 - Repouso padrão: o real fica deitado de barriga em terra. Os clipes já existem (Deitar → DescansoDeitado/DeitadoBocaAberta → Levantar); o "Repouso em pé" fica como pose de alerta/transição. **Quem escolhe deitar é a IA** (não existe ainda) — anotado para quando for feita.
 - Agora 36 JSON. Evidências: `review/R1/` (antes × depois, `qa_chao_R1.txt`, `qa_transicoes_R1.txt`, `qa_sela_clipes.txt`, `qa_demo_R1.json`, `geracao_R1.txt`). Roblox não testado.
 
+**11/11/2026 — Lote R2 (comportamento real): caça. Aprovado pelo usuário em 11/11/2026 ("Aprovar e commitar"). Só animação.**
+- 8 clipes novos em `scripts/anim_crocodilo.py` (44 JSON; os 36 anteriores **idênticos**, md5 em `versao_R1/`):
+  - **Espreita** (laço 6 s, água): imóvel, patas abertas e soltas, cabeça nivelada; o jogo deixa só olhos, narinas e cristas fora d'água.
+  - **AproximacaoSubmersa** (laço 3 s, água): patas coladas, cauda em onda longa e baixa, corpo e cabeça estáveis (silencioso).
+  - **BoteAquatico** (1,6 s, água): afunda e encolhe a cauda → chicotada lança o corpo para cima/frente (até 1,5 de altura e 1,2 à frente no clipe) com a **cabeça virada de lado** e a boca toda aberta → fecha de estalo no alto (0,62 s) → volta para a água segurando.
+  - **MordidaLateralEsquerda/Direita** (1,0 s, terra): vira para o lado oposto e abre, varre a cabeça de lado e fecha no meio da varrida.
+  - **ArrastarPresa** (laço 1,8 s): anda de ré (ciclo do Andar invertido, 0,79 studs/s para trás), cabeça baixa, boca travada, dois puxões de cabeça por ciclo; cauda arrasta.
+  - **Engolir** (2,2 s): ergue a cabeça e dá dois trancos para trás com a boca entreaberta (o pedaço escorrega).
+  - **RolarDaMorte** (laço 1,2 s = 1 volta): gira o corpo inteiro no eixo longo (eixo no meio do tronco, não na sola), patas coladas, cauda dobrada de lado, boca travada. **Só animação**: agarrão, dano, regra PvP e se vira habilidade continuam decisão do criador.
+- QA: IK 0 nos 8; terra com cauda a 0,016–0,017 do chão e focinho ≥ 1,3 (mordidas), pés iguais ao Andar (−0,25, pendência antiga); dentes sem cruzar (lateral ≤ 0,07°, deslize 0). Alturas de água nos renders são **de teste**.
+- Evidências: `review/R2/` (folhas e GIFs por clipe, `qa_chao_R2.txt`, `geracao_R2.txt`). Roblox não testado.
+
 ## 6. Pendências
 1. **Decisões do criador:**
    - **conflito do agarrão PvP** (só empurra × agarrão mais longo interrompível por aliados);

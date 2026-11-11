@@ -31,14 +31,16 @@ for nome in CLIPES:
     sinc = json.load(open(os.path.join(os.path.dirname(bpy.data.filepath), "clipes", "Crocodilo_%s.json" % nome))).get("sincronizacao", {})
     giro = math.radians(sinc.get("giro_graus_s", sinc.get("giro_graus_s_proposto", 0.0))); pivo_y = sinc.get("pivo_y", -4.0)
     desl_q = sinc.get("deslocamento_studs")
-    AGUA = ("Nado", "NadoParado", "CurvaAquaticaEsquerda", "CurvaAquaticaDireita", "Mergulho", "Emersao")
+    AGUA = {"Nado": 4.3, "NadoParado": 4.3, "CurvaAquaticaEsquerda": 4.3, "CurvaAquaticaDireita": 4.3, "Mergulho": 4.3, "Emersao": 4.3,
+            "CurvaLentaEsquerda": 4.3, "CurvaLentaDireita": 4.3, "RolarDaMorte": 3.4,
+            "Espreita": 5.15, "AproximacaoSubmersa": 6.4, "BoteAquatico": 5.15}   # R2: espreita = so olhos/cristas fora (altura de TESTE)
     if nome in AGUA and agua is None:
         bpy.ops.mesh.primitive_plane_add(size=200, location=(0, 0, 4.3)); agua = bpy.context.object; agua.name = "Agua_Teste"
         ma = bpy.data.materials.new("M_Agua"); ma.use_nodes = True; ba = ma.node_tree.nodes["Principled BSDF"]
         ba.inputs["Base Color"].default_value = (0.12, 0.22, 0.24, 1); ba.inputs["Alpha"].default_value = 0.45; ba.inputs["Roughness"].default_value = 0.1
         ma.surface_render_method = "BLENDED" if hasattr(ma, "surface_render_method") else ma.blend_method
         agua.data.materials.append(ma)
-    if agua: agua.hide_render = (nome not in AGUA)
+    if agua: agua.hide_render = (nome not in AGUA); agua.location.z = AGUA.get(nome, 4.3)
     for cn in CAMS_Q:
         p, a, lente, orto = CAMS[cn]
         for qi, f in enumerate(range(f0, f1 + 1, PASSO)):

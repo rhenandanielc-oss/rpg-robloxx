@@ -492,5 +492,123 @@
    "para": "DescansoDeitado",
    "obs": "gaping: sol/calor (referencia real)"
   }
+ },
+ "Espreita": {
+  "duracao": 6.0,
+  "loop": true,
+  "quadros": 180,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.021,
+  "sincronizacao": {
+   "obs": "emboscada: o jogo deixa so olhos/narinas/cristas fora d'agua"
+  }
+ },
+ "AproximacaoSubmersa": {
+  "duracao": 3.0,
+  "loop": true,
+  "quadros": 90,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 1.153,
+  "sincronizacao": {
+   "obs": "velocidade e profundidade do jogo"
+  }
+ },
+ "BoteAquatico": {
+  "duracao": 1.6,
+  "loop": false,
+  "quadros": 49,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.118,
+  "sincronizacao": {
+   "eventos": {
+    "chicotada": 0.3,
+    "fecha_boca": 0.62,
+    "volta_agua": 1.0
+   },
+   "de": "Espreita",
+   "para": "Espreita/RolarDaMorte",
+   "avanco_no_clipe_studs": 1.2
+  }
+ },
+ "MordidaLateralEsquerda": {
+  "duracao": 1.0,
+  "loop": false,
+  "quadros": 31,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.18,
+  "sincronizacao": {
+   "eventos": {
+    "fecha_boca": 0.45
+   },
+   "de": "Repouso",
+   "para": "Repouso"
+  }
+ },
+ "MordidaLateralDireita": {
+  "duracao": 1.0,
+  "loop": false,
+  "quadros": 31,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.18,
+  "sincronizacao": {
+   "eventos": {
+    "fecha_boca": 0.45
+   },
+   "de": "Repouso",
+   "para": "Repouso"
+  }
+ },
+ "ArrastarPresa": {
+  "duracao": 1.8,
+  "loop": true,
+  "quadros": 54,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.084,
+  "sincronizacao": {
+   "velocidade_re_studs_s": 0.794,
+   "obs": "anda de re"
+  }
+ },
+ "Engolir": {
+  "duracao": 2.2,
+  "loop": false,
+  "quadros": 67,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.18,
+  "sincronizacao": {
+   "eventos": {
+    "tranco1": 0.7,
+    "tranco2": 1.35
+   },
+   "de": "Repouso",
+   "para": "Repouso"
+  }
+ },
+ "RolarDaMorte": {
+  "duracao": 1.2,
+  "loop": true,
+  "quadros": 36,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": -1.118,
+  "sincronizacao": {
+   "voltas_por_ciclo": 1,
+   "obs": "so animacao; habilidade/agarrao = decisao do criador"
+  }
  }
 }

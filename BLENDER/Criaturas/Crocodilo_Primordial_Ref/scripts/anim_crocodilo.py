@@ -535,6 +535,105 @@ for nome_, fn_, dur_, loop_, ext_ in (
         ("Alerta", clipe_alerta, 2.5, False, {"eventos": {"vira_para_estimulo": 0.18}, "de": "Repouso", "para": "Repouso"})):
     CLIPES[nome_] = (boca_acompanha(fn_), dur_, loop_, 0.0)
     if ext_: EXTRA[nome_] = ext_
+# ================================================================== Lote R2: caca como um crocodilo real (so animacao)
+# Referencia: DOCS/criaturas/crocodilo-primordial-referencias-reais.md (IUCN CSG, San Diego Zoo, Londolozi, JEB). Nenhuma
+# regra de jogo: o jogo decide quando tocar, quanto anda, dano, agarrao e se o RolarDaMorte vira habilidade.
+def boca_frac(f):
+    """0 = fechada 100%, 1 = abertura maxima aprovada"""
+    return [(X_, FECHADA + (math.radians(ABRE_MAX) - FECHADA) * f)]
+def pes_boiando():
+    """parado na agua: patas abertas e soltas para os lados (real: boiando de espreita, pernas penduradas abertas)"""
+    return {k: ((V((0.75 * sx, 1.15, 1.55)) if par == "dian" else V((0.65 * sx, 1.15, 1.35))), 70.0) for k, (par, sx, f_) in PATAS.items()}   # abertas quase na horizontal (nao penduradas)
+def clipe_espreita(t):
+    """emboscada: imovel na beira d'agua, so olhos/narinas/cristas para fora (a altura e do jogo); quase nada se mexe -
+    so um ajuste muito lento da cauda e a cabeca nivelada com a superficie"""
+    T = 6.0; r = {}
+    nado_corpo(r, t, T, 0.8, 2.5, 0.0, 0.5)
+    r["Cabeca"] = [(Z_, 0.0), (X_, math.radians(-3.0))]; r["Pescoco"] = [(X_, math.radians(-1.0))]
+    return r, V((0, 0, 0.01 * math.sin(2 * math.pi * t / T))), pes_boiando()
+def clipe_aproximacao_submersa(t):
+    """aproximacao submersa e silenciosa: patas coladas no corpo, cauda em onda longa e baixa (sem esforco), corpo e cabeca
+    estaveis; a velocidade e a profundidade sao do jogo"""
+    T = 3.0; r = {}
+    nado_corpo(r, t, T, 4.0, 12.0, 0.0, 1.5)
+    r["Cabeca"] = [(Z_, math.radians(-0.4) * math.sin(2 * math.pi * t / T)), (X_, math.radians(-1.0))]
+    return r, V((0, 0, 0.0)), pes_recolhidos()
+def clipe_bote_aquatico(t):
+    """bote saindo da agua (1,6 s): afunda e encolhe a cauda -> chicotada da cauda lanca o corpo para cima/frente com a
+    cabeca virada de lado e a boca bem aberta -> fecha no ponto mais alto (agarra) -> volta para a agua segurando"""
+    r = {}
+    ant = suave(t / 0.30) * (1 - suave((t - 0.30) / 0.10))                 # antecipacao
+    sai = suave((t - 0.30) / 0.30) * (1 - suave((t - 0.80) / 0.60))        # corpo fora d'agua
+    cauda = math.sin(math.pi * max(0.0, min(1.0, (t - 0.25) / 0.40)))       # chicotada
+    for i, nm in enumerate(CAUDA):
+        r[nm] = [(Z_, math.radians(-18.0 * ant * (i / 7) + 34.0 * cauda * (0.4 + 0.6 * i / 7) * math.sin(math.pi * (i / 7) + 0.6)))]
+    r["Raiz"] = [(X_, math.radians(-22.0 * sai + 4.0 * ant))]                  # nariz sobe para fora d'agua
+    r["Pelve"] = [(Z_, math.radians(-6.0 * cauda))]; r["Coluna1"] = [(Z_, math.radians(5.0 * cauda))]
+    vira = suave((t - 0.25) / 0.25) * (1 - suave((t - 0.95) / 0.45))        # cabeca de lado (crocodilo "canta" a cabeca)
+    soma(r, "Pescoco", Z_, 10.0 * vira); soma(r, "Pescoco", X_, -6.0 * sai)
+    soma_cab(r, Y_, 32.0 * vira); soma_cab(r, Z_, 8.0 * vira)
+    abre = suave((t - 0.30) / 0.22) * (1 - suave((t - 0.58) / 0.07))       # abre no salto, fecha de estalo no alto
+    r["Mandibula"] = boca_frac(abre)
+    raiz = V((0, -1.2 * sai, 1.5 * sai - 0.25 * ant))
+    return r, raiz, pes_recolhidos()
+def mordida_lateral(lado):
+    """varrida lateral da cabeca (presa pequena e rapida): vira para o lado oposto e abre, varre de lado e fecha de estalo
+    no meio da varrida, volta ao Repouso (lado +1 = morde a esquerda / +X)"""
+    def f(t):
+        r = mix(REP0, {}, 0.0)
+        g = kf(t, [(0, 0), (0.25, -10), (0.42, 22), (0.55, 26), (0.95, 0)]) * lado
+        boca = kf(t, [(0, 0), (0.22, 1.0), (0.40, 1.0), (0.47, 0.0), (1.0, 0.0)])
+        soma(r, "Pescoco", Z_, 0.55 * g); soma(r, "Pescoco2", Z_, 0.25 * g); soma_cab(r, Z_, 0.45 * g)
+        soma(r, "Coluna2", Z_, 0.15 * g); soma(r, "Pescoco", X_, kf(t, [(0, 0), (0.25, -4), (0.5, 2), (0.95, 0)]))
+        r["Mandibula"] = boca_frac(boca)
+        for i, nm in enumerate(CAUDA): soma(r, nm, Z_, -4.0 * (i / 7) * math.sin(math.pi * min(1.0, t / 0.95)) * lado)
+        return r, V((0, 0, 0)), {}
+    return f
+_ARR = marcha(1.8, 1.0, 0.70, 0.35, 4.0, 6.0, 0.03)
+def clipe_arrastar_presa(t):
+    """arrasta a presa de re para a agua (laco 1,8 s): caminhada alta para tras, cabeca baixa e boca travada, puxoes de
+    cabeca e pescoco a cada passada; a cauda arrasta. Velocidade para tras (jogo): 1,0 / (0,70 * 1,8) studs/s"""
+    T = 1.8; r, raiz, pes = _ARR((T - t) % T)                              # o ciclo de passos ao contrario = andar de re
+    pux = math.sin(2 * math.pi * 2 * t / T) ** 2                            # 2 puxoes por ciclo
+    soma(r, "Pescoco", X_, 6.0 - 5.0 * pux); soma_cab(r, X_, 6.0 - 4.0 * pux)
+    soma(r, "Coluna2", X_, -1.5 * pux)
+    r["Mandibula"] = boca_frac(0.15)                                        # segurando: quase fechada
+    return r, raiz, pes
+def clipe_engolir(t):
+    """engole jogando a cabeca para tras (2,2 s, da pose Repouso segurando o pedaco): ergue a cabeca, abre um pouco e da
+    um tranco para tras/cima (o pedaco escorrega), fecha; repete mais curto; volta"""
+    r = mix(REP0, {}, 0.0)
+    cab = kf(t, [(0, 0), (0.35, -12), (0.55, -10), (0.70, -32), (0.85, -26), (1.15, -14), (1.35, -30), (1.5, -24), (1.9, -4), (2.2, 0)])
+    pes_ = kf(t, [(0, 0), (0.35, -6), (0.70, -12), (0.85, -10), (1.35, -11), (1.9, -2), (2.2, 0)])
+    boca = kf(t, [(0, 0), (0.45, 0.0), (0.62, 0.55), (0.76, 0.15), (0.85, 0.0), (1.25, 0.0), (1.34, 0.4), (1.45, 0.0), (2.2, 0.0)])
+    soma(r, "Pescoco", X_, pes_); soma(r, "Pescoco2", X_, 0.4 * cab); soma_cab(r, X_, 0.6 * cab)
+    soma(r, "Coluna2", X_, 0.08 * cab)
+    r["Mandibula"] = boca_frac(boca)
+    return r, V((0, 0, 0)), {}
+CENTRO_ROLAR = V((0, -4.2, 3.0))                                           # eixo longo do tronco (altura do meio do corpo)
+def clipe_rolar_da_morte(t):
+    """rolar da morte (laco 1,2 s = 1 volta completa no eixo longo): patas coladas no corpo, cauda dobrada de lado (gira o
+    corpo), cabeca alinhada e boca travada. So animacao: agarrao/dano/regra PvP sao do criador."""
+    T = 1.2; a = 2 * math.pi * t / T; r = {}
+    r["Raiz"] = [(Y_, a)]
+    for i, nm in enumerate(CAUDA): r[nm] = [(Z_, math.radians(3.5 + 1.5 * (i / 7)))]       # ~35 graus no total: mais que isso a ponta virava espeto no giro
+    r["Pelve"] = [(Z_, math.radians(-6.0))]; r["Coluna1"] = [(Z_, math.radians(3.0))]
+    r["Mandibula"] = boca_frac(0.0)
+    rel = CENTRO_ROLAR - BD["Raiz"].head_local                           # gira em torno do eixo do tronco, nao da sola
+    raiz = rel - _M.Rotation(a, 3, "Y") @ rel
+    return r, raiz, pes_recolhidos()
+for nome_, fn_, dur_, loop_, ext_ in (
+        ("Espreita", clipe_espreita, 6.0, True, {"obs": "emboscada: o jogo deixa so olhos/narinas/cristas fora d'agua"}),
+        ("AproximacaoSubmersa", clipe_aproximacao_submersa, 3.0, True, {"obs": "velocidade e profundidade do jogo"}),
+        ("BoteAquatico", clipe_bote_aquatico, 1.6, False, {"eventos": {"chicotada": 0.30, "fecha_boca": 0.62, "volta_agua": 1.0},
+                                                         "de": "Espreita", "para": "Espreita/RolarDaMorte", "avanco_no_clipe_studs": 1.2}),
+        ("MordidaLateralEsquerda", mordida_lateral(+1), 1.0, False, {"eventos": {"fecha_boca": 0.45}, "de": "Repouso", "para": "Repouso"}),
+        ("MordidaLateralDireita", mordida_lateral(-1), 1.0, False, {"eventos": {"fecha_boca": 0.45}, "de": "Repouso", "para": "Repouso"}),
+        ("ArrastarPresa", clipe_arrastar_presa, 1.8, True, {"velocidade_re_studs_s": round(1.0 / (0.70 * 1.8), 3), "obs": "anda de re"}),
+        ("Engolir", clipe_engolir, 2.2, False, {"eventos": {"tranco1": 0.70, "tranco2": 1.35}, "de": "Repouso", "para": "Repouso"}),
+        ("RolarDaMorte", clipe_rolar_da_morte, 1.2, True, {"voltas_por_ciclo": 1, "obs": "so animacao; habilidade/agarrao = decisao do criador"})):
+    CLIPES[nome_] = (boca_acompanha(fn_), dur_, loop_, 0.0); EXTRA[nome_] = ext_
+PES_CORPO.update({"Espreita": 1.0, "AproximacaoSubmersa": 1.0, "BoteAquatico": 1.0, "RolarDaMorte": 1.0})
 # ================================================================== Lote 4: montaria (so apresentacao; o cavaleiro e demonstracao separada)
 BAIXA_MONT = 0.20                                                  # baixa a postura para receber o peso (patas plantadas)
 def montaria(t, baixa, rola, olha, amortece, lado=1.0):
@@ -590,7 +689,7 @@ def mandibula_segue_cabeca(rots):
 # ate a altura-alvo (Cauda3 a meio caminho, 4 a 8 no chao). k = 0 na agua; nas transicoes terra<->agua acompanha as patas.
 RAIO_CAUDA = {"Cauda2": 1.43, "Cauda3": 1.32, "Cauda4": 1.11, "Cauda5": 0.92, "Cauda6": 0.77, "Cauda7": 0.56, "Cauda8": 0.22}  # junta -> pele de baixo (repouso)
 PELE_ALVO = {"Cauda3": 0.40, "Cauda4": 0.04, "Cauda5": 0.04, "Cauda6": 0.04, "Cauda7": 0.04, "Cauda8": 0.04}
-SEM_CHAO = ("Nado", "NadoParado", "CurvaAquaticaEsquerda", "CurvaAquaticaDireita", "Mergulho", "Emersao", "CurvaLentaEsquerda", "CurvaLentaDireita")
+SEM_CHAO = ("Nado", "NadoParado", "CurvaAquaticaEsquerda", "CurvaAquaticaDireita", "Mergulho", "Emersao", "CurvaLentaEsquerda", "CurvaLentaDireita", "Espreita", "AproximacaoSubmersa", "BoteAquatico", "RolarDaMorte")
 def k_cauda(nome, t):
     if nome in SEM_CHAO: return 0.0
     if nome == "EntradaAgua": return 1.0 - suave((t - 1.0) / 0.8)
