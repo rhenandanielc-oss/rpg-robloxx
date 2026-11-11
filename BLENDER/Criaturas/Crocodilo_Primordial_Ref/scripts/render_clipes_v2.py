@@ -33,7 +33,7 @@ for nome in CLIPES:
     desl_q = sinc.get("deslocamento_studs")
     AGUA = {"Nado": 4.3, "NadoParado": 4.3, "CurvaAquaticaEsquerda": 4.3, "CurvaAquaticaDireita": 4.3, "Mergulho": 4.3, "Emersao": 4.3,
             "CurvaLentaEsquerda": 4.3, "CurvaLentaDireita": 4.3, "RolarDaMorte": 3.4,
-            "Espreita": 5.15, "AproximacaoSubmersa": 6.4, "BoteAquatico": 5.15}   # R2: espreita = so olhos/cristas fora (altura de TESTE)
+            "Espreita": 5.15, "AproximacaoSubmersa": 6.4, "BoteAquatico": 5.15, "BatidaDeCabeca": 4.3, "Bramido": 4.3}   # R2: espreita = so olhos/cristas fora (altura de TESTE)
     if nome in AGUA and agua is None:
         bpy.ops.mesh.primitive_plane_add(size=200, location=(0, 0, 4.3)); agua = bpy.context.object; agua.name = "Agua_Teste"
         ma = bpy.data.materials.new("M_Agua"); ma.use_nodes = True; ba = ma.node_tree.nodes["Principled BSDF"]

@@ -610,5 +610,59 @@
    "voltas_por_ciclo": 1,
    "obs": "so animacao; habilidade/agarrao = decisao do criador"
   }
+ },
+ "AmeacaInflada": {
+  "duracao": 2.6,
+  "loop": false,
+  "quadros": 79,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0127,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.18,
+  "sincronizacao": {
+   "eventos": {
+    "sibilo": 0.3,
+    "bote_curto": 1.72
+   },
+   "de": "Repouso",
+   "para": "Repouso",
+   "obs": "sem canal de escala: inflar = postura alta e dorso arqueado"
+  }
+ },
+ "BatidaDeCabeca": {
+  "duracao": 2.6,
+  "loop": false,
+  "quadros": 79,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": -0.263,
+  "sincronizacao": {
+   "eventos": {
+    "batida_agua": 1.2
+   },
+   "de": "NadoParado/Espreita",
+   "para": "NadoParado",
+   "obs": "som de estalo + respingo no evento (jogo)"
+  }
+ },
+ "Bramido": {
+  "duracao": 4.0,
+  "loop": false,
+  "quadros": 121,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": -0.233,
+  "sincronizacao": {
+   "eventos": {
+    "vibracao_inicio": 0.8,
+    "vibracao_fim": 2.1,
+    "bramido": 2.2
+   },
+   "de": "NadoParado",
+   "para": "NadoParado",
+   "obs": "VFX de gotas no dorso durante a vibracao (desempenho a medir)"
+  }
  }
 }

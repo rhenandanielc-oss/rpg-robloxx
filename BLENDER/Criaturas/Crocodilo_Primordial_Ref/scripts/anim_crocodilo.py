@@ -634,6 +634,63 @@ for nome_, fn_, dur_, loop_, ext_ in (
         ("RolarDaMorte", clipe_rolar_da_morte, 1.2, True, {"voltas_por_ciclo": 1, "obs": "so animacao; habilidade/agarrao = decisao do criador"})):
     CLIPES[nome_] = (boca_acompanha(fn_), dur_, loop_, 0.0); EXTRA[nome_] = ext_
 PES_CORPO.update({"Espreita": 1.0, "AproximacaoSubmersa": 1.0, "BoteAquatico": 1.0, "RolarDaMorte": 1.0})
+# ================================================================== Lote R3: sinais como um crocodilo real (so animacao)
+# Referencia: DOCS/criaturas/crocodilo-primordial-referencias-reais.md (San Diego Zoo, Herpetological Bulletin, Nat. Zoo).
+# O rig nao tem canal de escala (JSON = rotacao + posicao): o "inflar" aparece pela postura (corpo alto, dorso arqueado).
+def hota(r, k, cauda_ang=7.0):
+    """postura 'cabeca e cauda para fora' (HOTA) na agua: nariz e cabeca altos, dorso arqueado, cauda erguida em arco"""
+    r["Raiz"] = list(r.get("Raiz", [])) + [(X_, math.radians(-6.0 * k))]
+    soma(r, "Coluna1", X_, -2.0 * k); soma(r, "Coluna2", X_, -2.0 * k)
+    soma(r, "Pescoco", X_, -5.0 * k); soma_cab(r, X_, -8.0 * k)
+    for i, nm in enumerate(CAUDA):
+        soma(r, nm, X_, cauda_ang * k * (1.0 if i < 4 else -0.6))         # base sobe, ponta volta (arco)
+def clipe_ameaca_inflada(t):
+    """ameaca real em terra (2,6 s): ergue-se alto nas patas, arqueia e 'infla' o tronco, cabeca alta de boca bem aberta
+    (sibilo), cauda chicoteia de lado; termina com um bote curto de estalo e volta ao Repouso"""
+    r = mix(REP0, {}, 0.0)
+    k = suave(t / 0.45) * (1 - suave((t - 2.15) / 0.40))
+    bote = suave((t - 1.70) / 0.12) * (1 - suave((t - 1.95) / 0.35))
+    soma(r, "Coluna1", X_, -3.0 * k); soma(r, "Coluna2", X_, -3.5 * k); soma(r, "Pelve", X_, 1.0 * k)
+    soma(r, "Pescoco", X_, -7.0 * k + 6.0 * bote); soma_cab(r, X_, -12.0 * k + 8.0 * bote)
+    trem = math.radians(0.5) * k * math.sin(2 * math.pi * t * 9)
+    abre = suave((t - 0.25) / 0.30) * (1 - suave((t - 1.72) / 0.06))           # aberta no sibilo, fecha de estalo no bote
+    r["Mandibula"] = [(X_, FECHADA + (math.radians(ABRE_MAX) - FECHADA) * abre + trem)]
+    for i, nm in enumerate(CAUDA): soma(r, nm, Z_, 10.0 * k * (0.3 + 0.7 * i / 7) * math.sin(2 * math.pi * (t / 0.9 - 0.1 * i)))
+    return r, V((0, -0.45 * bote, 0.32 * k)), {}          # bote curto: mais que 0,45 esticava a traseira E plantada (IK 0,14)
+def clipe_batida_de_cabeca(t):
+    """batida de cabeca na agua (2,6 s): assume HOTA (cabeca e cauda para fora), ergue mais a cabeca de boca entreaberta e
+    bate a parte de baixo da cabeca na superficie fechando a boca de estalo (jaw clap), quica e relaxa"""
+    r = {}; nado_corpo(r, t, 3.0, 1.0, 3.0, 0.0, 0.5)
+    k = suave(t / 0.6) * (1 - suave((t - 2.0) / 0.6))
+    hota(r, k)
+    ergue = suave((t - 0.7) / 0.45) * (1 - suave((t - 1.20) / 0.08))         # sobe devagar, desce de golpe
+    quica = math.exp(-9 * max(0.0, t - 1.28)) * math.sin(2 * math.pi * max(0.0, t - 1.28) / 0.25) if t > 1.28 else 0.0
+    soma(r, "Pescoco", X_, -10.0 * ergue + 4.0 * quica); soma_cab(r, X_, -14.0 * ergue + 5.0 * quica)
+    abre = 0.5 * suave((t - 0.8) / 0.3) * (1 - suave((t - 1.18) / 0.06))
+    r["Mandibula"] = [(X_, FECHADA + (math.radians(ABRE_MAX) - FECHADA) * abre)]
+    return r, V((0, 0, 0.25 * k)), pes_boiando()
+def clipe_bramido(t):
+    """bramido (4,0 s): HOTA com o tronco 'inflado'; vibracao subsonica sacode o dorso (no jogo: gotas 'dancando' sobre as
+    costas, VFX); depois abre parcialmente a boca e brame com a cabeca subindo; relaxa"""
+    r = {}; nado_corpo(r, t, 4.0, 1.0, 3.0, 0.0, 0.5)
+    k = suave(t / 0.7) * (1 - suave((t - 3.3) / 0.7))
+    hota(r, k, 9.0)
+    vib = suave((t - 0.8) / 0.2) * (1 - suave((t - 2.1) / 0.15))              # 0,8-2,1 s: vibracao (gotas no dorso)
+    v_ = math.radians(0.6) * vib * math.sin(2 * math.pi * t * 7.5)
+    for nm in ("Pelve", "Coluna1", "Coluna2"): r[nm] = list(r.get(nm, [])) + [(X_, v_)]
+    brame = suave((t - 2.1) / 0.3) * (1 - suave((t - 3.1) / 0.3))
+    soma(r, "Pescoco", X_, -5.0 * brame); soma_cab(r, X_, -6.0 * brame)
+    r["Mandibula"] = [(X_, FECHADA + (math.radians(ABRE_MAX) - FECHADA) * 0.5 * brame + math.radians(0.4) * brame * math.sin(2 * math.pi * t * 6))]
+    return r, V((0, 0, 0.30 * k + 0.02 * vib * math.sin(2 * math.pi * t * 7.5))), pes_boiando()
+for nome_, fn_, dur_, loop_, ext_ in (
+        ("AmeacaInflada", clipe_ameaca_inflada, 2.6, False, {"eventos": {"sibilo": 0.30, "bote_curto": 1.72}, "de": "Repouso", "para": "Repouso",
+                                                            "obs": "sem canal de escala: inflar = postura alta e dorso arqueado"}),
+        ("BatidaDeCabeca", clipe_batida_de_cabeca, 2.6, False, {"eventos": {"batida_agua": 1.20}, "de": "NadoParado/Espreita", "para": "NadoParado",
+                                                               "obs": "som de estalo + respingo no evento (jogo)"}),
+        ("Bramido", clipe_bramido, 4.0, False, {"eventos": {"vibracao_inicio": 0.80, "vibracao_fim": 2.10, "bramido": 2.20}, "de": "NadoParado", "para": "NadoParado",
+                                                "obs": "VFX de gotas no dorso durante a vibracao (desempenho a medir)"})):
+    CLIPES[nome_] = (boca_acompanha(fn_), dur_, loop_, 0.0); EXTRA[nome_] = ext_
+PES_CORPO.update({"BatidaDeCabeca": 1.0, "Bramido": 1.0})
 # ================================================================== Lote 4: montaria (so apresentacao; o cavaleiro e demonstracao separada)
 BAIXA_MONT = 0.20                                                  # baixa a postura para receber o peso (patas plantadas)
 def montaria(t, baixa, rola, olha, amortece, lado=1.0):
@@ -689,7 +746,7 @@ def mandibula_segue_cabeca(rots):
 # ate a altura-alvo (Cauda3 a meio caminho, 4 a 8 no chao). k = 0 na agua; nas transicoes terra<->agua acompanha as patas.
 RAIO_CAUDA = {"Cauda2": 1.43, "Cauda3": 1.32, "Cauda4": 1.11, "Cauda5": 0.92, "Cauda6": 0.77, "Cauda7": 0.56, "Cauda8": 0.22}  # junta -> pele de baixo (repouso)
 PELE_ALVO = {"Cauda3": 0.40, "Cauda4": 0.04, "Cauda5": 0.04, "Cauda6": 0.04, "Cauda7": 0.04, "Cauda8": 0.04}
-SEM_CHAO = ("Nado", "NadoParado", "CurvaAquaticaEsquerda", "CurvaAquaticaDireita", "Mergulho", "Emersao", "CurvaLentaEsquerda", "CurvaLentaDireita", "Espreita", "AproximacaoSubmersa", "BoteAquatico", "RolarDaMorte")
+SEM_CHAO = ("Nado", "NadoParado", "CurvaAquaticaEsquerda", "CurvaAquaticaDireita", "Mergulho", "Emersao", "CurvaLentaEsquerda", "CurvaLentaDireita", "Espreita", "AproximacaoSubmersa", "BoteAquatico", "RolarDaMorte", "BatidaDeCabeca", "Bramido")
 def k_cauda(nome, t):
     if nome in SEM_CHAO: return 0.0
     if nome == "EntradaAgua": return 1.0 - suave((t - 1.0) / 0.8)

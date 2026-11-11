@@ -252,6 +252,14 @@ Três gerações, nenhuma aprovada artisticamente pelo criador:
 - QA: IK 0 nos 8; terra com cauda a 0,016–0,017 do chão e focinho ≥ 1,3 (mordidas), pés iguais ao Andar (−0,25, pendência antiga); dentes sem cruzar (lateral ≤ 0,07°, deslize 0). Alturas de água nos renders são **de teste**.
 - Evidências: `review/R2/` (folhas e GIFs por clipe, `qa_chao_R2.txt`, `geracao_R2.txt`). Roblox não testado.
 
+**11/11/2026 — Lote R3 (comportamento real): sinais. Aprovado pelo usuário em 11/11/2026 ("Aprovar e commitar"). Só animação.**
+- 3 clipes novos (47 JSON; os 44 anteriores **idênticos**, md5 em `versao_R2/`):
+  - **AmeacaInflada** (2,6 s, terra): ergue-se alto nas patas, arqueia o tronco, cabeça alta de boca toda aberta (sibilo, tremor), cauda chicoteando; termina com **bote curto** de estalo (0,45 à frente) e volta ao Repouso. O rig não tem canal de escala (JSON = rotação + posição): o "inflar" aparece pela postura.
+  - **BatidaDeCabeca** (2,6 s, água): postura cabeça-e-cauda-para-fora (HOTA), ergue a cabeça de boca entreaberta e bate a parte de baixo na superfície fechando de estalo (evento em 1,2 s para som/respingo), quica e relaxa.
+  - **Bramido** (4,0 s, água): HOTA com o dorso arqueado; **vibração** do tronco de 0,8 a 2,1 s (no jogo: gotas "dançando" sobre o dorso como VFX, desempenho a medir) e depois brame de boca meio aberta com a cabeça subindo.
+- QA: IK ≤ 0,013 (o bote curto foi limitado a 0,45 porque 0,8 esticava a traseira E plantada, IK 0,14); AmeacaInflada com cauda a 0,015 do chão e pés iguais ao Repouso; dentes sem cruzar (lateral ≤ 0,07°, deslize 0).
+- Evidências: `review/R3/` (folhas, GIFs normal e lento, `qa_chao_R3.txt`, `geracao_R3.txt`). Roblox não testado.
+
 ## 6. Pendências
 1. **Decisões do criador:**
    - **conflito do agarrão PvP** (só empurra × agarrão mais longo interrompível por aliados);
