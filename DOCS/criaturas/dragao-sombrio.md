@@ -239,6 +239,10 @@ Todos estão marcados **[PROPOSTA]**. Dano, alcance, duração, custo, recarga e
 ### 5.z3 Clipes na convenção do jogo (10/11, DOCS/estado DA)
 - Todos os KFS do Sombrio no Studio agora tocam como no Blender (antes espelhados em pitch/rolagem). Exportar sempre com `CONVENCAO_ROBLOX=giro180y`. Desfazer = aplicar a mesma conversão de novo.
 
+### 5.z4 Sopro Umbral mais largo (11/11, DOCS/estado DJ)
+- Cone 13 → 26 graus (largura x2), alcance 95 igual; visual do jato com abertura x2. NAO_APROVADO.
+- Corrigido no Nucleo: o sopro não feria dragão no chão (RootPart no nível do chão bloqueava a visão).
+
 ## 6. Etapa 1 executada (03/11): ciclo de chão
 
 - **Parado, Andar, Correr:** testados em Play no `workspace.Sombrio`, com o corpo movido nas velocidades de ritmo (7,9 e 18,94 studs/s). Pé no apoio a ~11% da velocidade do corpo, igual ao Glacial certificado medido no mesmo teste. No Parado, o pé desliza 0,02–0,05 stud.

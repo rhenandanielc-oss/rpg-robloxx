@@ -213,10 +213,22 @@ function N:alvosValidos()
 	end
 	return l
 end
+-- PATCH_SOPRO_ALVO_CORPO (11/11): a RootPart dos dragoes tem o centro NO NIVEL DO CHAO; o raio de visao ate ela tocava o
+-- terreno (visivel = false) e o cone media o angulo ate os pes -> o sopro quase nunca feria dragao/guardiao no chao.
+-- Para dragoes (sem Humanoid) o ponto do alvo e o centro do corpo; personagens continuam pela HumanoidRootPart.
+local function pontoAlvo(a)
+	local r = raiz(a)
+	if a:FindFirstChildOfClass("Humanoid") then return r.Position end
+	local reg = N.registro and N.registro[a]
+	if reg then local ok, c = pcall(reg.centroCorpo, reg); if ok and typeof(c) == "Vector3" then return c end end
+	if a:GetAttribute("FormaRegional") then return r.Position + Vector3.new(0, 12, 0) end
+	return r.Position
+end
+N.pontoAlvo = pontoAlvo
 local rp = RaycastParams.new(); rp.FilterType = Enum.RaycastFilterType.Include
 function N:visivel(de, alvoMod)
 	rp.FilterDescendantsInstances = {workspace.Terrain}
-	local p = raiz(alvoMod).Position
+	local p = pontoAlvo(alvoMod)
 	return workspace:Raycast(de, p - de, rp) == nil
 end
 -- dano UNICO do combate (habilidades, basicos, mordida aerea da montaria e ticks de Burning): resistencia a Fogo do alvo,
@@ -253,7 +265,7 @@ function N:aplicar(alvos, dano, tipo, intensidade, el, frost)
 	return n
 end
 local function noCone(o, f, alvo, alc, ang)
-	local v = raiz(alvo).Position - o; local d = v.Magnitude
+	local v = pontoAlvo(alvo) - o; local d = v.Magnitude
 	if d > alc or d < 0.1 then return false end
 	return math.deg(math.acos(math.clamp(f:Dot(v.Unit), -1, 1))) <= ang
 end

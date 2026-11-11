@@ -160,22 +160,22 @@ local function emissoresSopro(m)
 		Orientation = Enum.ParticleOrientation.VelocityParallel, Squash = ns(0, 0.8, 1, 0),
 		Size = NumberSequence.new({NumberSequenceKeypoint.new(0, 0.9, 0.2), NumberSequenceKeypoint.new(1, 3, 0.6)}),
 		Transparency = ns(0, 0.55, 0.2, 0.3, 1, 1), Rotation = NumberRange.new(0, 360), RotSpeed = NumberRange.new(-50, 50),
-		SpreadAngle = Vector2.new(4, 4), EmissionDirection = F, Rate = 0, ZOffset = 1.5})
+		SpreadAngle = Vector2.new(8, 8), EmissionDirection = F, Rate = 0, ZOffset = 1.5})   -- PATCH_SOPRO_UMBRAL_LARGO (11/11): abertura x2 (cone 13 -> 26)
 	s.e.nucleo = emissor(s.anc, flipFumaca({Color = seq({PRETO, BREU, C3(38, 12, 58)}), LightEmission = 0, LightInfluence = 0.35,
-		Size = NumberSequence.new({NumberSequenceKeypoint.new(0, 1.4, 0.3), NumberSequenceKeypoint.new(0.06, 3, 0.6), NumberSequenceKeypoint.new(0.3, 5.5, 1.2), NumberSequenceKeypoint.new(0.65, 8.5, 2), NumberSequenceKeypoint.new(1, 10.5, 2.5)}),
+		Size = NumberSequence.new({NumberSequenceKeypoint.new(0, 1.4, 0.3), NumberSequenceKeypoint.new(0.06, 3, 0.6), NumberSequenceKeypoint.new(0.3, 8, 1.6), NumberSequenceKeypoint.new(0.65, 13, 3), NumberSequenceKeypoint.new(1, 16, 3.5)}),
 		Transparency = ns(0, 0.6, 0.08, 0.3, 0.5, 0.45, 0.85, 0.75, 1, 1), Rotation = NumberRange.new(0, 360), RotSpeed = NumberRange.new(-45, 45),
-		Acceleration = Vector3.new(0, 1.2, 0), SpreadAngle = Vector2.new(6, 6), EmissionDirection = F, Rate = 0, ZOffset = 1}))
+		Acceleration = Vector3.new(0, 1.2, 0), SpreadAngle = Vector2.new(12, 12), EmissionDirection = F, Rate = 0, ZOffset = 1}))
 	s.e.turbilhao = emissor(s.anc, flipFumaca({Color = seq({BREU, C3(18, 6, 28)}), LightEmission = 0, LightInfluence = 0.4,
-		Size = NumberSequence.new({NumberSequenceKeypoint.new(0, 1.4, 0.4), NumberSequenceKeypoint.new(1, 13, 3)}),
+		Size = NumberSequence.new({NumberSequenceKeypoint.new(0, 1.4, 0.4), NumberSequenceKeypoint.new(1, 19, 4)}),
 		Transparency = ns(0, 0.85, 0.3, 0.55, 0.75, 0.75, 1, 1), Rotation = NumberRange.new(0, 360), RotSpeed = NumberRange.new(-90, 90),
-		Acceleration = Vector3.new(0, 2.2, 0), SpreadAngle = Vector2.new(16, 16), EmissionDirection = F, Rate = 0}))
+		Acceleration = Vector3.new(0, 2.2, 0), SpreadAngle = Vector2.new(32, 32), EmissionDirection = F, Rate = 0}))
 	s.e.borda = emissor(s.anc, {Texture = TEX.nevoa, Color = seq({C3(95, 35, 160), C3(45, 15, 80)}), LightEmission = 0.25, LightInfluence = 0.5,
-		Size = NumberSequence.new({NumberSequenceKeypoint.new(0, 1.2, 0.3), NumberSequenceKeypoint.new(1, 12, 2.5)}),
+		Size = NumberSequence.new({NumberSequenceKeypoint.new(0, 1.2, 0.3), NumberSequenceKeypoint.new(1, 18, 3.5)}),
 		Transparency = ns(0, 0.92, 0.35, 0.74, 1, 1), Rotation = NumberRange.new(0, 360), RotSpeed = NumberRange.new(-30, 30),
-		SpreadAngle = Vector2.new(11, 11), EmissionDirection = F, Rate = 0, ZOffset = -1})
+		SpreadAngle = Vector2.new(22, 22), EmissionDirection = F, Rate = 0, ZOffset = -1})
 	s.e.fiapos = emissor(s.anc, {Texture = TEX.fumaca, Orientation = Enum.ParticleOrientation.VelocityParallel, Color = ColorSequence.new(PRETO),
 		LightEmission = 0, LightInfluence = 0.3, Size = ns(0, 0.25, 1, 0.75), Transparency = ns(0, 0.6, 0.4, 0.45, 1, 1),
-		SpreadAngle = Vector2.new(9, 9), EmissionDirection = F, Rate = 0, ZOffset = 2})
+		SpreadAngle = Vector2.new(18, 18), EmissionDirection = F, Rate = 0, ZOffset = 2})
 	s.eImp = emissor(s.imp, flipFumaca({Color = seq({BREU, PRETO}), LightEmission = 0, LightInfluence = 0.5,
 		Size = NumberSequence.new({NumberSequenceKeypoint.new(0, 3, 0.8), NumberSequenceKeypoint.new(1, 12, 3)}), Transparency = ns(0, 0.75, 0.3, 0.6, 1, 1),
 		Lifetime = NumberRange.new(0.8, 1.2), Speed = NumberRange.new(5, 11), Drag = 2.5, Rotation = NumberRange.new(0, 360), RotSpeed = NumberRange.new(-40, 40),

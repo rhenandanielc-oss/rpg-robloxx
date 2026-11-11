@@ -82,7 +82,7 @@ return {
 		-- Vinheta leve na tela do jogador atingido: so visual (VFXSombra)
 		SoproUmbral = {recarga = 10, energia = 25, emissao = 1.8, tick = 0.3, elemental = true, emissaoMax = 5, energiaSeg = 8,
 			emAtaque = "Sopro", clipes = "Sopro_Umbral", marcaIntervalo = 1.0,
-			porElemento = {Sombra = {forma = "cone", alcance = 95, angulo = 13, dano = 5}}},
+			porElemento = {Sombra = {forma = "cone", alcance = 95, angulo = 26, dano = 5}}},   -- PATCH_SOPRO_UMBRAL_LARGO (11/11, usuario: largura x2, alcance igual): 13 -> 26
 		-- Correntes da Noite (PATCH_CORRENTES_NOITE): longo alcance; batida das garras -> aviso no chao -> prende ate maxAlvos
 		-- no raio (sem andar/pular) com dano Sombra continuo; no ar nao prende; resistencia apos soltar. NAO_APROVADO
 		Correntes = {recarga = 12, energia = 30, elemental = true, intensidade = "moderado", clipe = "Correntes_Noite",
