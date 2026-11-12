@@ -471,6 +471,23 @@ Arquivo: `Wyvern_E7_clipes_L5.blend` = `Wyvern_E7_clipes_L4.blend` (preservado) 
 - **Evidências:** `review/L5_folha_vida.png`, `review/L5_folha_decolagem.png`, `review/L5_<Clipe>.mp4` (lateral em cima, 3/4 embaixo).
 - **Pendentes:** aprovação do usuário; Roblox/Studio não testado (exportação da Wyvern pendente, com conversão da convenção nova do Import 3D).
 
+## Lote 6 de clipes: realismo 2 (12/11/2026, APROVADO pelo usuário 12/11) [PROPOSTA]
+
+Arquivo: `Wyvern_E7_clipes_L6.blend` = `Wyvern_E7_clipes_L5.blend` (preservado) + 4 actions = **49 actions**. Script `build/20_clipes_lote6.py` (usa `08_base.py`; modo `lab:<pasta>` renderiza poses soltas para escolher parâmetros). As 45 actions anteriores são idênticas por hash (`review/l6/actions_L5_vs_L6.json`). Ângulos e tempos são proposta visual; nada de regra de jogo.
+
+| Clipe | s | O que faz |
+|---|---|---|
+| AsasEscudo | 6,0 | encolhe, recolhe a cabeça e cruza as asas dobradas à frente do peito (capa); tremor leve; volta |
+| SecarAsas | 6,0 | abre as asas ao sol (como corvo-marinho), duas batidas lentas, sacode a membrana, fecha |
+| AgarrarPresa | 6,0 | pisa 2,5 studs à frente com a pata direita (prende a presa) e entra na postura do Comer (aprovado): morde e puxa a ~11 studs à frente; solta e volta. Presa não modelada (a presa entre a pata e a boca mede ~6 studs) |
+| AndarQuatroApoios | 1,6 (loop) | anda apoiando o pulso/polegar das asas no chão (como morcego/pterossauro): pernas do walk_loop em câmera lenta (6,7 st/s na esteira), corpo inclinado 24° na pelve, asas por IK com a parte mais baixa da asa no chão durante o apoio |
+
+- Emendas idle↔clipe e a costura do loop: **0°** (`review/l6/emendas_L6.json`).
+- **QA** (`review/l6/qa_L6.json`): z mínimo −0,022 (= idle) nos três de 6 s; AndarQuatroApoios −0,06 (igual ao walk_loop); pés de apoio parados nos três de 6 s; no andar os pés e os pulsos recuam juntos a 6,9 st/s (esteira, como o walk_loop a 9,9). Maior salto por amostra: AsasEscudo 4,1°, SecarAsas 7,7°, AgarrarPresa 7,5°, AndarQuatroApoios 46° na coxa (o walk_loop aprovado tem 66° na mesma fase).
+- Lições: a perna do andar inclinado parte da orientação de MUNDO da coxa do walk_loop (IK direto torcia a coxa em 150–180°); dois quadros do andar ficam na pose de partida (jarrete a 0,16 do alvo); a pata do AgarrarPresa parte da solução do quadro anterior; o modelo é assimétrico (a junta da asa D apoia ~0,7 mais baixa que a E), por isso a altura do apoio é calibrada por lado; asas por cima da pose aberta do voo não servem como escudo (esticam para os lados).
+- AsasEscudo tem mais autointerseções (até 1266, idle = 799) porque as asas dobradas se cruzam à frente do peito.
+- **Evidências:** `review/L6_<Clipe>.mp4` (lateral em cima, 3/4 embaixo), `review/l6/folha_*.png`, laboratório em `review/l6/lab1..lab5/`.
+
 ## Limitações conhecidas
 
 - (Até o E4.) O ferrão vem de uma malha de pouca resolução, com triângulos longos e irregulares. No E4 a transição ficou contínua, mas ainda se vê facetamento low-poly de perto. Restam 8 faces dobradas pequenas na ponta do gancho, as 8 da espícula original e algumas interseções internas nos ciclos (2 a 7, no nível do E1). O estiramento p95 da UV na região subiu um pouco (3,08 → 3,51), porque o bulbo tem mais área que o losango original. **No E6** a fenda e a aba foram eliminadas e as penetrações zeraram. Fica o facetamento de malha leve, e as 8 faces novas da junção usam UV copiada dos vizinhos.
