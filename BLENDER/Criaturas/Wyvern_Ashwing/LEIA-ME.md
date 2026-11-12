@@ -450,6 +450,27 @@ Arquivo: `Wyvern_S1_sela.blend` = `Wyvern_E7_clipes_L4.blend` (preservado) + obj
   - Os ossos mantêm os nomes do rig do Ashwing; a renomeação para o jogo segue a exportação da própria Wyvern (pendente). O GLB não contém a malha do Ashwing.
 - **Pendentes:** teste no Roblox/Studio (com a exportação da Wyvern).
 
+## Lote 5 de clipes: realismo / vida parada (12/11/2026, APROVADO pelo usuário 12/11 após Farejar v3) [PROPOSTA]
+
+Arquivo: `Wyvern_E7_clipes_L5.blend` = `Wyvern_E7_clipes_L4.blend` (preservado) + 7 actions = **45 actions**. Script `build/19_clipes_lote5.py` (usa `08_base.py`). As 38 actions anteriores são idênticas por hash (`review/l5/actions_L4_vs_L5.json`); malha, pesos e rig não foram tocados. Ângulos e tempos são proposta visual; nada de regra de jogo.
+
+| Clipe | s | O que faz |
+|---|---|---|
+| SacudirCorpo | 3,0 | sacode como cão molhado (~4 Hz): onda cabeça → tronco (rola) → cauda; asas tremem por último |
+| AlisarAsaEsquerda / AlisarAsaDireita | 6,0 | estende a asa para o lado e passa o focinho no braço/membrana com mordiscadas |
+| Espreguicar | 6,0 | abre as asas devagar e para cima, peito à frente, pescoço alongado, cauda sobe, tremor e bocejo |
+| Farejar | 6,0 | abaixa o focinho até perto do chão à frente e cheira no centro, à esquerda e à direita; boca fechada (mandíbula +18°, porque no repouso do modelo a boca já fica entreaberta), sem fungadas, só um balanço suave da cabeça para os lados (ajuste do usuário 12/11) |
+| OlharVolta | 6,0 | corpo parado; só pescoço/cabeça viram à esquerda (inclina a cabeça), à direita e voltam |
+| DecolagemPenhasco | 2,4 | agacha na borda, lança-se de bico para baixo com as pernas para trás, abre as asas e termina no quadro 0 do Planeio |
+
+- Todos começam no quadro 0 do idle; os seis de chão também terminam nele (duração múltipla do idle de 3 s). Emendas idle↔clipe e Decolagem→Planeio: **0°** (`review/l5/emendas_L5.json`).
+- Pescoço/cabeça guiados por IK do focinho (`breath_socket`) com **modos distribuídos** (curvar, curva em S, virar, cabeça), para a curva ficar única e suave. O IK osso a osso foi descartado: dava zigue-zague e saltos de 30°.
+- Pés: inclinar o corpo ANTES de agachar (o agachamento replanta jarrete e pé no ponto do idle); na Decolagem os pés soltam a borda aos poucos (0,85 → 1,1 s) e o corpo sobe o que faltar no impulso.
+- **QA** (`review/l5/qa_L5.json`): z mínimo da malha **-0.022** em todos os clipes de chão (= idle), pés apoiados parados (0,0 stud/s); maior salto por amostra: SacudirCorpo 12.79° (cabeça, sacudida de 4 Hz), DecolagemPenhasco 12.9° (coxa, chute do impulso), demais ≤ 6.22°; autointerseções reais 783–813 (idle = 799: a prega já aceita).
+- A Decolagem é no lugar, como os outros clipes de voo: a queda e o deslocamento ficam com o jogo. Depois do impulso as pernas ficam acima do chão do quadro (o penhasco não está modelado).
+- **Evidências:** `review/L5_folha_vida.png`, `review/L5_folha_decolagem.png`, `review/L5_<Clipe>.mp4` (lateral em cima, 3/4 embaixo).
+- **Pendentes:** aprovação do usuário; Roblox/Studio não testado (exportação da Wyvern pendente, com conversão da convenção nova do Import 3D).
+
 ## Limitações conhecidas
 
 - (Até o E4.) O ferrão vem de uma malha de pouca resolução, com triângulos longos e irregulares. No E4 a transição ficou contínua, mas ainda se vê facetamento low-poly de perto. Restam 8 faces dobradas pequenas na ponta do gancho, as 8 da espícula original e algumas interseções internas nos ciclos (2 a 7, no nível do E1). O estiramento p95 da UV na região subiu um pouco (3,08 → 3,51), porque o bulbo tem mais área que o losango original. **No E6** a fenda e a aba foram eliminadas e as penetrações zeraram. Fica o facetamento de malha leve, e as 8 faces novas da junção usam UV copiada dos vizinhos.
