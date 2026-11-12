@@ -724,6 +724,9 @@ def base_pe(p, frente_baixa=0.0):
     p.arf += -6 * frente_baixa; p.off += Vector((0, -0.01 * frente_baixa, -0.012 * frente_baixa))
     for c in ("PD_E", "PD_D"): p.pata[c]["beta"] += 10 * frente_baixa; p.pata[c]["K"].x += PERNAS[c]["s"] * 0.012 * frente_baixa
 
+# (11/11, vida selvagem) BEBER_Z: altura-alvo da ponta da boca no gole (padrao 0,035 = como antes). No jogo a agua do
+# terreno fica no nivel do chao e a boca do Sombrio parava 2,4-3,2 studs acima dela -> o Sombrio usa um alvo mais baixo.
+BEBER_Z = float(os.environ.get("BEBER_Z", "0.035"))
 def f_beber(u):
     """Beber 9 s: aproxima a boca da agua (0-15%), 5 lambidas com pausas (mandibula + cabeca mergulham pouco), ergue
     a cabeca no meio para vigiar, volta a beber, ergue (85-100%)."""
@@ -732,7 +735,7 @@ def f_beber(u):
     r = math.sin(2 * math.pi * 4 * u)
     p.off += Vector((0, 0, 0.003 * r))
     lam = max(0.0, math.sin(2 * math.pi * 10 * u)) ** 2 * desce                   # lambidas (10 no clipe, so a metade baixa)
-    z = lerp(0.40, 0.035, desce) - 0.012 * lam
+    z = lerp(0.40, BEBER_Z, desce) - 0.012 * lam                                 # BEBER_Z (11/11, opcional): fundo do gole
     olhar = 18 * pulso(u, 0.48, 0.52, 0.58, 0.62) * math.sin(2 * math.pi * 2 * u)
     pescoco_ao_chao(p, z, esq=olhar)
     boca_abre(p, 0.18 * lam)

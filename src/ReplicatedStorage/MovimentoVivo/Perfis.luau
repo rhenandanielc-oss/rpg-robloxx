@@ -25,5 +25,12 @@ return {
 		-- molas (rigidez; a cauda vai ficando mais 'mole' para a ponta = atraso natural)
 		molaPescoco = 30, molaCabeca = 45, molaColuna = 22, molaCauda = {18, 14, 11, 9, 7.5, 6.5, 6}, molaPatas = 16, molaAsa = 20,
 		distMax = 320,                                    -- acima disto (camera) nao calcula
+		-- PATCH_PES_IK: IK de 2 ossos por perna {coxa, canela, pe, ponta dos dedos}; so levanta pe que entraria no chao
+		pesIK = {
+			{"front_leg_l", "front_ankle_l", "front_foot_l", "front_toes_tip_l"}, {"front_leg_r", "front_ankle_r", "front_foot_r", "front_toes_tip_r"},
+			{"back_leg_l", "back_ankle_l", "back_foot_l", "back_toes_tip_l"}, {"back_leg_r", "back_ankle_r", "back_foot_r", "back_toes_tip_r"},
+		},
+		pesFolga = 0.15, pesMax = 5, pesSonda = 12, pesDist = 160,   -- studs
+		pesDobraMax = 150,                                -- graus: joelho nunca dobra mais que isso pelo IK
 	},
 }

@@ -28,6 +28,20 @@ function L.novo(modelo, estados, cfg)
 	local chao = self:chaoLocal(piv.Position) or (piv.Position.Y - 26)
 	self.alturaPivo = piv.Position.Y - chao
 	self.distBoca = (cab.WorldPosition - piv.Position):Dot(self.f0) + 6
+	-- PATCH_IA_PES_ENCOSTA (12/11): apoio pelos pes. Mede no rig (repouso) o meio-comprimento entre patas dianteiras e
+	-- traseiras, a meia-largura e o centro dos apoios em relacao ao pivo; sem esses ossos usa 20 x 8 no pivo.
+	self.roll = 0
+	local function osso(n) local b = modelo:FindFirstChild(n, true); return b and b:IsA("Bone") and b.WorldPosition end
+	local fl, fr, bl, br = osso("front_foot_l"), osso("front_foot_r"), osso("back_foot_l"), osso("back_foot_r")
+	local lado0 = self.f0:Cross(Vector3.yAxis).Unit
+	if fl and fr and bl and br then
+		local fm, bm = (fl + fr) / 2, (bl + br) / 2
+		self.apoioC = math.max(plano(fm - bm).Magnitude / 2, 6)
+		self.apoioL = math.max(math.abs((fl - fr):Dot(lado0)) / 2, math.abs((bl - br):Dot(lado0)) / 2, 3)
+		self.apoioOff = ((fm + bm) / 2 - piv.Position):Dot(self.f0)
+	else
+		self.apoioC, self.apoioL, self.apoioOff = 20, 8, 0
+	end
 	self.noAr, self.alturaVoo = false, 0
 	self.atual = nil
 	return self
@@ -66,7 +80,54 @@ function L:_aplicar(pos)
 	if pf then local atual = self:pos(); pos = atual + (pos - atual) * math.clamp(pf, 0, 1) end
 	local giro = CFrame.Angles(0, self.psi, 0)
 	local dir = giro:VectorToWorldSpace(self.f0); local direita = dir:Cross(Vector3.yAxis).Unit
-	self.m:PivotTo(CFrame.new(pos) * CFrame.fromAxisAngle(direita, self.pitch) * giro * self.R0)
+	self.m:PivotTo(CFrame.new(pos) * CFrame.fromAxisAngle(dir, self.roll or 0) * CFrame.fromAxisAngle(direita, self.pitch) * giro * self.R0)
+end
+-- PATCH_IA_PES_ENCOSTA: assenta o corpo no plano dos 4 apoios (frente/tras e esquerda/direita): pitch ate 20 graus,
+-- roll ate 18 graus, altura pela media dos apoios (sem deixar a barriga mais de 3 studs dentro de uma crista).
+-- 'suave' (0..1) mistura com o quadro anterior para nao tremer em terreno irregular. Devolve a altura do pivo.
+function L:_assentar(p, f, suave)
+	f = plano(f).Unit; local lado = f:Cross(Vector3.yAxis).Unit
+	local c = p + f * self.apoioOff
+	local function h(q) return self:chaoLocal(q) end
+	local gC = h(c); if not gC then return nil end
+	local hF, hT = h(c + f * self.apoioC) or gC, h(c - f * self.apoioC) or gC
+	local hD, hE = h(c + lado * self.apoioL) or gC, h(c - lado * self.apoioL) or gC
+	local pitchAlvo = -math.clamp(math.atan2(hF - hT, 2 * self.apoioC), math.rad(-20), math.rad(20))
+	-- roll positivo (eixo da frente) BAIXA o lado direito -> chao mais alto a direita pede roll negativo (medido no Play)
+	local rollAlvo = -math.clamp(math.atan2(hD - hE, 2 * self.apoioL), math.rad(-18), math.rad(18))
+	local hm = math.max((hF + hT + hD + hE) / 4, gC - 3)
+	local a = suave or 1
+	self.pitch = self.pitch + (pitchAlvo - self.pitch) * a
+	self.roll = (self.roll or 0) + (rollAlvo - (self.roll or 0)) * a
+	return hm + self.alturaPivo
+end
+-- inclinacao do chao num ponto (maior desnivel entre apoios opostos, em studs); usado para escolher onde pousar
+function L:desnivel(p, f)
+	f = plano(f or self:frente()).Unit; local lado = f:Cross(Vector3.yAxis).Unit
+	local c = p + f * self.apoioOff; local gC = self:chaoEm(c); if not gC then return math.huge end
+	local function h(q) return self:chaoEm(q) or gC end
+	local a = math.abs(h(c + f * self.apoioC) - h(c - f * self.apoioC))
+	local b = math.abs(h(c + lado * self.apoioL) - h(c - lado * self.apoioL))
+	local m = math.max(math.abs(h(c + f * self.apoioC) - gC), math.abs(h(c - f * self.apoioC) - gC))
+	return math.max(a, b * (self.apoioC / self.apoioL), m * 2)
+end
+-- ponto de pouso: se o chao em 'q' for torto demais para o corpo, procura em aneis de 12/24/36 studs o mais plano
+-- com ceu livre (o dragao depois anda o resto a pe)
+function L:pousoPlano(q)
+	local limite = 2 * self.apoioC * math.tan(math.rad(10))
+	local melhor, nota = q, self:desnivel(q)
+	if nota <= limite then return q end
+	for _, r in ipairs({ 12, 24, 36 }) do
+		for k = 0, 7 do
+			local a = k * math.pi / 4; local c = q + Vector3.new(math.cos(a), 0, math.sin(a)) * r
+			if self:ceuLivre(c) then
+				local n = self:desnivel(c) + r * 0.05
+				if n < nota then melhor, nota = c, n end
+			end
+		end
+		if nota <= limite then break end
+	end
+	return melhor
 end
 function L:_girarPara(dir, taxaGraus, dt)
 	-- direcao nula/NaN (ex.: ja exatamente sobre o destino, ainda subindo): mantem o rumo. Sem isto o psi virava NaN e
@@ -124,6 +185,8 @@ function L:passoChao(alvo, correr, vivo, tol)
 	local vel = correr and (self.m:GetAttribute("VelCorrer") or cfg.correrVel * cfg.correrRitmo)
 		or (self.m:GetAttribute("RitmoAndarBase") or cfg.andarVel * cfg.andarRitmo)
 	vel *= 1 + (self.m:GetAttribute("PassoBonus") or 0)                  -- PATCH_IA_KIT_SOMBRA: Passo Sombrio da IA
+	local fator = (not correr and self.fatorPasso) or 1                  -- PATCH_IA_CACA: espreita (passo lento, clipe no mesmo ritmo)
+	vel *= fator
 	local giro = correr and cfg.giroCorrer or cfg.giroAndar
 	local ultimoTeste = 0
 	while vivo() do
@@ -137,7 +200,7 @@ function L:passoChao(alvo, correr, vivo, tol)
 		else
 			-- ritmo do clipe casado com a velocidade; outro rig informa a velocidade do proprio clipe (RitmoAndarBase)
 			local base = self.m:GetAttribute(correr and "RitmoCorrerBase" or "RitmoAndarBase")
-			self:clipe(correr and "Correr" or "Andar", true, base and vel / base or (correr and cfg.correrRitmo or cfg.andarRitmo))
+			self:clipe(correr and "Correr" or "Andar", true, base and vel / base or (correr and cfg.correrRitmo or cfg.andarRitmo) * fator)
 			local f = self:frente()
 			if os.clock() - ultimoTeste > 0.15 then
 				ultimoTeste = os.clock()
@@ -148,9 +211,8 @@ function L:passoChao(alvo, correr, vivo, tol)
 			local np = p + f * passo
 			local g = self:chaoLocal(np)
 			if not g then return false, "sem chao" end
-			local gF = self:chaoLocal(np + f * 20) or g; local gT = self:chaoLocal(np - f * 20) or g
-			self.pitch = math.clamp(math.atan2(gF - gT, 40), math.rad(-14), math.rad(14)) * -1
-			self:_aplicar(Vector3.new(np.X, g + self.alturaPivo, np.Z))
+			local y = self:_assentar(np, f, math.min(1, dt * 8)) or (g + self.alturaPivo)   -- PATCH_IA_PES_ENCOSTA
+			self:_aplicar(Vector3.new(np.X, y, np.Z))
 		end
 	end
 	return false, "cancelado"
@@ -203,7 +265,7 @@ end
 function L:decolar(vivo)
 	if self.noAr then return true end
 	if not self:ceuLivre() then return false, "sem ceu" end
-	self.pitch = 0; self:_aplicar(self:pos())
+	self.pitch = 0; self.roll = 0; self:_aplicar(self:pos())
 	if not esperarClipe(self, "Decolagem", vivo) then return false, "cancelado" end
 	self.noAr, self.alturaVoo = true, 0; self.m:SetAttribute("NoAr", true)
 	self:clipe("Voo", true)
@@ -217,11 +279,15 @@ function L:pousar(vivo, rapido)
 		local dt = RunService.Heartbeat:Wait(); if not vivo() then break end
 		local p = self:pos(); local g = (self:ceuLivre(p) and self:chaoEm(p) or self:chaoLocal(p)) or (p.Y - self.alturaPivo)
 		local alvoY = g + self.alturaPivo
+		if p.Y - alvoY < 15 then                                          -- PATCH_IA_PES_ENCOSTA: perto do chao assenta nos apoios
+			alvoY = self:_assentar(p, self:frente(), math.min(1, dt * 4)) or alvoY
+		end
 		if p.Y - alvoY <= 0.5 then break end
 		self:clipe("Descida", true)
 		self:_aplicar(Vector3.new(p.X, math.max(alvoY, p.Y - (rapido and 20 or 12) * dt), p.Z))
 	end
 	if not vivo() then return false end
+	do local p = self:pos(); local y = self:_assentar(p, self:frente(), 1); if y then self:_aplicar(Vector3.new(p.X, y, p.Z)) end end
 	local ok = esperarClipe(self, "Pouso", vivo)
 	self.noAr = false; self.m:SetAttribute("NoAr", false)
 	return ok
@@ -254,12 +320,13 @@ function L:voarAte(destino, rapido, vivo, tol)
 		local vel = (rapido and cfg.vooRapidoVel or cfg.vooVel) * (1 + (self.m:GetAttribute("PassoBonus") or 0))   -- PATCH_IA_KIT_SOMBRA
 		local falta = (self.altAlvo or p.Y) - p.Y
 		if self.bloqueadoVoo or falta > 40 then vel *= 0.25 end                 -- rocha a frente ou muito abaixo: sobe antes de avancar
+		if self.chegadaSuave and dist < 90 then vel *= math.clamp(dist / 90, 0.35, 1) end   -- PATCH_IA_PATRULHA_MIRANTES: freia antes do pouso
 		if erro > math.rad(35) then self:clipe(difAng(self.psi, yawDe(d) - yawDe(self.f0)) > 0 and "Curva_Aerea_E" or "Curva_Aerea_D", true); vel *= 0.7
 		elseif dy > cfg.vSubida * dt * 0.6 then self:clipe("Subida", true)
 		elseif dy < -cfg.vSubida * dt * 0.6 then self:clipe(self.planar and "Planeio" or "Descida", true)
 		elseif self.planar then self:clipe("Planeio", true)
 		else self:clipe(rapido and "Voo_Rapido" or "Voo", true) end
-		self.pitch = 0
+		self.pitch = 0; self.roll = 0
 		self:_aplicar(Vector3.new(p.X, p.Y + dy, p.Z) + f * math.min(vel * dt, dist))
 	end
 	return false, "cancelado"
@@ -288,7 +355,7 @@ function L:perseguirAr(alvoPos, vivo, distIdeal)
 		elseif dy > cfg.vSubida * dt * 0.6 then self:clipe("Subida", true)
 		elseif dy < -cfg.vSubida * dt * 0.6 then self:clipe("Descida", true)
 		else self:clipe("Voo", true) end
-		self.pitch = 0
+		self.pitch = 0; self.roll = 0
 		self:_aplicar(Vector3.new(p.X, p.Y + dy, p.Z) + f * avanco)
 	end
 	return true
@@ -299,7 +366,7 @@ function L:irPara(destino, urgente, vivo, tol)
 	local p = self:pos(); local dist = plano(destino - p).Magnitude
 	local podeVoar = self:ceuLivre() and self:ceuLivre(destino)
 	if self.noAr then
-		local ok, m = self:voarAte(self:ultimoCeuLivre(destino), urgente, vivo, tol); if not ok then return false, m end
+		local ok, m = self:voarAte(self:pousoPlano(self:ultimoCeuLivre(destino)), urgente, vivo, tol); if not ok then return false, m end
 		if not self:pousar(vivo, urgente) then return false, "cancelado" end
 		if plano(destino - self:pos()).Magnitude > (tol or 6) then return self:irAPe(destino, urgente, vivo, tol) end
 		return true
@@ -310,7 +377,7 @@ function L:irPara(destino, urgente, vivo, tol)
 		if m == "cancelado" then return false, m end
 		if not (self:ceuLivre() and self:ceuLivre(destino)) then return false, m end
 	end
-	local pouso = self:ultimoCeuLivre(destino)
+	local pouso = self:pousoPlano(self:ultimoCeuLivre(destino))           -- PATCH_IA_PES_ENCOSTA: nao pousa em encosta torta
 	local ok, m = self:voarAte(pouso, urgente, vivo, tol); if not ok then return false, m end
 	if not self:pousar(vivo, urgente) then return false, "cancelado" end
 	if plano(destino - self:pos()).Magnitude > (tol or 6) then return self:irAPe(destino, urgente, vivo, tol) end

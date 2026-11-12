@@ -14,6 +14,7 @@ Fontes oficiais lidas em 03/11/2026: `RPG_02_Criaturas_Elementos_e_Poderes_ATUAL
 | Kit | mínimo de **1 passiva e 3 ativas**, aprovadas criatura por criatura. As 4 habilidades históricas não são o kit | [OFICIAL] — kit do Sombrio **PENDENTE** |
 | Montaria / voo | montável desde Adulto; voo montado só depois da missão de desbloqueio | [OFICIAL] |
 | Números (dano, recarga, energia, alcance) | nenhum aprovado | [PENDENTE] |
+| Presa na natureza | **Rato Espinhoso** (fauna de coleta das Terras Corrompidas), caçado no chão. Corvo e Besouro não são presas. Porte de javali e fuga em velocidade média, em que às vezes escapa (12/11). Fuga a 16 studs/s (aprovada 12/11, testada no Play; ver ficha de fauna) | [OFICIAL 12/11, usuário] |
 
 ## 2. Modelo no Studio (place `Teste-animacoes_CR.rbxl`)
 

@@ -55,6 +55,74 @@ local function jogadorProximo(m, dist)
 	return melhor
 end
 
+-- PATCH_PES_IK (12/11): IK de 2 ossos por perna (coxa -> canela -> pe), so VISUAL. Le a pose do clipe (ja com as
+-- somas desta camada), mede o chao sob a ponta dos dedos e, se o dedo ficaria ENTERRADO (subindo encosta), levanta o pe
+-- ate o chao + folga, mantendo a orientacao animada do pe e o lado de dobra do joelho. Nunca abaixa pe (flutuar ja foi
+-- tratado pelo Locomotor no servidor). Liga por perfil (P.pesIK); workspace atributo PesIK_Off = true desliga (teste A/B).
+local rayIK = RaycastParams.new(); rayIK.FilterType = Enum.RaycastFilterType.Exclude
+local ultFiltroIK = 0
+local function filtroIK()
+	if os.clock() - ultFiltroIK < 2 then return end
+	ultFiltroIK = os.clock()
+	local l = {}
+	for _, d in ipairs(workspace:GetChildren()) do if d:IsA("Model") and (d:GetAttribute("FormaRegional") or d:GetAttribute("PerfilMovimento") or Players:GetPlayerFromCharacter(d)) then table.insert(l, d) end end
+	rayIK.FilterDescendantsInstances = l
+end
+local function rotDe(a, b)                    -- rotacao minima que leva a direcao a para b
+	a, b = a.Unit, b.Unit
+	local c = a:Cross(b); local s = c.Magnitude; local d = clamp(a:Dot(b), -1, 1)
+	if s < 1e-6 then return CFrame.identity end
+	return CFrame.fromAxisAngle(c / s, math.atan2(s, d))
+end
+local function somarMundo(e, osso, Wrot, Rw)  -- aplica a rotacao de MUNDO Rw ao osso cuja rotacao de mundo atual e Wrot
+	local X = Wrot:Inverse() * Rw * Wrot
+	osso.Transform = osso.Transform * X
+	e.soma[osso] = (e.soma[osso] or CFrame.identity) * X
+end
+local function pesNoChao(e, dt)
+	local P = e.P
+	if workspace:GetAttribute("PesIK_Off") then return end
+	filtroIK()
+	e.pernas = e.pernas or {}
+	for i, nomes in ipairs(P.pesIK) do
+		local pr = e.pernas[i]
+		if not pr then
+			local function b(n) for _, d in ipairs(e.m:GetDescendants()) do if d:IsA("Bone") and d.Name == n then return d end end end
+			pr = { coxa = b(nomes[1]), canela = b(nomes[2]), pe = b(nomes[3]), ponta = b(nomes[4]), lift = 0 }
+			e.pernas[i] = pr
+		end
+		if not (pr.coxa and pr.canela and pr.pe and pr.ponta) then continue end
+		local Wc, Wk, Wf = pr.coxa.TransformedWorldCFrame, pr.canela.TransformedWorldCFrame, pr.pe.TransformedWorldCFrame
+		local H, K, F, T = Wc.Position, Wk.Position, Wf.Position, pr.ponta.TransformedWorldCFrame.Position
+		local hit = workspace:Raycast(T + Vector3.new(0, P.pesSonda or 12, 0), Vector3.new(0, -(P.pesSonda or 12) * 2.5, 0), rayIK)
+		local alvo = 0
+		if hit then alvo = clamp(hit.Position.Y + (P.pesFolga or 0.15) - T.Y, 0, P.pesMax or 5) end
+		pr.lift += (alvo - pr.lift) * math.min(1, dt * (alvo > pr.lift and 25 or 8))   -- sobe rapido, solta devagar
+		if pr.lift < 0.02 then continue end
+		local a, bl = (K - H).Magnitude, (F - K).Magnitude
+		local F2 = F + Vector3.new(0, pr.lift, 0)
+		-- dobra maxima do joelho (P.pesDobraMax, graus entre coxa e canela; 180 = dobrada): nao encolhe a perna alem disso
+		local dMin = math.sqrt(math.max(a * a + bl * bl - 2 * a * bl * math.cos(rad(180 - (P.pesDobraMax or 150))), 0))
+		local v = F2 - H; local d = clamp(v.Magnitude, math.max(math.abs(a - bl) + 0.05, dMin), a + bl - 0.05); local u = v.Unit
+		-- sentido da dobra = normal do plano coxa/canela DO CLIPE; o joelho novo fica do lado que preserva essa normal
+		-- (antes: lado do joelho antigo em relacao a linha nova -> virava ao levantar muito o pe, medido no Play)
+		local n = (K - H):Cross(F - K)
+		if n.Magnitude < 1e-4 then n = pr.n or e.m:GetPivot().RightVector else n = n.Unit; pr.n = n end
+		n = (n - u * n:Dot(u)); if n.Magnitude < 1e-4 then continue end; n = n.Unit
+		local w = u:Cross(n)
+		local cosA = clamp((a * a + d * d - bl * bl) / (2 * a * d), -1, 1)
+		local K2 = H + a * (cosA * u + math.sqrt(1 - cosA * cosA) * w)
+		local F2r = H + u * d
+		local R1 = rotDe(K - H, K2 - H)                                -- coxa
+		local WkR = R1 * Wk.Rotation
+		local R2 = rotDe(R1:VectorToWorldSpace(F - K), F2r - K2)      -- canela
+		somarMundo(e, pr.coxa, Wc.Rotation, R1)
+		somarMundo(e, pr.canela, WkR, R2)
+		local WfR = R2 * R1 * Wf.Rotation
+		somarMundo(e, pr.pe, WfR, (R2 * R1):Inverse())                -- pe volta a orientacao animada
+	end
+end
+
 local function passo(e, dt)
 	local P, m = e.P, e.m
 	-- a soma vale para UM quadro sobre a pose do clipe. Se nenhum clipe reescreveu o osso desde o quadro anterior
@@ -159,6 +227,7 @@ local function passo(e, dt)
 		local F = cf.LookVector
 		girar(e.ombroE, F, rad(asa * P.sinalAsa)); girar(e.ombroD, F, rad(asa * P.sinalAsa))
 	end
+	if P.pesIK and not noAr and (m:GetPivot().Position - cam.CFrame.Position).Magnitude < (P.pesDist or 160) then pesNoChao(e, dt) end
 	local ult = {}
 	for osso, soma in pairs(e.soma) do ult[osso] = {T = osso.Transform, soma = soma} end
 	e.ultSoma = ult; atual = nil

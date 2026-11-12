@@ -356,10 +356,17 @@ local function passoChao(M, dt)
 	local np = p + f * M.vel * dt
 	local g = L:chaoLocal(np)
 	if not g then M.vel = 0; np = p; g = L:chaoLocal(p) or (p.Y - L.alturaPivo) end
-	local gF = L:chaoLocal(np + f * 20) or g; local gT = L:chaoLocal(np - f * 20) or g
-	L.pitch = -math.clamp(math.atan2(gF - gT, 40), math.rad(-14), math.rad(14))
-	M.roll += (0 - M.roll) * math.min(1, 4 * dt)
-	aplicar(M, Vector3.new(np.X, g + L.alturaPivo, np.Z))
+	-- PATCH_MONTARIA_APOIOS (12/11): corpo assenta no plano dos 4 apoios (mesmo L:_assentar da IA: pitch ate 20, roll
+	-- ate 18 graus, altura pela media dos apoios). Antes: so pitch +-14 pela base fixa de 40 studs e altura pelo chao sob
+	-- o pivo (em morro, a crista sob o pivo erguia o corpo e as 4 patas ficavam no ar). Sem _assentar: codigo antigo.
+	local yA
+	if L._assentar then L.roll = M.roll; yA = L:_assentar(np, f, math.min(1, dt * 8)); if yA then M.roll = L.roll end end
+	if not yA then
+		local gF = L:chaoLocal(np + f * 20) or g; local gT = L:chaoLocal(np - f * 20) or g
+		L.pitch = -math.clamp(math.atan2(gF - gT, 40), math.rad(-14), math.rad(14))
+		M.roll += (0 - M.roll) * math.min(1, 4 * dt)
+	end
+	aplicar(M, Vector3.new(np.X, yA or (g + L.alturaPivo), np.Z))
 	if math.floor(math.abs(M.vel)) ~= m:GetAttribute("Velocidade") then m:SetAttribute("Velocidade", math.floor(math.abs(M.vel))) end   -- PATCH_SOPRO_MOVIMENTO
 	-- ataque que deixa andar (Sopro): as patas seguem o passo (Andar/Correr), o clipe do ataque so mexe pescoco/cabeca
 	if ataque and fixo then return end
@@ -998,7 +1005,9 @@ local function descerEPousar(M, g)
 	end
 	if not m.Parent then return end
 	M.roll, L.pitch = 0, 0
-	aplicar(M, Vector3.new(L:pos().X, g + L.alturaPivo, L:pos().Z))
+	local yA                                                               -- PATCH_MONTARIA_APOIOS: pousa ja assentado
+	if L._assentar then L.roll = 0; yA = L:_assentar(L:pos(), L:frente(), 1); if yA then M.roll = L.roll end end
+	aplicar(M, Vector3.new(L:pos().X, yA or (g + L.alturaPivo), L:pos().Z))
 	local t = L:clipe("Pouso", false, nil, 0.2)
 	local lim = os.clock() + 4; while t.Length <= 0 and os.clock() < lim do task.wait(0.05) end
 	task.wait(math.max(0.3, t.Length - 0.25))

@@ -101,7 +101,7 @@ function C:registrar(msg)
 end
 function C:definir(estado, vivo)
 	if vivo and not vivo() then return end
-	if self.estado ~= estado then self.estado = estado; self.m:SetAttribute("EstadoIA", estado); self:registrar("-> " .. estado) end
+	if self.estado ~= estado then self.estadoAnterior = self.estado; self.estado = estado; self.m:SetAttribute("EstadoIA", estado); self:registrar("-> " .. estado) end
 end
 
 -- ===== percepcao ==============================================================================================
@@ -195,7 +195,9 @@ function C:perceber()
 	return perto
 end
 function C:maiorAmeaca()
-	local melhor, pior = nil, -1
+	-- PATCH_IA_AMEACA_LONGE (11/11): pior comecava em -1 e a nota desconta a distancia ao NINHO -> ameaca de nivel 1 a
+	-- mais de 1000 studs do ninho (dragao bebendo/cacando longe) ficava com nota negativa e era IGNORADA (sem Alerta)
+	local melhor, pior = nil, -math.huge
 	for alvo, a in pairs(self.ameacas) do
 		-- prioridade: quem coleta/coletou > nivel > mais perto do ovo
 		local r = raizDe(alvo)
@@ -212,9 +214,11 @@ function C:desejo()
 	if alvo and a.nivel >= 2 then return "DefendNest" end
 	if alvo and a.nivel == 1 then return "Alert" end
 	if self.investigar and os.clock() - self.investigar.t < self.cfg.investigarJanela then return "Investigate" end
+	-- PATCH_IA_SONO_RITUAL: dormindo, so ameaca/estimulo acorda; sede, fome e rondas esperam o despertar natural
+	if self.tarefa and self.tarefa.nome == "Sleep" and self.estado == "Sleep" then return nil end
 	if self.aposConfronto and os.clock() - self.aposConfronto < 60 and not self.recuperado then return "Recover" end
 	if self.sede > self.cfg.limiarNecessidade and self:poi("Agua") then return "SearchWater" end
-	if self.fome > self.cfg.limiarNecessidade and self:poi("Comida") then return "SearchFood" end
+	if self.fome > self.cfg.limiarNecessidade and (self:presaPerto() or self:poi("Comida")) then return "SearchFood" end
 	if self.sono > 0.85 then return "Sleep" end
 	if self.observado and os.clock() - self.ultimaObs > 25 then return "Observation" end
 	if plano(self.L:pos() - self.casa).Magnitude > self.cfg.territorio * 0.85 then return "ReturnHome" end
@@ -222,6 +226,7 @@ function C:desejo()
 end
 function C:rotina()
 	-- LOD: longe de todos os jogadores so rotinas paradas (sem locomocao por quadro); perto, rotina completa
+	local teste = self.m:GetAttribute("IA_RotinaTeste"); if teste and self["_" .. teste] then return teste end   -- so ensaio (Play)
 	local opcoes = self.dormente and {{"Rest", 2}, {"Idle", 1}} or {{"Wander", 4}, {"Patrol", 3}, {"Rest", 2}, {"Idle", 1}}
 	local soma = 0; for _, o in ipairs(opcoes) do soma += o[2] end
 	local r = math.random() * soma
@@ -260,7 +265,7 @@ function C:_laco()
 		local agora = os.clock(); local dt = agora - ultimo; ultimo = agora
 		self.sede = math.min(1, self.sede + self.cfg.sedeTaxa * dt)
 		self.fome = math.min(1, self.fome + self.cfg.fomeTaxa * dt)
-		if self.estado ~= "Sleep" then self.sono = math.min(1, self.sono + self.cfg.sonoTaxa * dt) end
+		if self.estado ~= "Sleep" then self.sono = math.min(1, self.sono + self.cfg.sonoTaxa * dt * (C.eNoite() and 2 or 1)) end   -- noite: cansa 2x
 		-- vida: regenera fora de combate; a barra so aparece em combate/derrotado
 		local vmax, vida = self.m:GetAttribute("VidaMax"), self.m:GetAttribute("Vida")
 		local ud = self.m:GetAttribute("UltimoDano")
@@ -415,7 +420,39 @@ function C:_Rest(vivo)
 		self:comportamento(math.random() < 0.5 and "Sentado" or "Descanso", 20 + math.random() * 10, vivo)
 	end
 end
+-- PATCH_IA_SONO_RITUAL (12/11, vida selvagem — lote 5): sono de animal do bioma. No ninho/toca: fareja o chao, da uma
+-- volta no lugar (como animais antes de deitar), deita de frente para a saida (entrada da caverna ou fora do ninho),
+-- fica alguns segundos deitado de olhos abertos e so entao adormece. A noite (ClockTime < 6 ou > 19) dorme mais.
+-- Ao acordar sozinho: Acordar -> Espreguicar. O despertar por ameaca (sono leve) fica no _Alert.
+local function eNoite() local h = game:GetService("Lighting").ClockTime; return h < 6 or h > 19 end
+C.eNoite = eNoite
 function C:_Sleep(vivo)
+	local noNinho = plano(self.L:pos() - self.casa).Magnitude < 60
+	if not (self.E.postura == "deitado" and noNinho) then
+		if not self:emPe(vivo) then return end
+		self:irAoNinho(false, vivo, 45); if not vivo() then return end
+		self:definir("Sleep")
+		self:comportamento("InspecaoNinho", 2.5, vivo); if not vivo() then return end           -- fareja o lugar
+		local f = self.L:frente(); local p = self.L:pos()
+		local lado = math.random() < 0.5 and 1 or -1                                            -- uma volta no lugar, sempre no mesmo sentido
+		for k = 1, 3 do
+			local a = math.rad(120 * k) * lado
+			self.L:virarPara(p + CFrame.Angles(0, a, 0):VectorToWorldSpace(f) * 20, vivo); if not vivo() then return end
+		end
+		local fora = plano(p - self.casa); local saida = self.entrada or (p + (fora.Magnitude > 1 and fora.Unit or f) * 30)
+		if plano(saida - p).Magnitude > 2 then self:encarar(saida, vivo) end                    -- de frente para a saida
+		self:registrar("sono: farejou, deu a volta, deita de frente para a saida")
+		self:comportamento("Descanso", 4 + math.random() * 2, vivo); if not vivo() then return end   -- deitado, olhos abertos
+	end
+	self:definir("Sleep")
+	local dur = eNoite() and 90 or 45
+	if self:comportamento("Sono", dur, vivo) then
+		self.sono = 0
+		self:comportamento("Despertar", 2.5, vivo); if not vivo() then return end
+		self:comportamento("Espreguicar", 4, vivo)
+	end
+end
+function C:_Sleep_antigo(vivo)
 	if self.E.postura == "deitado" and plano(self.L:pos() - self.casa).Magnitude < 60 then
 		self:definir("Sleep"); if self:comportamento("Sono", 45, vivo) then self.sono = 0; self:comportamento("Despertar", 5, vivo) end
 		return
@@ -443,7 +480,95 @@ function C:_Observation(vivo)
 	self:comportamento(self.nObs % 2 == 0 and "Curiosidade" or "Observacao", 6, vivo)
 	self:focar(nil)
 end
+-- PATCH_IA_PATRULHA_MIRANTES (11/11, vida selvagem): patrulha entre pontos do HABITAT (Observacao/Poleiro dentro do
+-- territorio, completados por pontos altos do relevo), sem repetir os ultimos; em cada ponto PARA num mirante: vira para
+-- fora do ninho, fareja/observa e varre o entorno com a cabeca (AlvoOlhar esquerda/frente/direita). Pausa varia com o
+-- contexto (poleiro/ponto alto = mais longa). Ponto ocupado, sem espaco para asas/cauda ou inalcancavel -> o proximo
+-- (caminho alternativo). Chegada voando desacelera antes do pouso (Locomotor.chegadaSuave).
+function C:espacoPouso(p)
+	local op = OverlapParams.new(); op.FilterType = Enum.RaycastFilterType.Exclude; op.FilterDescendantsInstances = {self.m, workspace.Terrain}
+	local g = self.L:chaoEm(p) or p.Y                              -- so o volume ACIMA do chao (asas/cauda), nao o proprio piso
+	for _, parte in ipairs(workspace:GetPartBoundsInBox(CFrame.new(p.X, g + 13, p.Z), Vector3.new(28, 18, 28), op)) do
+		if parte.CanCollide and parte.Transparency < 1 then return false end
+	end
+	return true
+end
+function C:pontosPatrulha()
+	local l, terr = {}, self.cfg.territorio * 0.8                  -- dentro da borda (alem de 0,85 a IA ja pede ReturnHome)
+	for _, tipo in ipairs({"Observacao", "Poleiro"}) do
+		local _, ps = self:poi(tipo)
+		for _, p in ipairs(ps or {}) do
+			if plano(p.Position - self.casa).Magnitude <= terr then table.insert(l, {pos = p.Position, alto = tipo == "Poleiro", nome = p.Name}) end
+		end
+	end
+	local gCasa = self.L:chaoEm(self.casa) or self.casa.Y
+	local tent = 0
+	while #l < 4 and tent < 4 do                                   -- completa com pontos altos do relevo (mirantes naturais)
+		tent += 1
+		local melhor, hm
+		for _ = 1, 6 do
+			local q = _pontoSorteado(self); local g = self.L:chaoEm(q)
+			if g and (not hm or g > hm) then melhor, hm = Vector3.new(q.X, g, q.Z), g end
+		end
+		if melhor then table.insert(l, {pos = melhor, alto = hm > gCasa + 12, nome = "relevo"}) end
+	end
+	return l
+end
+function C:mirante(ponto, vivo)
+	if not vivo() then return false end
+	local fora = plano(self.L:pos() - self.casa); if fora.Magnitude < 5 then fora = self.L:frente() end
+	self:encarar(self.L:pos() + fora.Unit * 40, vivo); if not vivo() then return false end
+	self:definir("Patrol")
+	self.L:soltar(); self.E:Mudar("Observacao")                    -- entrada Observar_Farejar -> laco Observar
+	local dur = (ponto.alto and 9 or 5) + math.random() * 4
+	if self.sono > 0.6 then dur *= 0.6 end                         -- cansado: pausas mais curtas
+	local f = self.L:frente(); local olhar = {}
+	for _, ang in ipairs(math.random() < 0.5 and {-50, 0, 50} or {50, 0, -50}) do
+		table.insert(olhar, CFrame.Angles(0, math.rad(ang), 0):VectorToWorldSpace(f))
+	end
+	local cab = self.L:pos() + Vector3.new(0, 10, 0); local fim = os.clock() + dur; local i = 0
+	while os.clock() < fim do
+		if not vivo() then self.m:SetAttribute("AlvoOlhar", nil); return false end
+		local k = math.min(#olhar, 1 + math.floor((1 - (fim - os.clock()) / dur) * #olhar))
+		if k ~= i then i = k; self.m:SetAttribute("AlvoOlhar", cab + olhar[k] * 60 + Vector3.new(0, -4, 0)) end
+		task.wait(0.1)
+	end
+	self.m:SetAttribute("AlvoOlhar", nil)
+	return true
+end
 function C:_Patrol(vivo)
+	if not self:emPe(vivo) then return end
+	if not self.L:ceuLivre() then
+		if not (self.entrada and self.L:irAPe(self.entrada, false, vivo, 14)) then self:_Wander(vivo); return end
+	end
+	local cand = self:pontosPatrulha(); self.ultimosMirantes = self.ultimosMirantes or {}
+	local function recente(p) for _, q in ipairs(self.ultimosMirantes) do if plano(q - p).Magnitude < 30 then return true end end return false end
+	local novos, velhos = {}, {}
+	for _, c in ipairs(cand) do table.insert(recente(c.pos) and velhos or novos, c) end
+	for i = #novos, 2, -1 do local j = math.random(i); novos[i], novos[j] = novos[j], novos[i] end
+	for _, c in ipairs(velhos) do table.insert(novos, c) end      -- repetidos so no fim (alternativas)
+	local alvoN, feitos = math.random(2, 3), 0
+	for _, ponto in ipairs(novos) do
+		if feitos >= alvoN or not vivo() then break end
+		if not self:pontoLivre(ponto.pos) or not self:espacoPouso(ponto.pos) then
+			self:registrar("patrulha: " .. ponto.nome .. " ocupado/sem espaco -> proximo ponto")
+		else
+			self:definir("Patrol"); self.destino = ponto.pos; self.L.chegadaSuave = true
+			local ok, motivo = self:ir(ponto.pos, false, vivo, 12)
+			self.L.chegadaSuave = false
+			if not vivo() then return end
+			if ok then
+				feitos += 1; table.insert(self.ultimosMirantes, 1, ponto.pos); self.ultimosMirantes[5] = nil
+				self:registrar(("patrulha: mirante %d (%s) em %s"):format(feitos, ponto.nome, tostring(Vector3.new(math.floor(ponto.pos.X), math.floor(ponto.pos.Y), math.floor(ponto.pos.Z)))))
+				if not self:mirante(ponto, vivo) then return end
+			else
+				self:registrar("patrulha: " .. ponto.nome .. " inalcancavel (" .. tostring(motivo) .. ") -> proximo ponto")
+			end
+		end
+	end
+	if self.T:ovoPresente() and vivo() then self.L.chegadaSuave = true; self:irAoNinho(false, vivo, 40); self.L.chegadaSuave = false end
+end
+function C:_Patrol_antigo(vivo)          -- substituida (PATCH_IA_PATRULHA_MIRANTES)
 	if not self:emPe(vivo) then return end
 	if not self.L:ceuLivre() then
 		if not (self.entrada and self.L:irAPe(self.entrada, false, vivo, 14)) then self:_Wander(vivo); return end
@@ -506,8 +631,126 @@ function C:_SearchWater(vivo)
 	self:definir("Drink"); if self:comportamento("BeberAgua", 9.5, vivo) then self.sede = 0 end
 end
 
+-- PATCH_IA_CACA (12/11, vida selvagem — lote 6): CACA de animal do bioma. Presa = qualquer modelo com a tag "Presa" (a
+-- especie/dieta do Sombrio NAO e oficial: o lote so cria o comportamento; quem e presa e decisao do usuario). Sem dano nem
+-- loot: a presa recebe os atributos Abatida/Consumida e o sistema dela decide o resto. Etapas: chega a ~110 (pousa longe,
+-- sem cair em cima), avista e congela olhando, ESPREITA em passo lento (clipe no mesmo ritmo), bote em corrida quando
+-- chega a 40 ou a presa foge, mordida, come no lugar. Presa escapa (longe ou 7 s de corrida) -> desiste, pausa ofegante e
+-- nao tenta caca por 60 s (vai a carcaca, se houver).
+local function posPresa(m) local r = m.PrimaryPart or m:FindFirstChildWhichIsA("BasePart"); return r and r.Position end
+function C:presaPerto()
+	if os.clock() - (self.cacaFalhouT or -1e9) < 60 then return nil end
+	local melhor, dm
+	for _, m in ipairs(CollectionService:GetTagged("Presa")) do
+		local p = m.Parent and not m:GetAttribute("Abatida") and posPresa(m)
+		if p and plano(p - self.casa).Magnitude < self.cfg.territorio * 0.9 then
+			local d = plano(p - self.L:pos()).Magnitude
+			if not dm or d < dm then melhor, dm = m, d end
+		end
+	end
+	return melhor
+end
+-- PATCH_IA_CACA_DESVIO: ponto de desvio ~24 studs a 50/75/100 graus da linha da presa, no lado preferido primeiro
+function C:_desvioEspreita(p, ladoPref)
+	local base = plano(p - self.L:pos()); if base.Magnitude < 1 then return nil end
+	base = base.Unit; local direita = base:Cross(Vector3.yAxis).Unit
+	local lados = ladoPref and { ladoPref, -ladoPref } or (math.random() < 0.5 and { 1, -1 } or { -1, 1 })
+	for _, lado in ipairs(lados) do
+		for _, ang in ipairs({ 50, 75, 100 }) do
+			local a = math.rad(ang); local dir = base * math.cos(a) + direita * lado * math.sin(a)
+			if self.L:podePassar(dir) then return { pos = self.L:pos() + dir * 24, lado = lado } end
+		end
+	end
+	return nil
+end
+function C:_cacar(presa, vivo)
+	self:definir("Hunt"); self:registrar("caca: presa " .. presa.Name)
+	local function olhar() local p = posPresa(presa); self.m:SetAttribute("AlvoOlhar", p and p + Vector3.new(0, 1, 0) or nil); return p end
+	local function fim(ok) self.L.fatorPasso = nil; self.m:SetAttribute("AlvoOlhar", nil); return ok end
+	local p = olhar(); if not p then return fim(false) end
+	-- 1) aproxima ate ~110 sem ser visto de cima (pousa/para longe)
+	if plano(p - self.L:pos()).Magnitude > 130 then
+		local d = plano(self.L:pos() - p).Unit
+		local ok = self:ir(p + d * 110, false, vivo, 12); if not ok or not vivo() then return fim(false) end
+	end
+	if not self:emPe(vivo) then return fim(false) end
+	-- 2) avista: encara e congela, olhando
+	p = olhar(); if not p then return fim(false) end
+	self:encarar(p, vivo); self:comportamento("Observacao", 1.8, vivo); olhar()
+	-- 3) espreita: passo lento ate 40 (ou ate a presa fugir)
+	p = olhar(); if not p then return fim(false) end
+	local ultimaD = plano(p - self.L:pos()).Magnitude
+	self.L.fatorPasso = 0.45; self:registrar("caca: espreita")
+	local pAnt, tAnt = p, os.clock() - 0.3
+	local desvios, ladoD = 0, nil
+	while vivo() and presa.Parent do
+		p = olhar(); if not p then break end
+		local d = plano(p - self.L:pos()).Magnitude
+		local velP = plano(p - pAnt).Magnitude / math.max(os.clock() - tAnt, 0.05); pAnt, tAnt = p, os.clock()
+		if d <= 40 or presa:GetAttribute("Fugindo") or velP > 5 or d > ultimaD + 8 then break end     -- perto ou ela disparou
+		ultimaD = math.min(ultimaD, d)
+		local t0 = os.clock(); local seg = function() return vivo() and os.clock() - t0 < 0.3 end
+		local ok, motivo = self.L:passoChao(p, false, seg, 39)
+		if not ok and motivo ~= "cancelado" then
+			-- PATCH_IA_CACA_DESVIO (12/11): arvore/rocha/rampa no caminho -> contorna pelo lado livre em passo lento (ate 4
+			-- desvios, mantendo o mesmo lado para nao oscilar); so desiste se os dois lados estiverem fechados
+			local alvoD = (motivo == "parede" or motivo == "rampa") and desvios < 4 and self:_desvioEspreita(p, ladoD)
+			if not alvoD then
+				self.cacaFalhouT = os.clock(); self:registrar("caca: espreita bloqueada (" .. tostring(motivo) .. ") -> desiste"); return fim(false)
+			end
+			desvios += 1; ladoD = alvoD.lado
+			self:registrar(("caca: espreita contorna obstaculo (%s, lado %s)"):format(tostring(motivo), ladoD > 0 and "direito" or "esquerdo"))
+			local segD = function() return vivo() and presa.Parent ~= nil and not presa:GetAttribute("Fugindo") end
+			self.L:virarPara(alvoD.pos, segD)                              -- encara o lado livre antes (o teste de parede usa a frente)
+			local okD, mD = self.L:passoChao(alvoD.pos, false, segD, 4)
+			if not okD and mD ~= "cancelado" then
+				self.cacaFalhouT = os.clock(); self:registrar("caca: desvio bloqueado (" .. tostring(mD) .. ") -> desiste"); return fim(false)
+			end
+			p = olhar(); if p then ultimaD = plano(p - self.L:pos()).Magnitude; pAnt, tAnt = p, os.clock() - 0.3 end
+		end
+	end
+	self.L.fatorPasso = nil
+	if not vivo() then return fim(false) end
+	-- 4) bote: corrida curta acompanhando a presa
+	self:definir("Hunt"); self:registrar("caca: bote"); local tB = os.clock(); local pegou = false; local desviosB = 0
+	while vivo() and presa.Parent and os.clock() - tB < 7 do
+		p = olhar(); if not p then break end
+		local d = plano(p - self.L:pos()).Magnitude
+		if d <= self.L.distBoca then pegou = true; break end                -- boca na presa (antes +4: mordia o ar)
+		if d > 110 then break end
+		local t0 = os.clock(); local seg = function() return vivo() and os.clock() - t0 < 0.25 end
+		local ok, motivo = self.L:passoChao(p, true, seg, self.L.distBoca - 2)
+		if not ok and motivo ~= "cancelado" then
+			-- PATCH_IA_CACA_DESVIO: no bote contorna correndo (ate 2 vezes, mesmo lado da espreita), sem parar o relogio de 7 s
+			local alvoD = (motivo == "parede" or motivo == "rampa") and desviosB < 2 and self:_desvioEspreita(p, ladoD)
+			if not alvoD then self:registrar("caca: bote bloqueado (" .. tostring(motivo) .. ")"); break end
+			desviosB += 1; ladoD = alvoD.lado
+			self:registrar(("caca: bote contorna obstaculo (%s, lado %s)"):format(tostring(motivo), ladoD > 0 and "direito" or "esquerdo"))
+			local segB = function() return vivo() and os.clock() - tB < 7 end
+			self.L:virarPara(alvoD.pos, segB)
+			local okD, mD = self.L:passoChao(alvoD.pos, true, segB, 6)
+			if not okD and mD ~= "cancelado" then self:registrar("caca: bote bloqueado no desvio (" .. tostring(mD) .. ")"); break end
+		end
+	end
+	if not vivo() then return fim(false) end
+	if not pegou then
+		self.cacaFalhouT = os.clock(); self:registrar("caca: presa escapou -> desiste")
+		self.L:clipe("Parada", false); task.wait(0.6)
+		self:comportamento("Observacao", 3, vivo)                     -- para, olha para onde ela foi
+		return fim(false)
+	end
+	-- 5) mordida e refeicao no lugar
+	self.L:clipe("Ataque_Mordida", false); presa:SetAttribute("Abatida", true); self:registrar("caca: mordida -> presa abatida")
+	local tM = os.clock() + 1.3; while os.clock() < tM do if not vivo() then return fim(false) end; task.wait(0.1) end
+	p = posPresa(presa); if p then self.L:virarPara(p, vivo) end
+	self.m:SetAttribute("AlvoOlhar", nil)
+	self:definir("Eat"); if self:comportamento("Alimentacao", 8.5, vivo) then self.fome = 0; presa:SetAttribute("Consumida", true) end
+	return fim(true)
+end
 function C:_SearchFood(vivo)
 	if not self:emPe(vivo) then return end
+	local presa = self:presaPerto()
+	if presa then self:_cacar(presa, vivo); return end
 	local poi = self:poi("Comida"); if not poi then return end
 	local f = plano(poi.Position - self.L:pos()).Unit
 	local ok = self:ir(poi.Position - f * self.L.distBoca, false, vivo, 8); if not ok or not vivo() then return end
@@ -517,7 +760,22 @@ function C:_SearchFood(vivo)
 end
 function C:_Alert(vivo)
 	local alvo, a = self:maiorAmeaca(); if not alvo then return end
+	-- PATCH_IA_SONO_RITUAL: sono leve -> primeiro ERGUE a cabeca deitado (Deitado_Acordado) e olha o estimulo; so depois levanta
+	if self.estadoAnterior == "Sleep" and self.E.postura == "deitado" then
+		self:registrar("acordou com estimulo: ergue a cabeca deitado antes de levantar")
+		self.L:soltar(); self.E:Mudar("Descanso"); self:focar(alvo)
+		local fim = os.clock() + 1.5
+		while os.clock() < fim do if not vivo() then return end; task.wait(0.1) end
+	end
 	if not self:emPe(vivo) then return end
+	-- PATCH_IA_BEBER_INTERROMPE (11/11, vida selvagem): estava bebendo -> primeiro ERGUE a cabeca e firma os apoios no
+	-- lugar (Reagir_Estimulo do estado Alerta, sem andar/girar) e so depois gira para a ameaca (antes: Beber -> Giro direto)
+	if self.estadoAnterior == "Drink" and not self.L.noAr then
+		self:registrar("interrompe o gole: ergue a cabeca e firma os apoios antes de girar")
+		self.L:soltar(); self.E:Mudar("Alerta"); self:focar(alvo)
+		local fim = os.clock() + 1.0
+		while os.clock() < fim do if not vivo() then return end; task.wait(0.1) end
+	end
 	if self.L.noAr then
 		if a.pessoal then self.L:pousar(vivo)                              -- alerta pessoal: pousa ali e encara
 		else self:irAoNinho(false, vivo, 60); return end
@@ -564,6 +822,13 @@ end
 -- RETORNO URGENTE + DEFESA + PERSEGUICAO LIMITADA + ATAQUE
 function C:_DefendNest(vivo)
 	local ultimoAtaque, ameacou, falhas = 0, false, 0
+	-- PATCH_IA_SONO_RITUAL: acordado no ninho por um invasor -> sobressalto curto (ergue a cabeca deitado e olha) antes de reagir
+	if self.estadoAnterior == "Sleep" and self.E.postura == "deitado" then
+		local alvo0 = self:maiorAmeaca()
+		self:registrar("acordou com invasor no ninho: ergue a cabeca deitado"); self.L:soltar(); self.E:Mudar("Descanso"); self:focar(alvo0)
+		local fim = os.clock() + 0.8
+		while os.clock() < fim do if not vivo() then return end; task.wait(0.1) end
+	end
 	local ultimoAlvo, ultimoImportante
 	while vivo() do
 		local alvo, a = self:maiorAmeaca()
