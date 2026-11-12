@@ -83,6 +83,8 @@ CB_D, CY_D = R(20), R(35)   # r2: corpo mais baixo -> cauda mais alta (varredura
 PES_DEIT = {"DD": V((0, -6.5, 0.3)), "DE": V((0, -6.5, 0.3)), "TD": V((1.4, -4.0, 0)), "TE": V((-1.4, -4.0, 0))}
 PES_DORM = dict(PES_DEIT, TD=V((4.5, -4.0, 0.3)), TE=V((6.0, -1.0, 0.3)))   # r3: traseiras soltas para o lado D (quadril tombado)
 YAW_DORM = {"TD": R(70), "TE": R(70)}
+# cauda deitada (busca gulosa por segmento, busca_cauda 11/11): sai do quadril, desce ao chao e contorna o lado D ate as patas
+CAUDA_DORM = [(R(p), R(y)) for p, y in ((8, 86), (-80, -4), (-24, 32), (-8, 14), (8, 23), (24, -4))]
 SENT = dict(z=-7.4, pitch=R(-28), meta_tras=R(-64), esc_sobe=-1.4)   # r2 (11/11): bunda NO chao, metatarso deitado com a pata a frente
 CB_S, CY_S = R(40), R(28)
 PES_SENT = {"TD": V((1.4, -3.5, 0)), "TE": V((-1.4, -3.5, 0))}
@@ -110,6 +112,7 @@ def c_dormir(t, fase):
     c.update(z=c["z"] - 0.75, roll=R(-55), peito_roll=R(30), pesc=R(-55) + R(1.0) * b, cab_pitch=R(-30), cab_yaw=R(6), cab_roll=R(6), palp=R(-42), orelha=(R(6), R(6)),
              col_pitch=R(1.2) * b, mand=R(0.5), cauda_base=R(-20), cauda_yaw=R(50), cauda_amp=R(1.5), cauda_f=1 / 8.0)
     c["orelha"] = (R(6) + R(14) * janela(t, 5.0, 5.35, 0.06, 0.15), R(6))                                   # a orelha tremula uma vez
+    c["cauda_chao"] = True; c["cauda_seg"] = CAUDA_DORM                                                                                # cauda DEITADA no chao, curvada ate as patas
     return c
 def c_levantar(t, fase):
     c = base_foco(t, fase); fr = 1 - rampa(t, 0.4, 1.7); tr = 1 - rampa(t, 1.5, 2.6)

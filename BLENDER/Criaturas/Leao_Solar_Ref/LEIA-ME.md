@@ -2,6 +2,9 @@
 
 **APROVADO (aparência, no Blender) em 03/11/2026: `Leao_Solar_Ref_E2_v11.blend`.** Ainda falta: mandíbula e interior da boca, as 573 bordas abertas, as manchas dos antebraços, a malha de jogo, o rig e o teste no Roblox.
 
+## Realismo extra (11/11/2026): APROVADO em 11/11 (`Leao_Solar_Ref_E5_clipes_r11.blend` = arquivo oficial dos clipes = r10 + 7 clipes + Dormir com a cauda deitada; r10 preservado)
+- Deitado_para_Dormir, Dormir_para_Deitado, Pular_Obstaculo, Nadar, Nadar_Parado, Subir_Encosta, Descer_Encosta. Gerador `build/e5/e5_24_extra.py`; regressão dos 46 clipes anteriores = idênticos. `E5-RELATORIO.md`, seção 9.3. Roblox não testado.
+
 ## Fase C clipes de vida (11/11/2026): r2 + Dormir r3 APROVADOS em 11/11 (`Leao_Solar_Ref_E5_clipes_r10.blend` = arquivo oficial dos clipes; r9 = r1 preservado). Roblox não testado.
 - r2: olhos (sinal da pálpebra corrigido + piscadas em todos), dormir com a cabeça nas patas e olhos fechados, deitado com antebraços rentes, sentado com a garupa no chão, espreguiçar com a pata esticada, lamber a pata deitado (seção 9.1).
 - Em pé: Beber, Comer, Bocejar, Lamber_Pata, Espreguicar, Reacao_Golpe_E/D. No chão: Deitar, Descanso_Deitado, Dormir, Levantar, Sentar, Sentado, Levantar_Sentado, Morte.

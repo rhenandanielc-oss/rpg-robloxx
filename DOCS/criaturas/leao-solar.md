@@ -156,6 +156,8 @@ Ficha criada em 03/11/2026, só com leitura. Nada foi alterado no Studio, em `sr
   - Arquivo `Leao_Solar_Ref_E5_clipes_r9.blend` (r8 + 15 = 54 ações). Relatório: `E5-RELATORIO.md`, seção 9. Nada testado no Roblox.
   - **r2 (11/11) — APROVADA em 11/11 (Blender), junto com o Dormir r3; oficial = `Leao_Solar_Ref_E5_clipes_r10.blend`:** feita pelas referências do usuário: olhos fecham de verdade (sinal da pálpebra corrigido), piscadas em todos os clipes, dormir com a cabeça nas patas, sentado com a garupa no chão, espreguiçar com a pata esticada e lamber a pata deitado.
     - Arquivo `Leao_Solar_Ref_E5_clipes_r10.blend`. Relatório: seção 9.1. Nada testado no Roblox.
+    - **Realismo extra (11/11) — APROVADO em 11/11 (Blender); oficial = `Leao_Solar_Ref_E5_clipes_r11.blend`:** cauda deitada no Dormir; transições Deitado↔Dormir; Pular_Obstaculo; Nadar e Nadar_Parado; Subir_Encosta e Descer_Encosta (rampa de 20°).
+      - Arquivo `Leao_Solar_Ref_E5_clipes_r11.blend`. Relatório: seção 9.3. Nada testado no Roblox.
     - **Dormir r3 (11/11):** corpo todo no chão. Quadril tombado de lado, traseiras soltas deitadas e cabeça nas patas (seção 9.2).
 - **E5 Bote r2 (05/11) — substituído pelo r3:** estalo das patas da frente na decolagem corrigido.
   - Saltos: punho de 90 para 23°/quadro, cotovelo de 66 para 31°, dedos de 102 para 17°.

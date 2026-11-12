@@ -225,6 +225,7 @@ CLIPES = {
 exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "e5_21_faseB.py"), encoding="utf-8").read())   # clipes da Fase B
 exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "e5_22_montaria.py"), encoding="utf-8").read())   # S2: montaria
 exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "e5_23_vida.py"), encoding="utf-8").read())   # Fase C: vida
+exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "e5_24_extra.py"), encoding="utf-8").read())   # Fase C extra: transicoes, pulo, nado, encosta
 # ------------------------------------------------------------------ simulacao de um clipe
 PRE = 3.0   # segundos de pre-rolagem (o ciclo entra ja estabilizado)
 def catmull(P, k, s_):
@@ -261,7 +262,7 @@ def agenda_pata(cl, p_, t, rp, ry, estado, raiz):
             vp, vy = raiz(tv)
             pts.append(vp + qz(vy) @ (REP_PATA[p_] + off)); us.append(u_); angs.append(ang)
         pts.append(alvo); us.append(1.0); angs.append(0.0 if any(x is not None for x in angs) else None)   # pousa com a pata plana
-        e.update(sw=sw, apoio=False, ini=e["w"].copy(), alvo=alvo, yaw_ini=e["yaw"], yaw_alvo=ly, pts=pts, us=us, angs=angs)
+        e.update(sw=sw, apoio=False, ini=e["w"].copy(), alvo=alvo, yaw_ini=e["yaw"], yaw_alvo=ly + sw.get("yaw", 0.0), pts=pts, us=us, angs=angs)   # yaw: pata gira (dormir de lado)
     uu = (t - sw["t0"]) / (sw["t1"] - sw["t0"]); pts, us = e["pts"], e["us"]
     vq = sw.get("via_quadril")
     jt = sw.get("jarrete")
@@ -296,6 +297,9 @@ def olhos(cl, t, c):
     b = piscar(t, ts_b, 0.18)
     if b > 0: c["palp"] = c["palp"] + (PALP_FECHADO - c["palp"]) * b if c["palp"] > PALP_FECHADO else c["palp"]
     return c
+def chao_z(cl, p):
+    """encosta (cl["inclinacao"], graus): o chao sobe para a frente (-Y): z = tan(a) * (-y). Raiz pela altura do chao sob o quadril."""
+    a = cl.get("inclinacao"); return math.tan(math.radians(a)) * (-p.y) if a else 0.0
 def simular(cl):
     dur = cl["dur"]; N = int(round(dur * FPS)); t0 = 0.0 if (cl.get("pose_repouso") or cl.get("inicio_repouso")) else -PRE   # pre-rolagem: a marcha entra estabilizada
     ts = np.arange(t0, dur + 2.0, DT)
@@ -366,8 +370,8 @@ def simular(cl):
                     s_ = suave(uu); w = e["ini"].lerp(e["alvo"], s_); w.z = e["ini"].z + (e["alvo"].z - e["ini"].z) * s_ + h * math.sin(math.pi * uu) ** 0.7
                     e.update(w=w, yaw=e["yaw_ini"] + (e["yaw_alvo"] - e["yaw_ini"]) * s_, u=uu)
         if t >= -1e-9 and len(quadros) < N + 1:
-            quadros.append(dict(t=t, raiz=rp.copy(), yaw=ry, fase=fase, corpo=olhos(cl, t, cl["corpo"](t, fase)), dmin=(cl.get("dmin_dian", 0.70), cl.get("dmin_tras", 0.76)),
-                                pes={p_: dict(w=e["w"].copy(), yaw=e["yaw"], apoio=e["apoio"], u=e["u"], prog=e["prog"], ang=e.get("ang"), rel=e.get("rel"), a_emp=e.get("a_emp"), a_ini=e.get("a_ini") if not e["apoio"] else None,
+            quadros.append(dict(incl=cl.get("inclinacao"), t=t, raiz=rp + V((0, 0, chao_z(cl, rp + qz(ry) @ V((0, OMBRO["TD"].y, 0))))), yaw=ry, fase=fase, corpo=olhos(cl, t, cl["corpo"](t, fase)), dmin=(cl.get("dmin_dian", 0.70), cl.get("dmin_tras", 0.76)),
+                                pes={p_: dict(w=e["w"] + V((0, 0, chao_z(cl, e["w"]))), yaw=e["yaw"], apoio=e["apoio"], u=e["u"], prog=e["prog"], ang=e.get("ang"), rel=e.get("rel"), a_emp=e.get("a_emp"), a_ini=e.get("a_ini") if not e["apoio"] else None,
                                          rq=e.get("rq") if not e["apoio"] else None) for p_, e in estado.items()}))
     DPH_FINAL.clear(); DPH_FINAL.update({p_: e["dph"] for p_, e in estado.items()})
     return quadros
@@ -406,7 +410,25 @@ def posar(q):
     # cauda: postura + onda atrasada (base -> ponta)
     for i, b in enumerate(CAUDA):
         lag = i * 0.11; w = math.sin(2 * math.pi * (c["cauda_f"] * q["t"] - lag)) if c["cauda_f"] else 0.0
-        PB[b].rotation_quaternion = rot_local(b, qz(c["cauda_amp"] * w * (0.5 + 0.12 * i) + c["cauda_yaw"]) @ qx(c["cauda_base"] * (1 if i < 3 else -0.6)))
+        seg = c.get("cauda_seg")                                              # opcional: (pitch, yaw) por segmento (cauda deitada no chao)
+        if seg:
+            km = c.get("cauda_mix", 1.0); pu, yu = c["cauda_base"] * (1 if i < 3 else -0.6), c["cauda_yaw"]   # mistura com a postura uniforme (transicoes)
+            yt, pt = c["cauda_amp"] * w * (0.5 + 0.12 * i) + yu + (seg[i][1] - yu) * km, pu + (seg[i][0] - pu) * km
+            if c.get("cauda_chao"):                                           # transicoes: menor desvio da postura misturada sem a cauda entrar no chao
+                folga = (0.6, 0.5, 0.45, 0.4, 0.4, 0.45)[i]; melhor = None
+                for d_ in [0] + [s * k * R(6) for k in range(1, 16) for s in (1, -1)]:
+                    PB[b].rotation_quaternion = rot_local(b, qz(yt) @ qx(pt + d_)); tf = {4: "Tufo1", 5: "Tufo2"}.get(i, "")
+                    if tf in PB: PB[tf].rotation_quaternion = PB[b].rotation_quaternion.copy()      # o tufo segue a base (como em molas())
+                    upd()
+                    zz = min((arm.matrix_world @ PB[b].head).z, (arm.matrix_world @ PB[b].tail).z)
+                    if tf in PB: zz = min(zz, (arm.matrix_world @ PB[tf].tail).z - 0.3)            # tufo: penacho mais grosso
+                    custo = abs(d_) + 10 * max(0.0, folga - zz)
+                    if melhor is None or custo < melhor[0]: melhor = (custo, d_)
+                    if zz >= folga: break
+                pt += melhor[1]
+            PB[b].rotation_quaternion = rot_local(b, qz(yt) @ qx(pt))
+            if c.get("cauda_chao"): upd()
+        else: PB[b].rotation_quaternion = rot_local(b, qz(c["cauda_amp"] * w * (0.5 + 0.12 * i) + c["cauda_yaw"]) @ qx(c["cauda_base"] * (1 if i < 3 else -0.6)))
     upd()
     erro = 0.0
     for p_, (tipo, ossos) in PERNAS.items():
@@ -436,7 +458,7 @@ def posar(q):
             dob = janela(pe["u"], 0.05, 0.75, 0.28, 0.3) * (0.55 if tipo == "dian" else 1.0)   # traseira: para a frente e para baixo)
             dsw = (Quaternion(lat, R(0 if tipo == "dian" else -40)) @ meta.normalized()) * VEC_DEDOS[p_].length
             dv = dv.lerp(dsw, dob)
-            folga = min((P + dv).z, (P + meta * 0.0).z - 0.45) - (0.35 + (REP_PATA[p_].z - 0.6))
+            folga = min((P + dv).z, (P + meta * 0.0).z - 0.45) - (0.35 + (REP_PATA[p_].z - 0.6)) - (math.tan(math.radians(q["incl"])) * (-P.y) if q.get("incl") else 0.0)   # encosta: chao inclinado
             if folga < 0: P = P + V((0, 0, -folga))                          # dedos nunca abaixo do chao: sobe a pata
         if not pe["apoio"]:
             # no balanco a perna nao fecha alem do anatomico: distancia minima ombro|quadril -> punho|jarrete (senao a canela
@@ -486,6 +508,7 @@ def posar(q):
             if pe["apoio"] or not SOLA_LOC[p_]: break
             # balanco: menor altura da sola real (vertices dos dedos/metacarpo levados pelos ossos) -> sobe a pata se tocar o chao
             zs = min(min((PB[b].matrix @ BD[b].matrix_local.inverted() @ v).z for v in SOLA_LOC[p_][b]) for b in SOLA_LOC[p_] if SOLA_LOC[p_][b])
+            if q.get("incl"): zs -= math.tan(math.radians(q["incl"])) * (-P.y)   # encosta: altura acima do chao inclinado
             if zs >= 0.06: break
             P = P + V((0, 0, 0.06 - zs))
         if pe["apoio"]:

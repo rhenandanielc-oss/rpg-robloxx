@@ -14,6 +14,13 @@ mc = bpy.data.materials.new("_chao"); mc.use_nodes = True; nt = mc.node_tree; bs
 ck = nt.nodes.new("ShaderNodeTexChecker"); ck.inputs["Scale"].default_value = 100; ck.inputs["Color1"].default_value = (0.47, 0.43, 0.36, 1); ck.inputs["Color2"].default_value = (0.38, 0.35, 0.29, 1)
 tc = nt.nodes.new("ShaderNodeTexCoord"); nt.links.new(tc.outputs["UV"], ck.inputs["Vector"]); nt.links.new(ck.outputs["Color"], bs.inputs["Base Color"]); bs.inputs["Roughness"].default_value = 0.95
 ch.data.materials.append(mc)
+if os.environ.get("E5_INCLINACAO"): ch.rotation_euler.x = -R(float(os.environ["E5_INCLINACAO"]))   # encosta: chao z = tan(a) * (-y) (sobe para a frente)
+if os.environ.get("E5_AGUA"):                                                # nado: superficie da agua (azul translucido) e fundo bem abaixo
+    ch.location.z = -25.0
+    bpy.ops.mesh.primitive_plane_add(size=400, location=(0, 0, float(os.environ["E5_AGUA"]))); ag_ = bpy.context.active_object; ag_.name = "_agua"
+    ma = bpy.data.materials.new("_agua"); ma.use_nodes = True; ba = ma.node_tree.nodes["Principled BSDF"]
+    ba.inputs["Base Color"].default_value = (0.10, 0.32, 0.38, 1); ba.inputs["Alpha"].default_value = 0.55; ba.inputs["Roughness"].default_value = 0.08
+    ma.surface_render_method = "BLENDED" if hasattr(ma, "surface_render_method") else None; ag_.data.materials.append(ma)
 w = bpy.data.worlds.new("N"); sc.world = w; w.use_nodes = True; w.node_tree.nodes["Background"].inputs[0].default_value = (0.62, 0.64, 0.66, 1)
 sol = bpy.data.lights.new("Sol", "SUN"); sol.energy = 2.6; sol.angle = R(8)
 so = bpy.data.objects.new("Sol", sol); sc.collection.objects.link(so); so.rotation_euler = (R(50), 0, R(35))

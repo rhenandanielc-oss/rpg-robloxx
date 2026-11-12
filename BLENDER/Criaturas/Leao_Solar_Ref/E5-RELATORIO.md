@@ -688,3 +688,53 @@ Pedido do usuário: "quero que suas pernas relaxem, não fiquem em posição de 
 **Arquivos e evidência:**
 - `Leao_Solar_Ref_E5_clipes_r10.blend` (Dormir trocado; conferido igual ao gerado).
 - Vídeos em `review/c/c5/` (lado D: perfil, 3/4, rosto; lado E: perfil, 3/4).
+
+### 9.3 Realismo extra (11/11/2026): cauda deitada, transições do sono, pulo, nado e encosta. APROVADO pelo usuário em 11/11 (Blender)
+Pedido do usuário: "siga com o 2" (opcionais de realismo). Só movimento; Blender apenas; **Roblox não testado**.
+
+**Gerador (`e5_20`), todas as opções desligadas por padrão:**
+- `cauda_seg`: (pitch, yaw) por segmento da cauda, misturado com a postura uniforme por `cauda_mix`.
+- `cauda_chao`: ajuste por quadro que ergue cada segmento o mínimo necessário para a cauda e o tufo não entrarem no chão.
+- Balanço da agenda com `yaw` (a pata gira).
+- `inclinacao` (graus): o chão e a raiz sobem ao longo da rampa (`chao_z`). As duas travas de "pata acima do chão" no balanço passaram a usar o chão inclinado; sem isso, as patas da frente ficavam presas no plano na descida.
+- Render: `E5_INCLINACAO` (rampa) e `E5_AGUA` (superfície da água).
+- Módulo novo `build/e5/e5_24_extra.py`.
+
+**Clipes:**
+- **Dormir (cauda):** a cauda sai do quadril, desce ao chão e contorna o lado das patas. Ângulos por busca gulosa por segmento (`CAUDA_DORM`). O tufo não fica mais de pé.
+- **Deitado_para_Dormir / Dormir_para_Deitado (4 s):**
+  - mistura do Descanso_Deitado (esfinge) com o Dormir r3;
+  - as traseiras escorregam para o lado da barriga (e voltam);
+  - ao acordar, os olhos abrem depois de a cabeça se mexer;
+  - sem o ajuste, a cauda chegava a −6,8 dentro do chão no meio do tombo; com ele, o tufo fica até −1,6, compressão do penacho.
+- **Pular_Obstaculo (2,8 s):** o mesmo impulso, voo e pouso do Bote r4 aprovado, com 16 studs de distância, arco de 6,5, agachamento menor, boca fechada e orelhas à frente.
+- **Nadar (loop, 4,5 studs/s) / Nadar_Parado (loop):** "nado de cachorro" do leão real:
+  - cabeça alta e dorso rente à superfície;
+  - dianteiras em remada alternada: sobe dobrada até sob o queixo, estica à frente e puxa com a pata aberta;
+  - traseiras chutam em diagonal com a dianteira oposta;
+  - cauda boiando e boca bufando no ritmo.
+  - Na r2 a remada foi ampliada (a 1ª parecia andar debaixo d'água) e o chute para trás foi reduzido: a canela TE virava 50° na emenda.
+- **Subir_Encosta / Descer_Encosta (loop, rampa de 20°):** o tronco inclina junto (pitch ±20°), a cabeça olha ao longo da rampa e a passada fica mais curta (82%). Na descida o corpo desce até 1,13 quando as dianteiras não alcançam.
+
+**QA:**
+
+| Clipe | IK | escorr. p90 | emenda | obs. |
+|---|---|---|---|---|
+| Deitado_para_Dormir | 0 | 0,011 | — | emenda com o Dormir: cauda 5° (fase da onda), resto < 0,5° |
+| Dormir_para_Deitado | 0 | 0,011 | — | emenda com o Dormir: 0,2° |
+| Pular_Obstaculo | 0 | 0,05 | — | erro do caminho das dianteiras 0,97 (como no Bote, partes fora do alcance) |
+| Nadar | 0 | — | 0° | |
+| Nadar_Parado | 0 | — | 0° | |
+| Subir_Encosta | 0 | 0,009 | 0° | |
+| Descer_Encosta | 0 | 0,009 | 8,7° (úmero DE; salto interno 8,3°) | |
+
+- A altura mínima da malha não vale para a encosta (medida contra z=0).
+
+**Para o jogo:**
+- A raiz sobe/desce na encosta e anda no nado. Na conversão "no lugar" para o Roblox, a translação da raiz sai inteira, como nos clipes de marcha.
+- A posição na água (altura da superfície) é do jogo.
+
+**Arquivos e evidência:**
+- `Leao_Solar_Ref_E5_clipes_r11.blend`.
+- Vídeos em `review/c/c8/` (sono), `review/c/c7/` (pulo e encostas), `review/c/c9/` (nado r2).
+- Folhas `review/c/folha_C8_sono.png`, `folha_C7a/b.png`, `folha_C9_nado.png`.
