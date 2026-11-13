@@ -186,9 +186,9 @@ local function montar(plr, m)
 		local Ac = require(AC)
 		if entrada == "tras" and Ac.subirCauda then                    -- PATCH_ENTRADAS_MONTAR: pula na cauda e corre ate a sela
 			local pts = Ac.caminhoCauda(function(n) local b = osso(m, n); return b and b.TransformedWorldCFrame.Position end)
-			if pts then return Ac.subirCauda(hrp, hum, sela, pts) end
+			if pts then return Ac.subirCauda(hrp, hum, sela, pts, m:GetAttribute("FormaRegional")) end
 		end
-		return Ac.subir(hrp, hum, sela)                                -- frente (canto a frente da asa): pulo
+		return Ac.subir(hrp, hum, sela, m:GetAttribute("FormaRegional"))   -- frente: pulo (PATCH_POSE_FORMA: pose montada da forma)
 	end) end
 	if not okA then if AC then warn("AnimCavaleiro: " .. tostring(trilhaA)) end; arco(hrp, hrp.CFrame, sela, 0.9, 8); trilhaA = nil end
 	M.trilhaCav = trilhaA
@@ -296,6 +296,10 @@ end
 
 -- ===== chao ======================================================================================================
 local function clipe(M, nome, ritmo, segurar)
+	-- PATCH_RIDE_CLIPES (12/11): forma com clipe proprio de MONTADO (apelido "Montado_<nome>" na pasta da forma, ex.: Wyvern
+	-- RideIdle/RideWalk/RideRun: dorso estabilizado sob a sela) usa esse clipe; as outras formas nao mudam
+	local ap = M.L.E.apelidos
+	if ap and ap["Montado_" .. nome] then nome = "Montado_" .. nome end
 	if os.clock() < M.clipeAte and not segurar then
 		if ritmo and M.L.trilha and M.L.atual == nome then M.L.trilha:AdjustSpeed(ritmo) end
 		return

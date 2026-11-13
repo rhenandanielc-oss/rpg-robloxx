@@ -25,6 +25,17 @@ end
 -- {x, z, y} em graus por articulacao; LowerTorso pode ter p = deslocamento (studs)
 local SENTADO = simetrico({LowerTorso = {0}, UpperTorso = {-10}, Head = {4}, UpperArm = {50, -6}, LowerArm = {38}, Hand = {-10},
 	UpperLeg = {72, 40}, LowerLeg = {-78}, Foot = {14}})
+-- PATCH_POSE_FORMA (12/11): pose MONTADA propria por forma (atributo FormaRegional do modelo); forma sem entrada usa SENTADO.
+-- Wyvern (decisao do usuario 09/11, demo do cavaleiro aprovada no Blender): meio deitado para a frente (tronco ~60 graus)
+-- SEGURANDO NO DORSO, cabeca erguida olhando a frente, pernas estilo joquei (coxas abertas, joelho dobrado ~115, pes para tras)
+local POSES = {
+	-- r2 (13/11, video do usuario: cavaleiro "fora do dragao"): o HumanoidRootPart ja chega inclinado ~39 graus para a frente
+	-- (o assento segue o osso da sela no RideIdle); a r1 somava 60 graus por cima e as coxas desciam retas atravessando o
+	-- flanco. Valores medidos no Play: tronco 60 graus no mundo, coxas abertas para a frente e para baixo, canelas para tras
+	Wyvern = simetrico({LowerTorso = {-10}, UpperTorso = {-11}, Head = {45}, UpperArm = {88, -10}, LowerArm = {18}, Hand = {-10},
+		UpperLeg = {94, 48}, LowerLeg = {-112}, Foot = {20}}),
+}
+M.POSES = POSES
 local KF = {
 	{0.00, {}},
 	{0.30, simetrico({LowerTorso = {-15, p = Vector3.new(0, -0.6, 0)}, UpperTorso = {-18}, Head = {18}, UpperArm = {-35, 8}, LowerArm = {22},
@@ -64,8 +75,10 @@ local function animacao(nome)
 		local ks
 		if nome == "Montar" then ks = sequencia("Cavaleiro_Montar", KF)
 		else                                                       -- montado: respiracao leve, sem mexer as pernas
-			local resp = table.clone(SENTADO); resp.UpperTorso = {-12}; resp.Head = {6}
-			ks = sequencia("Cavaleiro_Montado", {{0, SENTADO}, {1.3, resp}, {2.6, SENTADO}}, true)
+			local base = POSES[nome:match("^Montado_(.+)$") or ""] or SENTADO   -- PATCH_POSE_FORMA
+			local resp = table.clone(base); resp.UpperTorso = {(base.UpperTorso and base.UpperTorso[1] or -10) - 2}
+			resp.Head = {(base.Head and base.Head[1] or 4) + 2}
+			ks = sequencia("Cavaleiro_" .. nome, {{0, base}, {1.3, resp}, {2.6, base}}, true)
 		end
 		return KSP:RegisterKeyframeSequence(ks)
 	end)
@@ -80,10 +93,11 @@ local function tocar(hum, nome)
 	t.Priority = Enum.AnimationPriority.Action4; t:Play(0.15); return t
 end
 local function plano(v) return Vector3.new(v.X, 0, v.Z) end
+local function montado(forma) return (forma and POSES[forma]) and ("Montado_" .. forma) or "Montado" end   -- PATCH_POSE_FORMA
 local function suave(k) return k * k * (3 - 2 * k) end
 -- sobe do lugar atual (hrp.CFrame) ate a sela (CFrame final do HRP), pulando pelo lado em que o jogador esta
 -- (v3, 06/11: a entrada da FRENTE usa este pulo; a direcao e a do jogador ate a sela, nao mais so as laterais)
-function M.subir(hrp, hum, sela)
+function M.subir(hrp, hum, sela, forma)
 	local de = hrp.CFrame
 	local dir = plano(de.Position - sela.Position); if dir.Magnitude < 0.1 then dir = -sela.LookVector end
 	local side = dir.Unit; local up = Vector3.yAxis
@@ -103,7 +117,7 @@ function M.subir(hrp, hum, sela)
 	end
 	hrp.CFrame = sela
 	if trilha then task.delay(0.2, function() trilha:Stop(0.25) end) end
-	return tocar(hum, "Montado")                                                           -- devolve a trilha da pose montada
+	return tocar(hum, montado(forma))                                                           -- devolve a trilha da pose montada
 end
 
 -- ===== v2 (06/11, usuario: "para o jogador montar, a animacao deve abrir a asa ao montar (como uma rampa)") =========
@@ -164,7 +178,7 @@ local function animPulo()
 	if not ok then cache.Pulo = false; return nil end
 	local a = Instance.new("Animation"); a.AnimationId = id; cache.Pulo = a; return a
 end
-function M.subirCauda(hrp, hum, sela, pts)
+function M.subirCauda(hrp, hum, sela, pts, forma)
 	local up = Vector3.yAxis
 	local alvo = pts[1]
 	local chaoAlvo = Vector3.new(alvo.X, hrp.Position.Y, alvo.Z)
@@ -215,6 +229,6 @@ function M.subirCauda(hrp, hum, sela, pts)
 	end
 	hrp.CFrame = sela
 	if sentar then task.delay(0.15, function() sentar:Stop(0.25) end) end
-	return tocar(hum, "Montado")
+	return tocar(hum, montado(forma))
 end
 return M

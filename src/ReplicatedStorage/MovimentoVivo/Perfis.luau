@@ -33,4 +33,26 @@ return {
 		pesFolga = 0.15, pesMax = 5, pesSonda = 12, pesDist = 160,   -- studs
 		pesDobraMax = 150,                                -- graus: joelho nunca dobra mais que isso pelo IK
 	},
+	-- Wyvern (12/11): rig proprio (base Ashwing, 61 ossos; bipede, asa-braco). Mesmos principios do Silverwing com
+	-- pescoco de 5 ossos e cauda de 10 (ganho por segmento menor). Coluna SEM o Coluna2 (osso da sela: o cavaleiro segue
+	-- esse osso). Sem patas dianteiras (as maos sao da asa). IK so nas 2 pernas: coxa -> canela, metatarso (foot) mantem a
+	-- orientacao do clipe, sonda na base dos dedos (toes_tip_*). Valores = ponto de partida visual (nao aprovados).
+	Wyvern = {
+		pescoco = {"neck_01", "Pescoco2", "neck_03", "Pescoco4", "neck_05"}, cabeca = "Cabeca",
+		divPescoco = {0.14, 0.18, 0.2, 0.22, 0.26},
+		coluna = {"spine_01", "spine_03"}, divColuna = {0.45, 0.55},
+		cauda = {"tail_01", "tail_02", "Cauda3", "tail_04", "tail_05", "tail_06", "tail_07", "tail_08", "tail_09", "tail_tip"},
+		ombros = {E = "shoulder_l", D = "shoulder_r"},
+		patasD = {}, patasT = {"thigh_L", "thigh_R"},
+		curvaPescoco = 70, curvaCabeca = 20, curvaColuna = 20, curvaCauda = 10,
+		maxPescoco = 55, maxColuna = 18, maxCaudaSeg = 12,
+		trajPescoco = 0.55, trajCauda = -0.2, maxTraj = 32,
+		acelPatas = 1.2, acelTorax = 0.5, maxAcel = 22,
+		curvaAsa = 26, maxAsa = 24, sinalAsa = 1,
+		olharYaw = 0.55, olharPitch = 0.4, maxOlharYaw = 45, maxOlharPitch = 22, olharDist = 60,
+		molaPescoco = 32, molaCabeca = 48, molaColuna = 24, molaCauda = {20, 17, 14, 12, 10.5, 9, 8, 7.2, 6.6, 6}, molaPatas = 16, molaAsa = 22,
+		distMax = 300,
+		pesIK = {{"thigh_L", "calf_L", "foot_L", "toes_tip_l"}, {"thigh_R", "calf_R", "foot_R", "toes_tip_r"}},
+		pesFolga = 0.15, pesMax = 4, pesSonda = 10, pesDist = 160, pesDobraMax = 150,
+	},
 }

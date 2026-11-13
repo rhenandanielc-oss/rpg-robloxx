@@ -498,3 +498,11 @@ Arquivo: `Wyvern_E7_clipes_L6.blend` = `Wyvern_E7_clipes_L5.blend` (preservado) 
 - Os scripts de revisão anteriores (até o 05b) trocavam só a action do rig, e as shape keys ficavam com os valores do "bite". Isso não afeta a região do ferrão, onde as correctives valem zero. Foi corrigido em 05/11 (slot KEY).
 - O comprimento (~40) ainda passa dos ninhos de ~35. É uma pendência do usuário.
 - Nada foi exportado para o Roblox nem testado no Studio.
+
+## Exportação e Studio (12/11/2026)
+
+- `build/21_exportar_wyvern.py` → `export/jogo/Wyvern.glb` (corpo E6 + sela S1, 61 ossos, texturas 1024; ossos-chave com nomes do jogo — ver o MAPA no script). `build/22_exportar_clipes_wyvern.py` → JSON dos 49 clipes do L6 (`CONVENCAO_ROBLOX=giro180y` é a que vale no import atual; conferido no Studio).
+- No Studio (Teste-animacoes): `ReplicatedStorage.Animacoes_Wyvern` (49 KFS + Apelidos), `Wyvern` (montável) e `Wyvern_Guardiao` (IA, `Laboratorio_IA.Ninho_Wyvern`).
+- Árvore de Poses: `Keyframe > Pose "RootPart" > root > …` — a primeira Pose é a peça e não anima; o deslocamento do corpo deste rig está no osso `root`.
+- `takeoff`/`Pouso` no jogo com a raiz limitada a 1,7 (o jogo faz a subida/descida).
+- Capturas: `review/studio/`. Detalhes e limitações: diário `DOCS/estado/dragao-2026-10-30.md` (DX).
