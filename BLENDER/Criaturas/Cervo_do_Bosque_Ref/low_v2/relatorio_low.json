@@ -1,0 +1,33 @@
+{
+ "regioes": {
+  "galhada": 3193,
+  "cabeca": 2940,
+  "corpo": 5867
+ },
+ "pesos": [
+  0.62,
+  0.7,
+  0.65
+ ],
+ "alvo": 12000,
+ "voxel": 0.005,
+ "textura": 1024,
+ "malhas": {
+  "Cervo_Cabeca": {
+   "tris": 5245,
+   "material": "M_Cervo_Cabeca"
+  },
+  "Cervo_Corpo": {
+   "tris": 6752,
+   "material": "M_Cervo_Corpo"
+  }
+ },
+ "tris_total": 11997,
+ "bruto_tris": 468844,
+ "medidas": {
+  "comprimento": 1.6032806038856506,
+  "largura": 0.8211750984191895,
+  "altura": 1.9598207473754883,
+  "casco_min_z": 0.00024255768221337348
+ }
+}

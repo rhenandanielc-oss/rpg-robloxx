@@ -1,0 +1,257 @@
+{
+ "Susto": {
+  "duracao": 1.4,
+  "loop": false,
+  "quadros": 43,
+  "velocidade_u_s_PROPOSTA": 0.0,
+  "erro_ik_max": 0.0,
+  "erro_ik_por_pata": {
+   "QuartelaE": [
+    0.0,
+    42
+   ],
+   "QuartelaD": [
+    0.0,
+    42
+   ],
+   "QuartelaTrasE": [
+    0.0,
+    42
+   ],
+   "QuartelaTrasD": [
+    0.0,
+    42
+   ]
+  },
+  "casco_z_min": {
+   "QuartelaE": 0.0004,
+   "QuartelaD": 0.0002,
+   "QuartelaTrasE": 0.0007,
+   "QuartelaTrasD": 0.0008
+  },
+  "escorregao_casco_apoiado_max": {
+   "QuartelaE": 0.0,
+   "QuartelaD": 0.0,
+   "QuartelaTrasE": 0.0008,
+   "QuartelaTrasD": 0.0
+  },
+  "emenda_loop_graus": 0.0,
+  "giro_graus_s_PROPOSTA": 0.0,
+  "alvos_limitados": 0
+ },
+ "ReacaoFrente": {
+  "duracao": 0.9,
+  "loop": false,
+  "quadros": 28,
+  "velocidade_u_s_PROPOSTA": 0.0,
+  "erro_ik_max": 0.0204,
+  "erro_ik_por_pata": {
+   "QuartelaE": [
+    0.0146,
+    3
+   ],
+   "QuartelaD": [
+    0.0204,
+    3
+   ],
+   "QuartelaTrasE": [
+    0.0,
+    27
+   ],
+   "QuartelaTrasD": [
+    0.0,
+    27
+   ]
+  },
+  "casco_z_min": {
+   "QuartelaE": 0.0004,
+   "QuartelaD": 0.0002,
+   "QuartelaTrasE": 0.0007,
+   "QuartelaTrasD": 0.0008
+  },
+  "escorregao_casco_apoiado_max": {
+   "QuartelaE": 0.0004,
+   "QuartelaD": 0.0005,
+   "QuartelaTrasE": 0.0015,
+   "QuartelaTrasD": 0.0001
+  },
+  "emenda_loop_graus": 0.0,
+  "giro_graus_s_PROPOSTA": 0.0,
+  "alvos_limitados": 0
+ },
+ "ReacaoE": {
+  "duracao": 0.9,
+  "loop": false,
+  "quadros": 28,
+  "velocidade_u_s_PROPOSTA": 0.0,
+  "erro_ik_max": 0.0,
+  "erro_ik_por_pata": {
+   "QuartelaE": [
+    0.0,
+    27
+   ],
+   "QuartelaD": [
+    0.0,
+    27
+   ],
+   "QuartelaTrasE": [
+    0.0,
+    27
+   ],
+   "QuartelaTrasD": [
+    0.0,
+    27
+   ]
+  },
+  "casco_z_min": {
+   "QuartelaE": 0.0004,
+   "QuartelaD": 0.0002,
+   "QuartelaTrasE": 0.0007,
+   "QuartelaTrasD": 0.0008
+  },
+  "escorregao_casco_apoiado_max": {
+   "QuartelaE": 0.0,
+   "QuartelaD": 0.0001,
+   "QuartelaTrasE": 0.0005,
+   "QuartelaTrasD": 0.0
+  },
+  "emenda_loop_graus": 0.0,
+  "giro_graus_s_PROPOSTA": 0.0,
+  "alvos_limitados": 0
+ },
+ "ReacaoD": {
+  "duracao": 0.9,
+  "loop": false,
+  "quadros": 28,
+  "velocidade_u_s_PROPOSTA": 0.0,
+  "erro_ik_max": 0.0,
+  "erro_ik_por_pata": {
+   "QuartelaE": [
+    0.0,
+    27
+   ],
+   "QuartelaD": [
+    0.0,
+    27
+   ],
+   "QuartelaTrasE": [
+    0.0,
+    27
+   ],
+   "QuartelaTrasD": [
+    0.0,
+    27
+   ]
+  },
+  "casco_z_min": {
+   "QuartelaE": 0.0004,
+   "QuartelaD": 0.0002,
+   "QuartelaTrasE": 0.0007,
+   "QuartelaTrasD": 0.0008
+  },
+  "escorregao_casco_apoiado_max": {
+   "QuartelaE": 0.0,
+   "QuartelaD": 0.0001,
+   "QuartelaTrasE": 0.0004,
+   "QuartelaTrasD": 0.0
+  },
+  "emenda_loop_graus": 0.0,
+  "giro_graus_s_PROPOSTA": 0.0,
+  "alvos_limitados": 0
+ },
+ "DefesaGalhada": {
+  "duracao": 2.2,
+  "loop": false,
+  "quadros": 67,
+  "velocidade_u_s_PROPOSTA": 0.0,
+  "erro_ik_max": 0.0,
+  "erro_ik_por_pata": {
+   "QuartelaE": [
+    0.0,
+    66
+   ],
+   "QuartelaD": [
+    0.0,
+    66
+   ],
+   "QuartelaTrasE": [
+    0.0,
+    66
+   ],
+   "QuartelaTrasD": [
+    0.0,
+    66
+   ]
+  },
+  "casco_z_min": {
+   "QuartelaE": 0.0004,
+   "QuartelaD": 0.0002,
+   "QuartelaTrasE": 0.0007,
+   "QuartelaTrasD": 0.0008
+  },
+  "escorregao_casco_apoiado_max": {
+   "QuartelaE": 0.0,
+   "QuartelaD": 0.0001,
+   "QuartelaTrasE": 0.0008,
+   "QuartelaTrasD": 0.0
+  },
+  "emenda_loop_graus": 0.0,
+  "giro_graus_s_PROPOSTA": 0.0,
+  "alvos_limitados": 0
+ },
+ "Derrota": {
+  "duracao": 2.8,
+  "loop": false,
+  "quadros": 85,
+  "velocidade_u_s_PROPOSTA": 0.0,
+  "erro_ik_max": 0.0,
+  "erro_ik_por_pata": {
+   "QuartelaTrasE": [
+    0.0,
+    16
+   ],
+   "QuartelaTrasD": [
+    0.0,
+    16
+   ]
+  },
+  "casco_z_min": {
+   "QuartelaE": 0.0004,
+   "QuartelaD": -0.0324,
+   "QuartelaTrasE": 0.0004,
+   "QuartelaTrasD": 0.0008
+  },
+  "escorregao_casco_apoiado_max": {
+   "QuartelaE": 0.0,
+   "QuartelaD": 0.0,
+   "QuartelaTrasE": 0.0004,
+   "QuartelaTrasD": 0.0
+  },
+  "emenda_loop_graus": 0.0,
+  "giro_graus_s_PROPOSTA": 0.0,
+  "alvos_limitados": 0
+ },
+ "Caido": {
+  "duracao": 2.0,
+  "loop": true,
+  "quadros": 60,
+  "velocidade_u_s_PROPOSTA": 0.0,
+  "erro_ik_max": 0.0,
+  "erro_ik_por_pata": {},
+  "casco_z_min": {
+   "QuartelaE": 0.177,
+   "QuartelaD": 0.2285,
+   "QuartelaTrasE": 0.2426,
+   "QuartelaTrasD": 0.2232
+  },
+  "escorregao_casco_apoiado_max": {
+   "QuartelaE": 0.0,
+   "QuartelaD": 0.0,
+   "QuartelaTrasE": 0.0,
+   "QuartelaTrasD": 0.0
+  },
+  "emenda_loop_graus": 0.0,
+  "giro_graus_s_PROPOSTA": 0.0,
+  "alvos_limitados": 0
+ }
+}

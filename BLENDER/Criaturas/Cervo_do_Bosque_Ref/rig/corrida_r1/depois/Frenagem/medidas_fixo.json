@@ -1,0 +1,140 @@
+{
+ "clipe": "Frenagem",
+ "rotulo": "depois",
+ "quadros_render": 42,
+ "fps": 30,
+ "ciclo_s": 1.4,
+ "vel_PROPOSTA": 0.0,
+ "deslocamento_aplicado_em": "arm.matrix_world (externo, 1x); acao no lugar (Raiz sem avanco)",
+ "raiz_y": [
+  0.1175,
+  -0.0437,
+  -0.2037,
+  -0.3615,
+  -0.5162,
+  -0.6667,
+  -0.8124,
+  -0.9524,
+  -1.0861,
+  -1.213,
+  -1.3321,
+  -1.443,
+  -1.5455,
+  -1.6397,
+  -1.7256,
+  -1.8035,
+  -1.8735,
+  -1.9353,
+  -1.9889,
+  -2.0346,
+  -2.0728,
+  -2.1039,
+  -2.1284,
+  -2.1469,
+  -2.1602,
+  -2.169,
+  -2.1741,
+  -2.1766,
+  -2.1776,
+  -2.178,
+  -2.1784,
+  -2.1788,
+  -2.1793,
+  -2.1799,
+  -2.1804,
+  -2.1809,
+  -2.1815,
+  -2.1819,
+  -2.1824,
+  -2.1827,
+  -2.183,
+  -2.1832,
+  -2.1833
+ ],
+ "apoios": {
+  "QuartelaTrasD": [
+   {
+    "q_ini": 0,
+    "q_fim": 3,
+    "y_mundo": 0.5262,
+    "deriva_max": 0.0004
+   },
+   {
+    "q_ini": 13,
+    "q_fim": 17,
+    "y_mundo": -1.2583,
+    "deriva_max": 0.0008
+   },
+   {
+    "q_ini": 27,
+    "q_fim": 31,
+    "y_mundo": -1.6042,
+    "deriva_max": 0.0001
+   }
+  ],
+  "QuartelaTrasE": [
+   {
+    "q_ini": 0,
+    "q_fim": 4,
+    "y_mundo": 0.0876,
+    "deriva_max": 0.003
+   },
+   {
+    "q_ini": 14,
+    "q_fim": 18,
+    "y_mundo": -1.5689,
+    "deriva_max": 0.0008
+   },
+   {
+    "q_ini": 28,
+    "q_fim": 32,
+    "y_mundo": -1.8165,
+    "deriva_max": 0.0
+   }
+  ],
+  "QuartelaE": [
+   {
+    "q_ini": 7,
+    "q_fim": 11,
+    "y_mundo": -1.6554,
+    "deriva_max": 0.0009
+   },
+   {
+    "q_ini": 21,
+    "q_fim": 25,
+    "y_mundo": -2.5994,
+    "deriva_max": 0.0003
+   },
+   {
+    "q_ini": 35,
+    "q_fim": 39,
+    "y_mundo": -2.6076,
+    "deriva_max": 0.0
+   }
+  ],
+  "QuartelaD": [
+   {
+    "q_ini": 8,
+    "q_fim": 12,
+    "y_mundo": -1.8808,
+    "deriva_max": 0.0009
+   },
+   {
+    "q_ini": 22,
+    "q_fim": 26,
+    "y_mundo": -2.6708,
+    "deriva_max": 0.0002
+   },
+   {
+    "q_ini": 36,
+    "q_fim": 40,
+    "y_mundo": -2.6647,
+    "deriva_max": 0.0
+   }
+  ]
+ },
+ "deslocamento_total": 2.3008,
+ "velocidade_efetiva": 1.6434,
+ "deslocamento_por_ciclo": 2.3008,
+ "deriva_max_casco_apoiado": 0.003
+}

@@ -1,0 +1,122 @@
+{
+ "Trote": {
+  "duracao": 3.0,
+  "loop": true,
+  "quadros": 90,
+  "velocidade_u_s_PROPOSTA": 1.852,
+  "erro_ik_max": 0.0109,
+  "erro_ik_por_pata": {
+   "QuartelaE": [
+    0.0064,
+    9
+   ],
+   "QuartelaD": [
+    0.0109,
+    0
+   ],
+   "QuartelaTrasE": [
+    0.0,
+    89
+   ],
+   "QuartelaTrasD": [
+    0.0,
+    89
+   ]
+  },
+  "casco_z_min": {
+   "QuartelaE": 0.0004,
+   "QuartelaD": 0.0002,
+   "QuartelaTrasE": 0.0007,
+   "QuartelaTrasD": 0.0008
+  },
+  "escorregao_casco_apoiado_max": {
+   "QuartelaE": 0.0027,
+   "QuartelaD": 0.0051,
+   "QuartelaTrasE": 0.0012,
+   "QuartelaTrasD": 0.0001
+  },
+  "emenda_loop_graus": 0.0,
+  "giro_graus_s_PROPOSTA": 0.0,
+  "alvos_limitados": 0
+ },
+ "AndarParaTrote": {
+  "duracao": 2.9,
+  "loop": false,
+  "quadros": 88,
+  "velocidade_u_s_PROPOSTA": 0.0,
+  "erro_ik_max": 0.0109,
+  "erro_ik_por_pata": {
+   "QuartelaE": [
+    0.0061,
+    78
+   ],
+   "QuartelaD": [
+    0.0109,
+    87
+   ],
+   "QuartelaTrasE": [
+    0.0,
+    87
+   ],
+   "QuartelaTrasD": [
+    0.0,
+    87
+   ]
+  },
+  "casco_z_min": {
+   "QuartelaE": 0.0004,
+   "QuartelaD": 0.0002,
+   "QuartelaTrasE": 0.0007,
+   "QuartelaTrasD": 0.0008
+  },
+  "escorregao_casco_apoiado_max": {
+   "QuartelaE": 0.0007,
+   "QuartelaD": 0.0003,
+   "QuartelaTrasE": 0.0012,
+   "QuartelaTrasD": 0.0001
+  },
+  "emenda_loop_graus": 0.0,
+  "giro_graus_s_PROPOSTA": 0.0,
+  "alvos_limitados": 0
+ },
+ "TroteParaAndar": {
+  "duracao": 2.8333333333333335,
+  "loop": false,
+  "quadros": 86,
+  "velocidade_u_s_PROPOSTA": 0.0,
+  "erro_ik_max": 0.0337,
+  "erro_ik_por_pata": {
+   "QuartelaE": [
+    0.0337,
+    23
+   ],
+   "QuartelaD": [
+    0.0109,
+    0
+   ],
+   "QuartelaTrasE": [
+    0.0,
+    85
+   ],
+   "QuartelaTrasD": [
+    0.0,
+    85
+   ]
+  },
+  "casco_z_min": {
+   "QuartelaE": 0.0004,
+   "QuartelaD": 0.0002,
+   "QuartelaTrasE": 0.0007,
+   "QuartelaTrasD": 0.0008
+  },
+  "escorregao_casco_apoiado_max": {
+   "QuartelaE": 0.0017,
+   "QuartelaD": 0.0051,
+   "QuartelaTrasE": 0.0011,
+   "QuartelaTrasD": 0.0001
+  },
+  "emenda_loop_graus": 0.0,
+  "giro_graus_s_PROPOSTA": 0.0,
+  "alvos_limitados": 0
+ }
+}

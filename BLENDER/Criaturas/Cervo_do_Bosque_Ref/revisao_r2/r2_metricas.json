@@ -1,0 +1,157 @@
+{
+ "motor_estudo": "BLENDER_EEVEE",
+ "objetos": {
+  "Cervo_Corpo": {
+   "tris": 10506,
+   "dim_xyz": [
+    0.395,
+    1.646,
+    1.538
+   ],
+   "materiais": [
+    "M_Pelo_Corpo"
+   ]
+  },
+  "Cervo_Galhada": {
+   "tris": 5304,
+   "dim_xyz": [
+    0.865,
+    0.631,
+    0.567
+   ],
+   "materiais": [
+    "M_Galhada"
+   ]
+  },
+  "Cervo_Cascos": {
+   "tris": 288,
+   "dim_xyz": [
+    0.284,
+    0.935,
+    0.067
+   ],
+   "materiais": [
+    "M_Casco"
+   ]
+  },
+  "Cervo_Nariz": {
+   "tris": 168,
+   "dim_xyz": [
+    0.064,
+    0.04,
+    0.048
+   ],
+   "materiais": [
+    "M_Nariz_Umido"
+   ]
+  },
+  "Cervo_Orelha_E": {
+   "tris": 224,
+   "dim_xyz": [
+    0.15,
+    0.05,
+    0.121
+   ],
+   "materiais": [
+    "M_Orelha"
+   ]
+  },
+  "Cervo_Orelha_D": {
+   "tris": 224,
+   "dim_xyz": [
+    0.15,
+    0.05,
+    0.121
+   ],
+   "materiais": [
+    "M_Orelha"
+   ]
+  },
+  "Cervo_Boca": {
+   "tris": 144,
+   "dim_xyz": [
+    0.094,
+    0.105,
+    0.016
+   ],
+   "materiais": [
+    "M_Labios"
+   ]
+  },
+  "Cervo_Olho_E": {
+   "tris": 2208,
+   "dim_xyz": [
+    0.035,
+    0.036,
+    0.037
+   ],
+   "materiais": [
+    "M_Olho"
+   ]
+  },
+  "Cervo_Palpebras_E": {
+   "tris": 512,
+   "dim_xyz": [
+    0.024,
+    0.039,
+    0.03
+   ],
+   "materiais": [
+    "M_Palpebra"
+   ]
+  },
+  "Cervo_Olho_D": {
+   "tris": 2208,
+   "dim_xyz": [
+    0.035,
+    0.036,
+    0.037
+   ],
+   "materiais": [
+    "M_Olho"
+   ]
+  },
+  "Cervo_Palpebras_D": {
+   "tris": 512,
+   "dim_xyz": [
+    0.024,
+    0.039,
+    0.03
+   ],
+   "materiais": [
+    "M_Palpebra"
+   ]
+  }
+ },
+ "tris_total": 22298,
+ "cascos_apoio": {
+  "D_E": {
+   "min_z": 0.0,
+   "topo_z": 0.0666
+  },
+  "T_E": {
+   "min_z": 0.0,
+   "topo_z": 0.0666
+  },
+  "D_D": {
+   "min_z": 0.0,
+   "topo_z": 0.0666
+  },
+  "T_D": {
+   "min_z": 0.0,
+   "topo_z": 0.0666
+  }
+ },
+ "corpo_min_z": 0.0407,
+ "corpo_altura": 1.579,
+ "cernelha_z": 1.247,
+ "galhada_abertura_x": 0.865,
+ "galhada_topo_z": 2.119,
+ "nariz_y": -0.978,
+ "textura": {
+  "arquivo": "r2_Cervo_Pelo_Cor_1k.png",
+  "resolucao": 1024,
+  "folhas_pintadas": 34
+ },
+ "materiais_total": 8
+}

@@ -1,0 +1,45 @@
+{
+ "ossos": [
+  "Raiz",
+  "Pelve",
+  "Coluna1",
+  "Coluna2",
+  "Coluna3",
+  "Pescoco",
+  "Pescoco2",
+  "Cabeca",
+  "OrelhaE",
+  "OrelhaD",
+  "EscapulaE",
+  "BracoE",
+  "AntebracoE",
+  "CanelaE",
+  "QuartelaE",
+  "EscapulaD",
+  "BracoD",
+  "AntebracoD",
+  "CanelaD",
+  "QuartelaD",
+  "Cauda1",
+  "Cauda2",
+  "CoxaE",
+  "PernaE",
+  "CanelaTrasE",
+  "QuartelaTrasE",
+  "CoxaD",
+  "PernaD",
+  "CanelaTrasD",
+  "QuartelaTrasD"
+ ],
+ "sem_vertice": [],
+ "nariz": [
+  0.0,
+  -0.7906525731086731,
+  1.353476881980896
+ ],
+ "nuca": [
+  0.0,
+  -0.5706525444984436,
+  1.4396288394927979
+ ]
+}

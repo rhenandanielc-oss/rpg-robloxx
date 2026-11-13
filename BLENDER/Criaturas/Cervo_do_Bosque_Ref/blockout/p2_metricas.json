@@ -1,0 +1,92 @@
+{
+ "passagem": 2,
+ "objetos": {
+  "Cervo_Orelha_E": {
+   "tris": 168,
+   "dim_xyz": [
+    0.171,
+    0.06,
+    0.134
+   ],
+   "materiais": [
+    "M_Orelha"
+   ]
+  },
+  "Cervo_Orelha_D": {
+   "tris": 168,
+   "dim_xyz": [
+    0.171,
+    0.06,
+    0.134
+   ],
+   "materiais": [
+    "M_Orelha"
+   ]
+  },
+  "Cervo_Olho_E": {
+   "tris": 168,
+   "dim_xyz": [
+    0.036,
+    0.032,
+    0.032
+   ],
+   "materiais": [
+    "M_Olho"
+   ]
+  },
+  "Cervo_Olho_D": {
+   "tris": 168,
+   "dim_xyz": [
+    0.036,
+    0.032,
+    0.032
+   ],
+   "materiais": [
+    "M_Olho"
+   ]
+  },
+  "Cervo_Nariz": {
+   "tris": 168,
+   "dim_xyz": [
+    0.064,
+    0.04,
+    0.048
+   ],
+   "materiais": [
+    "M_Casco_Nariz"
+   ]
+  },
+  "Cervo_Corpo": {
+   "tris": 10578,
+   "dim_xyz": [
+    0.481,
+    1.723,
+    1.578
+   ],
+   "materiais": [
+    "M_Pelagem",
+    "M_Creme",
+    "M_Casco_Nariz",
+    "M_Perna"
+   ]
+  },
+  "Cervo_Galhada": {
+   "tris": 3800,
+   "dim_xyz": [
+    0.858,
+    0.635,
+    0.524
+   ],
+   "materiais": [
+    "M_Galhada",
+    "M_Galhada_Base"
+   ]
+  }
+ },
+ "tris_total": 15218,
+ "corpo_altura_total": 1.578,
+ "nariz_y": -0.981,
+ "galhada_topo_z": 2.078,
+ "materiais_total": 9,
+ "objetos_mesh": 10
+}

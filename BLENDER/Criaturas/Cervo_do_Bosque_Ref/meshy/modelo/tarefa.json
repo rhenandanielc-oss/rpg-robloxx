@@ -1,0 +1,10 @@
+{
+ "tarefa": "01a1d13d-8e57-7246-b3ea-13bed44be276",
+ "imagens": [
+  "imagem/cervo_neutro_0.png",
+  "imagem/cervo_neutro_1.png",
+  "imagem/cervo_neutro_2.png"
+ ],
+ "creditos": 30,
+ "status": "SUCCEEDED"
+}

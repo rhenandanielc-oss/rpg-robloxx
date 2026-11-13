@@ -1,0 +1,47 @@
+{
+ "passagem": 1,
+ "objetos": {
+  "Cervo_Corpo_Pecas": {
+   "tris": 10362,
+   "dim_xyz": [
+    0.481,
+    1.728,
+    1.568
+   ],
+   "materiais": []
+  },
+  "Cervo_Galhada_Skin": {
+   "tris": 3288,
+   "dim_xyz": [
+    0.858,
+    0.635,
+    0.504
+   ],
+   "materiais": []
+  },
+  "Cervo_Orelha_E": {
+   "tris": 168,
+   "dim_xyz": [
+    0.152,
+    0.059,
+    0.1
+   ],
+   "materiais": []
+  },
+  "Cervo_Orelha_D": {
+   "tris": 168,
+   "dim_xyz": [
+    0.152,
+    0.059,
+    0.1
+   ],
+   "materiais": []
+  }
+ },
+ "tris_total": 13986,
+ "corpo_altura_total": 1.568,
+ "nariz_y": -0.99,
+ "galhada_topo_z": 2.057,
+ "materiais_total": 1,
+ "objetos_mesh": 5
+}

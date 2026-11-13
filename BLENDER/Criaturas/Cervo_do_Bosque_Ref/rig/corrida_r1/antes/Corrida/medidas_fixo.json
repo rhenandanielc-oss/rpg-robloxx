@@ -1,0 +1,134 @@
+{
+ "clipe": "Corrida",
+ "rotulo": "antes",
+ "quadros_render": 36,
+ "fps": 30,
+ "ciclo_s": 0.4,
+ "vel_PROPOSTA": 4.84375,
+ "deslocamento_aplicado_em": "arm.matrix_world (externo, 1x); acao no lugar (Raiz sem avanco)",
+ "raiz_y": [
+  0.1175,
+  -0.0439,
+  -0.2054,
+  -0.3669,
+  -0.5283,
+  -0.6898,
+  -0.8512,
+  -1.0127,
+  -1.1742,
+  -1.3356,
+  -1.4971,
+  -1.6585,
+  -1.82,
+  -1.9814,
+  -2.1429,
+  -2.3044,
+  -2.4658,
+  -2.6273,
+  -2.7887,
+  -2.9502,
+  -3.1117,
+  -3.2731,
+  -3.4346,
+  -3.596,
+  -3.7575,
+  -3.9189,
+  -4.0804,
+  -4.2419,
+  -4.4033,
+  -4.5648,
+  -4.7262,
+  -4.8877,
+  -5.0492,
+  -5.2106,
+  -5.3721,
+  -5.5335,
+  -5.695
+ ],
+ "apoios": {
+  "QuartelaTrasD": [
+   {
+    "q_ini": 0,
+    "q_fim": 2,
+    "y_mundo": 0.5839,
+    "deriva_max": 0.0
+   },
+   {
+    "q_ini": 11,
+    "q_fim": 14,
+    "y_mundo": -1.3536,
+    "deriva_max": 0.0
+   },
+   {
+    "q_ini": 23,
+    "q_fim": 26,
+    "y_mundo": -3.2911,
+    "deriva_max": 0.0
+   }
+  ],
+  "QuartelaTrasE": [
+   {
+    "q_ini": 0,
+    "q_fim": 3,
+    "y_mundo": 0.1746,
+    "deriva_max": 0.0
+   },
+   {
+    "q_ini": 12,
+    "q_fim": 15,
+    "y_mundo": -1.7629,
+    "deriva_max": 0.0
+   },
+   {
+    "q_ini": 24,
+    "q_fim": 27,
+    "y_mundo": -3.7004,
+    "deriva_max": 0.0
+   }
+  ],
+  "QuartelaE": [
+   {
+    "q_ini": 6,
+    "q_fim": 9,
+    "y_mundo": -1.5187,
+    "deriva_max": 0.0
+   },
+   {
+    "q_ini": 18,
+    "q_fim": 21,
+    "y_mundo": -3.4562,
+    "deriva_max": 0.0
+   },
+   {
+    "q_ini": 30,
+    "q_fim": 33,
+    "y_mundo": -5.3937,
+    "deriva_max": 0.0
+   }
+  ],
+  "QuartelaD": [
+   {
+    "q_ini": 7,
+    "q_fim": 10,
+    "y_mundo": -1.7695,
+    "deriva_max": 0.0
+   },
+   {
+    "q_ini": 19,
+    "q_fim": 22,
+    "y_mundo": -3.707,
+    "deriva_max": 0.0
+   },
+   {
+    "q_ini": 31,
+    "q_fim": 34,
+    "y_mundo": -5.6445,
+    "deriva_max": 0.0
+   }
+  ]
+ },
+ "deslocamento_total": 5.8125,
+ "velocidade_efetiva": 4.8438,
+ "deslocamento_por_ciclo": 1.9375,
+ "deriva_max_casco_apoiado": 0.0
+}

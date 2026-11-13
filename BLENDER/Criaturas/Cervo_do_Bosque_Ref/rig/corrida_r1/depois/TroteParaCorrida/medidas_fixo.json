@@ -1,0 +1,182 @@
+{
+ "clipe": "TroteParaCorrida",
+ "rotulo": "depois",
+ "quadros_render": 60,
+ "fps": 30,
+ "ciclo_s": 2.0,
+ "vel_PROPOSTA": 0.0,
+ "deslocamento_aplicado_em": "arm.matrix_world (externo, 1x); acao no lugar (Raiz sem avanco)",
+ "raiz_y": [
+  0.1175,
+  0.0557,
+  -0.0067,
+  -0.07,
+  -0.1348,
+  -0.2014,
+  -0.2702,
+  -0.3416,
+  -0.4159,
+  -0.4934,
+  -0.5744,
+  -0.659,
+  -0.7475,
+  -0.8401,
+  -0.9368,
+  -1.0378,
+  -1.1432,
+  -1.253,
+  -1.3672,
+  -1.4858,
+  -1.6087,
+  -1.736,
+  -1.8673,
+  -2.0027,
+  -2.142,
+  -2.2849,
+  -2.4312,
+  -2.5806,
+  -2.7329,
+  -2.8876,
+  -3.0446,
+  -3.2033,
+  -3.3634,
+  -3.5243,
+  -3.6857,
+  -3.8471,
+  -4.0086,
+  -4.1701,
+  -4.3315,
+  -4.493,
+  -4.6544,
+  -4.8159,
+  -4.9773,
+  -5.1388,
+  -5.3003,
+  -5.4617,
+  -5.6232,
+  -5.7846,
+  -5.9461,
+  -6.1075,
+  -6.269,
+  -6.4305,
+  -6.5919,
+  -6.7534,
+  -6.9148,
+  -7.0763,
+  -7.2377,
+  -7.3992,
+  -7.5607,
+  -7.7221,
+  -7.8836
+ ],
+ "apoios": {
+  "QuartelaD": [
+   {
+    "q_ini": 0,
+    "q_fim": 7,
+    "y_mundo": -0.639,
+    "deriva_max": 0.0054
+   },
+   {
+    "q_ini": 15,
+    "q_fim": 18,
+    "y_mundo": -1.7361,
+    "deriva_max": 0.0003
+   },
+   {
+    "q_ini": 27,
+    "q_fim": 30,
+    "y_mundo": -3.3402,
+    "deriva_max": 0.0021
+   },
+   {
+    "q_ini": 40,
+    "q_fim": 44,
+    "y_mundo": -5.5177,
+    "deriva_max": 0.0081
+   },
+   {
+    "q_ini": 54,
+    "q_fim": 58,
+    "y_mundo": -7.7779,
+    "deriva_max": 0.0081
+   }
+  ],
+  "QuartelaTrasE": [
+   {
+    "q_ini": 0,
+    "q_fim": 8,
+    "y_mundo": 0.2346,
+    "deriva_max": 0.0006
+   },
+   {
+    "q_ini": 18,
+    "q_fim": 22,
+    "y_mundo": -1.2598,
+    "deriva_max": 0.0004
+   },
+   {
+    "q_ini": 33,
+    "q_fim": 36,
+    "y_mundo": -3.3962,
+    "deriva_max": 0.0
+   },
+   {
+    "q_ini": 47,
+    "q_fim": 50,
+    "y_mundo": -5.6563,
+    "deriva_max": 0.0
+   }
+  ],
+  "QuartelaE": [
+   {
+    "q_ini": 9,
+    "q_fim": 15,
+    "y_mundo": -1.177,
+    "deriva_max": 0.0044
+   },
+   {
+    "q_ini": 25,
+    "q_fim": 29,
+    "y_mundo": -3.0077,
+    "deriva_max": 0.0102
+   },
+   {
+    "q_ini": 39,
+    "q_fim": 43,
+    "y_mundo": -5.2346,
+    "deriva_max": 0.0163
+   },
+   {
+    "q_ini": 53,
+    "q_fim": 57,
+    "y_mundo": -7.4948,
+    "deriva_max": 0.0164
+   }
+  ],
+  "QuartelaTrasD": [
+   {
+    "q_ini": 11,
+    "q_fim": 19,
+    "y_mundo": -0.2788,
+    "deriva_max": 0.0453
+   },
+   {
+    "q_ini": 31,
+    "q_fim": 35,
+    "y_mundo": -2.9424,
+    "deriva_max": 0.0001
+   },
+   {
+    "q_ini": 45,
+    "q_fim": 49,
+    "y_mundo": -5.2147,
+    "deriva_max": 0.0
+   }
+  ]
+ },
+ "deslocamento_total": 8.0011,
+ "velocidade_efetiva": 4.0006,
+ "deslocamento_por_ciclo": 8.0011,
+ "deriva_max_casco_apoiado": 0.0453
+}

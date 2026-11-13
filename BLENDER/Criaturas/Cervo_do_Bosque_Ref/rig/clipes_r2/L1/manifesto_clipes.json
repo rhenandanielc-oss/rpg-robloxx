@@ -1,0 +1,162 @@
+{
+ "Repouso": {
+  "duracao": 10.0,
+  "loop": true,
+  "quadros": 300,
+  "velocidade_u_s_PROPOSTA": 0.0,
+  "erro_ik_max": 0.0,
+  "erro_ik_por_pata": {
+   "QuartelaE": [
+    0.0,
+    299
+   ],
+   "QuartelaD": [
+    0.0,
+    299
+   ],
+   "QuartelaTrasE": [
+    0.0,
+    299
+   ],
+   "QuartelaTrasD": [
+    0.0,
+    299
+   ]
+  },
+  "casco_z_min": {
+   "QuartelaE": 0.0004,
+   "QuartelaD": 0.0002,
+   "QuartelaTrasE": 0.0007,
+   "QuartelaTrasD": 0.0008
+  },
+  "escorregao_casco_apoiado_max": {
+   "QuartelaE": 0.0,
+   "QuartelaD": 0.0,
+   "QuartelaTrasE": 0.0,
+   "QuartelaTrasD": 0.0
+  },
+  "emenda_loop_graus": 0.0,
+  "giro_graus_s_PROPOSTA": 0.0,
+  "alvos_limitados": 0
+ },
+ "Andar": {
+  "duracao": 11.0,
+  "loop": true,
+  "quadros": 330,
+  "velocidade_u_s_PROPOSTA": 0.71,
+  "erro_ik_max": 0.0116,
+  "erro_ik_por_pata": {
+   "QuartelaE": [
+    0.0116,
+    309
+   ],
+   "QuartelaD": [
+    0.0043,
+    29
+   ],
+   "QuartelaTrasE": [
+    0.0,
+    329
+   ],
+   "QuartelaTrasD": [
+    0.0,
+    329
+   ]
+  },
+  "casco_z_min": {
+   "QuartelaE": 0.0004,
+   "QuartelaD": 0.0002,
+   "QuartelaTrasE": 0.0007,
+   "QuartelaTrasD": 0.0008
+  },
+  "escorregao_casco_apoiado_max": {
+   "QuartelaE": 0.002,
+   "QuartelaD": 0.0013,
+   "QuartelaTrasE": 0.0004,
+   "QuartelaTrasD": 0.0
+  },
+  "emenda_loop_graus": 0.0,
+  "giro_graus_s_PROPOSTA": 0.0,
+  "alvos_limitados": 0
+ },
+ "VirarE": {
+  "duracao": 11.0,
+  "loop": true,
+  "quadros": 330,
+  "velocidade_u_s_PROPOSTA": 0.71,
+  "erro_ik_max": 0.0138,
+  "erro_ik_por_pata": {
+   "QuartelaE": [
+    0.0011,
+    322
+   ],
+   "QuartelaD": [
+    0.0138,
+    29
+   ],
+   "QuartelaTrasE": [
+    0.0,
+    329
+   ],
+   "QuartelaTrasD": [
+    0.0,
+    329
+   ]
+  },
+  "casco_z_min": {
+   "QuartelaE": 0.0004,
+   "QuartelaD": 0.0002,
+   "QuartelaTrasE": 0.0007,
+   "QuartelaTrasD": 0.0008
+  },
+  "escorregao_casco_apoiado_max": {
+   "QuartelaE": 0.0004,
+   "QuartelaD": 0.0025,
+   "QuartelaTrasE": 0.0004,
+   "QuartelaTrasD": 0.0002
+  },
+  "emenda_loop_graus": 0.0,
+  "giro_graus_s_PROPOSTA": 25.0,
+  "alvos_limitados": 0
+ },
+ "VirarD": {
+  "duracao": 11.0,
+  "loop": true,
+  "quadros": 330,
+  "velocidade_u_s_PROPOSTA": 0.71,
+  "erro_ik_max": 0.0228,
+  "erro_ik_por_pata": {
+   "QuartelaE": [
+    0.0228,
+    309
+   ],
+   "QuartelaD": [
+    0.0039,
+    9
+   ],
+   "QuartelaTrasE": [
+    0.0,
+    329
+   ],
+   "QuartelaTrasD": [
+    0.0,
+    329
+   ]
+  },
+  "casco_z_min": {
+   "QuartelaE": 0.0004,
+   "QuartelaD": 0.0002,
+   "QuartelaTrasE": 0.0007,
+   "QuartelaTrasD": 0.0008
+  },
+  "escorregao_casco_apoiado_max": {
+   "QuartelaE": 0.0032,
+   "QuartelaD": 0.0014,
+   "QuartelaTrasE": 0.0006,
+   "QuartelaTrasD": 0.0002
+  },
+  "emenda_loop_graus": 0.0,
+  "giro_graus_s_PROPOSTA": -25.0,
+  "alvos_limitados": 0
+ }
+}
