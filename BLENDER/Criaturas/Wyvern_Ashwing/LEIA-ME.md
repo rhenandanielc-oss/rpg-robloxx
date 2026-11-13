@@ -506,3 +506,7 @@ Arquivo: `Wyvern_E7_clipes_L6.blend` = `Wyvern_E7_clipes_L5.blend` (preservado) 
 - Árvore de Poses: `Keyframe > Pose "RootPart" > root > …` — a primeira Pose é a peça e não anima; o deslocamento do corpo deste rig está no osso `root`.
 - `takeoff`/`Pouso` no jogo com a raiz limitada a 1,7 (o jogo faz a subida/descida).
 - Capturas: `review/studio/`. Detalhes e limitações: diário `DOCS/estado/dragao-2026-10-30.md` (DX).
+
+## Lote 7: boca fechada (13/11/2026) — base atual dos clipes
+
+`Wyvern_E7_clipes_L7.blend` = L6 (preservado) com só a mandíbula refeita por `build/23_boca_fechada.py`: boca fechada (+18° X local) em todos os clipes; abre só onde a ação pede (rugido/ameaça 26°, mordida 24°, bocejo 22° com o sinal corrigido, Comer 18°, Agarrar 16°, ninho 14°, morte 12°, golpe 10°, ferrão 8°, mordiscadas 8°). Antes: boca entreaberta em quase todos os clipes e rugido/mordida abrindo ~65° (mandíbula pendurada). Evidências em `review/boca/`. Exportação para o jogo: `build/22` sobre o L7.
