@@ -1,0 +1,327 @@
+{
+ "Ameaca": {
+  "maior_extensao_cascos_u_quadro": [
+   0.735,
+   0
+  ],
+  "cabeca_z_min_cm": 13.63,
+  "alvos_limitados_pelo_alcance": 0,
+  "apoios_limitados_pelo_alcance": 0,
+  "maior_giro_entre_quadros_graus_osso_quadro": [
+   16.08,
+   "AntebracoD",
+   33
+  ],
+  "duracao_s": 1.8,
+  "loop": false,
+  "quadros": 55,
+  "velocidade_u_s_PROPOSTA": 0.0,
+  "giro_graus_s_PROPOSTA": 0.0,
+  "entrada": "Repouso q0",
+  "saida": "AmeacaFim",
+  "erro_ik_max": 0.0,
+  "erro_ik_por_pata": {
+   "QuartelaE": [
+    0.0,
+    54
+   ],
+   "QuartelaD": [
+    0.0,
+    54
+   ],
+   "QuartelaTrasE": [
+    0.0,
+    54
+   ],
+   "QuartelaTrasD": [
+    0.0,
+    54
+   ]
+  },
+  "casco_z_min": {
+   "QuartelaE": 0.0003,
+   "QuartelaD": 0.0003,
+   "QuartelaTrasE": 0.0006,
+   "QuartelaTrasD": 0.0002
+  },
+  "escorregao_casco_apoiado_max": {
+   "QuartelaE": 0.0,
+   "QuartelaD": 0.0,
+   "QuartelaTrasE": 0.0,
+   "QuartelaTrasD": 0.0
+  },
+  "deslocamento_total_u": 0.0,
+  "emenda_entrada_graus_transl": [
+   0.0,
+   0.0
+  ],
+  "emenda_saida_graus_transl": [
+   0.0,
+   0.0
+  ]
+ },
+ "Investida": {
+  "maior_extensao_cascos_u_quadro": [
+   1.057,
+   30
+  ],
+  "cabeca_z_min_cm": 5.87,
+  "alvos_limitados_pelo_alcance": 4,
+  "apoios_limitados_pelo_alcance": 0,
+  "maior_giro_entre_quadros_graus_osso_quadro": [
+   44.91,
+   "QuartelaD",
+   26
+  ],
+  "duracao_s": 1.2,
+  "loop": false,
+  "quadros": 37,
+  "velocidade_u_s_PROPOSTA": 0.0,
+  "giro_graus_s_PROPOSTA": 0.0,
+  "entrada": "AmeacaFim",
+  "saida": "InvestidaFim",
+  "erro_ik_max": 0.0,
+  "erro_ik_por_pata": {
+   "QuartelaE": [
+    0.0,
+    36
+   ],
+   "QuartelaD": [
+    0.0,
+    36
+   ],
+   "QuartelaTrasE": [
+    0.0,
+    36
+   ],
+   "QuartelaTrasD": [
+    0.0,
+    36
+   ]
+  },
+  "casco_z_min": {
+   "QuartelaE": 0.0003,
+   "QuartelaD": 0.0003,
+   "QuartelaTrasE": 0.0006,
+   "QuartelaTrasD": 0.0002
+  },
+  "escorregao_casco_apoiado_max": {
+   "QuartelaE": 0.0002,
+   "QuartelaD": 0.0002,
+   "QuartelaTrasE": 0.0002,
+   "QuartelaTrasD": 0.0002
+  },
+  "deslocamento_total_u": 2.1467,
+  "emenda_entrada_graus_transl": [
+   0.105,
+   0.0
+  ],
+  "emenda_saida_graus_transl": [
+   0.0,
+   0.0
+  ]
+ },
+ "RecuperacaoInvestida": {
+  "maior_extensao_cascos_u_quadro": [
+   1.057,
+   4
+  ],
+  "cabeca_z_min_cm": 5.87,
+  "alvos_limitados_pelo_alcance": 1,
+  "apoios_limitados_pelo_alcance": 0,
+  "maior_giro_entre_quadros_graus_osso_quadro": [
+   44.76,
+   "QuartelaD",
+   0
+  ],
+  "duracao_s": 2.4333,
+  "loop": false,
+  "quadros": 74,
+  "velocidade_u_s_PROPOSTA": 0.0,
+  "giro_graus_s_PROPOSTA": 0.0,
+  "entrada": "InvestidaFim",
+  "saida": "AlertaFim",
+  "erro_ik_max": 0.0,
+  "erro_ik_por_pata": {
+   "QuartelaE": [
+    0.0,
+    73
+   ],
+   "QuartelaD": [
+    0.0,
+    73
+   ],
+   "QuartelaTrasE": [
+    0.0,
+    73
+   ],
+   "QuartelaTrasD": [
+    0.0,
+    73
+   ]
+  },
+  "casco_z_min": {
+   "QuartelaE": 0.0003,
+   "QuartelaD": 0.0003,
+   "QuartelaTrasE": 0.0006,
+   "QuartelaTrasD": 0.0002
+  },
+  "escorregao_casco_apoiado_max": {
+   "QuartelaE": 0.0002,
+   "QuartelaD": 0.0001,
+   "QuartelaTrasE": 0.0023,
+   "QuartelaTrasD": 0.0024
+  },
+  "deslocamento_total_u": 1.9833,
+  "emenda_entrada_graus_transl": [
+   0.0,
+   0.0
+  ],
+  "emenda_saida_graus_transl": [
+   0.0,
+   0.0
+  ]
+ },
+ "ReacaoImpacto": {
+  "maior_extensao_cascos_u_quadro": [
+   0.735,
+   11
+  ],
+  "cabeca_z_min_cm": 18.71,
+  "alvos_limitados_pelo_alcance": 0,
+  "apoios_limitados_pelo_alcance": 0,
+  "maior_giro_entre_quadros_graus_osso_quadro": [
+   14.29,
+   "OrelhaE",
+   2
+  ],
+  "duracao_s": 1.2,
+  "loop": false,
+  "quadros": 37,
+  "velocidade_u_s_PROPOSTA": 0.0,
+  "giro_graus_s_PROPOSTA": 0.0,
+  "entrada": "Repouso q0",
+  "saida": "Repouso q0",
+  "erro_ik_max": 0.0,
+  "erro_ik_por_pata": {
+   "QuartelaE": [
+    0.0,
+    36
+   ],
+   "QuartelaD": [
+    0.0,
+    36
+   ],
+   "QuartelaTrasE": [
+    0.0,
+    36
+   ],
+   "QuartelaTrasD": [
+    0.0,
+    36
+   ]
+  },
+  "casco_z_min": {
+   "QuartelaE": 0.0003,
+   "QuartelaD": 0.0003,
+   "QuartelaTrasE": 0.0006,
+   "QuartelaTrasD": 0.0002
+  },
+  "escorregao_casco_apoiado_max": {
+   "QuartelaE": 0.0,
+   "QuartelaD": 0.0,
+   "QuartelaTrasE": 0.0,
+   "QuartelaTrasD": 0.0
+  },
+  "deslocamento_total_u": 0.0,
+  "emenda_entrada_graus_transl": [
+   0.0,
+   0.0
+  ],
+  "emenda_saida_graus_transl": [
+   0.0,
+   0.0
+  ]
+ },
+ "Derrota": {
+  "maior_extensao_cascos_u_quadro": [
+   0.735,
+   0
+  ],
+  "cabeca_z_min_cm": 0.4,
+  "alvos_limitados_pelo_alcance": 0,
+  "apoios_limitados_pelo_alcance": 0,
+  "maior_giro_entre_quadros_graus_osso_quadro": [
+   5.72,
+   "Raiz",
+   39
+  ],
+  "duracao_s": 2.6,
+  "loop": false,
+  "quadros": 79,
+  "velocidade_u_s_PROPOSTA": 0.0,
+  "giro_graus_s_PROPOSTA": 0.0,
+  "entrada": "Repouso q0",
+  "saida": "DerrotaFim",
+  "erro_ik_max": 0.0,
+  "erro_ik_por_pata": {},
+  "casco_z_min": {
+   "QuartelaE": -0.0,
+   "QuartelaD": 0.0,
+   "QuartelaTrasE": -0.0,
+   "QuartelaTrasD": 0.0
+  },
+  "escorregao_casco_apoiado_max": {
+   "QuartelaE": 0.0,
+   "QuartelaD": 0.0,
+   "QuartelaTrasE": 0.0,
+   "QuartelaTrasD": 0.0
+  },
+  "deslocamento_total_u": 0.0,
+  "emenda_entrada_graus_transl": [
+   0.0,
+   0.0
+  ],
+  "emenda_saida_graus_transl": [
+   0.0,
+   0.0
+  ]
+ },
+ "Derrotado": {
+  "maior_extensao_cascos_u_quadro": [
+   0.551,
+   0
+  ],
+  "cabeca_z_min_cm": 0.4,
+  "alvos_limitados_pelo_alcance": 0,
+  "apoios_limitados_pelo_alcance": 0,
+  "maior_giro_entre_quadros_graus_osso_quadro": [
+   0.0,
+   "",
+   0
+  ],
+  "duracao_s": 1.0,
+  "loop": true,
+  "quadros": 30,
+  "velocidade_u_s_PROPOSTA": 0.0,
+  "giro_graus_s_PROPOSTA": 0.0,
+  "entrada": "DerrotaFim",
+  "saida": "laco (pose mantida)",
+  "erro_ik_max": 0.0,
+  "erro_ik_por_pata": {},
+  "casco_z_min": {
+   "QuartelaE": 0.0101,
+   "QuartelaD": 0.1478,
+   "QuartelaTrasE": 0.0024,
+   "QuartelaTrasD": 0.1429
+  },
+  "escorregao_casco_apoiado_max": {
+   "QuartelaE": 0.0,
+   "QuartelaD": 0.0,
+   "QuartelaTrasE": 0.0,
+   "QuartelaTrasD": 0.0
+  },
+  "emenda_laco_graus": 0.0,
+  "emenda_laco_transl": 0.0
+ }
+}

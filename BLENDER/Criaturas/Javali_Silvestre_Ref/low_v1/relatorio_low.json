@@ -1,0 +1,33 @@
+{
+ "regioes": {
+  "focinho": 1461,
+  "cabeca": 1934,
+  "corpo": 6605
+ },
+ "pesos": [
+  0.55,
+  0.7,
+  0.65
+ ],
+ "alvo": 10000,
+ "voxel": 0.004,
+ "textura": 1024,
+ "malhas": {
+  "Javali_Cabeca": {
+   "tris": 3357,
+   "material": "M_Javali_Cabeca"
+  },
+  "Javali_Corpo": {
+   "tris": 6643,
+   "material": "M_Javali_Corpo"
+  }
+ },
+ "tris_total": 10000,
+ "bruto_tris": 5644174,
+ "medidas": {
+  "comprimento": 1.4653186202049255,
+  "largura": 0.4401741176843643,
+  "altura": 0.8388232588768005,
+  "casco_min_z": 0.00020715697610285133
+ }
+}

@@ -1,0 +1,10 @@
+{
+ "tarefa": "01a1d643-0dea-7024-9499-f762cf5de8ef",
+ "imagens": [
+  "imagem/limpa_0.png",
+  "imagem/limpa_1.png",
+  "imagem/limpa_2.png"
+ ],
+ "creditos": 30,
+ "status": "SUCCEEDED"
+}

@@ -1,0 +1,216 @@
+{
+ "cadeia": "Corrida:1.0",
+ "rotulo": "Corrida",
+ "quadros": 30,
+ "fps": 30,
+ "segmentos": [
+  [
+   "Corrida",
+   0,
+   30
+  ]
+ ],
+ "controlador": "DEMONSTRACAO externo: arm.matrix_world integra v/giro gravados na acao; a acao e no lugar (Raiz sem avanco)",
+ "raiz_mundo": [
+  [
+   0.0,
+   0.0427
+  ],
+  [
+   0.0,
+   -0.0506
+  ],
+  [
+   0.0,
+   -0.1439
+  ],
+  [
+   0.0,
+   -0.2373
+  ],
+  [
+   0.0,
+   -0.3306
+  ],
+  [
+   0.0,
+   -0.4239
+  ],
+  [
+   0.0,
+   -0.5173
+  ],
+  [
+   0.0,
+   -0.6106
+  ],
+  [
+   0.0,
+   -0.7039
+  ],
+  [
+   0.0,
+   -0.7973
+  ],
+  [
+   0.0,
+   -0.8906
+  ],
+  [
+   0.0,
+   -0.9839
+  ],
+  [
+   0.0,
+   -1.0773
+  ],
+  [
+   0.0,
+   -1.1706
+  ],
+  [
+   0.0,
+   -1.2639
+  ],
+  [
+   0.0,
+   -1.3573
+  ],
+  [
+   0.0,
+   -1.4506
+  ],
+  [
+   0.0,
+   -1.5439
+  ],
+  [
+   0.0,
+   -1.6373
+  ],
+  [
+   0.0,
+   -1.7306
+  ],
+  [
+   0.0,
+   -1.8239
+  ],
+  [
+   0.0,
+   -1.9173
+  ],
+  [
+   0.0,
+   -2.0106
+  ],
+  [
+   0.0,
+   -2.1039
+  ],
+  [
+   0.0,
+   -2.1973
+  ],
+  [
+   0.0,
+   -2.2906
+  ],
+  [
+   0.0,
+   -2.3839
+  ],
+  [
+   0.0,
+   -2.4773
+  ],
+  [
+   0.0,
+   -2.5706
+  ],
+  [
+   0.0,
+   -2.6639
+  ]
+ ],
+ "apoios": {
+  "QuartelaTrasE": [
+   {
+    "q_ini": 0,
+    "q_fim": 2,
+    "deriva_max": 0.0
+   },
+   {
+    "q_ini": 10,
+    "q_fim": 12,
+    "deriva_max": 0.0
+   },
+   {
+    "q_ini": 20,
+    "q_fim": 22,
+    "deriva_max": 0.0
+   }
+  ],
+  "QuartelaTrasD": [
+   {
+    "q_ini": 0,
+    "q_fim": 2,
+    "deriva_max": 0.0
+   },
+   {
+    "q_ini": 10,
+    "q_fim": 12,
+    "deriva_max": 0.0
+   },
+   {
+    "q_ini": 20,
+    "q_fim": 22,
+    "deriva_max": 0.0
+   }
+  ],
+  "QuartelaE": [
+   {
+    "q_ini": 5,
+    "q_fim": 7,
+    "deriva_max": 0.0
+   },
+   {
+    "q_ini": 15,
+    "q_fim": 17,
+    "deriva_max": 0.0
+   },
+   {
+    "q_ini": 25,
+    "q_fim": 27,
+    "deriva_max": 0.0
+   }
+  ],
+  "QuartelaD": [
+   {
+    "q_ini": 6,
+    "q_fim": 8,
+    "deriva_max": 0.0
+   },
+   {
+    "q_ini": 16,
+    "q_fim": 18,
+    "deriva_max": 0.0
+   },
+   {
+    "q_ini": 26,
+    "q_fim": 28,
+    "deriva_max": 0.0
+   }
+  ]
+ },
+ "pele_z_min": 0.0002,
+ "estica_max": 2.924,
+ "salto_entre_clipes_graus": [],
+ "estica_p99_max": 1.629,
+ "arestas_>2x_max_por_quadro": 27,
+ "avanco_total_u": 2.7066,
+ "duracao_s": 1.0,
+ "velocidade_media": 2.7999,
+ "avanco_por_ciclo_u": 0.9333,
+ "deriva_max_casco_apoiado": 0.0
+}

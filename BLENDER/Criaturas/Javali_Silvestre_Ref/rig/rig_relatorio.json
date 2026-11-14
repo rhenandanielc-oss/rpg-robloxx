@@ -1,0 +1,106 @@
+{
+ "ossos": [
+  "Raiz",
+  "Pelve",
+  "Coluna1",
+  "Coluna2",
+  "Coluna3",
+  "Pescoco",
+  "Pescoco2",
+  "Cabeca",
+  "OrelhaE",
+  "OrelhaD",
+  "EscapulaE",
+  "BracoE",
+  "AntebracoE",
+  "CanelaE",
+  "QuartelaE",
+  "EscapulaD",
+  "BracoD",
+  "AntebracoD",
+  "CanelaD",
+  "QuartelaD",
+  "Cauda1",
+  "Cauda2",
+  "CoxaE",
+  "PernaE",
+  "CanelaTrasE",
+  "QuartelaTrasE",
+  "CoxaD",
+  "PernaD",
+  "CanelaTrasD",
+  "QuartelaTrasD"
+ ],
+ "deformam": 29,
+ "fora_do_proxy": [
+  [
+   "Cauda1",
+   "head",
+   0.006
+  ],
+  [
+   "QuartelaE",
+   "tail",
+   0.01
+  ],
+  [
+   "QuartelaTrasE",
+   "tail",
+   0.005
+  ],
+  [
+   "QuartelaD",
+   "tail",
+   0.01
+  ],
+  [
+   "QuartelaTrasD",
+   "tail",
+   0.005
+  ]
+ ],
+ "malhas": {
+  "Javali_Cabeca": {
+   "tris": 3357,
+   "grupos": 29,
+   "max_influencias": 4,
+   "sem_peso": 0,
+   "materiais": [
+    "M_Javali_Cabeca"
+   ]
+  },
+  "Javali_Corpo": {
+   "tris": 6643,
+   "grupos": 29,
+   "max_influencias": 4,
+   "sem_peso": 0,
+   "materiais": [
+    "M_Javali_Corpo"
+   ]
+  }
+ },
+ "sem_vertice": [],
+ "provas": {
+  "apoio": {
+   "min_z_malha": 0.0002,
+   "min_z_cabeca": 0.2648
+  },
+  "passada": {
+   "min_z_malha": -0.0023,
+   "min_z_cabeca": 0.2711
+  },
+  "giro": {
+   "min_z_malha": -0.0013,
+   "min_z_cabeca": 0.2647
+  },
+  "reacao": {
+   "min_z_malha": 0.0002,
+   "min_z_cabeca": 0.3316
+  },
+  "focinho_baixo": {
+   "min_z_malha": 0.0002,
+   "min_z_cabeca": 0.02
+  }
+ },
+ "focinho_baixo_angulo_pescoco": 40.0
+}
