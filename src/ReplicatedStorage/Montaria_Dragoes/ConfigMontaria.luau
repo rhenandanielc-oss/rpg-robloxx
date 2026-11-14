@@ -82,10 +82,10 @@ return {
 		-- PATCH_KIT_GELO: rotulo de cada slot por forma, e slots que seguem mandando a mira enquanto a habilidade roda (s)
 		rotulosForma = {Glacial = {Sopro = "Sopro Glacial", Arremetida = "Rajadas", Tempestade = "Zero Absol.", Coracao = "Nevasca"},
 			Sombrio = {Sopro = "Sopro Umbral", Arremetida = "Correntes", Tempestade = "Passo Sombrio", Coracao = "Eclipse"},
-			Wyvern = {Arremetida = "Rasante"}},   -- PATCH_ECLIPSE_DRACONICO / PATCH_PASSO_SOMBRIO / PATCH_KIT_WYVERN
+			Wyvern = {Arremetida = "Rasante", Tempestade = "Lamina de Vento"}},   -- PATCH_ECLIPSE_DRACONICO / PATCH_PASSO_SOMBRIO / PATCH_KIT_WYVERN
 		dicaForma = {Glacial = " | segure 1: Sopro Glacial | 2 Rajadas de Gelo (mire) | 3 Zero Absoluto | 4 Nevasca Ancestral",
 			Sombrio = " | segure 1: Sopro Umbral | 2 Correntes da Noite (mire no chao) | 3 Passo Sombrio | 4 Eclipse Dracônico",
-			Wyvern = " | 2 Rasante Predatorio (no ar mergulha na mira; no chao salta) | R Ferroada (segue a mira)"},   -- PATCH_KIT_WYVERN
+			Wyvern = " | 2 Rasante Predatorio (no ar mergulha na mira; no chao salta) | 3 Lamina de Vento (X teleguiado no alvo da mira) | R Ferroada (segue a mira)"},   -- PATCH_KIT_WYVERN
 		miraVivaForma = {Glacial = {Arremetida = 2.6}, Sombrio = {Arremetida = 1.6}},   -- Correntes: mira ate a batida
 		corEnergiaForma = {Glacial = Color3.fromRGB(150, 215, 255), Sombrio = Color3.fromRGB(165, 90, 255)},
 	},

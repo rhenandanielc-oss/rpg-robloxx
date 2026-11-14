@@ -47,5 +47,6 @@ return {
 	Rasante_Ar = c("Mergulho"), Rasante_Saida = c("Subida"), Rasante_Recup = c("Planeio"), Rasante_Chao = c("DecolagemPenhasco"),
 	Rasante_Pouso = c("Frenagem"),
 	Rasante_Batida = c("VooBatido"),                      -- r2 do rasante aereo: batidas no fim do arco de saida (sustentacao)                       -- PATCH_KIT_WYVERN: basico Ferroada (Combate_Wyvern/Ferroada)
+	LaminaVento = c("LaminaVento"), LaminaVento_Ar = c("LaminaVento_Ar"),   -- Lamina de Vento (lote 8; Combate_Wyvern/LaminaVento)
 	Dano_Leve = c("ReacaoGolpe"), Dano_Forte = c("ReacaoGolpe"), Dano_Leve_Ar = c("fly_loop"), Dano_Forte_Ar = c("fly_loop"),
 }

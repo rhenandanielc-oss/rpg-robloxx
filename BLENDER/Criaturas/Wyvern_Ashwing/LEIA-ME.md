@@ -510,3 +510,17 @@ Arquivo: `Wyvern_E7_clipes_L6.blend` = `Wyvern_E7_clipes_L5.blend` (preservado) 
 ## Lote 7: boca fechada (13/11/2026) — base atual dos clipes
 
 `Wyvern_E7_clipes_L7.blend` = L6 (preservado) com só a mandíbula refeita por `build/23_boca_fechada.py`: boca fechada (+18° X local) em todos os clipes; abre só onde a ação pede (rugido/ameaça 26°, mordida 24°, bocejo 22° com o sinal corrigido, Comer 18°, Agarrar 16°, ninho 14°, morte 12°, golpe 10°, ferrão 8°, mordiscadas 8°). Antes: boca entreaberta em quase todos os clipes e rugido/mordida abrindo ~65° (mandíbula pendurada). Evidências em `review/boca/`. Exportação para o jogo: `build/22` sobre o L7.
+
+## Lote 8 — Lâmina de Vento (14/11/2026, APROVADO pelo usuário; Studio testado)
+
+`Wyvern_E7_clipes_L8.blend` = L7 (preservado, boca fechada) + 2 actions = **51 actions**. Script `build/24_clipes_lamina.py` (usa `08_base.py` e as funções comuns do lote 6; modo `lab:<pasta> <json>` renderiza poses soltas). Ângulos e tempos são proposta visual.
+
+| Clipe | s | Gesto |
+|---|---|---|
+| LaminaVento | 1,6 | (chão) agacha 0,8 e cruza as asas dobradas à frente do peito (pose do AsasEscudo aprovado) com a cabeça erguida e recuada; abre as duas **de uma vez** em 0,16 s até a envergadura do voo; tronco avança 1,2 e inclina 7°, pescoço estica; segura e volta ao idle. **Emissão do X = 0,49 s.** |
+| LaminaVento_Ar | 1,3 | (voo) mesmo gesto sobre o fly_loop; no ar as asas cruzam mais baixas (à frente do peito, por baixo do pescoço) — a pose do escudo embrulhava a cabeça com o pescoço esticado do voo. **Emissão = 0,40 s.** |
+
+- Pontas das asas na emissão (studs, relativas à pelve): chão ±9,2 de lado, 7,3 à frente, 2,2 acima; voo ±8,0, 1,9 à frente, 2,3 abaixo. Focinho: chão 10,9 à frente/6,6 acima; voo 12,2 à frente/3,1 abaixo (o efeito do jogo nasce entre as pontas das asas).
+- QA (`review/l8/manifesto_L8.json`): pés plantados (erro 0); asas nunca tocam o chão (z mín. 1,56); maior giro por amostra 52° (chão) / 61° (voo), só nos dedos da asa durante a abertura de 180° em 0,16 s (o "de uma vez" da regra); IK da cabeça erro 0,11 (chão) / 0,33 (voo).
+- Iterações: cabeça mergulhava entre as asas no preparo (lab1) → recuada e erguida (lab2); no voo as asas embrulhavam a cabeça → pose própria mais baixa (lab3); abertura com ease-out cúbico dava 82–153° numa amostra → caminho único base→cruzadas→abertas→base com 0,16 s suave.
+- Evidências: `review/l8/L8_lamina_vs_referencia.jpg` (referência de emissão × chão × voo), `review/kit/Wyvern_LaminaVento_clipes.mp4` e `_lento.mp4`. Exportação/Studio: pendentes (build/22 sobre o L8).
