@@ -180,7 +180,41 @@ local function emissoresSopro(m)
 		Size = NumberSequence.new({NumberSequenceKeypoint.new(0, 3, 0.8), NumberSequenceKeypoint.new(1, 12, 3)}), Transparency = ns(0, 0.75, 0.3, 0.6, 1, 1),
 		Lifetime = NumberRange.new(0.8, 1.2), Speed = NumberRange.new(5, 11), Drag = 2.5, Rotation = NumberRange.new(0, 360), RotSpeed = NumberRange.new(-40, 40),
 		SpreadAngle = Vector2.new(80, 80), EmissionDirection = F, Rate = 0}))
+	-- PATCH_UMBRAL_BRILHO (14/11, pedido do usuario: "mais efeitos, mais brilhante", como o Sopro da Wyvern): camadas
+	-- violeta luminosas POR CIMA do breu aprovado (as 5 camadas acima nao mudam): veios de energia no eixo do jato,
+	-- fagulhas soltas, clarao na boca e centelhas no ponto de contato. Fora de s.e (a tabela PERF nao as controla).
+	s.x = {}
+	-- r2 (14/11, "reforcar veios"): maiores, mais claros, mais numerosos e com ZOffset alto (desenham na frente do breu)
+	s.x.veios = emissor(s.anc, {Texture = TEX.faisca, Color = seq({C3(240, 220, 255), VIOLETA_CLARO, VIOLETA}), LightEmission = 1, LightInfluence = 0,
+		Orientation = Enum.ParticleOrientation.VelocityParallel, Size = ns(0, 2.3, 0.6, 1.7, 1, 0.6), Squash = ns(0, -2, 1, -2),   -- r3: grossos; Squash NEGATIVO = alonga no sentido do jato (positivo achatava = riscos atravessados)
+		Transparency = ns(0, 0, 0.7, 0.2, 1, 1), SpreadAngle = Vector2.new(11, 11), EmissionDirection = F, Rate = 0, ZOffset = 8})
+	s.x.fagulhas = emissor(s.anc, {Texture = TEX.faisca, Color = seq({C3(240, 220, 255), VIOLETA_CLARO}), LightEmission = 1, LightInfluence = 0,
+		Size = ns(0, 1.3, 1, 0), Transparency = ns(0, 0, 1, 1), Rotation = NumberRange.new(0, 360), RotSpeed = NumberRange.new(-120, 120),
+		SpreadAngle = Vector2.new(30, 30), EmissionDirection = F, Rate = 0, ZOffset = 8})
+	s.x.boca = emissor(s.anc, {Texture = TEX.fumaca, Color = seq({VIOLETA_CLARO, VIOLETA}), LightEmission = 1, LightInfluence = 0,
+		Size = ns(0, 2.4, 1, 0.5), Transparency = ns(0, 0.35, 1, 1), Lifetime = NumberRange.new(0.12, 0.18), Speed = NumberRange.new(2, 5),
+		SpreadAngle = Vector2.new(30, 30), EmissionDirection = F, Rate = 0, ZOffset = 3})
+	s.x.imp = emissor(s.imp, {Texture = TEX.faisca, Color = seq({VIOLETA_CLARO, VIOLETA}), LightEmission = 1, LightInfluence = 0,
+		Size = ns(0, 0.8, 1, 0), Transparency = ns(0, 0, 1, 1), Lifetime = NumberRange.new(0.3, 0.55), Speed = NumberRange.new(14, 26), Drag = 3,
+		SpreadAngle = Vector2.new(75, 75), EmissionDirection = F, Rate = 0, ZOffset = 3})
 	return s
+end
+-- PATCH_UMBRAL_BRILHO: {vida max, arrasto, taxa no fator 1}; velocidade calculada para chegar ao alcance (como PERF)
+local PERF_X = {veios = {0.95, 0, 70}, fagulhas = {1.1, 1.5, 50}}   -- r2: 55 -> 90 e 30 -> 50; r3: veios vivem 0,45 -> 0,95 s (2x mais lentos), 70/s
+local COR_ANEL = C3(150, 70, 255)
+local function anelPressao(s, b, d, D)                               -- disco violeta translucido que viaja e abre ao longo do jato
+	local r0 = 3; local r1 = 3 + D * 0.46                          -- abertura ~ cone de 26 graus do servidor
+	local a = peca({Shape = Enum.PartType.Cylinder, Size = Vector3.new(0.4, r0, r0), Material = Enum.Material.Neon, Color = COR_ANEL,
+		Transparency = 0.55, CFrame = CFrame.lookAt(b, b + d) * CFrame.Angles(0, math.rad(90), 0)})
+	TweenService:Create(a, TweenInfo.new(0.6, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+		{CFrame = a.CFrame + d * D * 0.95, Size = Vector3.new(0.2, r1, r1), Transparency = 1}):Play()
+	Debris:AddItem(a, 0.7)
+end
+local function claraoImpacto(pos)                                     -- bola violeta que estoura no ponto de contato
+	local a = peca({Shape = Enum.PartType.Ball, Size = Vector3.new(2, 2, 2), Material = Enum.Material.Neon, Color = VIOLETA_CLARO,
+		Transparency = 0.35, CFrame = CFrame.new(pos)})
+	TweenService:Create(a, TweenInfo.new(0.32, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = Vector3.new(9, 9, 9), Transparency = 1}):Play()
+	Debris:AddItem(a, 0.4)
 end
 local function ligarSopro(m, ligado, f, alvo, alcance)
 	local s = emissoresSopro(m); s.alvo = alvo
@@ -191,6 +225,11 @@ local function ligarSopro(m, ligado, f, alvo, alcance)
 			local p = PERF[k]; local v = velPara(alc, p[1], p[2], p[3]); s.vel[k] = v
 			e.Drag = p[2]; e.Lifetime = NumberRange.new(p[3] * 0.85, p[3]); e.Speed = NumberRange.new(v * p[5], v * 1.04)
 		end
+		for k, p in pairs(PERF_X) do                                    -- PATCH_UMBRAL_BRILHO
+			local e = s.x[k]; local v = velPara(alc, k == "veios" and 1 or 0.8, p[2], p[1]); s.vel[k] = v
+			e.Drag = p[2]; e.Lifetime = NumberRange.new(p[1] * 0.8, p[1]); e.Speed = NumberRange.new(v * 0.9, v * 1.05)
+		end
+		s.proxAnel, s.proxClarao = 0, 0
 		if s.con then return end
 		s.con = RunService.RenderStepped:Connect(function()
 			if not m.Parent then limparSopro(m); return end
@@ -198,20 +237,26 @@ local function ligarSopro(m, ligado, f, alvo, alcance)
 			if s.alvo then local v = s.alvo - b; if v.Magnitude > 5 then d = limitar(d, v.Unit, BOCA_MAX) end end
 			s.anc.WorldCFrame = CFrame.lookAt(b, b + d)
 			local agora = os.clock()
-			if s.ligado then local k = math.min(1, (agora - s.t0) / ABRE); for n, e in pairs(s.e) do e.Rate = PERF[n][4] * s.f * (0.3 + 0.7 * k) end end
+			if s.ligado then local k = math.min(1, (agora - s.t0) / ABRE); for n, e in pairs(s.e) do e.Rate = PERF[n][4] * s.f * (0.3 + 0.7 * k) end
+				for n, p in pairs(PERF_X) do s.x[n].Rate = p[3] * s.f * (0.3 + 0.7 * k) end; s.x.boca.Rate = 30 * s.f end   -- PATCH_UMBRAL_BRILHO
 			if agora < s.prox then return end
 			s.prox = agora + 0.1                                       -- contato: 10x/s basta
 			local h = raioSolido(b, d * s.alc, m)
 			local D = h and (h.Position - b).Magnitude or s.alc
 			for n, e in pairs(s.e) do local p = PERF[n]; local t = vidaAte(D * 1.12, s.vel[n] * 1.04, p[2], p[3]); e.Lifetime = NumberRange.new(t * 0.85, t) end
+			for n, p in pairs(PERF_X) do local t = vidaAte(D, s.vel[n] * 1.05, p[2], p[1]); s.x[n].Lifetime = NumberRange.new(t * 0.8, t) end
+			if s.ligado and s.f >= 0.5 and agora >= s.proxAnel then s.proxAnel = agora + 0.3; anelPressao(s, b, d, D) end   -- PATCH_UMBRAL_BRILHO
 			if h and s.ligado then
 				local r = d - 2 * d:Dot(h.Normal) * h.Normal                   -- espalha rente a superficie, no sentido do jato
 				local p = h.Position - d * 2 + h.Normal * 0.6                 -- um pouco antes do contato: emenda com o jato
 				s.imp.WorldCFrame = CFrame.lookAt(p, p + (h.Normal + r * 0.6).Unit); s.eImp.Rate = 10 * s.f
-			else s.eImp.Rate = 0 end
+				s.x.imp.Rate = 22 * s.f
+				if agora >= s.proxClarao then s.proxClarao = agora + 0.35; claraoImpacto(h.Position + h.Normal * 0.8) end
+			else s.eImp.Rate = 0; s.x.imp.Rate = 0 end
 		end)
 	else
 		s.ligado = false; for _, e in pairs(s.e) do e.Rate = 0 end; s.eImp.Rate = 0
+		for _, e in pairs(s.x) do e.Rate = 0 end                        -- PATCH_UMBRAL_BRILHO
 		task.delay(1.8, function() if s.con and not s.ligado then s.con:Disconnect(); s.con = nil end end)
 	end
 end
