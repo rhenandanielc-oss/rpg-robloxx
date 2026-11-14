@@ -524,3 +524,18 @@ Arquivo: `Wyvern_E7_clipes_L6.blend` = `Wyvern_E7_clipes_L5.blend` (preservado) 
 - QA (`review/l8/manifesto_L8.json`): pés plantados (erro 0); asas nunca tocam o chão (z mín. 1,56); maior giro por amostra 52° (chão) / 61° (voo), só nos dedos da asa durante a abertura de 180° em 0,16 s (o "de uma vez" da regra); IK da cabeça erro 0,11 (chão) / 0,33 (voo).
 - Iterações: cabeça mergulhava entre as asas no preparo (lab1) → recuada e erguida (lab2); no voo as asas embrulhavam a cabeça → pose própria mais baixa (lab3); abertura com ease-out cúbico dava 82–153° numa amostra → caminho único base→cruzadas→abertas→base com 0,16 s suave.
 - Evidências: `review/l8/L8_lamina_vs_referencia.jpg` (referência de emissão × chão × voo), `review/kit/Wyvern_LaminaVento_clipes.mp4` e `_lento.mp4`. Exportação/Studio: pendentes (build/22 sobre o L8).
+
+## Lote 9 — Sopro Predatório (14/11/2026, aguarda revisão)
+
+`Wyvern_E7_clipes_L9.blend` = L8 (preservado) + 3 actions = **54 actions**. Script `build/25_clipes_sopro.py` (usa `08_base.py` e as funções comuns do lote 6; modo `lab:` para poses soltas). Ângulos e tempos são proposta visual.
+
+| Clipe | s | Gesto |
+|---|---|---|
+| Sopro_Inicio | 1,05 | inspira (peito ergue 7°, pescoço recua e a cabeça sobe) e estende o pescoço para a frente e um pouco para baixo, abrindo a boca 20° (L7: fechada +18°; roar 26°, bite 24°); o jato do Núcleo começa em 1,05 s |
+| Sopro_Loop | 1,2 (laço) | pescoço estendido, boca aberta, tremor curto de esforço na cabeça e na mandíbula, peito esvaziando |
+| Sopro_Fim | 0,8 | fecha a boca e o pescoço volta ao repouso |
+
+- As versões `_Sup` (só pescoço/cabeça/mandíbula, para soprar andando/voando) são feitas no Studio com peso 0 nos outros ossos (padrão do Sombrio).
+- QA (`review/l9/manifesto_L9.json`): emendas Início→Laço, Laço→Laço e Laço→Fim = 0°; maior giro por amostra 8,4° (Início, extensão do pescoço), 2,4° (Laço), 3,3° (Fim); pés plantados.
+- Iterações: IK do focinho por quadro (partida quente e depois fria) trocava de solução perto do limite de alcance → cabeça saltava 12–14° e emendas de 12°; agora o IK resolve só 2 poses (inspiração e sopro) e cada quadro interpola; tremor por rotação direta da cabeça.
+- Evidências: `review/l9/L9_sopro_vs_referencia.jpg`, `review/kit/Wyvern_Sopro_clipes.mp4` e `_lento.mp4`. Exportação/Studio: pendentes.

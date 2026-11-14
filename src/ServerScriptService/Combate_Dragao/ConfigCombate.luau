@@ -14,13 +14,13 @@ return {
 	-- elemento UNICO por forma (oficial 30/10). Glacial = Gelo e Sombrio = Sombra: kits ainda nao definidos (nao ativar)
 	elementosForma = {Montanhas = {"Fogo"}, Glacial = {"Gelo"}, Sombrio = {"Sombra"}, Wyvern = {"Ar"}},   -- PATCH_KIT_WYVERN (13/11): Wyvern = Ar   -- PATCH_MARCA_SOMBRIA (03/11): Sombrio = Sombra
 	habilidadesForma = {Montanhas = {"Sopro", "Arremetida", "Tempestade", "Coracao"}, Glacial = {"Sopro", "Arremetida", "Tempestade", "Coracao"},
-		Sombrio = {"Sopro", "Arremetida", "Tempestade", "Coracao"}, Wyvern = {"Arremetida", "Tempestade"}},   -- PATCH_KIT_WYVERN: vaga 2 = Rasante, vaga 3 = Lamina de Vento (14/11); PATCH_SOPRO_UMBRAL / CORRENTES / ECLIPSE / PASSO_SOMBRIO (04/11): kit do Sombrio
+		Sombrio = {"Sopro", "Arremetida", "Tempestade", "Coracao"}, Wyvern = {"Sopro", "Arremetida", "Tempestade"}},   -- PATCH_KIT_WYVERN: vaga 1 = Sopro Predatorio, 2 = Rasante, 3 = Lamina de Vento (14/11); PATCH_SOPRO_UMBRAL / CORRENTES / ECLIPSE / PASSO_SOMBRIO (04/11): kit do Sombrio
 	passivasForma = {Montanhas = {"SangueDeMagma", "Burning"}, Glacial = {"SangueGlacial", "Frostbite"}, Sombrio = {"MarcaSombria", "RastroBreu"},
 		Wyvern = {"ToxinaFerrao", "ArranqueAsa"}},   -- PATCH_KIT_WYVERN (modulos proprios em Combate_Wyvern)
 	-- PATCH_KIT_GELO (oficial 02/11): o slot (tecla/HUD/IA) continua com o mesmo id; a forma decide a habilidade real
 	kitForma = {Glacial = {Sopro = "SoproGlacial", Arremetida = "Rajadas", Tempestade = "ZeroAbsoluto", Coracao = "Nevasca"},
 		Sombrio = {Sopro = "SoproUmbral", Arremetida = "Correntes", Tempestade = "PassoSombrio", Coracao = "Eclipse"},
-		Wyvern = {Garra = "Ferroada", Arremetida = "Rasante", Tempestade = "LaminaVento"}},   -- PATCH_KIT_WYVERN: tecla da Garra (R / DPad esquerdo) = Ferroada na Wyvern
+		Wyvern = {Garra = "Ferroada", Sopro = "SoproPredatorio", Arremetida = "Rasante", Tempestade = "LaminaVento"}},   -- PATCH_KIT_WYVERN: tecla da Garra (R / DPad esquerdo) = Ferroada na Wyvern
 	maxElementos = 1,                                            -- sem elementos secundarios (o Nucleo nao le desbloqueios)
 	energiaMax = 100, energiaRegen = 6,                         -- por segundo
 	basicos = {
@@ -37,6 +37,12 @@ return {
 		-- PATCH_KIT_WYVERN (13/11): Ferroada = basico da Wyvern (slot da Garra via kitForma; fora das vagas de ativas). Fisica,
 		-- sem energia. raio = capsula da ponta do ferrao ate 10 studs abaixo (Combate_Wyvern/Ferroada). Numeros PROVISORIOS
 		Ferroada = {recarga = 2.2, dano = 16, raio = 6, intensidade = "moderado", energia = 0},
+		-- PATCH_KIT_WYVERN (14/11): Sopro Predatorio (vaga 1; Combate_Wyvern/SoproPredatorio -> Sopro do Nucleo com Ar):
+		-- jato continuo e CONCENTRADO de Ar a CURTA distancia (cone estreito), segurando a tecla ate emissaoMax; clipes
+		-- Wyvern_Sopro_Inicio/Loop/Fim (L9). Numeros PROVISORIOS (balanceamento)
+		SoproPredatorio = {recarga = 9, energia = 25, emissao = 1.6, tick = 0.25, elemental = true, emissaoMax = 4, energiaSeg = 8,
+			emAtaque = "Sopro", clipes = "Sopro",
+			porElemento = {Ar = {forma = "cone", alcance = 35, angulo = 10, dano = 4}}},
 		-- PATCH_KIT_WYVERN (14/11): Lamina de Vento (vaga 3; Combate_Wyvern/LaminaVento): X teleguiado (persegue o alvo do
 		-- disparo como missil), 1 acerto por alvo por disparo. velocidade studs/s, taxaCurva graus/s, duracao s (perseguicao),
 		-- alcance studs; meiaLargura/espessura/profundidade = hitbox em X; cruzaFrente = onde os cortes das asas se cruzam;

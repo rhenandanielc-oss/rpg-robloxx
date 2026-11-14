@@ -22,7 +22,7 @@ N.Passivas = Passivas
 local Wy = game:GetService("ServerScriptService"):FindFirstChild("Combate_Wyvern")
 local function reqW(n) local x = Wy and Wy:FindFirstChild(n); local ok, r = pcall(function() return x and require(x) end); return ok and r or nil end
 local ToxinaFerrao, FerroadaW, RasanteW = reqW("ToxinaFerrao"), reqW("Ferroada"), reqW("Rasante")
-local LaminaW = reqW("LaminaVento")   -- PATCH_KIT_WYVERN (14/11)
+local LaminaW, SoproW = reqW("LaminaVento"), reqW("SoproPredatorio")   -- PATCH_KIT_WYVERN (14/11)
 if ToxinaFerrao then ToxinaFerrao.ligar(N) end
 
 local function raiz(m) return m and (m:FindFirstChild("HumanoidRootPart") or m.PrimaryPart) end
@@ -355,6 +355,7 @@ end
 function N:_Ferroada(def, el, noAr, op) if FerroadaW then return FerroadaW.executar(self, def, el, noAr, op) end end
 function N:_Rasante(def, el, noAr, op) if RasanteW then return RasanteW.executar(self, def, el, noAr, op) end end   -- PATCH_KIT_WYVERN
 function N:_LaminaVento(def, el, noAr, op) if LaminaW then return LaminaW.executar(self, def, el, noAr, op) end end   -- PATCH_KIT_WYVERN (14/11)
+function N:_SoproPredatorio(def, el, noAr, op) if SoproW then return SoproW.executar(self, def, el, noAr, op) end end   -- PATCH_KIT_WYVERN (14/11)
 function N:_Cauda(def, el)
 	local t = self:tocar("Ataque_Cauda", false, {Impacto = 0.92}, function(n)
 		if n == "Impacto" then

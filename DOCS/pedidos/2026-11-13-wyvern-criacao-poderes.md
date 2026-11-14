@@ -1,0 +1,27 @@
+# Criação dos poderes da Wyvern
+
+Chat **Wyvern**, bioma Montanhas Altas. Implemente o kit aprovado pelo usuário, em passos pequenos, começando pela inspeção M0. Leia CLAUDE.md, PROJECT-STATE.md, TASKS.md, MASTER-PROMPT.md, DOCS/criaturas/wyvern.md e BLENDER/Criaturas/Wyvern_Ashwing/LEIA-ME.md. Confira as regras oficiais, com precedência da atualização de 30/10, e use as decisões posteriores abaixo para preencher as pendências do kit.
+
+| Tipo | Poder | Comportamento aprovado |
+|---|---|---|
+| Elemento único | Ar | Uma afinidade natural. |
+| Ativa | Rasante Predatório | Em voo, mergulho rápido numa faixa estreita, com preparação legível e saída após a investida. No chão, agacha e dá uma batida curta de asas para saltar rente ao solo, com alcance menor e direção fixada na arrancada. Atinge o primeiro alvo na trajetória e volta a apoiar as patas. Se errar, há uma breve recuperação antes de virar. |
+| Ativa | Lâmina de Vento | Recolhe as asas à frente do peito e abre ambas de uma vez. Cada asa emite um corte diagonal que cruza o outro logo à frente, formando um X largo. O X viaja como um único projétil teleguiado de média distância e ajusta a trajetória em voo para perseguir o alvo do disparo, como um míssil. Cada alvo pode ser atingido uma vez por disparo. Funciona em terra e no ar. |
+| Ativa | Sopro Predatório | Inspira, estende o pescoço e sopra pela boca um jato contínuo e concentrado de Ar a curta distância. O fluxo começa estreito e abre levemente, branco translúcido, com som áspero. A cabeça pode acompanhar a presa durante o sopro. |
+| Passiva | Toxina do Ferrão | Intoxicação biológica leve inata. A Ferroada aplica a toxina. Reaplicações renovam o efeito sem multiplicar o dano. Respeite antídotos, purificação e as regras oficiais de renovação. |
+| Passiva | Arranque de Asa | Ao passar de aceleração desligada para ligada em voo, aplica impulso frontal curto se a recarga estiver pronta. Marque o impulso com dois rastros brancos nas pontas das asas. Recarga de 10 s desde o impulso. Aceleração contínua não reativa. Durante a recarga, acelerar funciona normalmente e não agenda impulso. Para disparar novamente, é preciso desacelerar e voltar a acelerar com a recarga pronta. |
+| Básicos | Mordida e Ferroada | Mordida física frontal e Ferroada física de curto alcance com a cauda. Ambas ficam disponíveis fora das vagas de ativas. Reaproveite os clipes existentes quando compatíveis. |
+
+Comece pelo Arranque de Asa como primeira entrega. Antes de editar, identifique a base vigente da Wyvern e seus pontos de integração com voo, combate, entradas e animações. A pasta BLENDER/Criaturas/Wyvern_Ashwing/ contém Wyvern_E7_clipes_L6.blend e versões anteriores. Confirme a versão adotada e inventarie as actions antes de produzir clipes. Valide o primeiro passo e entregue o relatório antes de avançar para o seguinte.
+
+Prefira código e recursos próprios da Wyvern. Valide no servidor estado, recarga, acertos e permissões de controle. Use os comandos existentes quando compatíveis e planeje entrada equivalente no PC e no celular. Proteja os movimentos contra atravessar obstáculos e mantenha o custo de efeitos e consultas compatível com vários jogadores. Dano, alcance numérico, custo de fôlego e recargas das ativas ficam para balanceamento. Identifique valores de teste como provisórios.
+
+Na inspeção não encontrei imagens específicas em REFERENCIAS/ para a Wyvern. Confira novamente e priorize as referências do usuário se existirem. Para a identidade visual, abra C:/Users/Rhenan/Downloads/RPG_Referencias_Visuais_GitHub/REFERENCES/03_CREATURES/02-dragoes-wyvern.png. Para a preparação e emissão pelas asas, abra C:/Users/Rhenan/.codex/generated_images/01a1a26c-bdd5-7240-b160-b34c8d6e1555/exec-24e8db01-c895-47ab-bac2-d7dc6905be6b.png. A prancha gerada mostra a meia-lua inicial. A decisão mais recente pede dois cortes diagonais formando um X largo e preserva a saída pelas asas. Em cada etapa visual, compare lado a lado a referência, a versão anterior quando houver e a revisão, com câmera e escala equivalentes. Registre adaptações exigidas pelo rig ou pelo desempenho.
+
+Aceite do Arranque de Asa. O primeiro comando de acelerar em voo dispara uma vez. Acelerar continuamente por mais de 10 s não repete. Soltar e acelerar dentro de 10 s mantém a aceleração normal sem impulso pendente. Soltar e acelerar após 10 s dispara de novo. No chão não dispara. Verifique esses casos e o efeito visual nos dois lados, com evidência e sem atribuir a testes locais resultados de Play.
+
+Quando chegar à Lâmina de Vento, demonstre que o X sai das duas asas e curva a trajetória quando o alvo muda de direção depois do disparo. Verifique colisão com obstáculos e um único acerto por alvo. Deixe a taxa de curva e a duração da perseguição para balanceamento.
+
+Preserve outras criaturas, mapa, ninhos, montaria e arquivos compartilhados. Se a integração exigir um arquivo compartilhado, apresente o caminho, a mudança mínima e o risco de regressão para aprovação do usuário. O Roblox Studio exige autorização expressa para a tarefa e exclusividade conforme DOCS/estado/studio-em-uso.md. Consulte e reserve quando autorizado, respeite a ocupação e libere ao terminar.
+
+Entregue o relatório de CLAUDE.md com tarefa e objetivo, inspeção, alterações reais, testes e evidências, riscos e pendências, arquivos e estado para a próxima sessão, e um único próximo passo aguardando aprovação. Diferencie testes executados no Blender, em código e no Studio.

@@ -241,4 +241,7 @@ Recebido do usuário em 03/11/2026: `Downloads\Ashwing_Drake_Lite_v1.0.0.zip` (2
 - **Lâmina de Vento — E3 Studio (14/11, APROVADA):** testada pela tecla 3 no Teste-animacoes (curva atrás do alvo, para no obstáculo, 1 acerto por alvo, chão e voo); só montada por enquanto (IA selvagem pendente). Diário EK.
 - **Lâmina de Vento — E2 código (14/11):** `Combate_Wyvern/LaminaVento.luau` + `LaminaVento_Cliente`; tecla 3; ganchos aprovados. Studio pendente (E3). Detalhes no diário (EJ).
 - **Lâmina de Vento — E1 clipes (14/11, APROVADOS):** `Wyvern_E7_clipes_L8.blend` (LaminaVento chão 1,6 s / LaminaVento_Ar 1,3 s). Código, efeito e Studio pendentes. Detalhes no diário (EI) e no LEIA-ME (Lote 8).
-- Pendentes: Lâmina de Vento, Sopro Predatório; Ferroada no ar; IA selvagem usando o kit.
+- **Sopro Predatório — E3 Studio (14/11):** dano confirmado (parado, alvo andando, voo); Part não bloqueia (Núcleo); alvo perto/abaixo erra por paralaxe; efeito genérico de Ar sobreposto (usuário preferiu manter: jato próprio + efeito genérico, diário EQ). Diário EO.
+- **Sopro Predatório — E2 código (14/11):** `Combate_Wyvern/SoproPredatorio.luau` + `SoproPredatorio_Cliente`; tecla 1 (segurar); ganchos aprovados. Studio pendente (E3). Diário EN.
+- **Sopro Predatório — E1 clipes (14/11, APROVADOS):** `Wyvern_E7_clipes_L9.blend` (Sopro_Inicio/Loop/Fim). Código, visual, som e Studio pendentes. Diário EM.
+- Pendentes: Sopro Predatório (E2/E3); Ferroada no ar; IA selvagem usando o kit.
