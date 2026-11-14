@@ -227,3 +227,13 @@ Recebido do usuário em 03/11/2026: `Downloads\Ashwing_Drake_Lite_v1.0.0.zip` (2
 ## Histórico desta ficha
 
 - 03/11/2026: ficha criada (somente leitura). Nenhuma alteração no Studio, em `src/` ou em arquivos compartilhados, e nenhum commit.
+
+## 7. Kit aprovado pelo usuário (13/11/2026) e implementação
+
+- **Elemento único:** Ar. **Ativas:** Rasante Predatório, Lâmina de Vento (X largo pelas asas), Sopro Predatório. **Passivas:** Toxina do Ferrão, Arranque de Asa. **Básicos:** Mordida e Ferroada (fora das vagas). Números (dano, alcance, fôlego, recargas das ativas) = balanceamento; valores de teste são PROVISÓRIOS.
+- **Arranque de Asa — IMPLEMENTADO e testado no Studio (13/11; r3 APROVADA pelo usuário: impulso forte, também no chão, aura de aceleração discreta):** `Combate_Wyvern/ArranqueAsa.luau` + `ArranqueAsa_Cliente.client.luau` + gancho `PATCH_ARRANQUE_ASA` em `Montaria_Dragao_Servidor`. Detalhes no diário (ED).
+- **Toxina do Ferrão + Ferroada — IMPLEMENTADAS e testadas no Studio (13/11):** `Combate_Wyvern/ToxinaFerrao.luau`, `Ferroada.luau`, `ToxinaFerrao_Cliente`; ganchos em `ConfigCombate`/`Nucleo` (PATCH_KIT_WYVERN). Elemento Ar gravado nos modelos. Detalhes no diário (EE).
+- **Rasante Predatório — IMPLEMENTADO e testado no Studio (13/11):** vaga 2 (tecla 2); `Combate_Wyvern/Rasante.luau` + ganchos (PATCH_RASANTE na montaria). Detalhes no diário (EF).
+- **Rasante aéreo r2b (13/11, APROVADO pelo usuário):** voo contínuo (entrada gradual, picada pelo arco tangente com o fundo sobre o alvo, saída em arco progressivo com raio pela velocidade, asas abrindo e batendo, devolução sem degrau); aborta e devolve recarga/energia com virada impossível, alvo perto/íngreme demais ou obstáculo no corredor. 4 cenários em Play (parado acerta, desvio escapa, lateral acerta, obstáculo aborta). Detalhes no diário (EG).
+- **Rasante r2c — colisão (13/11, APROVADO pelo usuário):** criatura grande no corredor aborta; alvo grande é sobrevoado (fundo do arco acima do dorso); obstáculo que surge na picada → freio até parar com o focinho a ~3 studs. Detalhes no diário (EH).
+- Pendentes: Lâmina de Vento, Sopro Predatório; Ferroada no ar; IA selvagem usando o kit.

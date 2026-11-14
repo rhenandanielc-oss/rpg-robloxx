@@ -18,6 +18,11 @@ N.__index = N
 N.registro = {}
 N.FX = FX
 N.Passivas = Passivas
+-- PATCH_KIT_WYVERN (13/11): modulos proprios da Wyvern (ServerScriptService.Combate_Wyvern); sem a pasta nada muda
+local Wy = game:GetService("ServerScriptService"):FindFirstChild("Combate_Wyvern")
+local function reqW(n) local x = Wy and Wy:FindFirstChild(n); local ok, r = pcall(function() return x and require(x) end); return ok and r or nil end
+local ToxinaFerrao, FerroadaW, RasanteW = reqW("ToxinaFerrao"), reqW("Ferroada"), reqW("Rasante")
+if ToxinaFerrao then ToxinaFerrao.ligar(N) end
 
 local function raiz(m) return m and (m:FindFirstChild("HumanoidRootPart") or m.PrimaryPart) end
 local function osso(m, nome) for _, d in ipairs(m:GetDescendants()) do if d:IsA("Bone") and d.Name == nome then return d end end end
@@ -252,6 +257,7 @@ function N.ferir(fonte, a, dano, el, tipo, intensidade, ehTick, frost)
 		Passivas.aplicarFrostbite(fonte, a, frost or Cfg.passivas.Frostbite.basico)   -- Glacial: todo acerto acumula
 		Passivas.marcarCombate(fonte)
 		if el == "Sombra" then Passivas.aplicarMarca(fonte, a) end      -- PATCH_MARCA_SOMBRIA: acerto (nao tick) marca
+		if ToxinaFerrao then ToxinaFerrao.aoAcertar(fonte, a, tipo) end   -- PATCH_KIT_WYVERN: Ferroada aplica, basicos renovam (so Wyvern)
 	end
 	if ok then local t = workspace:GetServerTimeNow(); if fonte then fonte:SetAttribute("UltimoCombate", t) end; a:SetAttribute("UltimoCombate", t) end   -- PATCH_MARCA_SOMBRIA: Rastro do Breu
 	return ok
@@ -344,6 +350,9 @@ function N:_Garra(def, el, noAr)
 	end)
 	task.wait(math.max(t and t.Length or 0, 1.5) - 0.1)
 end
+-- PATCH_KIT_WYVERN: Ferroada (basico da Wyvern, slot da Garra via kitForma) no modulo proprio
+function N:_Ferroada(def, el, noAr, op) if FerroadaW then return FerroadaW.executar(self, def, el, noAr, op) end end
+function N:_Rasante(def, el, noAr, op) if RasanteW then return RasanteW.executar(self, def, el, noAr, op) end end   -- PATCH_KIT_WYVERN
 function N:_Cauda(def, el)
 	local t = self:tocar("Ataque_Cauda", false, {Impacto = 0.92}, function(n)
 		if n == "Impacto" then

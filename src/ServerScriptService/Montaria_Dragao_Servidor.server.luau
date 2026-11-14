@@ -288,6 +288,24 @@ end)
 -- velocidade atual, o jogador segue dirigindo e as colisoes/relevo deste controlador continuam valendo. No fim, a
 -- desaceleracao normal do controlador traz a velocidade de volta (sem parada brusca, sem ganho permanente).
 local ARR = require(game:GetService("ServerScriptService"):WaitForChild("Combate_Dragao"):WaitForChild("ConfigCombate")).habilidades.Arremetida
+-- PATCH_ARRANQUE_ASA (13/11): passiva Arranque de Asa da Wyvern (modulo proprio Combate_Wyvern.ArranqueAsa); sem o modulo nada muda
+-- PATCH_RASANTE (13/11): o Rasante Predatorio da Wyvern (Combate_Wyvern.Rasante) move o corpo enquanto ativo; sem o modulo nada muda
+-- resolvido na hora do uso (e guardado): no 1o teste o carregamento no inicio do script ficou vazio sem erro aparente;
+-- falha de require fica no atributo Workspace.RasanteErro (depuracao)
+local Rasante
+local function rasanteMod()
+	if Rasante == nil then
+		local p = game:GetService("ServerScriptService"):FindFirstChild("Combate_Wyvern"); local mod = p and p:FindFirstChild("Rasante")
+		if not mod then return nil end
+		local ok, r = pcall(require, mod)
+		if ok and type(r) == "table" then Rasante = r else Rasante = false; workspace:SetAttribute("RasanteErro", tostring(r)) end
+	end
+	return Rasante or nil
+end
+local Arranque = (function()
+	local p = game:GetService("ServerScriptService"):FindFirstChild("Combate_Wyvern"); local mod = p and p:FindFirstChild("ArranqueAsa")
+	local ok, r = pcall(function() return mod and require(mod) end); return ok and r or nil
+end)()
 local function arremetendo(m) return (m:GetAttribute("ArremetidaFim") or 0) > workspace:GetServerTimeNow() end
 local function impactoArremetida(M)
 	local t = M.m:GetAttribute("ArremetidaImpacto")
@@ -308,6 +326,7 @@ local function clipe(M, nome, ritmo, segurar)
 end
 local function passoChao(M, dt)
 	local m, L = M.m, M.L
+	local Ra = rasanteMod(); if Ra and Ra.ativo(m) and Ra.passo(M, dt, "chao", aplicar) then return end   -- PATCH_RASANTE
 	local e = entrada(M)
 	local ataque = m:GetAttribute("EmAtaque")
 	-- um so controlador por vez: durante a investida e a elevacao da Tempestade quem move o corpo e o combate
@@ -326,6 +345,8 @@ local function passoChao(M, dt)
 			* (1 + (m:GetAttribute("RastroBonus") or 0) + (m:GetAttribute("PassoBonus") or 0))   -- PATCH_RASTRO_BREU (03/11) + PATCH_PASSO_SOMBRIO_V2
 		elseif e.f < -0.1 then alvo = -Cfg.recuarVel end
 	end
+	local fC = fixo and 0 or e.f; local wNovoC = fC > 0.1 and (M.fAntC or 0) <= 0.1; M.fAntC = fC          -- PATCH_ARRANQUE_ASA (chao)
+	if wNovoC and not arr and Arranque then local dv = Arranque.tentar(m, M, "chao"); if dv then M.vel = math.max(M.vel, 0) + dv end end
 	local a = math.abs(alvo) > math.abs(M.vel) and (arr and ARR.acelChao or Cfg.acelChao) or Cfg.freioChao
 	M.vel += math.clamp(alvo - M.vel, -a * dt, a * dt)
 	if alvo <= 0 and M.vel > Cfg.frenagemMin and not M.freando and not ataque then
@@ -699,6 +720,7 @@ end
 -- perto do chao, devagar e com intencao de descer (passagem rapida rente ao chao nao pousa). Sem atributo: controle antigo.
 local function passoVooLivre(M, dt)
 	local m, L = M.m, M.L
+	local Ra = rasanteMod(); if Ra and Ra.ativo(m) and Ra.passo(M, dt, "ar", aplicar) then return end   -- PATCH_RASANTE
 	local e = entrada(M)
 	local ataque = m:GetAttribute("EmAtaque")
 	if not (M.mix and M.mix.ativo) then iniciarMix(M) end
@@ -709,6 +731,7 @@ local function passoVooLivre(M, dt)
 	local f = arr and 1 or math.max(e.f, 0)                                           -- S sem funcao no ar; investida = empuxo pleno
 	local wNovo = f > 0.1 and (M.fAnt or 0) <= 0.1; local upNovo = (e.up or 0) > 0.5 and (M.upAnt or 0) <= 0.5
 	M.fAnt, M.upAnt = f, e.up or 0
+	if wNovo and not arr and Arranque then local dv = Arranque.tentar(m, M, "voo"); if dv then M.vel += dv end end   -- PATCH_ARRANQUE_ASA
 	if m:GetAttribute("Incapacitado") then M.planar = true
 	elseif M.planar and (wNovo or upNovo) and os.clock() - (M.planarDesde or 0) > 0.5 then M.planar = false end
 	local mover = math.clamp(M.vel / VL.velPlena, 0, 1)                               -- 0 parado .. 1 voo pleno

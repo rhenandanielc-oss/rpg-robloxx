@@ -12,13 +12,15 @@ return {
 	NAO_APROVADO = NAO_APROVADO,
 	elementosGlobais = {"Fogo", "Terra", "Ar", "Raio", "Gelo", "Agua", "Luz", "Sombra"},  -- referencia; cada forma restringe abaixo
 	-- elemento UNICO por forma (oficial 30/10). Glacial = Gelo e Sombrio = Sombra: kits ainda nao definidos (nao ativar)
-	elementosForma = {Montanhas = {"Fogo"}, Glacial = {"Gelo"}, Sombrio = {"Sombra"}},   -- PATCH_MARCA_SOMBRIA (03/11): Sombrio = Sombra
+	elementosForma = {Montanhas = {"Fogo"}, Glacial = {"Gelo"}, Sombrio = {"Sombra"}, Wyvern = {"Ar"}},   -- PATCH_KIT_WYVERN (13/11): Wyvern = Ar   -- PATCH_MARCA_SOMBRIA (03/11): Sombrio = Sombra
 	habilidadesForma = {Montanhas = {"Sopro", "Arremetida", "Tempestade", "Coracao"}, Glacial = {"Sopro", "Arremetida", "Tempestade", "Coracao"},
-		Sombrio = {"Sopro", "Arremetida", "Tempestade", "Coracao"}},   -- PATCH_SOPRO_UMBRAL / CORRENTES / ECLIPSE / PASSO_SOMBRIO (04/11): kit do Sombrio
-	passivasForma = {Montanhas = {"SangueDeMagma", "Burning"}, Glacial = {"SangueGlacial", "Frostbite"}, Sombrio = {"MarcaSombria", "RastroBreu"}},
+		Sombrio = {"Sopro", "Arremetida", "Tempestade", "Coracao"}, Wyvern = {"Arremetida"}},   -- PATCH_KIT_WYVERN: vaga 2 = Rasante (demais ativas ainda nao feitas); PATCH_SOPRO_UMBRAL / CORRENTES / ECLIPSE / PASSO_SOMBRIO (04/11): kit do Sombrio
+	passivasForma = {Montanhas = {"SangueDeMagma", "Burning"}, Glacial = {"SangueGlacial", "Frostbite"}, Sombrio = {"MarcaSombria", "RastroBreu"},
+		Wyvern = {"ToxinaFerrao", "ArranqueAsa"}},   -- PATCH_KIT_WYVERN (modulos proprios em Combate_Wyvern)
 	-- PATCH_KIT_GELO (oficial 02/11): o slot (tecla/HUD/IA) continua com o mesmo id; a forma decide a habilidade real
 	kitForma = {Glacial = {Sopro = "SoproGlacial", Arremetida = "Rajadas", Tempestade = "ZeroAbsoluto", Coracao = "Nevasca"},
-		Sombrio = {Sopro = "SoproUmbral", Arremetida = "Correntes", Tempestade = "PassoSombrio", Coracao = "Eclipse"}},
+		Sombrio = {Sopro = "SoproUmbral", Arremetida = "Correntes", Tempestade = "PassoSombrio", Coracao = "Eclipse"},
+		Wyvern = {Garra = "Ferroada", Arremetida = "Rasante"}},   -- PATCH_KIT_WYVERN: tecla da Garra (R / DPad esquerdo) = Ferroada na Wyvern
 	maxElementos = 1,                                            -- sem elementos secundarios (o Nucleo nao le desbloqueios)
 	energiaMax = 100, energiaRegen = 6,                         -- por segundo
 	basicos = {
@@ -32,6 +34,14 @@ return {
 			porForma = {Montanhas = {chao = {"Rugido_Combate", 0.38}, mov = {"Rugido_Combate_Sup", 0.38}, ar = {"Rugido_Aereo_Sup", 0.74}}}},
 	},
 	habilidades = {
+		-- PATCH_KIT_WYVERN (13/11): Ferroada = basico da Wyvern (slot da Garra via kitForma; fora das vagas de ativas). Fisica,
+		-- sem energia. raio = capsula da ponta do ferrao ate 10 studs abaixo (Combate_Wyvern/Ferroada). Numeros PROVISORIOS
+		Ferroada = {recarga = 2.2, dano = 16, raio = 6, intensidade = "moderado", energia = 0},
+		-- PATCH_KIT_WYVERN: Rasante Predatorio (vaga 2; Combate_Wyvern/Rasante). Velocidades studs/s, tempos s, angulos graus.
+		-- raio = faixa estreita varrida pela boca; picadaMin/Max = inclinacao do mergulho; giroMax = desvio maximo da frente
+		Rasante = {recarga = 8, energia = 20, dano = 40, raio = 5, intensidade = "pesado", velAr = 78, velChao = 45,
+			prepAr = 0.35, prepChao = 0.3, durAr = 0.9, durChao = 0.55, saida = 0.5, recup = 0.6, alturaSalto = 4,
+			picadaMin = 8, picadaMax = 55, giroMax = 45, giroPrep = 200, ritmoSaltoChao = 1.6, alcanceBaixo = 12, folgaRasante = 3},   -- PROVISORIO
 		Sopro = {recarga = 9, energia = 25, emissao = 1.8, tick = 0.3, elemental = true,
 			emissaoMax = 6, energiaSeg = 8,                       -- segurado: ate 6 s, 8 de energia/s alem dos 1,8 s (EXPERIMENTAL)
 			porElemento = {
