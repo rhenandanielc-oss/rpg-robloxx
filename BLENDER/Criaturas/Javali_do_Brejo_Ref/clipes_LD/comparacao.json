@@ -1,0 +1,410 @@
+{
+ "Ameaca": {
+  "pose_identica_max_dif": 0.0,
+  "quadros": {
+   "base": 55,
+   "brejo": 55
+  },
+  "pele_z_min_cm": {
+   "base": 0.02,
+   "brejo": 0.02
+  },
+  "cabeca_z_min_cm": {
+   "base": 12.63,
+   "brejo": 8.42
+  },
+  "cabeca_x_corpo_max": {
+   "base": 0,
+   "brejo": 0
+  },
+  "corpo_auto_media": {
+   "base": 5.0,
+   "brejo": 6.0
+  },
+  "corpo_auto_max": {
+   "base": 6,
+   "brejo": 7
+  },
+  "estira_max": {
+   "base": {
+    "ombro": 1.76,
+    "quadril": 1.21,
+    "jarrete": 1.2,
+    "pescoco": 1.89,
+    "cabeca_presas": 2.45
+   },
+   "brejo": {
+    "ombro": 1.76,
+    "quadril": 1.21,
+    "jarrete": 1.2,
+    "pescoco": 1.79,
+    "cabeca_presas": 2.45
+   }
+  }
+ },
+ "Investida": {
+  "pose_identica_max_dif": 0.0,
+  "quadros": {
+   "base": 37,
+   "brejo": 37
+  },
+  "pele_z_min_cm": {
+   "base": 0.02,
+   "brejo": 0.02
+  },
+  "cabeca_z_min_cm": {
+   "base": 5.87,
+   "brejo": 1.99
+  },
+  "cabeca_x_corpo_max": {
+   "base": 0,
+   "brejo": 0
+  },
+  "corpo_auto_media": {
+   "base": 14.7,
+   "brejo": 15.7
+  },
+  "corpo_auto_max": {
+   "base": 50,
+   "brejo": 51
+  },
+  "estira_max": {
+   "base": {
+    "ombro": 2.37,
+    "quadril": 2.66,
+    "jarrete": 2.46,
+    "pescoco": 1.83,
+    "cabeca_presas": 2.35
+   },
+   "brejo": {
+    "ombro": 2.37,
+    "quadril": 2.66,
+    "jarrete": 2.46,
+    "pescoco": 1.73,
+    "cabeca_presas": 2.35
+   }
+  },
+  "render": {
+   "base": {
+    "cadeia": "Repouso:0.5+Ameaca+Investida@1+RecuperacaoInvestida@1+AlertaParaRepouso@1+Repouso@1:0.5",
+    "quadros": 242,
+    "avanco_total_u": 4.13,
+    "avanco_por_ciclo_u": null,
+    "velocidade_media": 0.5141,
+    "deriva_max_casco_apoiado": 0.0023,
+    "pele_z_min": -0.0008,
+    "estica_max": 2.689,
+    "salto_entre_clipes_graus": [
+     [
+      15,
+      2.878
+     ],
+     [
+      70,
+      1.296
+     ],
+     [
+      106,
+      44.763
+     ],
+     [
+      179,
+      0.0
+     ],
+     [
+      227,
+      0.181
+     ]
+    ]
+   },
+   "brejo": {
+    "cadeia": "Repouso:0.5+Ameaca+Investida@1+RecuperacaoInvestida@1+AlertaParaRepouso@1+Repouso@1:0.5",
+    "quadros": 220,
+    "avanco_total_u": 2.7766,
+    "avanco_por_ciclo_u": null,
+    "velocidade_media": 0.3804,
+    "deriva_max_casco_apoiado": 0.0006,
+    "pele_z_min": -0.0005,
+    "estica_max": 2.689,
+    "salto_entre_clipes_graus": [
+     [
+      15,
+      2.878
+     ],
+     [
+      70,
+      1.296
+     ],
+     [
+      106,
+      44.763
+     ],
+     [
+      157,
+      0.0
+     ],
+     [
+      205,
+      0.181
+     ]
+    ]
+   }
+  }
+ },
+ "RecuperacaoInvestida": {
+  "pose_identica_max_dif": 0.0,
+  "quadros": {
+   "base": 52,
+   "brejo": 52
+  },
+  "pele_z_min_cm": {
+   "base": -0.05,
+   "brejo": -0.05
+  },
+  "cabeca_z_min_cm": {
+   "base": 7.82,
+   "brejo": 4.29
+  },
+  "cabeca_x_corpo_max": {
+   "base": 0,
+   "brejo": 0
+  },
+  "corpo_auto_media": {
+   "base": 6.1,
+   "brejo": 7.1
+  },
+  "corpo_auto_max": {
+   "base": 31,
+   "brejo": 32
+  },
+  "estira_max": {
+   "base": {
+    "ombro": 2.33,
+    "quadril": 2.27,
+    "jarrete": 2.18,
+    "pescoco": 1.65,
+    "cabeca_presas": 2.29
+   },
+   "brejo": {
+    "ombro": 2.33,
+    "quadril": 2.27,
+    "jarrete": 2.18,
+    "pescoco": 1.58,
+    "cabeca_presas": 2.29
+   }
+  }
+ },
+ "ReacaoImpacto": {
+  "pose_identica_max_dif": 0.0,
+  "quadros": {
+   "base": 40,
+   "brejo": 40
+  },
+  "pele_z_min_cm": {
+   "base": 0.02,
+   "brejo": 0.02
+  },
+  "cabeca_z_min_cm": {
+   "base": 20.44,
+   "brejo": 18.51
+  },
+  "cabeca_x_corpo_max": {
+   "base": 0,
+   "brejo": 0
+  },
+  "corpo_auto_media": {
+   "base": 5.0,
+   "brejo": 6.1
+  },
+  "corpo_auto_max": {
+   "base": 5,
+   "brejo": 7
+  },
+  "estira_max": {
+   "base": {
+    "ombro": 1.77,
+    "quadril": 1.31,
+    "jarrete": 1.17,
+    "pescoco": 1.34,
+    "cabeca_presas": 2.04
+   },
+   "brejo": {
+    "ombro": 1.77,
+    "quadril": 1.31,
+    "jarrete": 1.17,
+    "pescoco": 1.29,
+    "cabeca_presas": 2.04
+   }
+  },
+  "render": {
+   "base": {
+    "cadeia": "Repouso:0.5+ReacaoImpacto+Repouso@1:0.5",
+    "quadros": 67,
+    "avanco_total_u": 0.0011,
+    "avanco_por_ciclo_u": null,
+    "velocidade_media": 0.0005,
+    "deriva_max_casco_apoiado": 0.0,
+    "pele_z_min": 0.0002,
+    "estica_max": 1.984,
+    "salto_entre_clipes_graus": [
+     [
+      15,
+      2.878
+     ],
+     [
+      52,
+      0.181
+     ]
+    ]
+   },
+   "brejo": {
+    "cadeia": "Repouso:0.5+ReacaoImpacto+Repouso@1:0.5",
+    "quadros": 70,
+    "avanco_total_u": 0.0011,
+    "avanco_por_ciclo_u": null,
+    "velocidade_media": 0.0005,
+    "deriva_max_casco_apoiado": 0.0,
+    "pele_z_min": 0.0002,
+    "estica_max": 2.064,
+    "salto_entre_clipes_graus": [
+     [
+      15,
+      2.878
+     ],
+     [
+      55,
+      0.181
+     ]
+    ]
+   }
+  }
+ },
+ "Derrota": {
+  "pose_identica_max_dif": 0.012759999999999994,
+  "quadros": {
+   "base": 79,
+   "brejo": 79
+  },
+  "pele_z_min_cm": {
+   "base": 0.0,
+   "brejo": 0.0
+  },
+  "cabeca_z_min_cm": {
+   "base": 0.4,
+   "brejo": 0.4
+  },
+  "cabeca_x_corpo_max": {
+   "base": 0,
+   "brejo": 0
+  },
+  "corpo_auto_media": {
+   "base": 83.5,
+   "brejo": 84.5
+  },
+  "corpo_auto_max": {
+   "base": 186,
+   "brejo": 187
+  },
+  "estira_max": {
+   "base": {
+    "ombro": 1.86,
+    "quadril": 2.07,
+    "jarrete": 2.57,
+    "pescoco": 1.8,
+    "cabeca_presas": 2.57
+   },
+   "brejo": {
+    "ombro": 1.78,
+    "quadril": 2.07,
+    "jarrete": 2.57,
+    "pescoco": 1.7,
+    "cabeca_presas": 2.46
+   }
+  },
+  "render": {
+   "base": {
+    "cadeia": "Repouso:0.5+Derrota+Derrotado@1:1.0",
+    "quadros": 124,
+    "avanco_total_u": 0.0,
+    "avanco_por_ciclo_u": null,
+    "velocidade_media": 0.0,
+    "deriva_max_casco_apoiado": 0.0,
+    "pele_z_min": 0.0,
+    "estica_max": 2.573,
+    "salto_entre_clipes_graus": [
+     [
+      15,
+      2.878
+     ],
+     [
+      94,
+      0.0
+     ]
+    ]
+   },
+   "brejo": {
+    "cadeia": "Repouso:0.5+Derrota+Derrotado@1:1.0",
+    "quadros": 124,
+    "avanco_total_u": 0.0,
+    "avanco_por_ciclo_u": null,
+    "velocidade_media": 0.0,
+    "deriva_max_casco_apoiado": 0.0,
+    "pele_z_min": 0.0,
+    "estica_max": 2.573,
+    "salto_entre_clipes_graus": [
+     [
+      15,
+      2.878
+     ],
+     [
+      94,
+      0.0
+     ]
+    ]
+   }
+  }
+ },
+ "Derrotado": {
+  "pose_identica_max_dif": 0.012759999999999994,
+  "quadros": {
+   "base": 30,
+   "brejo": 30
+  },
+  "pele_z_min_cm": {
+   "base": 0.0,
+   "brejo": 0.0
+  },
+  "cabeca_z_min_cm": {
+   "base": 0.4,
+   "brejo": 0.4
+  },
+  "cabeca_x_corpo_max": {
+   "base": 0,
+   "brejo": 0
+  },
+  "corpo_auto_media": {
+   "base": 47.0,
+   "brejo": 48.0
+  },
+  "corpo_auto_max": {
+   "base": 47,
+   "brejo": 48
+  },
+  "estira_max": {
+   "base": {
+    "ombro": 1.86,
+    "quadril": 1.86,
+    "jarrete": 1.63,
+    "pescoco": 1.8,
+    "cabeca_presas": 2.57
+   },
+   "brejo": {
+    "ombro": 1.78,
+    "quadril": 1.86,
+    "jarrete": 1.63,
+    "pescoco": 1.69,
+    "cabeca_presas": 2.46
+   }
+  }
+ }
+}

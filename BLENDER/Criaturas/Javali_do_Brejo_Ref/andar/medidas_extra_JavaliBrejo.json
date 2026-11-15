@@ -1,0 +1,185 @@
+{
+ "arquivo": "C:\\Users\\Rhenan\\Downloads\\RPG_Roblox_GitHub_Pacote_Inicial\\BLENDER\\Criaturas\\Javali_do_Brejo_Ref\\CR_JavaliBrejo_v4.blend",
+ "prefixo": "JavaliBrejo",
+ "acao": "JavaliBrejo_Andar",
+ "quadros": 216,
+ "duracao_s": 7.2,
+ "propriedades": {
+  "loop": true,
+  "velocidade_PROPOSTA": 0.4444444444444444,
+  "giro_graus_s_PROPOSTA": 0.0
+ },
+ "apoios": {
+  "ciclo_quadros": 27,
+  "por_pata": {
+   "QuartelaE": {
+    "pousos_q": [
+     21,
+     48,
+     75,
+     102
+    ],
+    "fase_no_ciclo": 0.778,
+    "apoio_%": 63.0
+   },
+   "QuartelaD": {
+    "pousos_q": [
+     7,
+     34,
+     61,
+     88
+    ],
+    "fase_no_ciclo": 0.259,
+    "apoio_%": 66.7
+   },
+   "QuartelaTrasE": {
+    "pousos_q": [
+     27,
+     54,
+     81,
+     108
+    ],
+    "fase_no_ciclo": 0.0,
+    "apoio_%": 66.7
+   },
+   "QuartelaTrasD": {
+    "pousos_q": [
+     14,
+     41,
+     68,
+     95
+    ],
+    "fase_no_ciclo": 0.519,
+    "apoio_%": 66.7
+   }
+  },
+  "ordem_de_pouso": [
+   "QuartelaTrasE",
+   "QuartelaD",
+   "QuartelaTrasD",
+   "QuartelaE"
+  ],
+  "intervalos_entre_pousos_q": [
+   7.0,
+   7.0,
+   7.0,
+   6.0
+  ]
+ },
+ "deslocamento": {
+  "curvas_location_raiz_pelve_min_max_u": {
+   "Raiz[0]": [
+    -0.003,
+    0.003
+   ],
+   "Raiz[1]": [
+    0.0,
+    0.0
+   ],
+   "Raiz[2]": [
+    -0.019,
+    -0.011
+   ],
+   "Pelve[0]": [
+    -0.0,
+    0.0
+   ],
+   "Pelve[1]": [
+    0.0,
+    0.0
+   ],
+   "Pelve[2]": [
+    -0.0,
+    -0.0
+   ]
+  },
+  "velocidade_PROPOSTA_na_acao": 0.4444444444444444,
+  "leitura": "acao NO LUGAR: a Raiz so oscila (cm); o avanco e do controlador (no render, arm.matrix_world integra velocidade_PROPOSTA; no jogo, o movimento do modelo)"
+ },
+ "emenda_laco": {
+  "giro_ultimo_para_primeiro_graus": 23.46,
+  "giro_por_quadro_mediana": 11.9,
+  "giro_por_quadro_max": 23.82,
+  "q0_igual_ao_q_ciclo": 10.919
+ },
+ "penetracoes_3_ciclos": {
+  "pares_tri_cabeca_x_corpo_max_por_quadro": 0,
+  "pares_tri_cabeca_x_corpo_media": 0.0,
+  "pares_tri_corpo_auto_max_por_quadro": 25,
+  "pares_tri_corpo_auto_media": 8.6,
+  "tris_em_auto_intersecao_por_regiao_soma": {
+   "dorso(z>0,62)": 1008,
+   "pernas(z<0,30)": 150,
+   "tronco": 240
+  },
+  "pele_z_min_cm": 0.02,
+  "cabeca_z_min_cm": 21.2,
+  "nota": "pares de triangulos que se cruzam; exclui vizinhos que dividem vertice e a faixa de 2 aneis da costura cabeca/corpo"
+ },
+ "poses_extremas": {
+  "dianteiraE_a_frente": {
+   "quadro": 20,
+   "estiramento_por_regiao": {
+    "ombro": {
+     "max": 1.89,
+     "p99": 1.41,
+     "min": 0.46
+    },
+    "quadril": {
+     "max": 1.71,
+     "p99": 1.37,
+     "min": 0.52
+    },
+    "jarrete": {
+     "max": 1.71,
+     "p99": 1.23,
+     "min": 0.59
+    },
+    "pescoco": {
+     "max": 1.21,
+     "p99": 1.15,
+     "min": 0.92
+    },
+    "cabeca_presas": {
+     "max": 1.47,
+     "p99": 1.09,
+     "min": 0.55
+    }
+   },
+   "pares_cabeca_x_corpo": 0,
+   "pares_corpo_auto": 6
+  },
+  "dianteiraE_atras": {
+   "quadro": 11,
+   "estiramento_por_regiao": {
+    "ombro": {
+     "max": 1.59,
+     "p99": 1.18,
+     "min": 0.6
+    },
+    "quadril": {
+     "max": 2.15,
+     "p99": 1.53,
+     "min": 0.25
+    },
+    "jarrete": {
+     "max": 2.15,
+     "p99": 1.27,
+     "min": 0.36
+    },
+    "pescoco": {
+     "max": 1.16,
+     "p99": 1.13,
+     "min": 0.74
+    },
+    "cabeca_presas": {
+     "max": 1.21,
+     "p99": 1.08,
+     "min": 0.65
+    }
+   },
+   "pares_cabeca_x_corpo": 0,
+   "pares_corpo_auto": 6
+  }
+ }
+}

@@ -1,0 +1,48 @@
+{
+ "versao": "v2",
+ "parametros_PROPOSTA": {
+  "crista_altura_extra": 0.3,
+  "crista_tufo": 0.15,
+  "crista_tufo_periodo": 0.1,
+  "crista_aperto_x": 0.25,
+  "crista_garupa_altura": 0.022,
+  "focinho_avanco": 0.055,
+  "focinho_queda_graus": 4.0,
+  "disco_escala": 1.1
+ },
+ "forma": {
+  "JavaliBrejo_Corpo": {
+   "vertices_movidos_>1mm": 253,
+   "desloc_max_cm": 6.2
+  },
+  "JavaliBrejo_Cabeca": {
+   "vertices_movidos_>1mm": 722,
+   "desloc_max_cm": 6.19
+  }
+ },
+ "costura": {
+  "pares": 107,
+  "pares_iguais_depois": 107
+ },
+ "bake": {
+  "Corpo": {
+   "Cor": "texturas\\T_JavaliBrejo_Corpo_Cor.png",
+   "Rugosidade": "texturas\\T_JavaliBrejo_Corpo_Rugosidade.png",
+   "Normal": "texturas\\T_JavaliBrejo_Corpo_Normal.png"
+  },
+  "Cabeca": {
+   "Cor": "texturas\\T_JavaliBrejo_Cabeca_Cor.png",
+   "Rugosidade": "texturas\\T_JavaliBrejo_Cabeca_Rugosidade.png",
+   "Normal": "texturas\\T_JavaliBrejo_Cabeca_Normal.png"
+  }
+ },
+ "tris": {
+  "JavaliBrejo_Corpo": 6643,
+  "JavaliBrejo_Cabeca": 3357
+ },
+ "materiais": [
+  "M_JavaliBrejo_Corpo",
+  "M_JavaliBrejo_Cabeca"
+ ],
+ "ossos": 30
+}
