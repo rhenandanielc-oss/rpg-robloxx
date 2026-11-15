@@ -296,7 +296,37 @@ local function emissoresSopro(m)
 	-- (teste no jogo 02/11: opaco e brilhante parecia um laser) feixes translucidos: so dao direcao e continuidade ao fluxo
 	s.feixe = feixe(2.2, 13, 26, 2.0, ns(0, 0.62, 0.5, 0.8, 1, 1), 0.12)
 	s.miolo = feixe(0.8, 3.2, 12, 3.2, ns(0, 0.45, 0.45, 0.72, 1, 1), 0.3)
+	-- PATCH_GELO_BRILHO r2: miolo mais presente (base continua por baixo das particulas; continua fino para nao virar laser)
+	s.miolo.Transparency = ns(0, 0.2, 0.5, 0.45, 1, 1); s.miolo.LightEmission = 0.55
+	s.feixe.Transparency = ns(0, 0.5, 0.5, 0.7, 1, 1)
+	-- PATCH_GELO_BRILHO (15/11, pedido do usuario: "mais efeitos, como a Wyvern"; mesmo padrao do Sopro Umbral r3 e do
+	-- Fogo aprovados): camadas brilhantes POR CIMA do jato translucido (nada acima muda, evita o "laser" de 02/11): veios de
+	-- geada alongados (Squash NEGATIVO), faiscas cristalinas, clarao frio na boca; aneis de pressao e clarao no contato.
+	s.x = {}
+	s.x.veios = emissor(s.anc, {Texture = TEX.faisca, Orientation = VP, Color = seq({C3(255, 255, 255), C3(205, 240, 255), AZUL}), LightEmission = 1,
+		LightInfluence = 0, Size = ns(0, 2.0, 0.6, 1.5, 1, 0.5), Squash = ns(0, -2, 1, -2), Transparency = ns(0, 0.05, 0.7, 0.25, 1, 1),
+		SpreadAngle = Vector2.new(7, 7), EmissionDirection = Enum.NormalId.Front, Rate = 0, ZOffset = 8})
+	s.x.faiscas = emissor(s.anc, {Texture = TEX.faisca, Color = seq({C3(255, 255, 255), AZUL_CLARO}), LightEmission = 1, LightInfluence = 0,
+		Size = ns(0, 1.1, 1, 0), Transparency = ns(0, 0, 1, 1), Drag = 1.4, SpreadAngle = Vector2.new(22, 22), EmissionDirection = Enum.NormalId.Front,
+		Rate = 0, ZOffset = 8})
+	s.x.boca = emissor(s.anc, {Texture = TEX.brilho, Color = seq({C3(255, 255, 255), C3(200, 238, 255)}), LightEmission = 1, LightInfluence = 0,
+		Size = ns(0, 3.2, 1, 0.6), Transparency = ns(0, 0.15, 1, 1), Lifetime = NumberRange.new(0.12, 0.18), Speed = NumberRange.new(2, 5),
+		Rotation = NumberRange.new(0, 90), SpreadAngle = Vector2.new(30, 30), EmissionDirection = Enum.NormalId.Front, Rate = 0, ZOffset = 8})
 	return s
+end
+local function anelGelo(b, d, D)
+	local r1 = 3 + D * 0.32
+	local a = peca({Shape = Enum.PartType.Cylinder, Size = Vector3.new(0.4, 3, 3), Material = Enum.Material.Neon, Color = C3(150, 215, 255),
+		Transparency = 0.55, CFrame = CFrame.lookAt(b, b + d) * CFrame.Angles(0, math.rad(90), 0)})
+	TweenService:Create(a, TweenInfo.new(0.6, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+		{CFrame = a.CFrame + d * D * 0.95, Size = Vector3.new(0.2, r1, r1), Transparency = 1}):Play()
+	Debris:AddItem(a, 0.7)
+end
+local function claraoGelo(pos)
+	local a = peca({Shape = Enum.PartType.Ball, Size = Vector3.new(2, 2, 2), Material = Enum.Material.Neon, Color = C3(225, 245, 255),
+		Transparency = 0.3, CFrame = CFrame.new(pos)})
+	TweenService:Create(a, TweenInfo.new(0.32, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = Vector3.new(9, 9, 9), Transparency = 1}):Play()
+	Debris:AddItem(a, 0.4)
 end
 -- {fracao do alcance, arrasto, vida, taxa}
 local PERF = {nucleo = {1.0, 0.7, 0.95, 120}, fluxo = {0.95, 1.1, 1.2, 55}, nevoa = {0.85, 1.6, 1.8, 22}, po = {1.05, 0.9, 1.1, 170},
@@ -313,14 +343,28 @@ local function ligarSopro(m, ligado, f, alvo, alcance)
 			s.anc.WorldCFrame = CFrame.lookAt(b, b + d)
 			local h = workspace:Raycast(b, d * alc * 0.85, rp)                     -- o feixe para na superficie
 			s.fim.WorldPosition = h and h.Position or (b + d * alc * 0.85)
+			if s.xOn then                                                          -- PATCH_GELO_BRILHO: veios ate o contato
+				local t = os.clock(); local D = h and (h.Position - b).Magnitude or alc * 0.85
+				local vida = math.min(0.95, D / s.vVeio); s.x.veios.Lifetime = NumberRange.new(vida * 0.8, vida)
+				if s.fx >= 0.5 and t >= s.proxAnel then s.proxAnel = t + 0.3; anelGelo(b, d, D) end
+				if h and t >= s.proxClarao then s.proxClarao = t + 0.35; claraoGelo(h.Position + h.Normal * 1) end
+			end
 		end)
 		for k, e in pairs(s.e) do
 			local p = PERF[k]; e.Rate = p[4] * f
-			if p[1] then local v = velPara(alc, p[1], p[2], p[3]); e.Drag = p[2]; e.Lifetime = NumberRange.new(p[3] * 0.9, p[3]); e.Speed = NumberRange.new(v * 0.92, v * 1.04) end
+			-- PATCH_GELO_BRILHO r2: velocidades ESPALHADAS (0,6-1,04): com fps baixo cada quadro solta um lote que viajava junto
+			-- (bolhas espacadas = jato "cortado", medido a 15 fps no Studio); espalhado, cada lote vira um trecho continuo
+			if p[1] then local v = velPara(alc, p[1], p[2], p[3]); e.Drag = p[2]; e.Lifetime = NumberRange.new(p[3] * 0.9, p[3]); e.Speed = NumberRange.new(v * 0.6, v * 1.04) end
 		end
 		s.feixe.Enabled = true; s.miolo.Enabled = true
 		if not s.luz then s.luz = luz(s.anc, C3(160, 215, 255), 1.8, 34) end
+		-- PATCH_GELO_BRILHO: camadas extras (velocidade dos veios = alcance em ~0,95 s; vida recortada no contato acima)
+		s.vVeio = alc * 0.85 / 0.95; s.fx = f; s.proxAnel, s.proxClarao = 0, 0; s.xOn = true
+		s.x.veios.Speed = NumberRange.new(s.vVeio * 0.6, s.vVeio * 1.05); s.x.veios.Rate = 65 * f
+		s.x.faiscas.Speed = NumberRange.new(alc * 0.5, alc * 0.9); s.x.faiscas.Lifetime = NumberRange.new(0.5, 0.9); s.x.faiscas.Rate = 45 * f
+		s.x.boca.Rate = 35 * f
 	else
+		s.xOn = false; for _, e in pairs(s.x) do e.Rate = 0 end
 		for _, e in pairs(s.e) do e.Rate = 0 end
 		s.feixe.Enabled = false; s.miolo.Enabled = false
 		liberarLuz(s.luz); s.luz = nil
