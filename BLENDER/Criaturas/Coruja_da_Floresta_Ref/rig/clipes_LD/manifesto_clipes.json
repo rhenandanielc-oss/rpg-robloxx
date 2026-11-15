@@ -1,0 +1,249 @@
+{
+ "Ameaca": {
+  "duracao_s": 3.0,
+  "quadros": 91,
+  "laco": false,
+  "velocidade_u_s_PROPOSTA": 0.0,
+  "giro_graus_s_PROPOSTA": 0.0,
+  "entrada": "Repouso q0",
+  "saida": "Repouso q0",
+  "erro_ik_max": 0.0,
+  "pele_z_min_cm": -0.01,
+  "escorregao_pe_apoiado_max": {
+   "E": 0.0,
+   "D": 0.0
+  },
+  "alvos_limitados": 0,
+  "maior_giro_entre_quadros_graus_osso_quadro": [
+   34.12,
+   "AntebracoAsaE",
+   7
+  ],
+  "emenda_entrada_graus_transl": [
+   0.0,
+   0.0
+  ],
+  "emenda_saida_graus_transl": [
+   0.0,
+   0.0
+  ],
+  "emenda_entrada_pior_osso": [
+   0.0,
+   "TufoE"
+  ],
+  "emenda_saida_pior_osso": [
+   0.0,
+   "TufoE"
+  ]
+ },
+ "ReacaoImpacto": {
+  "duracao_s": 0.9,
+  "quadros": 28,
+  "laco": false,
+  "velocidade_u_s_PROPOSTA": 0.0,
+  "giro_graus_s_PROPOSTA": 0.0,
+  "entrada": "Repouso q0",
+  "saida": "Repouso q0",
+  "erro_ik_max": 0.0,
+  "pele_z_min_cm": -0.02,
+  "escorregao_pe_apoiado_max": {
+   "E": 0.0002,
+   "D": 0.0002
+  },
+  "alvos_limitados": 0,
+  "maior_giro_entre_quadros_graus_osso_quadro": [
+   45.68,
+   "PalpebraE",
+   2
+  ],
+  "emenda_entrada_graus_transl": [
+   0.0,
+   0.0
+  ],
+  "emenda_saida_graus_transl": [
+   0.0,
+   0.0
+  ],
+  "emenda_entrada_pior_osso": [
+   0.0,
+   "TufoE"
+  ],
+  "emenda_saida_pior_osso": [
+   0.0,
+   "TufoE"
+  ]
+ },
+ "ReacaoImpactoVoo": {
+  "duracao_s": 0.8,
+  "quadros": 25,
+  "laco": false,
+  "velocidade_u_s_PROPOSTA": 0.0,
+  "giro_graus_s_PROPOSTA": 0.0,
+  "entrada": "BaterAsas q0",
+  "saida": "BaterAsas q0",
+  "erro_ik_max": 0.2845,
+  "pele_z_min_cm": 28.8,
+  "escorregao_pe_apoiado_max": {
+   "E": 0.0,
+   "D": 0.0
+  },
+  "alvos_limitados": 50,
+  "maior_giro_entre_quadros_graus_osso_quadro": [
+   45.68,
+   "PalpebraE",
+   2
+  ],
+  "emenda_entrada_graus_transl": [
+   0.0,
+   0.0
+  ],
+  "emenda_saida_graus_transl": [
+   0.0,
+   0.0
+  ],
+  "emenda_entrada_pior_osso": [
+   0.0,
+   "TufoE"
+  ],
+  "emenda_saida_pior_osso": [
+   0.0,
+   "TufoE"
+  ]
+ },
+ "FugaDecolando": {
+  "duracao_s": 1.4333,
+  "quadros": 44,
+  "laco": false,
+  "velocidade_u_s_PROPOSTA": 0.0,
+  "giro_graus_s_PROPOSTA": 0.0,
+  "entrada": "Repouso q0",
+  "saida": "BaterAsas q0",
+  "erro_ik_max": 0.2837,
+  "pele_z_min_cm": -0.02,
+  "escorregao_pe_apoiado_max": {
+   "E": 0.0004,
+   "D": 0.0003
+  },
+  "alvos_limitados": 70,
+  "maior_giro_entre_quadros_graus_osso_quadro": [
+   42.94,
+   "TarsoE",
+   8
+  ],
+  "emenda_entrada_graus_transl": [
+   0.0,
+   0.0
+  ],
+  "emenda_saida_graus_transl": [
+   0.0,
+   0.0
+  ],
+  "emenda_entrada_pior_osso": [
+   0.0,
+   "TufoE"
+  ],
+  "emenda_saida_pior_osso": [
+   0.0,
+   "TufoE"
+  ]
+ },
+ "Derrota": {
+  "duracao_s": 2.5,
+  "quadros": 76,
+  "laco": false,
+  "velocidade_u_s_PROPOSTA": 0.0,
+  "giro_graus_s_PROPOSTA": 0.0,
+  "entrada": "Repouso q0",
+  "saida": "DerrotaFim",
+  "erro_ik_max": 0.2151,
+  "pele_z_min_cm": -0.26,
+  "escorregao_pe_apoiado_max": {
+   "E": 0.0019,
+   "D": 0.0002
+  },
+  "alvos_limitados": 100,
+  "maior_giro_entre_quadros_graus_osso_quadro": [
+   45.68,
+   "PalpebraE",
+   2
+  ],
+  "emenda_entrada_graus_transl": [
+   0.0,
+   0.0
+  ],
+  "emenda_saida_graus_transl": [
+   0.0,
+   0.0
+  ],
+  "emenda_entrada_pior_osso": [
+   0.0,
+   "TufoE"
+  ],
+  "emenda_saida_pior_osso": [
+   0.0,
+   "TufoE"
+  ]
+ },
+ "DerrotaEmVoo": {
+  "duracao_s": 2.1,
+  "quadros": 64,
+  "laco": false,
+  "velocidade_u_s_PROPOSTA": 0.0,
+  "giro_graus_s_PROPOSTA": 0.0,
+  "entrada": "BaterAsas q0",
+  "saida": "DerrotaFim",
+  "erro_ik_max": 0.2835,
+  "pele_z_min_cm": 0.03,
+  "escorregao_pe_apoiado_max": {
+   "E": 0.0,
+   "D": 0.0
+  },
+  "alvos_limitados": 128,
+  "maior_giro_entre_quadros_graus_osso_quadro": [
+   45.68,
+   "PalpebraE",
+   2
+  ],
+  "emenda_entrada_graus_transl": [
+   0.0,
+   0.0
+  ],
+  "emenda_saida_graus_transl": [
+   0.0,
+   0.0
+  ],
+  "emenda_entrada_pior_osso": [
+   0.0,
+   "TufoE"
+  ],
+  "emenda_saida_pior_osso": [
+   0.0,
+   "TufoE"
+  ]
+ },
+ "Derrotada": {
+  "duracao_s": 1.0,
+  "quadros": 30,
+  "laco": true,
+  "velocidade_u_s_PROPOSTA": 0.0,
+  "giro_graus_s_PROPOSTA": 0.0,
+  "entrada": "laco",
+  "saida": "laco",
+  "erro_ik_max": 0.2151,
+  "pele_z_min_cm": 0.03,
+  "escorregao_pe_apoiado_max": {
+   "E": 0.0,
+   "D": 0.0
+  },
+  "alvos_limitados": 62,
+  "maior_giro_entre_quadros_graus_osso_quadro": [
+   0.0,
+   "",
+   0
+  ],
+  "emenda_laco_graus_transl": [
+   0.0,
+   0.0
+  ]
+ }
+}

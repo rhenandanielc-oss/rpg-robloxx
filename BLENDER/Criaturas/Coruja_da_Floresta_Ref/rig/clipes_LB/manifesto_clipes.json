@@ -1,0 +1,250 @@
+{
+ "BaterAsas": {
+  "duracao_s": 1.6,
+  "quadros": 48,
+  "laco": true,
+  "velocidade_u_s_PROPOSTA": 3.0,
+  "giro_graus_s_PROPOSTA": 0.0,
+  "entrada": "laco",
+  "saida": "laco",
+  "erro_ik_max": 0.2835,
+  "pele_z_min_cm": 32.51,
+  "escorregao_pe_apoiado_max": {
+   "E": 0.0,
+   "D": 0.0
+  },
+  "alvos_limitados": 98,
+  "maior_giro_entre_quadros_graus_osso_quadro": [
+   21.21,
+   "BracoAsaD",
+   45
+  ],
+  "emenda_laco_graus_transl": [
+   0.0,
+   0.0
+  ]
+ },
+ "Planar": {
+  "duracao_s": 2.6,
+  "quadros": 78,
+  "laco": true,
+  "velocidade_u_s_PROPOSTA": 3.6,
+  "giro_graus_s_PROPOSTA": 0.0,
+  "entrada": "laco",
+  "saida": "laco",
+  "erro_ik_max": 0.2811,
+  "pele_z_min_cm": 34.51,
+  "escorregao_pe_apoiado_max": {
+   "E": 0.0,
+   "D": 0.0
+  },
+  "alvos_limitados": 158,
+  "maior_giro_entre_quadros_graus_osso_quadro": [
+   0.96,
+   "PrimariasD",
+   73
+  ],
+  "emenda_laco_graus_transl": [
+   0.0,
+   0.0
+  ]
+ },
+ "PlanarCurvaE": {
+  "duracao_s": 2.6,
+  "quadros": 78,
+  "laco": true,
+  "velocidade_u_s_PROPOSTA": 3.6,
+  "giro_graus_s_PROPOSTA": 40.0,
+  "entrada": "laco",
+  "saida": "laco",
+  "erro_ik_max": 0.2764,
+  "pele_z_min_cm": 33.9,
+  "escorregao_pe_apoiado_max": {
+   "E": 0.0,
+   "D": 0.0
+  },
+  "alvos_limitados": 158,
+  "maior_giro_entre_quadros_graus_osso_quadro": [
+   0.96,
+   "PrimariasD",
+   73
+  ],
+  "emenda_laco_graus_transl": [
+   0.0,
+   0.0
+  ]
+ },
+ "PlanarCurvaD": {
+  "duracao_s": 2.6,
+  "quadros": 78,
+  "laco": true,
+  "velocidade_u_s_PROPOSTA": 3.6,
+  "giro_graus_s_PROPOSTA": -40.0,
+  "entrada": "laco",
+  "saida": "laco",
+  "erro_ik_max": 0.2764,
+  "pele_z_min_cm": 34.16,
+  "escorregao_pe_apoiado_max": {
+   "E": 0.0,
+   "D": 0.0
+  },
+  "alvos_limitados": 158,
+  "maior_giro_entre_quadros_graus_osso_quadro": [
+   0.96,
+   "PrimariasD",
+   73
+  ],
+  "emenda_laco_graus_transl": [
+   0.0,
+   0.0
+  ]
+ },
+ "BaterParaPlanar": {
+  "duracao_s": 1.0,
+  "quadros": 31,
+  "laco": false,
+  "velocidade_u_s_PROPOSTA": 0.0,
+  "giro_graus_s_PROPOSTA": 0.0,
+  "entrada": "BaterAsas q0",
+  "saida": "Planar q0",
+  "erro_ik_max": 0.2835,
+  "pele_z_min_cm": 32.51,
+  "escorregao_pe_apoiado_max": {
+   "E": 0.0,
+   "D": 0.0
+  },
+  "alvos_limitados": 62,
+  "maior_giro_entre_quadros_graus_osso_quadro": [
+   20.82,
+   "BracoAsaE",
+   2
+  ],
+  "emenda_entrada_graus_transl": [
+   0.0,
+   0.0
+  ],
+  "emenda_saida_graus_transl": [
+   0.0,
+   0.0
+  ],
+  "emenda_entrada_pior_osso": [
+   0.0,
+   "TufoE"
+  ],
+  "emenda_saida_pior_osso": [
+   0.0,
+   "TufoE"
+  ]
+ },
+ "PlanarParaBater": {
+  "duracao_s": 1.2,
+  "quadros": 37,
+  "laco": false,
+  "velocidade_u_s_PROPOSTA": 0.0,
+  "giro_graus_s_PROPOSTA": 0.0,
+  "entrada": "Planar q0",
+  "saida": "BaterAsas q0",
+  "erro_ik_max": 0.2835,
+  "pele_z_min_cm": 32.51,
+  "escorregao_pe_apoiado_max": {
+   "E": 0.0,
+   "D": 0.0
+  },
+  "alvos_limitados": 74,
+  "maior_giro_entre_quadros_graus_osso_quadro": [
+   21.21,
+   "BracoAsaD",
+   33
+  ],
+  "emenda_entrada_graus_transl": [
+   0.0,
+   0.0
+  ],
+  "emenda_saida_graus_transl": [
+   0.0,
+   0.0
+  ],
+  "emenda_entrada_pior_osso": [
+   0.0,
+   "TufoE"
+  ],
+  "emenda_saida_pior_osso": [
+   0.0,
+   "TufoE"
+  ]
+ },
+ "Decolar": {
+  "duracao_s": 1.64,
+  "quadros": 50,
+  "laco": false,
+  "velocidade_u_s_PROPOSTA": 0.0,
+  "giro_graus_s_PROPOSTA": 0.0,
+  "entrada": "Repouso q0",
+  "saida": "BaterAsas q0",
+  "erro_ik_max": 0.2837,
+  "pele_z_min_cm": -0.15,
+  "escorregao_pe_apoiado_max": {
+   "E": 0.0051,
+   "D": 0.0051
+  },
+  "alvos_limitados": 72,
+  "maior_giro_entre_quadros_graus_osso_quadro": [
+   30.8,
+   "TarsoD",
+   12
+  ],
+  "emenda_entrada_graus_transl": [
+   0.0,
+   0.0
+  ],
+  "emenda_saida_graus_transl": [
+   0.227,
+   0.0
+  ],
+  "emenda_entrada_pior_osso": [
+   0.0,
+   "TufoE"
+  ],
+  "emenda_saida_pior_osso": [
+   0.23,
+   "BracoAsaE"
+  ]
+ },
+ "Pousar": {
+  "duracao_s": 1.9,
+  "quadros": 58,
+  "laco": false,
+  "velocidade_u_s_PROPOSTA": 0.0,
+  "giro_graus_s_PROPOSTA": 0.0,
+  "entrada": "Planar q0",
+  "saida": "Repouso q0",
+  "erro_ik_max": 0.2852,
+  "pele_z_min_cm": -0.02,
+  "escorregao_pe_apoiado_max": {
+   "E": 0.0004,
+   "D": 0.0002
+  },
+  "alvos_limitados": 56,
+  "maior_giro_entre_quadros_graus_osso_quadro": [
+   25.79,
+   "TarsoE",
+   28
+  ],
+  "emenda_entrada_graus_transl": [
+   0.0,
+   0.0
+  ],
+  "emenda_saida_graus_transl": [
+   0.0,
+   0.0
+  ],
+  "emenda_entrada_pior_osso": [
+   0.0,
+   "TufoE"
+  ],
+  "emenda_saida_pior_osso": [
+   0.0,
+   "TufoE"
+  ]
+ }
+}

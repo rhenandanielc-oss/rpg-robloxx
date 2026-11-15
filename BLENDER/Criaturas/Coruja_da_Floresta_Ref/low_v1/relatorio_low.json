@@ -1,0 +1,33 @@
+{
+ "regioes": {
+  "asa": 4487,
+  "cabeca": 3042,
+  "corpo": 1471
+ },
+ "pesos": [
+  0.8,
+  0.6,
+  0.8
+ ],
+ "alvo": 9000,
+ "voxel": 0.0035,
+ "textura": 1024,
+ "malhas": {
+  "Coruja_Cabeca": {
+   "tris": 3042,
+   "material": "M_Coruja_Cabeca"
+  },
+  "Coruja_Corpo": {
+   "tris": 5958,
+   "material": "M_Coruja_Corpo"
+  }
+ },
+ "tris_total": 9000,
+ "bruto_tris": 1111686,
+ "medidas": {
+  "comprimento": 0.5071347504854202,
+  "largura": 1.4820335507392883,
+  "altura": 0.6189742088317871,
+  "casco_min_z": -3.654640386230312e-05
+ }
+}

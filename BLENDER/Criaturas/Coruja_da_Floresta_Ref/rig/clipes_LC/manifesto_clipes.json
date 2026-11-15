@@ -1,0 +1,249 @@
+{
+ "Espreitar": {
+  "duracao_s": 3.4,
+  "quadros": 103,
+  "laco": false,
+  "velocidade_u_s_PROPOSTA": 0.0,
+  "giro_graus_s_PROPOSTA": 0.0,
+  "entrada": "Repouso q0",
+  "saida": "Repouso q0",
+  "erro_ik_max": 0.0,
+  "pele_z_min_cm": -0.01,
+  "escorregao_pe_apoiado_max": {
+   "E": 0.0,
+   "D": 0.0
+  },
+  "alvos_limitados": 0,
+  "maior_giro_entre_quadros_graus_osso_quadro": [
+   4.43,
+   "Cabeca",
+   49
+  ],
+  "emenda_entrada_graus_transl": [
+   0.0,
+   0.0
+  ],
+  "emenda_saida_graus_transl": [
+   0.0,
+   0.0
+  ],
+  "emenda_entrada_pior_osso": [
+   0.0,
+   "TufoE"
+  ],
+  "emenda_saida_pior_osso": [
+   0.0,
+   "TufoE"
+  ]
+ },
+ "Piar": {
+  "duracao_s": 2.6,
+  "quadros": 79,
+  "laco": false,
+  "velocidade_u_s_PROPOSTA": 0.0,
+  "giro_graus_s_PROPOSTA": 0.0,
+  "entrada": "Repouso q0",
+  "saida": "Repouso q0",
+  "erro_ik_max": 0.0,
+  "pele_z_min_cm": -0.01,
+  "escorregao_pe_apoiado_max": {
+   "E": 0.0,
+   "D": 0.0
+  },
+  "alvos_limitados": 0,
+  "maior_giro_entre_quadros_graus_osso_quadro": [
+   2.07,
+   "Cabeca",
+   32
+  ],
+  "emenda_entrada_graus_transl": [
+   0.0,
+   0.0
+  ],
+  "emenda_saida_graus_transl": [
+   0.0,
+   0.0
+  ],
+  "emenda_entrada_pior_osso": [
+   0.0,
+   "TufoE"
+  ],
+  "emenda_saida_pior_osso": [
+   0.0,
+   "TufoE"
+  ]
+ },
+ "MergulhoCaca": {
+  "duracao_s": 1.55,
+  "quadros": 47,
+  "laco": false,
+  "velocidade_u_s_PROPOSTA": 0.0,
+  "giro_graus_s_PROPOSTA": 0.0,
+  "entrada": "Planar q0",
+  "saida": "MantoFim",
+  "erro_ik_max": 0.2972,
+  "pele_z_min_cm": -0.02,
+  "escorregao_pe_apoiado_max": {
+   "E": 0.0067,
+   "D": 0.0067
+  },
+  "alvos_limitados": 66,
+  "maior_giro_entre_quadros_graus_osso_quadro": [
+   29.11,
+   "TarsoD",
+   33
+  ],
+  "emenda_entrada_graus_transl": [
+   0.0,
+   0.0
+  ],
+  "emenda_saida_graus_transl": [
+   0.0,
+   0.0
+  ],
+  "emenda_entrada_pior_osso": [
+   0.0,
+   "TufoE"
+  ],
+  "emenda_saida_pior_osso": [
+   0.0,
+   "TufoE"
+  ]
+ },
+ "Comer": {
+  "duracao_s": 3.4,
+  "quadros": 103,
+  "laco": false,
+  "velocidade_u_s_PROPOSTA": 0.0,
+  "giro_graus_s_PROPOSTA": 0.0,
+  "entrada": "MantoFim",
+  "saida": "Repouso q0",
+  "erro_ik_max": 0.0,
+  "pele_z_min_cm": -0.02,
+  "escorregao_pe_apoiado_max": {
+   "E": 0.0,
+   "D": 0.0
+  },
+  "alvos_limitados": 0,
+  "maior_giro_entre_quadros_graus_osso_quadro": [
+   15.04,
+   "AntebracoAsaD",
+   61
+  ],
+  "emenda_entrada_graus_transl": [
+   0.0,
+   0.0
+  ],
+  "emenda_saida_graus_transl": [
+   0.0,
+   0.0
+  ],
+  "emenda_entrada_pior_osso": [
+   0.0,
+   "TufoE"
+  ],
+  "emenda_saida_pior_osso": [
+   0.0,
+   "TufoE"
+  ]
+ },
+ "Adormecer": {
+  "duracao_s": 1.8,
+  "quadros": 55,
+  "laco": false,
+  "velocidade_u_s_PROPOSTA": 0.0,
+  "giro_graus_s_PROPOSTA": 0.0,
+  "entrada": "Repouso q0",
+  "saida": "Dormindo q0",
+  "erro_ik_max": 0.0,
+  "pele_z_min_cm": -0.02,
+  "escorregao_pe_apoiado_max": {
+   "E": 0.0,
+   "D": 0.0
+  },
+  "alvos_limitados": 0,
+  "maior_giro_entre_quadros_graus_osso_quadro": [
+   2.09,
+   "Cabeca",
+   18
+  ],
+  "emenda_entrada_graus_transl": [
+   0.0,
+   0.0
+  ],
+  "emenda_saida_graus_transl": [
+   0.0,
+   0.0
+  ],
+  "emenda_entrada_pior_osso": [
+   0.0,
+   "TufoE"
+  ],
+  "emenda_saida_pior_osso": [
+   0.0,
+   "TufoE"
+  ]
+ },
+ "Dormindo": {
+  "duracao_s": 6.0,
+  "quadros": 180,
+  "laco": true,
+  "velocidade_u_s_PROPOSTA": 0.0,
+  "giro_graus_s_PROPOSTA": 0.0,
+  "entrada": "laco",
+  "saida": "laco",
+  "erro_ik_max": 0.0,
+  "pele_z_min_cm": -0.02,
+  "escorregao_pe_apoiado_max": {
+   "E": 0.0,
+   "D": 0.0
+  },
+  "alvos_limitados": 0,
+  "maior_giro_entre_quadros_graus_osso_quadro": [
+   0.17,
+   "TarsoD",
+   0
+  ],
+  "emenda_laco_graus_transl": [
+   0.0,
+   0.0
+  ]
+ },
+ "Despertar": {
+  "duracao_s": 1.4,
+  "quadros": 43,
+  "laco": false,
+  "velocidade_u_s_PROPOSTA": 0.0,
+  "giro_graus_s_PROPOSTA": 0.0,
+  "entrada": "Dormindo q0",
+  "saida": "Repouso q0",
+  "erro_ik_max": 0.0,
+  "pele_z_min_cm": -0.02,
+  "escorregao_pe_apoiado_max": {
+   "E": 0.0,
+   "D": 0.0
+  },
+  "alvos_limitados": 0,
+  "maior_giro_entre_quadros_graus_osso_quadro": [
+   8.0,
+   "Cabeca",
+   32
+  ],
+  "emenda_entrada_graus_transl": [
+   0.0,
+   0.0
+  ],
+  "emenda_saida_graus_transl": [
+   0.0,
+   0.0
+  ],
+  "emenda_entrada_pior_osso": [
+   0.0,
+   "TufoE"
+  ],
+  "emenda_saida_pior_osso": [
+   0.0,
+   "TufoE"
+  ]
+ }
+}

@@ -1,0 +1,62 @@
+{
+ "ossos": [
+  "Raiz",
+  "Pelve",
+  "Coluna1",
+  "Coluna2",
+  "Pescoco",
+  "Pescoco2",
+  "Cabeca",
+  "TufoE",
+  "TufoD",
+  "OmbroAsaE",
+  "BracoAsaE",
+  "AntebracoAsaE",
+  "MaoAsaE",
+  "PrimariasE",
+  "OmbroAsaD",
+  "BracoAsaD",
+  "AntebracoAsaD",
+  "MaoAsaD",
+  "PrimariasD",
+  "CoxaE",
+  "TibiaE",
+  "TarsoE",
+  "DedosE",
+  "CoxaD",
+  "TibiaD",
+  "TarsoD",
+  "DedosD",
+  "Cauda",
+  "CaudaLequeE",
+  "CaudaLequeD"
+ ],
+ "deformam": 29,
+ "costura": [
+  84,
+  84
+ ],
+ "malhas": {
+  "Coruja_Cabeca": {
+   "tris": 3042,
+   "grupos": 29,
+   "max_influencias": 4,
+   "sem_peso": 0
+  },
+  "Coruja_Corpo": {
+   "tris": 5958,
+   "grupos": 29,
+   "max_influencias": 4,
+   "sem_peso": 0
+  }
+ },
+ "sem_vertice": [],
+ "provas_min_z_cm": {
+  "repouso_T": -0.0,
+  "asas_fechadas": -0.0,
+  "batida_alto": 30.0,
+  "batida_baixo": 18.15,
+  "cabeca_virada": -0.0,
+  "cauda_leque": -0.0
+ }
+}
