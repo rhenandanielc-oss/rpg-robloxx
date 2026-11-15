@@ -134,13 +134,13 @@ Não confundir com o **Javali-do-Brejo** do Pântano Nebuloso, que é outra esp�
   - `REFERENCIAS/floresta-ancestral/coruja-da-floresta/coruja-da-floresta-referencia.png`
 
   A aparência delas não define porte, comportamento nem recursos; essas regras seguem pendentes.
-- **Cervo-do-Bosque:** blockout piloto em `BLENDER/Criaturas/Cervo_do_Bosque_Ref/`.
+- **Cervo-do-Bosque:** blockout piloto em `BLENDER/Criaturas/Fauna_Floresta_Ancestral/Cervo_do_Bosque_Ref/`.
   - Duas passagens, com pranchas lado a lado.
   - Ainda **aguarda aprovação**.
   - Sem rig, UV, animação ou Studio.
   - Ver o `LEIA-ME.md` da pasta.
 - **Javali e coruja:** traços registrados no mesmo `LEIA-ME.md`. Modelagem em lotes posteriores.
-- **Cervo r1 (12/11):** revisão de silhueta + estudo de pelagem em `BLENDER/Criaturas/Cervo_do_Bosque_Ref/revisao_r1/`. Aguarda revisão do usuário.
+- **Cervo r1 (12/11):** revisão de silhueta + estudo de pelagem em `BLENDER/Criaturas/Fauna_Floresta_Ancestral/Cervo_do_Bosque_Ref/revisao_r1/`. Aguarda revisão do usuário.
 
 ---
 
@@ -160,3 +160,13 @@ Não confundir com o **Javali-do-Brejo** do Pântano Nebuloso, que é outra esp�
 6. **Coleta:** derrota, depois interação, depois os materiais validados no servidor. Depende do M4.1 (inventário).
 
 Nada disso foi feito. Este arquivo é só leitura e organização.
+
+---
+
+**15/11/2026 — organização:** Cervo-do-Bosque, Javali Silvestre e Coruja-da-Floresta passaram para `BLENDER/Criaturas/Fauna_Floresta_Ancestral/` (pedido do usuário).
+- Apagado ~2,1 GB de lixo:
+  - 5.756 quadros PNG soltos dos renders, mantendo os GIFs e as pranchas (17 GIFs foram gerados antes, onde não havia);
+  - 2 arquivos `.blend1`;
+  - 1 `__pycache__`.
+- Os caminhos absolutos de textura foram corrigidos em 44 `.blend` da fauna e em 8 `.blend` do Javali-do-Brejo que apontavam para as texturas do Javali Silvestre; agora todas as texturas são encontradas.
+- Os pedidos antigos em `DOCS/pedidos/` mantêm o caminho antigo, como registro histórico.

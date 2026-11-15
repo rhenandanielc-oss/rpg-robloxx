@@ -464,3 +464,4 @@ Sem dano, hitbox ou regra de jogo. Como a coruja é derrotada, onde o corpo cai 
 - Renders em `rig/clipes_LD/render/`: pranchas, GIFs e `derrotada_vistas.png`.
 - Studio não testado.
 - **Lote D APROVADO pelo usuário em 15/11** ("Aprovar lote D"). Coruja completa no Blender: lotes A r2, B, C r2 e D sobre o rig r4. Studio não testado; sem commit.
+- **Commit 211cf6d (15/11, autorizado: "Sim, commit")**: scripts, JSON dos clipes, manifestos e LEIA-ME (81 arquivos); sem .blend nem renders; push para origin/main em 15/11.

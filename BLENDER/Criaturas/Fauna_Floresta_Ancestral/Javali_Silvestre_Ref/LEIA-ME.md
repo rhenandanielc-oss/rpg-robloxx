@@ -448,3 +448,5 @@ Os renders ficam em `rig/clipes_LD/render/cadeia_*/`.
 - O r2 aguarda a revisão visual do usuário.
 
 **13/11: lote D r2 APROVADO pelo usuário** ("Aprovar o lote D r2"). Base oficial do lote D: `rig/clipes_LD_r2/` (o r1 em `rig/clipes_LD/` fica só como histórico). Javali completo no Blender: lotes A, B, C e D r2 = 24 clipes, rig r4. Pendentes: deformação ~4× da nuca no Fucar; Studio (com autorização); commit.
+
+**14/11: commit 087628f** (84 arquivos: scripts, JSON dos clipes, manifestos/medidas, LEIA-ME; GIFs e binários fora do git). Push feito 14/11 (junto com a9d0fb0 da Wyvern).
