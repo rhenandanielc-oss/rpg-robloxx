@@ -265,6 +265,30 @@ end
 -- ===== SOPRO (camadas extras sobre o jato do VFXCombate): garganta acende no preparo; linguas de chama irregulares
 -- no meio do jato (forma organica, sem cone rigido) e calor tremulo junto a boca ===================================
 local sopro = {}
+-- PATCH_FOGO_BRILHO (15/11): contato do jato (terreno/paredes; personagens nao param o efeito), disco de pressao e clarao
+local function contato(o, v, m)
+	local ign = {m, pastaFX()}; local rp = RaycastParams.new(); rp.FilterType = Enum.RaycastFilterType.Exclude
+	for _ = 1, 3 do
+		rp.FilterDescendantsInstances = ign
+		local h = workspace:Raycast(o, v, rp); if not h then return nil end
+		local mdl = h.Instance:FindFirstAncestorOfClass("Model")
+		if mdl and mdl:FindFirstChildOfClass("Humanoid") then table.insert(ign, mdl) else return h end
+	end
+end
+local function anelCalor(b, d, D)
+	local r1 = 3 + D * 0.3
+	local a = peca({Shape = Enum.PartType.Cylinder, Size = Vector3.new(0.4, 3, 3), Material = Enum.Material.Neon, Color = C3(255, 150, 50),
+		Transparency = 0.55, CFrame = CFrame.lookAt(b, b + d) * CFrame.Angles(0, math.rad(90), 0)})
+	TweenService:Create(a, TweenInfo.new(0.6, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+		{CFrame = a.CFrame + d * D * 0.95, Size = Vector3.new(0.2, r1, r1), Transparency = 1}):Play()
+	Debris:AddItem(a, 0.7)
+end
+local function claraoFogo(pos)
+	local a = peca({Shape = Enum.PartType.Ball, Size = Vector3.new(2, 2, 2), Material = Enum.Material.Neon, Color = C3(255, 220, 140),
+		Transparency = 0.3, CFrame = CFrame.new(pos)})
+	TweenService:Create(a, TweenInfo.new(0.32, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = Vector3.new(10, 10, 10), Transparency = 1}):Play()
+	Debris:AddItem(a, 0.4)
+end
 local function soproExtra(m, d, f)
 	if d.fase == "preparo" then
 		local g = osso(m, "Pescoco4", "Pescoco2")
@@ -282,6 +306,23 @@ local function soproExtra(m, d, f)
 		s.tremulo = emissor(s.a, {Texture = TEX.onda, Color = seq({C3(255, 235, 200), C3(255, 200, 150)}), LightEmission = 0.15, LightInfluence = 0.6,
 			Size = ns(0, 3, 1, 9), Transparency = ns(0, 0.82, 1, 1), Lifetime = NumberRange.new(0.25, 0.4), Speed = NumberRange.new(20, 35),
 			SpreadAngle = Vector2.new(25, 25), Rotation = NumberRange.new(0, 360), RotSpeed = NumberRange.new(-90, 90), Rate = 18 * f, EmissionDirection = Enum.NormalId.Front})
+		-- PATCH_FOGO_BRILHO (15/11, pedido do usuario: "mais efeitos, como a Wyvern"; mesmo padrao do Sopro Umbral r3
+		-- aprovado): por cima do jato do VFXCombate e das linguas acima (nada disso muda): veios incandescentes ao longo do
+		-- jato (Squash NEGATIVO = alongados no sentido da velocidade), brasas voando, clarao branco-amarelo na boca, discos
+		-- laranja de pressao a cada 0,3 s ate o contato e bola de clarao no contato a cada 0,35 s. Sem luz dinamica nova.
+		s.vVeio = alc / 0.95
+		s.veios = emissor(s.a, {Texture = TEX.faisca, Color = seq({C3(255, 255, 235), C3(255, 220, 120), C3(255, 140, 40)}), LightEmission = 1,
+			LightInfluence = 0, Orientation = Enum.ParticleOrientation.VelocityParallel, Size = ns(0, 2.3, 0.6, 1.7, 1, 0.6), Squash = ns(0, -2, 1, -2),
+			Transparency = ns(0, 0, 0.7, 0.2, 1, 1), Lifetime = NumberRange.new(0.75, 0.95), Speed = NumberRange.new(s.vVeio * 0.9, s.vVeio * 1.05),
+			SpreadAngle = Vector2.new(8, 8), Rate = 70 * f, ZOffset = 8, EmissionDirection = Enum.NormalId.Front})
+		s.brasas = emissor(s.a, {Texture = TEX.brasa, Orientation = Enum.ParticleOrientation.VelocityParallel, Color = BRASA, LightEmission = 1,
+			LightInfluence = 0, Size = ns(0, 1.0, 1, 0.2), Transparency = ns(0, 0, 1, 1), Lifetime = NumberRange.new(0.6, 1.0),
+			Speed = NumberRange.new(alc * 0.6, alc * 1.1), Drag = 1.2, Acceleration = Vector3.new(0, -15, 0), SpreadAngle = Vector2.new(18, 18),
+			Rate = 45 * f, ZOffset = 8, EmissionDirection = Enum.NormalId.Front})
+		s.bocaB = emissor(s.a, {Texture = TEX.fogo, Color = seq({C3(255, 255, 220), C3(255, 190, 80)}), LightEmission = 1, LightInfluence = 0,
+			Size = ns(0, 3, 1, 0.6), Transparency = ns(0, 0.2, 1, 1), Lifetime = NumberRange.new(0.12, 0.18), Speed = NumberRange.new(2, 5),
+			SpreadAngle = Vector2.new(30, 30), Rate = 35 * f, ZOffset = 8, EmissionDirection = Enum.NormalId.Front})
+		s.proxAnel, s.proxClarao, s.proxRaio, s.f = 0, 0, 0, f
 		s.alvo = d.alvoPos
 		s.con = RunService.RenderStepped:Connect(function()
 			if not m.Parent then s.con:Disconnect(); return end
@@ -292,12 +333,20 @@ local function soproExtra(m, d, f)
 			dr = (dr + Vector3.new(math.sin(t * 7.3), math.sin(t * 5.1) * 0.6, math.cos(t * 6.2)) * 0.035).Unit
 			s.a.WorldCFrame = CFrame.lookAt(p, p + dr)
 			s.linguas.Rate = (38 + 14 * math.sin(t * 9)) * f                -- variacoes naturais de densidade
+			if s.fim or t < s.proxRaio then return end                     -- PATCH_FOGO_BRILHO: contato 10x/s
+			s.proxRaio = t + 0.1
+			local h = contato(p, dr * alc, m)
+			local D = h and (h.Position - p).Magnitude or alc
+			local vida = math.min(0.95, D / s.vVeio); s.veios.Lifetime = NumberRange.new(vida * 0.8, vida)
+			if s.f >= 0.5 and t >= s.proxAnel then s.proxAnel = t + 0.3; anelCalor(p, dr, D) end
+			if h and t >= s.proxClarao then s.proxClarao = t + 0.35; claraoFogo(h.Position + h.Normal * 1) end
 		end)
 	elseif d.fase == "mira" then local s = sopro[m]; if s then s.alvo = d.alvoPos end
 	elseif d.fase == "fim" then
 		local s = sopro[m]; sopro[m] = nil
 		if s then
-			for _, e in ipairs({s.linguas, s.tremulo}) do if e then TweenService:Create(e, TweenInfo.new(0.35), {Rate = 0}):Play() end end
+			s.fim = true                                                     -- PATCH_FOGO_BRILHO: sem aneis/clarao novos
+			for _, e in ipairs({s.linguas, s.tremulo, s.veios, s.brasas, s.bocaB}) do if e then TweenService:Create(e, TweenInfo.new(0.35), {Rate = 0}):Play() end end
 			task.delay(1.0, function() if s.con then s.con:Disconnect() end; if s.a then s.a:Destroy() end end)
 		end
 	end
