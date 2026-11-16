@@ -1,0 +1,86 @@
+local raiz = game.ServerStorage:FindFirstChild("Crocodilo_Piloto") or Instance.new("Folder"); raiz.Name = "Crocodilo_Piloto"; raiz.Parent = game.ServerStorage
+local dados = raiz:FindFirstChild("Dados_Clipes") or Instance.new("Folder"); dados.Name = "Dados_Clipes"; dados.Parent = raiz
+local v
+v = dados:FindFirstChild("Crocodilo_RolarDaMorte"); if v then v:Destroy() end
+v = Instance.new("StringValue"); v.Name = "Crocodilo_RolarDaMorte"; v.Value = [==[Crocodilo_RolarDaMorte|30|1|36|Raiz,Pelve,Coluna1,Coluna2,Pescoco,Pescoco2,Cabeca,Mandibula,BracoE,AntebracoE,MaoE,BracoD,AntebracoD,MaoD,Cauda1,Cauda2,Cauda3,Cauda4,Cauda5,Cauda6,Cauda7,Cauda8,CoxaE,CanelaE,PeE,CoxaD,CanelaD,PeD
+Raiz|2|EAv2B/1Bn1B/zBryBrwB/tBnrBloB5kBnhBndlZ7UrQ5LjHrC0/mBjH5LrQ7UlZndnhB5kBloBnrB/tBrwBryB/zBn1B/1B
+Raiz|4|EgxTrCjH5LrQ7UlZndnhB5kBloBnrB/tBrwBryB/zBn1B/1Bv2Bw2Bg2Bo1Bg0BsyBswBguBorBmoB6kBohBodmZ8UsQ6LkH
+Raiz|5|EAylK47JmoJ4rIinHw7FkqEy0Cwcvcx0CjqEv7FhnH3rIloJ17JzlKxlK37JloJ3rIhnHv7FjqEx0Cvcwcy0CkqEw7FinH4rImoJ27J
+Raiz|7|EAwcy0CkqEw7FinH4rImoJ47JylKylK47JmoJ4rIinHw7FkqEy0Cwcvcx0CjqEv7FhnH3rIloJ37JxlKxlK37JloJ3rIhnHv7FjqEx0C
+Pelve|2|S-0.00286
+Pelve|3|S0.05226
+Pelve|4|S0.99863
+Coluna1|2|S0.00215
+Coluna1|3|S-0.02609
+Coluna1|4|S0.99966
+Mandibula|1|S-0.11814
+Mandibula|4|S0.99300
+BracoE|1|S0.02894
+BracoE|2|S0.74768
+BracoE|3|S0.20677
+BracoE|4|S0.63038
+AntebracoE|1|S-0.04681
+AntebracoE|3|S0.09078
+AntebracoE|4|S0.99477
+MaoE|1|S0.35600
+MaoE|2|S-0.11220
+MaoE|3|S-0.07901
+MaoE|4|S0.92435
+BracoD|1|S-0.03864
+BracoD|2|S-0.71084
+BracoD|3|S-0.21799
+BracoD|4|S0.66760
+AntebracoD|1|S0.00107
+AntebracoD|3|S-0.49143
+AntebracoD|4|S0.87092
+MaoD|1|S0.41265
+MaoD|2|S-0.10248
+MaoD|3|S0.44685
+MaoD|4|S0.78711
+Cauda1|2|S-0.00304
+Cauda1|3|S0.03039
+Cauda1|4|S0.99953
+Cauda2|2|S-0.00480
+Cauda2|3|S0.03205
+Cauda2|4|S0.99947
+Cauda3|2|S-0.00377
+Cauda3|3|S0.03407
+Cauda3|4|S0.99941
+Cauda4|2|S-0.00467
+Cauda4|3|S0.03584
+Cauda4|4|S0.99935
+Cauda5|2|S-0.00309
+Cauda5|3|S0.03789
+Cauda5|4|S0.99928
+Cauda6|2|S-0.00016
+Cauda6|3|S0.03988
+Cauda6|4|S0.99920
+Cauda7|2|S-0.00162
+Cauda7|3|S0.04172
+Cauda7|4|S0.99913
+Cauda8|2|S-0.00466
+Cauda8|3|S0.04337
+Cauda8|4|S0.99905
+CoxaE|1|S0.19533
+CoxaE|2|S0.17221
+CoxaE|3|S0.55138
+CoxaE|4|S0.79257
+CanelaE|1|S-0.22548
+CanelaE|3|S-0.43281
+CanelaE|4|S0.87283
+PeE|1|S-0.16753
+PeE|2|S0.12497
+PeE|3|S0.72508
+PeE|4|S0.65618
+CoxaD|1|S0.18537
+CoxaD|2|S-0.34483
+CoxaD|3|S-0.23044
+CoxaD|4|S0.89086
+CanelaD|1|S-0.08605
+CanelaD|3|S-0.20194
+CanelaD|4|S0.97561
+PeD|1|S0.18371
+PeD|2|S-0.43323
+PeD|3|S-0.57974
+PeD|4|S0.66518]==]; v.Parent = dados
+local r = 0 for _, c in ipairs(dados:GetChildren()) do r += 1 end return "Dados_Clipes: " .. r .. " valores"

@@ -688,5 +688,24 @@
   "sincronizacao": {
    "obs": "descida da rampa e do jogo (deslize, sem passos)"
   }
+ },
+ "CaudaDeMare": {
+  "duracao": 1.5,
+  "loop": false,
+  "quadros": 46,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0893,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": -0.035,
+  "sincronizacao": {
+   "eventos": {
+    "arma": 0.2,
+    "impacto_cauda": 0.56,
+    "fim_varredura": 0.75
+   },
+   "de": "NadoParado",
+   "para": "NadoParado",
+   "obs": "PROTOTIPO de poder (Cauda de Mare = referencia historica); varre de +X para -X"
+  }
  }
 }

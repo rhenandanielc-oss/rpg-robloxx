@@ -725,6 +725,30 @@ for nome_, fn_, dur_, loop_, vel_, ext_ in (
         ("FugaDeBarriga", clipe_fuga_de_barriga, 0.8, True, FUGA_V, {"obs": "fuga rapida para a agua (barriga no chao)"}),
         ("EscorregarBarranco", clipe_escorregar_barranco, 1.2, True, 0.0, {"obs": "descida da rampa e do jogo (deslize, sem passos)"})):
     CLIPES[nome_] = (boca_acompanha(fn_), dur_, loop_, vel_); EXTRA[nome_] = ext_
+# ================================================================== Poderes P1 (15/11): clipe de PROTOTIPO, nao e kit aprovado
+# Cauda de Mare (referencia historica da Etapa 15.1; kit do Crocodilo PENDENTE): o catalogo nao tinha varredura de cauda.
+def clipe_cauda_de_mare(t):
+    """varredura de cauda na agua (1,5 s): antecipacao (corpo torce, cauda arma do lado +X) -> varredura rapida e larga
+    para o lado -X com a ponta atrasada (chicote) -> recuperacao para a pose de boiar. Evento impacto_cauda no meio."""
+    r = {}; nado_corpo(r, t, 3.0, 1.0, 3.0, 0.0, 0.5)
+    arma = suave(t / 0.45)                                          # 0..0,45: arma
+    varre = suave((t - 0.45) / 0.22)                                # 0,45..0,67: varre
+    volta = suave((t - 0.80) / 0.70)                                # 0,8..1,5: recupera
+    for i, nm in enumerate(CAUDA):
+        k = i / 7; atraso = 0.06 * k                               # ponta chega depois (chicote)
+        v_ = suave((t - 0.45 - atraso) / 0.22)
+        a = (14.0 * arma - 30.0 * v_) * (0.5 + 0.5 * k) * (1 - volta)
+        r[nm] = [(Z_, math.radians(a))]
+    tor = (6.0 * arma - 12.0 * varre) * (1 - volta)
+    r["Pelve"] = [(Z_, math.radians(-0.8 * tor))]; r["Coluna1"] = [(Z_, math.radians(0.5 * tor))]
+    soma(r, "Pescoco", Z_, 0.6 * tor); soma_cab(r, Z_, 0.4 * tor)
+    r["Raiz"] = [(Y_, math.radians(2.0 * math.sin(math.pi * min(1.0, max(0.0, (t - 0.45) / 0.5))) * (1 - volta)))]   # 4 graus esticava as patas boiando (IK 0,09)
+    r["Mandibula"] = [(X_, FECHADA)]
+    return r, V((0, 0, 0)), pes_boiando()
+CLIPES["CaudaDeMare"] = (boca_acompanha(clipe_cauda_de_mare), 1.5, False, 0.0)
+EXTRA["CaudaDeMare"] = {"eventos": {"arma": 0.20, "impacto_cauda": 0.56, "fim_varredura": 0.75}, "de": "NadoParado", "para": "NadoParado",
+                        "obs": "PROTOTIPO de poder (Cauda de Mare = referencia historica); varre de +X para -X"}
+PES_CORPO["CaudaDeMare"] = 1.0
 # ================================================================== Lote 4: montaria (so apresentacao; o cavaleiro e demonstracao separada)
 BAIXA_MONT = 0.20                                                  # baixa a postura para receber o peso (patas plantadas)
 def montaria(t, baixa, rola, olha, amortece, lado=1.0):
@@ -780,7 +804,7 @@ def mandibula_segue_cabeca(rots):
 # ate a altura-alvo (Cauda3 a meio caminho, 4 a 8 no chao). k = 0 na agua; nas transicoes terra<->agua acompanha as patas.
 RAIO_CAUDA = {"Cauda2": 1.43, "Cauda3": 1.32, "Cauda4": 1.11, "Cauda5": 0.92, "Cauda6": 0.77, "Cauda7": 0.56, "Cauda8": 0.22}  # junta -> pele de baixo (repouso)
 PELE_ALVO = {"Cauda3": 0.40, "Cauda4": 0.04, "Cauda5": 0.04, "Cauda6": 0.04, "Cauda7": 0.04, "Cauda8": 0.04}
-SEM_CHAO = ("Nado", "NadoParado", "CurvaAquaticaEsquerda", "CurvaAquaticaDireita", "Mergulho", "Emersao", "CurvaLentaEsquerda", "CurvaLentaDireita", "Espreita", "AproximacaoSubmersa", "BoteAquatico", "RolarDaMorte", "BatidaDeCabeca", "Bramido")
+SEM_CHAO = ("Nado", "NadoParado", "CurvaAquaticaEsquerda", "CurvaAquaticaDireita", "Mergulho", "Emersao", "CurvaLentaEsquerda", "CurvaLentaDireita", "Espreita", "AproximacaoSubmersa", "BoteAquatico", "RolarDaMorte", "BatidaDeCabeca", "Bramido", "CaudaDeMare")
 def k_cauda(nome, t):
     if nome in SEM_CHAO: return 0.0
     if nome == "EntradaAgua": return 1.0 - suave((t - 1.0) / 0.8)
@@ -808,6 +832,8 @@ def cauda_no_chao(rots, kc):
             a = math.asin(max(-1.0, min(1.0, zt / math.hypot(dh, d.z)))) - fi
             rots[nm] = list(rots.get(nm, [])) + [(eixo, a)]
             PB[nm].rotation_quaternion = rot_mundo(nm, rots[nm])
+PERNAS_TRAVADAS = ("RolarDaMorte",)
+OSSOS_PERNA = [n + s for n in ("Braco", "Antebraco", "Mao", "Coxa", "Canela", "Pe") for s in ("E", "D")]
 # ------------------------------------------------------------------ amostragem -> FK -> acao + JSON + QA
 pes_ponta = {k: BD[k] for k in PATAS}
 manifesto = {}
@@ -838,6 +864,9 @@ for nome in QUAIS:
         for pb in PB:
             m = arm.convert_space(pose_bone=pb, matrix=pb.matrix, from_space="POSE", to_space="LOCAL")
             pose[pb.name] = m.copy()
+        if nome in PERNAS_TRAVADAS:                               # 15/11 (teste no Studio): no giro do corpo o polo do IK
+            if qi == 0: trav = {k: pose[k].copy() for k in OSSOS_PERNA}   # fica no mundo e torcia a pata (BracoE ate 28 graus
+            else: pose.update({k: v.copy() for k, v in trav.items()})     # por quadro); pernas presas ao corpo na pose do q0
         for k in PATAS:                                           # QA: punho no alvo; ponta do pe no chao
             e_ = (PB[k].head - ALVO[k].location).length
             if e_ > erro_ik: erro_ik = e_; pior = (k, round((t / dur + PATAS[k][2]) % 1.0, 2), tuple(round(c, 2) for c in (ALVO[k].location - REPOUSO[k])))
