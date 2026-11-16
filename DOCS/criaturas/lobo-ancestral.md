@@ -31,21 +31,19 @@ Ficha criada em 03/11/2026, só com leitura. Nada foi alterado no Studio nem em 
 ## 2. Elemento e habilidades
 
 ### Elemento
-- **[OFICIAL — 30/10/2026]** Cada criatura tem **um único elemento natural**. Não há 2º/3º elemento, alternância nem fusão elemental no sistema atual.
-- **[PENDENTE]** O elemento único do Lobo Ancestral **ainda não foi escolhido**.
-  - A lista antiga "Natureza, Terra, Ar" (§2 e §5) é histórico. Ela não indica a escolha final.
-  - Não presumir nenhum dos três.
+- **[OFICIAL — 30/10/2026]** Cada criatura tem **um único elemento natural**. Não há 2º/3º elemento, alternância nem fusão elemental.
+- **[DECISÃO DO USUÁRIO — 10/11/2026, aprovada em conceito]** Elemento do Lobo Ancestral: **Natureza** (pedido `DOCS/pedidos/2026-11-10-lobo-ancestral-habilidades-passivas.md`).
 
-### Habilidades
-- **[OFICIAL — 30/10/2026]** Cada criatura tem no mínimo **1 passiva + 3 ativas**. Nomes, efeitos e quantidades são aprovados criatura por criatura.
-- **Lista histórica da espécie-base Lobo** (§5, compartilhada com o Ártico). Vale como referência anterior; a lista final do Ancestral está **[PENDENTE]**:
-  1. **Salto Predatório**: seleciona um alvo.
-  2. **Uivo**: fortalece temporariamente o próprio Lobo.
-  3. **Investida**: segue a direção escolhida.
-  4. **Instinto de Caça**: rastreia inimigos. Na exploração, encontra pistas de ninhos por odor, pegadas e sinais, **sem revelar coordenadas**.
-- **[OFICIAL]** Habilidades ofensivas rápidas, com recargas relativamente baixas. Os números estão pendentes.
-- **Passiva:** nenhuma definida. **[PENDENTE]**
-- **[PROPOSTA — histórico, superada]** As versões por elemento (§6) e as fusões direcionais (§7) contrariam a regra de elemento único. Não implementar.
+### Habilidades — kit aprovado em conceito (10/11/2026)
+- **[OFICIAL — 30/10/2026]** No mínimo 1 passiva + 3 ativas; o ataque básico de mordidas e garras fica **fora** dos slots.
+- **[DECISÃO DO USUÁRIO — 10/11/2026]** 2 passivas + 3 ativas:
+  1. **Passiva — Instinto de Caça:** pistas perceptíveis (odor, pegadas, vestígios) de inimigos na perseguição e de ninhos na exploração. Indica direção/pista; **não** revela coordenadas, posição através de obstáculos nem entrega recompensa.
+  2. **Passiva — Caçador Noturno:** só à noite (estado único calculado no servidor), melhora agilidade de perseguição/esquiva e o dano físico de mordida/garra. Termina ao amanhecer.
+  3. **Ativa — Salto Predatório:** alvo selecionado; salta até ele e golpeia ao aterrissar. Alcance, linha de visão e acerto validados no servidor; sem teleporte nem atravessar paredes.
+  4. **Ativa — Uivo Ancestral:** uivo audível que fortalece temporariamente **só o próprio lobo** (mobilidade/esquiva); sem buff de grupo.
+  5. **Ativa — Investida:** avanço rápido na direção escolhida; golpe físico no primeiro alvo válido; obstáculo interrompe; no máximo 1 acerto por alvo por uso.
+- **Números:** nenhum aprovado. Os valores de protótipo estão em §6ae como **[PROPOSTA]**.
+- **[PROPOSTA — histórico, superada]** As versões por elemento (§6) e as fusões direcionais (§7 do RPG_02) contrariam a regra de elemento único. Não implementar.
 
 ## 3. Atributos (Etapa 24)
 - **[OFICIAL — 24.1]** São 6 atributos: Vida, Defesa, Força, Velocidade, Energia e Poder Elemental. A comparação é entre Adultos de nível 100. Vantagem ambiental de 10–15%; raridade influencia 1–5%.
@@ -1148,8 +1146,333 @@ A busca não trouxe referência anatômica do jarrete no chão ao sentar. A pose
   - Studio: solda do cavaleiro na sela e animação sentada do R15 (não testado);
   - balanço secundário do cavaleiro (opcional).
 
-## 7. Próximos passos sugeridos (aguardam aprovação)
-1. **Revisar a V5** com uma prancha lado a lado com o painel 01 (só leitura e renders) e listar as correções.
-2. **Decidir a base para o Roblox:** importar a V5 com pele deformável no lugar do modelo Motor6D rígido de 26/10. Fazer o teste num place vazio local, sem tocar no mapa.
-3. **Pedir ao criador** o elemento único e o kit (passiva + ativas) antes de qualquer VFX ou combate.
-4. **Só depois:** clipes refinados, sons, IA e montaria. Um sistema por vez.
+## 6ae. Kit Natureza — etapa 1: clipes das ativas no Blender (10/11/2026, aguardando avaliação) → `habilidades/`
+- **Pedido:** `DOCS/pedidos/2026-11-10-lobo-ancestral-habilidades-passivas.md` (autoriza criar/testar o kit só no place isolado do lobo).
+- **Studio (10/11):** o Studio conectado estava **sem place aberto** ("Place is not open") e não encontrei o `.rbxl` do Baseplate isolado de 05/11. A reserva em `DOCS/estado/studio-em-uso.md` (chat Lobo, 05/11) **não pôde ser confirmada**; nada foi feito no Studio. Precisa que o usuário abra o place isolado do lobo (ou um Baseplate novo).
+- **Clipes novos (`habilidades/clipes_kit.py`, carregado com `LOBO_KIT=1`; os 24 clipes aprovados não mudam):**
+  - `Hab_SaltoPredatorio` (1,35 s): mira agachado (orelhas para trás) → impulso → bote no ar (dianteiras esticadas para a frente, traseiras para trás, boca aberta) → aterrissa fechando a mandíbula → amortece. Marcadores Mira 0,30 / Impulso 0,36 / Decolagem 0,42 / Golpe = Aterrissagem 0,86 / Recuperado 1,35. Diferente do `Salto` de vida (que é um pulo sem mira nem mordida).
+  - `Hab_UivoAncestral` (2,6 s): firma as patas, estufa o peito, uiva (mais curto que o `Uivo` de 4 s) e sacode a juba; termina com a cauda alta. Marcadores UivoInicio 0,55 / BuffInicio 0,6 / UivoFim 1,85 / Fim 2,6.
+  - `Hab_Investida` (1,2 s): carga baixa → arranque em galope baixo (passada do `Corrida` aprovado, cabeça estendida, boca abrindo) → mordida avançando o pescoço → freia. Marcadores Carga 0 / Arranque 0,22 / Contato 0,86 / Freia 0,96 / Fim 1,2.
+  - Todos **no lugar**: o arco do salto e o avanço da investida vêm do jogo (servidor/física), não do clipe.
+  - QA: erro de IK ≤ 0,022, malha fora das patas ≥ 0,009 do chão, dedos ≥ 0,10. Gravado em `rig18/Lobo_Ancestral_Anim_Kit.blend` e `habilidades/clipes_kit/` (JSON + manifesto).
+- **Vídeos:** `habilidades/videos_kit/` (normal e lento de cada clipe) e `folha_kit_lado.png`.
+- **Parâmetros de protótipo — [PROPOSTA], não aprovados, um único módulo de configuração no place isolado:**
+  | Item | Proposta |
+  |---|---|
+  | Noite (Caçador Noturno) | `Lighting.ClockTime` ≥ 18,5 ou < 5,5, lido **só no servidor**, a cada 1 s, com histerese de 0,1 h |
+  | Caçador Noturno | +12% velocidade de perseguição, janela de esquiva +10%, +12% dano de mordida/garra |
+  | Uivo Ancestral | 6 s; +15% velocidade, janela de esquiva +20%; recarga 18 s; energia 15 |
+  | Acúmulo | bônus somados numa tabela única de modificadores (aditivos) com teto de velocidade +25%; a vantagem ambiental da Floresta (10–15%) continua fora dessa tabela e **não** é reaplicada; montado, os bônus de mobilidade valem para o lobo (montaria), não para o cavaleiro |
+  | Salto Predatório | alcance 8–40 studs, linha de visão, voo 0,44 s, acerto num raio de 6 na aterrissagem; dano 1,4× força-base; recarga 8 s; energia 20 |
+  | Investida | 30 studs em 0,56 s, largura 5, para em obstáculo; dano 1,2×; 1 acerto por alvo; recarga 6 s; energia 15 |
+  | Instinto de Caça | pegadas/odor visíveis só para o dono: rastro de até 8 s de inimigos a ≤ 60 studs e com linha de visão; pistas de ninho a ≤ 150 studs como direção aproximada (±30°), a cada 30 s; sem marcador de posição |
+- **Pendente (etapa 2, depois da aprovação dos clipes e com o place isolado aberto):** servidor do kit (passivas + ativas), VFX discretos de folhas/vento, sons, testes em Play/PC e custo com várias instâncias. Celular real não testado.
+
+## 6af. Pernas e patas na marcha — v27 (10/11/2026, aguardando avaliação) → `review/pernas/`, `clipes27/`, `export27/`
+- **Pedido:** corrigir pernas e patas tortas em Andar, Trote e Corrida, sem Studio, preservando repouso, pelagem, dormir e sela.
+- **Base conferida:** Andar/Trote/Corrida de `clipes14` (vídeos de `videos14/`) = `clipes26` (diferença ≤ 0,002; só entraram as pálpebras). A versão anterior fica preservada: `clipes26/`, `export26/`, `rig18/Lobo_Ancestral_Anim.blend` (regenerado idêntico, diferença 0) e o script `review/pernas/anim_lobo_v26.py`.
+- **Inspeção:** ciclo inteiro, quadro a quadro, em frente/lado/trás/3/4 + 2 closes baixos com chão (`review/pernas/render_ciclo.py` → `antes/`, `depois/`, folhas `folha_<clipe>_<vista>.png`); medição por perna e quadro nos ossos e na malha (`analisar_pernas.py` → `analise_antes.json`, `analise_depois.json`): plano da perna, dobra, torção de cada osso, sola, z da pata, cruzamento E×D. Perfil de pesos do punho/jarrete: `medir_pesos_punho.py`.
+- **Defeitos encontrados (v26), por clipe e perna** (balanço = quadros com a almofada acima do chão):
+  | Clipe | Perna | Quadros | Defeito | Causa |
+  |---|---|---|---|---|
+  | Andar | DE / DD | balanço q1–9 e q33–36 / q15–27 | pata dobra fora do plano da perna (ponta desvia para o lado); punho dobra demais com os dedos enrolados → "toco" escuro e prega na malha | alvo do IK: a pata girava em volta do X do MUNDO, mas a perna é inclinada (plano 12,7–16,9°); dobra + dedos somados; malha LOW com poucos vértices no carpo |
+  | Trote | DE / DD | balanço q11–20 / q1–10 | idem, mais forte (pata vira "toco" em q4 e q15) | idem |
+  | Corrida | DE / DD | balanço q1–6, q12–14 / q1–8, q13–14 | idem; de frente as patas dobradas giram para dentro (q3) | idem |
+  | todos | dianteiras | apoio inteiro | calcanhar sobe desde o pouso (sola +2° → −9°): a pata rola para a ponta sustentando o peso; pelo da pata −0,03 a −0,04 dentro do chão | perfil de inclinação do apoio (linear do pouso à saída) |
+  | Andar / Trote / Corrida | TE / TD | balanço (Andar q24–36 / q6–18; Trote q1–10 / q11–20; Corrida q6–14 / q7–14) | pata chega de ponta, dedos para baixo, até o pouso | a dobra do balanço só zerava no último quadro |
+  | Corrida | TE / TD | q10–12 (recolhimento) | coxa torce 4,5–5,1° (pendência antiga da ficha) | IK com polo fixo; não piorou nem foi resolvido (ver tentativas) |
+  - **Descartado como causa:** torção dos ossos pelo IK (< 5°), pesos (transição Antebraço→Mão e Canela→Metatarso já larga, ~1,4 stud) e o pivô dos ossos (joelho/cotovelo dobram para o lado certo em todos os quadros).
+- **Correção (só no código da marcha em `anim_lobo.py`; repouso, pelagem, rig, pesos e os outros 19 clipes idênticos):**
+  - dianteiras dobram em volta da **normal do plano da própria perna** (`EIXO_PATA`) e com 80% da dobra anterior (`LOBO_FLEX_DIAN`);
+  - dedos menos enrolados no balanço (`LOBO_DEDO_BAL` 0,55);
+  - a dobra das dianteiras termina antes do pouso; as traseiras mantêm o perfil do v26 e aplainam no fim do balanço (`LOBO_TRAS_APLAINA` 0,6);
+  - pouso plano (`LOBO_INCL_POUSO` 1°, antes 4–6°) e calcanhar só sobe nos últimos 45% do apoio;
+  - polo do IK das dianteiras 4 studs mais longe na marcha (`LOBO_POLO_LONGE`).
+  - **Tentativas descartadas (medidas):** eixo da perna também nas traseiras (coxa da Corrida 4,5° → 9,8°, plano 12 → 21°); dobra traseira 0,75 e perfil rápido (coxa 9–10°); polo traseiro mais longe ou mais perto do centro (coxa 9–13°).
+- **Resultados v26 → v27 (`analise_*.json`, manifesto):**
+  - plano das dianteiras: Andar 12,7–16,9° → 11,5–14,8°; Trote 14,3–15,5° → 12,1–13,4°; Corrida 14,2–16,3° → 12,0–13,3°;
+  - pata no chão: −0,03/−0,04 → −0,01 (as 4 patas, os 3 clipes); malha fora das patas 0,17–0,19 → 0,24;
+  - distância mínima entre as pernas E×D: dianteiras 0,07–0,10 → 0,08–0,11; traseiras na Corrida 0,016 → 0,023;
+  - traseiras: plano e torção da coxa iguais ao v26 (Corrida 12,2° / 4,5–5,1°);
+  - erro de IK ≤ 0,0002, deslize 0, dedos ≥ 0,10; loops fechados (a marcha é periódica); Partida/Freada usam a mesma passada (IK 0, malha 0,24).
+- **Evidências:** `review/pernas/AntesDepois_{Andar,Trote,Corrida}_{normal,lento}.mp4` (lado, close lateral, frente baixa e trás, antes × depois); folhas `antes/` e `depois/folha_*`; `zoom_antes_depois.png`; `closes_patas_<clipe>.png` (cada pata no apoio e no balanço, fora e frente, v26 × v27).
+- **Compatibilidade:** `export27/Lobo_Ancestral.glb` reimportado (`validacao_glb.json`): 19.614 tris, 58 ossos, 24 ações, pose de ossos-chave idêntica à referência (0,0), 0 vértices sem peso nem > 4 influências. Dormir/sela/ataques não mudam (JSON idênticos). Cavaleiro montado (`m4_montado.py` com o v27): igual ao v26, exceto a Freada (perna do cavaleiro −0,10 na sela num quadro; antes −0,02). `m4_montado.py` agora troca as ações do arquivo indicado (antes reaproveitava as antigas do `.blend` da sela).
+- **Pendente:** a prega no carpo ainda aparece de leve na dobra máxima (malha LOW); coxa traseira da Corrida segue com 4,5–5,1° de torção; `Hab_Investida` usa o galope e precisa ser regenerada se o v27 for aprovado; Studio não testado. O v27 só substitui a base (`Lobo_Ancestral_Anim.blend`, `clipes26`/`export26`) depois da aprovação.
+
+## 6ag. Pendências da v27: prega do carpo e torção da coxa — v28 (10/11/2026, APROVADA VISUALMENTE no Blender pelo usuário em 10/11; Roblox não testado) → `review/pernas2/`, `clipes28/`, `export28/`
+- **Preservado para comparação:** v26 (`Lobo_Ancestral_Anim.blend`, `clipes26/`, `export26/`, `Lobo_Ancestral_Rig.blend`) e v27 (`Lobo_Ancestral_Anim_v27.blend`, `clipes27/`, `export27/`, script `review/pernas2/anim_lobo_v27.py`). A v28 tem rig próprio: `rig18/Lobo_Ancestral_Rig_v28.blend` → `Lobo_Ancestral_Anim_v28.blend`.
+- **Diagnóstico (antes de editar; `diag_carpo_coxa.py` → `diag_v26/v27.json`; renders `diag_render.py` com malha, pesos, ossos, eixo de dobra e dedos → `diag_<clipe>_<perna>_<q>.png`):**
+  - **Carpo:** flexão máxima na Corrida q1 (62° na v27; 97° na v26). Sem auto-interseção pata×antebraço (0) e sem pelo na região. O lado **palmar** comprime (arestas a 55% na Corrida, 67% no Trote) e forma um vinco em V; tufos de pelo do antebraço entram no vinco. A transição de pesos já era larga (~1,4 stud) — suavizá-la (`suavizar_carpo.py`, 3 intensidades) só levou 0,55 → 0,56–0,60 e piorou o Deitado. **Causa: geometria esparsa (3–7 vértices por faixa no carpo) + skin linear na rotação do carpo**, não os pesos nem o pelo.
+  - **Coxa (Corrida q10–12, recolhimento):** o jarrete abre +0,12 em x (abertura lateral `abre` do balanço do galope) e o joelho entra até x 0,82 (repouso 0,95). Com o polo do joelho parado, o plano da perna gira e a coxa torce 4,5–5,1°. **Causa: alvo do IK com desvio lateral contra um polo fixo** (diferente das tentativas da v27, que moviam o polo de forma fixa).
+- **Correção (menor mudança):**
+  - **coxa:** o polo do joelho acompanha o desvio lateral do alvo (`LOBO_POLO_SEGUE` 1, só na marcha). Testado também sem a abertura lateral (`LOBO_ABRE_TRAS` 0): mesma torção, menos folga entre as traseiras.
+  - **carpo:** osso auxiliar `CarpoE/CarpoD` (filho do antebraço, na junta) que recebe metade do giro da pata (`osso_carpo.py`, fração de peso 0,8, raio 0,9; `anim_lobo.carpo_meio`), mais 2 anéis de arestas só nos carpos (`aneis_carpo.py`, UV e pesos interpolados; +102 vértices, 19.614 → 19.818 tris; 4 influências no máximo). Só o osso ou só os pesos não mudavam o visual; os dois juntos arredondam a dobra (`zoom_carpo_4v.png`).
+  - **clipes que não são da marcha:** os ossos antigos ficam **idênticos** aos da v27 (`mesclar_v28.py`; sem isso o assentamento por malha mudava até 0,16 no dormir); só ganham as chaves do osso do carpo. Andar/Trote/Partida/Freada também ficam iguais nos ossos antigos; só a Corrida muda (polo).
+- **Resultados v26 → v27 → v28 (`diag_v28.json`, `analise_v28.json`, manifesto):**
+  | Medida | v26 | v27 | v28 |
+  |---|---|---|---|
+  | Carpo, compressão palmar mín. (Corrida / Trote / Andar) | 0,19 / 0,44 / 0,68 | 0,55 / 0,67 / 0,79 | 0,67 / 0,79 / 0,85 |
+  | Carpo, lado dorsal mín. (Corrida / Trote) | 0,38 / 0,62 | 0,66 / 0,75 | 0,65 / 0,70 |
+  | Coxa, torção máx. na Corrida | 5,1° | 5,1° | 3,1° |
+  | Joelho x mín. no recolhimento (repouso 0,95) | 0,82 | 0,82 | 0,87 |
+  - pata no chão ≥ −0,012; sola plana no pouso e calcanhar só no fim do apoio (como a v27); deslize 0; IK ≤ 0,0002; dedos ≥ 0,10; malha ≥ 0,24; distância mín. entre pernas E×D: dianteiras 0,06–0,07, traseiras 0,030–0,034.
+  - Dormir/Deitado/Sentado: ossos idênticos; visual igual nas 3 vistas (`diag_dormir_v27_v28.png`). No Adormecer, a pata dobrada sob o peito tem mais compressão dorsal (0,28 → 0,15), em região escondida.
+- **Evidências:** `v26_v27_v28_{Andar,Trote,Corrida}_{normal,lento}.mp4` (lado, close lateral, frente baixa e trás; mesma câmera e luz); `closes_v26_v27_v28_<clipe>.png` (cada pata no apoio, no balanço e no pouso); `zoom_carpo_3v.png`, `zoom_carpo_4v.png`, `diag_*.png`.
+- **GLB (`export28/validacao_glb.json`):** 19.818 tris, 60 ossos (58 + CarpoE/D), 24 ações, 2 texturas 1024, pose de referência idêntica (0,0), 0 vértices sem peso nem > 4 influências. Cavaleiro montado igual à v27.
+- **Limitações e pendências:**
+  - ainda há um vinco suave no carpo na flexão máxima da Corrida e tufos de pelo do antebraço entram nele; reduzir mais exigiria menos flexão (`LOBO_FLEX_DIAN`) ou mais geometria no carpo da LOW;
+  - a coxa ainda torce 3,1° na Corrida (o jarrete continua abrindo 0,12 para não cruzar as pernas);
+  - o esqueleto passa a ter 60 ossos: o GLB da sela (M3, 58 ossos) precisa ser reexportado com o rig v28 antes do Studio, se a v28 for aprovada;
+  - `Hab_Investida` só deve ser regerada depois da aprovação; Studio não testado.
+
+## 6ah. Sela e kit compatibilizados com a marcha v28 (10/11/2026, sela v28 e nova Investida APROVADAS pelo usuário em 10/11; Roblox não testado)
+- **Status da base:** a marcha **v28** (§6ag) foi **aprovada visualmente no Blender** pelo usuário em 10/11. **Nada foi testado no Roblox.** v26 e v27 continuam preservadas.
+- **Sela (`montaria/m3b_sela_v28.py` → `montaria/export_sela_v28/`):** a MESMA sela de jogo da M3 (malha, material único, UV, 3 texturas 1024, escala, posição e pesos) reexportada com a armadura de 60 ossos (58 + CarpoE/CarpoD, sem peso na sela). Bind pose: os 58 ossos antigos têm repouso idêntico ao do rig v28 (diferença 0,0); os 2 novos, 1,6e-7.
+  - **Reimportação (`m3b_validar.py` → `export_sela_v28/validacao_sela_v28.json`):** sela v28 e lobo v28 com 60 ossos, mesmos nomes, mesmos pais, repouso mundial igual (0,0); sela v28 = sela M3 em vértices (8.113), triângulos (8.440), posição (0,0), UV (0,0), material, imagens e pesos (idênticos); máx. 4 influências, 0 sem peso, nenhum peso em CarpoE/D.
+  - **Sela sobre o lobo (`m3b_sela_marcha.py` → `montaria/review_m3b/`, prancha `prancha_sela_v26_v28.png`):** v26 + sela M3 × v28 + sela v28 em Andar, Trote, Corrida, Partida, Freada, Salto e Impacto: profundidade máxima do pelo sob a sela −0,11 a −0,28 e fração da face de baixo dentro do pelo 0,6–3%, iguais nas duas versões (é o pelo comprimido sob a sela, já presente na M3 aprovada).
+  - O GLB da sela M3 de 58 ossos (`export_sela/`) continua guardado para comparação.
+- **Hab_Investida (`habilidades/clipes_kit.py`; anterior em `clipes_kit_v27.py`):** regerada sobre a Corrida v28 no rig v28 (`LOBO_KIT=1` → `rig18/Lobo_Ancestral_Anim_Kit_v28.blend`, `habilidades/clipes_kit28/`).
+  - Mesmas fases e marcadores (Carga 0 / Arranque 0,22 / Contato 0,86 / Freia 0,96 / Fim 1,2), 37 quadros, no lugar.
+  - **Patinagem corrigida** (já existia na versão anterior): curva de velocidade do avanço que o jogo aplica (`clipes_kit28/Investida_velocidade.json`: parado → rampa no Arranque → galope 21,4 studs/s → desacelera até o Freia → parado); as patas apoiadas ficam plantadas e recuam nessa curva; na carga só o corpo abaixa; recuo além de 0,75 vira um passo curto; na freada, passos alternados até o repouso (antes deslizavam 0,55). Também a regra da marcha (eixo da perna e polos) vale em todas as fases (antes trocava nas misturas).
+  - **QA (`habilidades/qa_investida.py`, `diag_carpo_coxa.py`):** deslize das patas apoiadas 33,9 → 0,0 no avanço e 3,4 → 0,6 parado (o 0,6 é o quadro em que a curva zera); carpo: dobra máx. 99,5° → 66,9°, compressão palmar 0,18 → 0,64 (sem "toco"); coxa: torção 6,0° → 3,5°, joelho x mín. 0,79 → 0,85; IK 0,0003; malha ≥ 0,028 do chão; dedos ≥ 0,10.
+  - Evidências: `habilidades/Investida_v27_v28_{normal,lento}.mp4` (lado, close lateral, frente baixa e trás), `closes_investida_v27_v28.png` (4 patas no apoio, no balanço e na freada, fora e frente), folhas `folha_investida_v28_{lado,close_lado,tras,frente}.png`, `comparar_referencia_v28.png`.
+- **Hab_SaltoPredatorio e Hab_UivoAncestral:** só reexportados no esqueleto v28 — ossos antigos idênticos aos anteriores (diferença 0,0), mesma duração, mesmos marcadores, IK e malha; ganharam apenas as chaves do osso do carpo. Os 3 clipes do kit continuam **aguardando avaliação** (§6ae) e os números de combate seguem **[PROPOSTA]**.
+- **Limitações:** a sela do jogo continua com o pelo comprimido sob ela (como na M3); a Investida ainda dobra a coxa 3,5° no galope; a curva de avanço é sincronismo de animação, não parâmetro de combate aprovado; Studio não usado.
+
+## 6ai. Marcha v29: Andar e Corrida inspirados no Lobo Ártico (10/11/2026, aguardando avaliação; NÃO substitui a base v28) → `marcha/marcha_v29.py`, `review/marcha_v29/`, `clipes29/`, `export29/`
+- **Pedido:** dar ao Andar e à Corrida a naturalidade do Lobo Ártico v29 (só esses dois clipes). Fontes só lidas: `Lobo_Artico_Ref/anim_v29/CR_LoboArtico_Anim.blend`, `clipes_v12.py`, `clipes_v21.py`, `marcha_v21.py` e a ficha do Ártico §8.26–8.31.
+- **Lado a lado antes de alterar (`render_comparar.py`, mesmas câmeras relativas, luz e chão; 2 ciclos):** v28 × Ártico em lado, frente, trás, 3/4 e 2 closes; medição comparável normalizada pela perna e pela cernelha (`medir_marcha.py` → `marcha_v28.json`, `marcha_artico.json`).
+- **Diferenças encontradas (v28 → Ártico):**
+  | | Andar | Corrida |
+  |---|---|---|
+  | Sequência | igual (TE, DE, TD, DD lateral) | v28 **transverso** (TE, TD, DE, DD) → Ártico **rotatório** (TE, TD, DD, DE) |
+  | Apoio (fração) | 0,72 → 0,61–0,69 | 0,36–0,43 → 0,29–0,36 |
+  | Altura do balanço / perna | 0,07 → 0,10–0,135 | 0,16–0,17 → 0,18–0,22 |
+  | Varredura do apoio / perna | 0,40–0,42 → 0,45–0,50 | 0,56–0,60 → 0,46–0,65 |
+  | Dobra do carpo no balanço | 1–2° (pata rígida) → 67–77° | 37–38° → 103–111° |
+  | Cotovelo | 34° → 45–48° | 75° → 97–100° |
+  | Balanço da pata | perfil suave → **min-jerk**, altura que só zera no toque | idem |
+  | Rolamento da sola | desde 55% do apoio → só nos últimos ~28% | idem (~40%) |
+  | Corpo | quadril sobe-desce 2,7× e arfagem 1,6° → nivelado | traseira pula, frente parada → suspensão recolhida, coluna recolhe/estende |
+  | Cauda lateral (/cernelha) | 0,31 → 0,12 | 0,09 → 0,05 |
+  | Dedos no apoio | retos (0°) → 3–15° para fora (no Ancestral mantidos retos) | idem |
+- **Nova versão (reversível, `LOBO_MARCHA29=1`; Trote, Partida, Freada, transições, habilidades e modelo/rig/pesos/texturas intocados):** `marcha29()` com balanço min-jerk, altura até o toque, rolamento no fim do apoio, dobra do carpo/jarrete no meio do balanço e desfeita antes do pouso, dedos retos, regra da v28 (eixo da perna, polos, carpo auxiliar). Andar: passada 2,25 (3,02 studs/s), apoio 0,62, alturas 0,58/0,48, dobra 48°/34°, corpo nivelado e cauda menor. Corrida: **galope rotatório** (fases do Ártico), apoio 0,28, 21,43 studs/s (igual à v28), alturas 0,95/0,85, dobra 45°/30°, coluna recolhe/estende, arfagem 6°, cabeça estabilizada, cauda de contrapeso, orelhas para trás. A dobra do carpo foi limitada (com a do Ártico, 88–120°, a compressão palmar caía para 0,30–0,51: volta do "toco").
+- **Montagem:** `review/marcha_v29/montar_v29.py` → `rig18/Lobo_Ancestral_Anim_v29.blend` (cópia da v28 com só `Lobo_Andar` e `Lobo_Corrida` trocados) e `clipes29/` (= clipes28 + Andar/Corrida; os outros 22 JSON idênticos). v26, v27 e v28 preservadas.
+- **Resultados (v28 → v29; Ártico entre parênteses):**
+  | | Andar | Corrida |
+  |---|---|---|
+  | Carpo da frente (dobra máx.) | 2° → 40° (66°) | 38° → 48° (103°) |
+  | Cotovelo | 35° → 49° (48°) | 75° → 79° (100°) |
+  | Altura do balanço frente/trás (/perna) | 0,068/0,065 → 0,123/0,097 (0,131/0,104) | 0,169/0,161 → 0,201/0,171 (0,219/0,183) |
+  | Apoio frente | 0,72 → 0,69 (0,61) | 0,36 → 0,36 (0,36) |
+  | Quadril sobe-desce (/cernelha) | 0,030 → 0,009 (0,012) | 0,117 → 0,134 (0,065) |
+  | Arfagem | 1,96° → 0,45° (0,06°) | 6,6° → 9,3° (7,6°) |
+  | Cauda lateral | 0,31 → 0,13 (0,12) | 0,09 → 0,10 (0,05) |
+  | Deslize / IK | 0 / 0 → 0 / 0 | 0 / 0,0002 → 0 / 0,0003 |
+  | Sola: z mín. / inclinação no apoio | −0,011 / −7,8…−0,5° → −0,012 / −8,4…−0,4° | −0,012 / −9,3…−0,5° → −0,012 / −8,5…−0,4° |
+  | Compressão palmar do carpo | 0,85 → 0,65 | 0,67 → 0,58 |
+  | Torção da coxa | 2,4° → 2,1° | 3,1° → 4,6° |
+  | Distância mín. pernas E×D (frente/trás) | 0,073/0,031 → 0,074/0,034 | 0,068/0,030 → 0,066/0,027 |
+  | Emenda do loop (maior passo / emenda) | 0,175 / 0,087 (contínuo) | 0,318 / 0,130 (contínuo) |
+  - (A cernelha do Ártico é medida em `Coluna3` e a do Ancestral no topo da escápula: comparação de corpo é aproximada.)
+- **GLB `export29/` (reimportado, `validacao_glb.json`):** 19.818 tris, 60 ossos, 24 ações, 2 texturas 1024, 0 vértices sem peso, ≤ 4 influências, pose de referência idêntica.
+- **Sela v28 sobre a v29 (`m3b_sela_marcha.py` → `review/marcha_v29/sela_v28|sela_v29`):** Corrida igual (−0,288 / 3,1% contra −0,28 / 3,1%); Andar: pelo sob a sela até −0,18 num quadro (v28 −0,11), 0,9% da face de baixo (v28 0,8%) — leve aumento pela nova rolagem lateral; sem interpenetração nova visível.
+- **Evidências:** `v28_v29_Artico_{Andar,Corrida}_{A,B}_{normal,lento}.mp4` (A = lado, 3/4, close lateral; B = frente, trás, close frontal; 2 ciclos), folhas `folha_<clipe>_{lado,close_lado,frente,tras}.png`, `closes_patas_<clipe>_v28_v29.png` (4 patas em pouso, apoio, impulso e balanço, fora e frente), `comparar_referencias.png`, `marcha_v28/v29/artico.json`, `diag_v29.json`, `analise_v29.json`.
+- **Limitações:** a carpa dobra menos que a do Ártico (limite da malha LOW do Ancestral); na Corrida o quadril ainda sobe-desce mais que a frente e a coxa torce 4,6° (v28 3,1°). Alternativa medida: arfagem em fase com a subida (`LOBO_V29_PIT=-4 LOBO_V29_PIT_F=0.78`) deixa o corpo mais parecido com o Ártico (quadril 0,044, cernelha 0,034) mas a coxa vai a 5,8°.
+- **Dependência:** `Hab_Investida` usa o galope da v28 (transverso). Se a Corrida v29 for aprovada, a Investida precisa ser regerada sobre o galope rotatório em outra etapa.
+- **Base:** a v28 continua a base aprovada; a v29 só a substitui após avaliação. Roblox/Studio não usados.
+
+## 6aj. Marcha v30: correção das regressões da v29 em Andar e Corrida (10/11/2026, aguardando avaliação; NÃO substitui a base v28) → `marcha/marcha_v30.py`, `review/marcha_v30/`, `clipes30/`, `export30/`
+- **Preservado:** v28 (base aprovada) e v29 (`marcha_v29.py`, `Anim_v29.blend`, `clipes29/`, `export29/`) intactas. A v30 é carregada com `LOBO_MARCHA30=1` e montada por `review/marcha_v30/montar_v30.py` (cópia da v28 com só Andar e Corrida trocados); os outros 22 clipes de `clipes30/` são idênticos à v28.
+- **Diagnóstico quadro a quadro da v29 (`diag_carpo_coxa.py`, `analisar_pernas.py`):**
+  - **carpo do Andar:** a compressão palmar só cai no meio do balanço (DE q1–5, DD q19–23), proporcional ao ângulo do punho (20° → 0,98; 46° → 0,74; 64° → 0,65). Limite da malha LOW: para 0,85 o carpo precisa ficar perto da v28.
+  - **coxa da Corrida:** a torção cresce no apoio, à medida que a pata traseira recua (q3–q7: 1,7° → 5,3°). O plano de repouso da perna traseira é inclinado (9°) e não é paralelo ao movimento; a pata que recua em linha reta sai desse plano e o joelho gira (jarrete x 1,00 / joelho 1,05).
+  - **quadril da Corrida:** o sobe-desce vinha da **arfagem em torno do centro do tronco** (a traseira, longe do pivô, subia e descia ~0,7 stud), não da subida do corpo.
+- **Hipóteses testadas e descartadas (medidas):** polo do joelho preso à raiz (coxa 4,6 → 5,2°); polo calculado no plano de repouso (coxa 6,9°, traseiras a 0,01); abrir a traseira no balanço (6,2–8,2°); fração maior do carpo auxiliar (pior); correção lateral do jarrete também no apoio (coxa 2,5°, mas a pata deslizava de lado 0,7–3,3 studs/s); menos rolamento da traseira, mais arfagem ou menos coluna (4,1–4,4°).
+- **Correção adotada (só no código da marcha v30):**
+  - **coxa:** no balanço, a pata traseira é posta para o jarrete ficar no plano de repouso da perna; no apoio, x constante (o do meio do apoio) → sem deslize lateral; apoio traseiro um pouco à frente (centro 0,35);
+  - **corpo da Corrida:** arfagem 4,5° em torno do **quadril** (a frente sobe e desce, o quadril fica estável, como no Ártico), subida do corpo 0,10, flexão da coluna/pelve à metade, menos rolamento da sola traseira (12°);
+  - **carpo:** Andar com dobra de 10° e rolamento de 14° (limite da malha para 0,85+); Corrida com dobra de 38°.
+  - Mantidos da v29: galope rotatório, balanço min-jerk, altura que só zera no toque, patas apontadas para a frente, velocidades (Andar 3,02, Corrida 21,43 studs/s).
+- **Resultados (v28 → v29 → v30; Ártico entre parênteses):**
+  | | Andar | Corrida |
+  |---|---|---|
+  | Compressão palmar do carpo | 0,85 → 0,65 → **0,865** | 0,674 → 0,58 → **0,672** |
+  | Compressão dorsal do carpo | 0,79 → 0,63 → 0,825 | 0,645 → 0,64 → 0,675 |
+  | Torção da coxa | 2,38° → 2,05° → **1,63°** | 3,13° → 4,62° → **3,12°** |
+  | Quadril sobe-desce (/cernelha) | 0,030 → 0,009 → 0,009 (0,012) | 0,117 → 0,134 → **0,033** (0,065) |
+  | Cernelha (ombros) sobe-desce | 0,026 → 0,013 → 0,013 (0,012) | 0,028 → 0,018 → **0,104** (0,138) |
+  | Arfagem | 1,96° → 0,45° → 0,45° (0,06°) | 6,6° → 9,3° → **7,3°** (7,6°) |
+  | Flexão da coluna | 2,2° → 1,9° → 1,9° (0,9°) | 14,2° → 15,5° → 7,9° (8,2°) |
+  | Dobra do carpo da frente | 2° → 40° → 8° (66°) | 38° → 48° → 35° (103°) |
+  | Cotovelo | 35° → 49° → 47° (48°) | 75° → 79° → 68° (100°) |
+  | Altura do balanço frente (/perna) | 0,068 → 0,123 → 0,123 (0,131) | 0,169 → 0,201 → 0,201 (0,219) |
+  | Distância mín. pernas E×D (frente/trás) | 0,073/0,031 → 0,074/0,034 → 0,069/0,028 | 0,068/0,030 → 0,066/0,027 → 0,069/0,032 |
+  | Deslize (frente e lateral) / IK | 0 / 0 em todas | 0 / 0,0002 → 0 / 0,0003 → 0 / 0,0002 |
+  | Pata abaixo do chão | −0,011 / −0,012 / −0,011 | −0,012 nas três |
+  | Loop: maior passo / emenda | v30 0,101 / 0,038 | v30 0,226 / 0,126 (contínuo) |
+  - (A cernelha do Ártico é medida em `Coluna3`, a do Ancestral no topo da escápula: comparação de corpo aproximada.)
+- **Compromisso explícito:** no Andar, a meta de 0,85 só é atingida com o carpo quase sem dobra no balanço (8°, contra 66° do Ártico); a fluidez do Andar vem da passada min-jerk, da altura do balanço (0,123) e do cotovelo (47°). Com dobra de 25–35° a compressão fica em 0,81–0,76 (mais próximo do Ártico, mas pior que a v28). Na Corrida o carpo dobra 35° (v28 38°).
+- **Pequenas pioras restantes:** no Andar a distância entre as pernas cai um pouco (0,073/0,031 → 0,069/0,028), sem cruzamento.
+- **GLB `export30/` (reimportado):** 19.818 tris, 60 ossos, 24 ações, 2 texturas 1024, 0 vértices sem peso, ≤ 4 influências, pose de referência idêntica (0,0), 5,90 MB (igual à v28): sem custo adicional para PC/celular.
+- **Sela v28:** Andar −0,182 / 1,0% e Corrida −0,286 / 3,5% de pelo sob a sela (v28: −0,11 / 0,8% e −0,28 / 3,1%); leve aumento no Andar, já presente na v29; sem interpenetração nova visível.
+- **Evidências (`review/marcha_v30/`):** `v28_v29_v30_Artico_{Andar,Corrida}_{A,B}_{normal,lento_0.5x}.mp4` (A = lado, 3/4, close lateral; B = frente, trás, close frontal; 2 ciclos), folhas `folha_<clipe>_{lado,close_lado,frente,tras}.png`, `closes_patas_<clipe>_v28_v29_v30.png` (4 patas no apoio, balanço e pouso), `comparar_referencias_v30.png`, `tabela_v28_v29_v30_artico.json`, `diag_v30.json`, `analise_v30.json`, `marcha_v30.json`.
+- **Dependência:** `Hab_Investida` continua sobre a Corrida v28 (galope transverso); atualizar em outra etapa se a v30 for aprovada.
+- **Base:** v28 continua a base aprovada. Roblox/Studio não usados.
+
+## 6ak. v31: patas apontadas 100% para a frente (11/11/2026, patas retas APROVADAS pelo usuário em 11/11; Roblox não testado) → `review/patas_dir/`, `rig18/Lobo_Ancestral_Anim_v31.blend`, `export31/`
+- **Pedido:** "as patas estão viradas para o meio... a direita aponta à esquerda e a esquerda à direita"; depois "ainda possuem uma virada ao outro lado, quero 100% reta à frente".
+- **Diagnóstico:** os ossos dos dedos já apontavam para a frente; o desvio é da **malha** (modelagem), igual na v28 e na v30.
+- **Medida confiável (`direcao_fixa.py`):** vértices FIXOS da ponta e do calcanhar de cada sola, escolhidos uma vez no modelo original (`indices_sola.json`) e acompanhados em todas as versões (as medidas por forma da sola — quartis e eixo de simetria — eram instáveis com 18–36 vértices e chegaram a dar sinais contraditórios). v30: dianteiras **−9,35°** e traseiras **−27,23°** (para dentro).
+- **Primeira tentativa (36°/9°, guardada em `Lobo_Ancestral_Anim_v31_36graus.blend`):** traseiras passaram para **+8,8° para fora** — a "virada ao outro lado" que o usuário viu.
+- **Correção final (`endireitar_patas.py` com 27,23° traseiras e 9,35° dianteiras, sobre a v30):** gira só os vértices das patas em volta do eixo vertical do centro da sola (peso total até 0,45 de altura, transição até 1,1). Ossos, pesos, UV, texturas, tris (19.818) e ações iguais.
+- **Resultado (graus; + fora / − dentro):** repouso **0,0** nas quatro; traseiras **0,0** em todos os quadros medidos do Andar, Trote e Corrida; dianteiras apoiadas −0,2 a +0,1; dianteiras no balanço (dobradas) −1 a −5,7 (a dobra segue o plano inclinado da perna); Sentado dianteiras +4,5.
+- **Contato:** pata abaixo do chão Andar −0,011 → −0,020, Trote −0,012 → −0,024, Corrida −0,012 → −0,025; distância entre pernas, deslize e IK iguais.
+- **GLB `export31/`:** 60 ossos, 24 ações, 2 texturas, 0 vértices sem peso, ≤ 4 influências.
+- **Evidências:** `Patas_retas_v30_v31_{normal,lento_0.5x}.mp4` (frente, trás, close frontal; Andar e Corrida), `final_{baixo_tras,baixo,frente_baixa,tras_baixa}.png` (v30 × 36° × final), `fixa_v30.json`, `fixa_v31.json` (36°), `fixa_v31d.json` (final).
+- **Limitações:** pequeno aumento do afundamento da pata (até −0,025); no balanço as dianteiras dobradas giram até 5,7° para dentro (no ar). Base aprovada continua v28; v29/v30/v31 aguardam avaliação; Roblox não testado.
+
+## 6al. Repertório de vida realista (11/11/2026; lotes 1 a 5 APROVADOS em 12/11) → `comportamento/`
+- **Pedido:** "todas as animações realistas; ele viverá naturalmente na floresta ancestral: beber, comer, descansar, uivar, entre todas as outras de um lobo da vida real; melhore movimentação, posições, adicione se necessário".
+- **Inventário atual (24 + 3 kit + 4 montaria):** Repouso, Observar, Andar, Trote, Corrida, Partida, Freada, VirarE/D, Sentar/Sentado/LevantarSentado, Deitar/Deitado/Descanso/LevantarDeitado, Adormecer/Despertar (dormir aprovado), Salto, Uivo, Rosnar, Mordida, Garra, Impacto; kit Salto Predatório/Uivo Ancestral/Investida; Montar/Desmontar E/D.
+- **Plano por lotes (cada um mostrado e aprovado antes do próximo):**
+  1. **Lote 1 — necessidades básicas (APROVADO 11/11):** `Beber` (7 s: desce abrindo as dianteiras, lambe em rajadas de ~3/s, ergue e olha em volta, volta a beber), `Comer` (8 s: morde, puxa com o pescoço para trás e sacode, mastiga de lado), `Farejar` (laço 4 s: nariz baixo varrendo E/D com fungadas), `Sacudir` (1,8 s: onda da cabeça à cauda, 4,5 Hz), `Espreguicar` (4 s: reverência e esticada da traseira), `Bocejar` (2,4 s: boca bem aberta, olhos fecham).
+  2. **Lote 2 — conforto e higiene (APROVADO 11/11 após r4; Cocar retirado):** `LamberPata` (5 s deitado: cabeça sobre a dianteira E, lambidas ~3/s com pausa), `Cavar` (4 s: frente baixa, dianteiras alternadas puxando a terra sob o peito), `DormirEnrolado` (laço 6 s: corpo em arco, focinho para a garupa, cauda contornando). **Adiados:** rolar no chão e mudar de lado deitado (exigem rotação do corpo inteiro no chão; arriscado no rig atual).
+  3. **Lote 3 — alerta e caça (feito, em avaliação):**
+     - `Alerta` (4 s): congela, cabeça alta, orelhas giram para o som, fareja o ar e relaxa.
+     - `Espreita` (laço, 0,86 studs/s): corpo 1,7 mais baixo (barriga 1,5 do chão), cabeça na linha do dorso, cauda baixa, passada curta e lenta (apoio 76%).
+     - `FarejarAndando` (laço, 1,61 studs/s): passo lento, focinho baixo varrendo, fungadas.
+     - `OlharTras` (3,6 s): por cima do ombro esquerdo, patas plantadas.
+     - `Bote` (2,8 s, salto de rato): fixa agachado, ajeita as traseiras, salta alto em arco, cai com as dianteiras prendendo e o focinho na presa. Termina 2,4 à frente, como o Salto.
+  4. **Lote 4 — social e vocal:** uivo sentado e em pé (revisão do atual), latido curto/aviso, ganido, rosnado com lábio (limite do rig), cauda conforme o estado.
+  5. **Lote 5 — revisão dos clipes existentes** para mais naturalidade (Repouso com troca de peso e orelhas, Observar, Sentar/Deitar, Uivo), sem quebrar o que já foi aprovado.
+- **Lote 1 — técnica:** `comportamento/clipes_vida_l1.py` (carregado com `LOBO_VIDA=1`, clipes aprovados intactos), no rig v28; ações gravadas em `rig18/Lobo_Ancestral_Anim_Vida_L1.blend` com as patas retas da v31; JSON em `comportamento/clipes_l1/`. Para o focinho alcançar o chão em pé, a frente desce (raiz −1,5, arfagem 24°) com as dianteiras abertas e o pescoço estende (ajuste `cara_no_chao` do dormir): queixo z 0,10 (beber), 0,18 (comer), 0,48 (farejar). QA: erro de IK ≤ 0,0003 (Espreguiçar 0,015), malha ≥ 0,06 do chão (Espreguiçar −0,59 = antebraço apoiado no chão na reverência, como no deitado). A reverência saía fraca porque a elevação automática do gerador erguia o peito e porque girar a raiz esticava demais as traseiras (IK 0,57); agora a frente desce pela curva da coluna/peito (12°) com a raiz −0,3/12° e o clipe fica fora da elevação automática. Vídeos em `videos_v31/vida_lote1/`.
+- **Correção 11/11 (usuário: "ao se espreguiçar as patas viram para o lado"):** a versão entregue e APROVADA ("Aprovado, siga") usa `eixo_perna` (a pata dobra no plano da perna) com inclinação −60° na reverência. Registro factual: uma variante com −6° foi escrita mas não chegou a ser gerada (erro de sintaxe no comentário); o arquivo foi restaurado e reproduz exatamente o clipe aprovado (diferença 0,0).
+- **Lote 2 — técnica:** `comportamento/clipes_vida_l2.py` (`LOBO_VIDA=2` carrega lote 1 + 2; aprovados intactos), rig v28; ações em `rig18/Lobo_Ancestral_Anim_Vida_L2.blend` com patas retas v31; JSON em `comportamento/clipes_l2/`. QA: Cocar IK 0,013 / malha −0,179 (= base Sentado); LamberPata IK 0,0003 / −0,394 (= base Deitado); Cavar IK 0,0003 / malha +0,054; DormirEnrolado IK 0,0087 / −0,618 (antebraço no chão). Correções: no Cocar o alvo da pata era longo (IK 0,49) → encurtado; rolagem ±5° fazia o quadril entrar no chão → 0°; a perna ficava escondida atrás do corpo → alvo deslocado X −0,6 (X −0,9 deu IK 0,124). O enrolar do DormirEnrolado é moderado (`LOBO_ENROLA` 1,0), mais visível de frente. Vídeos em `videos_v31/vida_lote2/` + `folha_lote2.png`. Roblox não testado.
+- **Correção r2 11/11 (usuário: "dormindo de lado as patas ficam tortas e parece quebrar o pescoço; ao se espreguiçar as patas dobram muito; parece que coça o vento e se contorce todo"):**
+  - **DormirEnrolado:** a curva girava o PEITO e as dianteiras ficavam presas (torciam); pescoço 66° + cabeça 16° + rolagem 6°. Agora o peito fica parado (desvio 0,019), a curva (12° × 3 ossos) gira só a garupa (raiz −36°) e as traseiras acompanham posição e direção (`yaw_pe`, novo e opcional em `aplicar`, não afeta os clipes aprovados); pescoço+cabeça 26° sem rolar, queixo no chão (0,05), cauda contornando. IK 0,0001, malha −0,46 (pelo do peito).
+  - **Espreguicar:** dianteiras iam só 1,3 à frente e o antebraço dobrava sob o peito (malha −0,63). Agora esticam 2,8 (pata −38, `eixo_perna` mantido): IK 0,015, malha −0,30.
+  - **Cocar:** a pata ficava 0,7 fora do corpo (no ar). Medido: a orelha fica a 7,2 do quadril e a perna alcança 4,95 — sentado, este modelo não alcança a orelha; agora coça o OMBRO/flanco (como lobos reais também fazem), pata na superfície do pelo, metatarso −60, vaivém curto 6/s; cabeça vira pouco e olha para a pata, sem sacudir. Trocado para a traseira ESQUERDA (`LOBO_COCA_LADO`, visível nas vistas de revisão). IK 0,0, malha −0,179 (= Sentado).
+- **Correção r3 11/11 (usuário: "retire a animação de coçar, arrume as patas dobradas ao espreguiçar e não deixe a cabeça entrar dentro da perna"):**
+  - **Cocar RETIRADO** (código, JSON, entrada do manifesto, ação `Lobo_Cocar` do `Anim_Vida_L2.blend` e vídeos). O lote 2 fica com LamberPata, Cavar e DormirEnrolado.
+  - **Espreguicar:** medido no modelo de patas retas, a −38° a sola rolava ~8° e os dedos curvavam (ponta para baixo). Agora a pata dobra a −53° no plano da perna: chapada, reta para a frente (desvio 0,5°), na linha do antebraço. Pescoço −28/−12 e cabeça +4, para o focinho não entrar no antebraço.
+  - **Cabeça × pernas dianteiras** (vértices da cabeça a < 0,45 / < 0,30 do osso do antebraço/mão, varredura a cada 0,2 s):
+    - Espreguicar: 196 → 0.
+    - LamberPata: 1003 → 0 (pata 0,35 para fora, queixo a 0,9, lambe por cima).
+    - DormirEnrolado: 958 → 0 (queixo apoiado SOBRE as patas a 0,7, pescoço 12°).
+    - Beber, Comer, Farejar, Sacudir e Bocejar: 0.
+    - **Clipes antigos aprovados não alterados:** Adormecer 536 (t 1,6), Descanso 79 e Cavar 26 (< 0,45; contato leve). Aguardam decisão.
+  - **QA:** Espreguicar IK 0,015 / malha −0,30; LamberPata IK 0,0003 / −0,39 (base Deitado); DormirEnrolado IK 0,0001 / −0,46.
+- **Correção r4 11/11 (usuário: "encoste a cabeça no chão ou na perna, e arrume a perna que agora vira e fica torta ao se espreguiçar"):**
+  - **Perna torta no Espreguicar:** o polo do cotovelo (ajuste da marcha) deixava o plano de dobra do cotovelo 85° fora da perna: o cotovelo entrava sob o peito e o antebraço torcia. Nova opção `polo_frente_vert` em `aplicar` (polo no plano vertical ombro→pata, com peso pela reverência; não afeta os clipes aprovados): plano 10–12°. Patas 0,3 para fora (pernas paralelas, alinhadas aos ombros) e 3° para fora (`yaw_pe`).
+  - **Cabeça encostando sem entrar:**
+    - Espreguicar: queixo no chão entre as patas (0,05). Contato só de pelo da bochecha: 6 vértices a < 0,30 do osso, que não mudam com patas mais abertas.
+    - LamberPata: queixo 0,55 encosta na pata (0 a < 0,30).
+    - DormirEnrolado: queixo 0,4 encostado na perna (0 a < 0,30).
+  - **QA:** Espreguicar IK 0,015 / malha −0,30; LamberPata 0,0003 / −0,39; DormirEnrolado 0,0001 / −0,46.
+- **Lote 3 — técnica:**
+  - `comportamento/clipes_vida_l3.py`, gerado com `LOBO_VIDA=3 LOBO_MARCHA30=1` e carregado depois da marcha v30. Espreita e FarejarAndando usam `marcha29`, a mesma do Andar aprovado, com outro corpo e outra passada.
+  - Ações em `rig18/Lobo_Ancestral_Anim_Vida_L3.blend` (patas retas v31); JSON em `comportamento/clipes_l3/`; vídeos em `videos_v31/vida_lote3/` + `folha_lote3.png`.
+  - **QA:** IK ≤ 0,0003 (Bote 0,023 no ar); malha ≥ 0,05; cabeça dentro das pernas 0 em todos; plano do cotovelo 13–21° (andar 13–15°); deslize dos pés 0.
+- **Ajustes medidos no lote 3:**
+  - Espreita a −0,85 quase não agachava (−2,1 estoura o IK) → −1,7.
+  - FarejarAndando: o focinho a 4,2 do chão → pescoço 60/35, frente −0,6/12° → 2,0. O pescoço do modelo é curto.
+  - OlharTras: o peito girando 9° torcia o cotovelo (28°) → 4° (21°).
+  - Bote:
+    - com as patas juntas a cabeça entrava nas pernas (174 vértices) → patas na largura dos ombros (0);
+    - focinho até 0,7 do chão;
+    - a cauda baixa no agachado fazia a elevação automática erguer o lobo → cauda mais alta (base 25°) e agachado −1,6/−1,9.
+- **Correção r2 do lote 3 (usuário: "na espreita a perna traseira parece se mover mais do que pode; no farejar a cabeça mais perto do chão, indo da esquerda para a direita; no bote parece que come os próprios pelos — dê um impulso com a cabeça para a frente"):**
+  - **Espreita:** a −1,7 o joelho traseiro dobrava 130–155° e o jarrete até 112° (Andar: 63–98° e 73°). Agora: corpo −1,3 com a frente 5° mais baixa e passo traseiro curto (altura 0,18, dobra 10, rolamento 4, apoio centrado 0,35). Resultado: joelho 110–126°, jarrete 55–92°, faixa do jarrete 88 → 37.
+  - **FarejarAndando:**
+    - pescoço esticado para a frente (60/10, cabeça −5), em vez de dobrado (60/35/−26);
+    - frente −1,0/18°;
+    - nariz de 2,06 para 1,50 do chão e mais à frente das patas;
+    - varredura E↔D de 9 para 16 (cabeça a < 0,30 da perna: 0).
+  - **Bote:**
+    - o pescoço dobrado até o queixo no chão afundava o focinho na juba do peito. Agora o peito desce (−1,6/30°) com o pescoço reto e o focinho fica 0,85 à frente do peito;
+    - nova ESTOCADA (1,95–2,35 s): impulso só do pescoço para a frente e para baixo, com a boca abrindo. Girar o corpo tirava as traseiras do chão (IK 0,63);
+    - traseiras 0,4 mais atrás;
+    - IK 0,023 (só no ar); focinho 1,35; cabeça × pernas 0.
+- **Correção r3 do Farejar (12/11; usuário: "rosto mais à frente, virado ao chão; parece que está cheirando o pelo"):**
+  - **Problema medido:** o pescoço 60/10 com a frente a 18° virava o osso da cabeça para trás: focinho a 117° da horizontal, nariz 0,81 atrás da frente do peito, ou seja, dentro da juba.
+  - **Correção:** pescoço 55/−5, cabeça −30, frente −1,1/18°.
+    - Focinho a 72° para baixo, nariz 1,10 à frente do peito e a 1,51 do chão.
+    - IK 0,0002; cabeça × pernas 0; deslize 0,005.
+  - **Limite:** com a frente a 21° o nariz descia a 1,41, mas as dianteiras esticavam demais (IK 0,13), então não usei.
+- **Lote 3 APROVADO (12/11, "Aprovado, siga").**
+- **Lote 4 — vocal e social (12/11, aguardando avaliação):**
+  - **Onde está:** `comportamento/clipes_vida_l4.py`, carregado com `LOBO_VIDA=4` (não precisa da marcha). Blend `rig18/Lobo_Ancestral_Anim_Vida_L4.blend` (patas retas), JSON em `comportamento/clipes_l4/`, vídeos em `videos_v31/vida_lote4/`.
+  - **Clipes da base intactos:** os aprovados "Uivo" e "Rosnar" não foram mexidos; os 6 clipes abaixo são novos.
+  - **UivoSentado (7,0 s):** começa e termina no Sentado, com a cauda apoiada.
+    - Orelhas atentas, depois inspira (o peito enche).
+    - Focinho a 61° acima da horizontal, chegando a 65° quando a nota sobe.
+    - Boca em "O" (mandíbula 11, não escancarada), vibrato e olhos semicerrados.
+    - A nota cai no fim e a cabeça desce um pouco.
+  - **UivoEmPe (6,4 s):** igual ao sentado, mas em pé, com o peso um pouco atrás e a cauda pendente. O corpo não sobe na inspiração, porque isso esticava as patas (IK 0,10).
+  - **LatidoAviso (2,4 s):** postura alta de alarme: orelhas à frente, nuca levemente eriçada, cauda na horizontal. Dois latidos curtos ("uf"), cada um com tranco do peito, cabeça à frente e boca abrindo e fechando rápido.
+  - **Ganido (3,6 s):**
+    - Corpo encolhido, orelhas para trás e para os lados, cabeça baixa e inclinada (troca de lado).
+    - Dois ganidos com a boca quase fechada, tremendo.
+    - Cauda baixa abanando curto; ergue a pata dianteira esquerda.
+  - **RosnadoAmeaca (3,4 s, ofensivo):**
+    - Cabeça na linha do dorso, olhar fixo, orelhas eretas à frente.
+    - Nuca, dorso e juba eriçados (medido: nuca/dorso eriçam com X+, a juba lateral com X−).
+    - Cauda alta e rígida com a ponta tremendo, peso à frente, boca entreaberta com vibração no peito.
+    - Ameaça mais forte em 1,7–2,3 s.
+  - **Saudacao (3,6 s, social):** corpo baixo, orelhas coladas, cauda baixa abanando largo com o quadril rebolando, e o focinho sobe "lambendo" o ar duas vezes.
+  - **Cauda conforme o estado:** relaxada (uivo), horizontal (alarme), baixa curta (ganido), alta e rígida (ameaça), baixa larga (saudação).
+  - **Medido:**
+    - IK 0 em todos, exceto UivoEmPe (0,009); cabeça × pernas 0; deslize 0.
+    - Malha mínima fora das patas ≥ 0,11. No UivoSentado é −0,179, igual ao Sentado aprovado (pelo comprimido no assento).
+  - **Limite do rig:** não há osso de lábio, então o rosnado não franze o lábio nem mostra só as presas. Isso exigiria um osso ou forma nova na boca, o que é uma mudança de rig e precisa de aprovação.
+- **Lote 4 APROVADO (12/11, "Aprovado, siga").**
+- **Lote 5 — revisão dos clipes existentes (12/11, APROVADO pelo usuário em 12/11):**
+  - **Onde está:** `comportamento/clipes_vida_l5.py`, carregado com `LOBO_VIDA=5`. Substitui, só neste lote, os clipes de mesmo nome. A base aprovada v31 (`rig18/Lobo_Ancestral_Anim_v31.blend`, `clipes30/`) fica intacta. Blend `rig18/Lobo_Ancestral_Anim_Vida_L5.blend` (patas retas), JSON em `comportamento/clipes_l5/`, vídeos em `videos_v31/vida_lote5/` (e `antes/` com Uivo/Adormecer/Despertar da v31).
+  - **Auditoria dos 24 clipes da base:** cabeça a < 0,30 do eixo do antebraço/pata e erro de IK.
+    - Defeitos: Adormecer com 225 pontos da cabeça dentro do antebraço direito (1,3–2,0 s); Despertar com 264 (0,1–0,5 s); Uivo com IK 0,074 (o corpo subia 0,10 com as patas plantadas).
+    - Descanso tem 12–17: a cabeça encosta na pata, como na foto aprovada; mantido.
+    - Demais: 0.
+  - **Adormecer/Despertar:** medido quadro a quadro, a cabeça passa pelo antebraço direito e a pata esquerda recolhe por baixo do queixo.
+    - Correção: o pescoço gira para a esquerda durante a transição (Adormecer 18° com a cabeça um pouco mais alta e a pata esquerda 0,8 por fora; Despertar 16°) e volta a zero, então a pose de dormir aprovada não muda.
+    - Erguer a cabeça sozinha piorava (testado).
+    - Resultado: 225 → 11 e 264 → 12, igual ao contato da pose de dormir.
+  - **Uivo (4 s, mesmos marcadores 0,78/3,2):** focinho a 61° (+4° na nota), boca em "O" (11) com vibrato, olhos semicerrados, inspiração no peito, corpo sem subir. IK 0,074 → 0,009.
+  - **Repouso (laço 4 → 8 s, sobre o aprovado):** troca de peso E/D, cabeça olha devagar, orelhas giram sozinhas (E 1,3 s, D 4,6 s, as duas à frente 6,2 s), piscadas (2,2 e 5,8 s), fareja o ar (3,2–3,8 s).
+  - **Observar (4,5 s, mesmos marcadores):** as orelhas giram 0,15 s antes da cabeça, pisca no início de cada giro, o peso vai para o lado do olhar, fareja em cada lado.
+  - **Sentado (laço 4 → 8 s):** olha devagar para os lados, orelhas sozinhas, três piscadas, a ponta da cauda mexe uma vez.
+  - **Medido:** IK ≤ 0,009, deslize 0, malha igual à base (Sentado −0,179, Adormecer −0,407 = corpo deitado); os laços fecham sem salto (diferença 0,00).
+  - **Não mexidos (sem defeito medido):** marcha, Partida/Freada, viradas, Sentar/Levantar, Deitar/Deitado/Descanso/LevantarDeitado, Salto, Rosnar, Mordida, Garra, Impacto.
+- **Observação do lote 1:** para beber/comer/farejar o lobo dobra bastante as dianteiras (a cabeça fica perto das patas); o pescoço do modelo é curto para alcançar o chão só estendendo.
+- **Vídeos de todas as animações atuais (patas retas v31):** `videos_v31/base/` (24), `videos_v31/habilidades/` (3), `videos_v31/montaria/` (4), normal e lento, 3 vistas.
+
+## 6am. Import no Studio + kit Natureza em protótipo (15/11/2026; place isolado "Testes-loboancestral", placeId 73543092389791; aguardando avaliação) → `studio/`, `export31_studio/`
+- **Place:** confirmado pelo usuário em 15/11 (arquivo `Loboancestral-testes.rbxl`, publicado por ele durante a sessão). A cópia herdou o place dos dragões (4,58 M instâncias): o primeiro Play travou o Studio. Com o consentimento do usuário a cópia foi **limpa** (dragões, scripts e backups apagados em lotes; ~2,6 mil instâncias) e salva. Backup completo: `Documents\RPG_Roblox\BACKUPS\Loboancestral-testes_BACKUP_antes-lobo_2026-11-15.rbxl`. RPG principal, Dragon Ranch e outros places não foram tocados.
+- **Preparação no Blender (testado no Blender):**
+  - `Hab_Investida` regenerada sobre a Corrida v30 (`habilidades/clipes_kit_v30.py`, `LOBO_KIT=1 LOBO_MARCHA30=1` → `habilidades/clipes_kit30/`, `rig18/Lobo_Ancestral_Anim_Kit_v30.blend`): mesmas fases e marcadores; IK 0,0003, deslize 0,0, malha ≥ 0,024; Corrida idêntica à `clipes30` (0,0). Vídeos `videos_v31/habilidades_v30/`. A v28 (`clipes_kit28/`) foi preservada.
+  - Montar/Desmontar E/D regenerados no rig de 60 ossos (`montaria/clipes_m2_v31/`): idênticos aos aprovados nos 58 ossos comuns (0,0).
+  - **GLB de importação** `export31_studio/Lobo_Ancestral_Studio.glb` (`studio/exportar_studio.py`): lobo v31 + sela v28 no MESMO esqueleto, sem ações, + 1 triângulo degenerado com peso no `Raiz`. Motivo medido: no `export31` o Raiz não tinha peso e a sela GLB tinha 48 ossos sem peso — o Import 3D descarta ossos assim. Reimportado: 60 ossos, todos com peso.
+  - **Pacote dos clipes** `studio/LoboAncestral.rbxm` (`studio/empacotar_lobo.py` + `rojo build`): 51 clipes (24 da base com os 6 do lote 5 substituídos por nome, L1–L4, 2 do kit v28, Investida v30, 4 de montaria) + `AdaptadorLobo` (`studio/AdaptadorLobo.luau`). Inventário com fonte, lote, quadros, duração, marcadores e md5 em `studio/inventario.json`.
+- **Studio (importado e testado no Studio, Play/PC):**
+  - O usuário fez o Import 3D e o Insert from File. Modelo em `Workspace.Teste_LoboAncestral.Lobo_Ancestral` (RootPart ancorado, malhas sem colisão, sela visível só montado). Dados em `ReplicatedStorage.LoboAncestral`.
+  - **Convenção dos ossos medida:** quadros do Andar e da Mordida aplicados no Studio × posições do Blender = erro 0,002 stud na convenção nova (antiga 2,0). Fixada no adaptador. Escala 1:1, frente = −Z.
+  - Animações só em Play, `AnimationClipProvider:RegisterAnimationClip` (nada publicado; `studio/LoboAnimacao.luau`). 51/51 tocam sem erro; **todos os marcadores disparam**.
+  - Passada com o modelo movido na velocidade do clipe (deslize mediano das patas apoiadas / velocidade): Andar 0,12/3,02, Trote 0,50/7,67, Corrida 0,48/21,4, Espreita 0,05/0,86, FarejarAndando 0,06/1,61, Partida 0,58 e Freada 0,38 com curva suave, Investida 1,6 com a curva do clipe. Sem salto de cabeça nas emendas (só o bote intencional da Investida).
+  - Capturas: escala, textura, marcas, olhos, patas retas de frente, Uivo e sela encaixada. Folha `studio/review/comparacao_studio_blender_ref.png`.
+- **Kit Natureza (protótipo, testado no Studio pelo servidor e pelo remoto do cliente):** `studio/kit/ConfigKitLobo.luau` (números [PROPOSTA]), `LoboKit_Servidor.luau` (ServerScriptService.LoboAncestral_Kit), `LoboKit_Cliente.luau` (StarterPlayerScripts: teclas Z/X/C/V/B, HUD mínima, folhas/vento discretos, pegadas só para o dono).
+  - Instinto de Caça: pegadas só de inimigos vistos (linha de visão) a ≤ 60, sempre ≥ 1 s atrasadas; alvo atrás da parede = 0 pegadas; pista de ninho = só direção, erro medido 23° (limite 30°).
+  - Caçador Noturno: estado único no servidor (ClockTime ≥ 18,5 ou < 5,5, histerese 0,1 h — testado 18h27/18h21/18h33/18h42/5h33/6h); noite: vel ×1,12, esquiva 15%, mordida 11,2 e garra 9,0 (dia 10/8).
+  - Salto Predatório: recusa outro jogador, alvo inválido, fora de alcance (60), sem linha de visão (parede), ocupado e recarga; válido aterrissa diante do alvo e golpeia no marcador (0,87 s, 14 = 1,4×); arco bloqueado → para antes e cai sem dano; alvo que sai do raio → erra. Sem teleporte nem atravessar.
+  - Uivo Ancestral: bônus só no BuffInicio, 6 s, só o próprio lobo; noite + uivo respeita o teto (vel +25%, esquiva 35%).
+  - Investida: avança 12,4 studs (curva do clipe, sem patinar), para na parede e no primeiro alvo, 1 acerto por uso (2 alvos em fila: só o 1º). Ajuste feito no teste: alcance da mordida 4 → 1,5.
+  - Esquiva medida em 2.000 golpes: 5,8% (esperado 5%) e 36% à noite com uivo (35%). Morte e remoção zeram bônus, cancelam tarefas e recusam pedidos. Spam de 30 pedidos pelo remoto real: 1 aceito; habilidades simultâneas recusadas.
+  - Custo: 9 lobos animando = servidor 60 Heartbeat/s (1 lobo: 60). FPS do cliente não medido de forma válida (o Studio fora de foco fica preso em 15).
+- **Pendências e riscos:** montaria funcional do lobo não existe no place (teste montado PENDENTE); sons do lobo inexistentes (pendente); celular e multiplayer NÃO testados; vídeos normais/lentos do Studio não gravados (os do Blender existem); cor no Studio mais fria que no Blender (iluminação herdada) — CORRIGIDA em 15/11 (ver abaixo); o salto/investida usam chão plano (sem raycast de terreno); o lobo segue o dono a pé com Andar/Corrida (sem Trote nem Partida/Freada nas trocas); a Investida avança 12,4 studs (não os 30 da proposta antiga, que patinariam com este clipe); gancho de teste `ServerStorage.LoboKitTeste` só em Studio.
+
+- **Cor (15/11, a pedido do usuário):** a textura importada estava certa; o tom frio vinha da iluminação herdada dos dragões (céu azul refletido com EnvironmentDiffuseScale 1,0, brilho 3, ambiente cinza). Só neste place: Brightness 3 → 2,2; EnvironmentDiffuseScale 1,0 → 0,35; EnvironmentSpecularScale 1,0 → 0,5; Ambient 0,32/0,30/0,25; OutdoorAmbient 0,52/0,49/0,41; ColorShift_Top 1,0/0,92/0,78; Atmosphere cor 0,78/0,76/0,66 e decay 0,45/0,47/0,38; Bloom 1,0 → 0,6; ColorCorrection `Floresta_CorLobo` (saturação +0,05, contraste +0,05, tom 1/0,98/0,94). Valores antigos em `ServerStorage.Backup_Iluminacao_Lobo_2026-11-15`. Resultado: marrom quente, peito creme e marca verde como no Blender (`studio/review/cor_antes_depois.png`). É iluminação de teste, não a iluminação oficial do bioma.
+
+## 7. Próximos passos sugeridos (atualizado em 10/11/2026; aguardam aprovação)
+- **Estado real:** a base é o rig18/clipes26/export26 (58 ossos, pálpebras), com dormir v26, montaria M1–M4 e GLB da sela aprovados no Blender. A antiga V5 e o modelo Motor6D de 26/10 estão superados.
+1. **(15/11) Avaliar o import e o protótipo do kit no Testes-loboancestral (§6am)**: aparência no Studio, números [PROPOSTA], efeitos.
+2. **Studio:** montaria funcional do lobo, sons, iluminação de bioma, teste em celular e multiplayer (cada um só com autorização).
+3. **Depois:** sons próprios, IA do lobo selvagem e integração no place principal (só combinando com o usuário).

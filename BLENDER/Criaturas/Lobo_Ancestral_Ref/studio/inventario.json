@@ -1,0 +1,1082 @@
+{
+ "Repouso": {
+  "fonte": "comportamento/clipes_l5/LoboAncestral_Repouso.json",
+  "lote": "vida L5 (revisao)",
+  "quadros": 240,
+  "fps": 30,
+  "duracao": 8.0,
+  "loop": true,
+  "marcadores": [],
+  "velocidade": 0.0,
+  "bytes": 32121,
+  "md5_json": "1500d28490c23dc2b21180ec37893482"
+ },
+ "Observar": {
+  "fonte": "comportamento/clipes_l5/LoboAncestral_Observar.json",
+  "lote": "vida L5 (revisao)",
+  "quadros": 136,
+  "fps": 30,
+  "duracao": 4.5,
+  "loop": false,
+  "marcadores": [
+   {
+    "nome": "OlharEsquerda",
+    "t": 0.6
+   },
+   {
+    "nome": "OlharDireita",
+    "t": 2.4
+   }
+  ],
+  "velocidade": 0.0,
+  "bytes": 19892,
+  "md5_json": "48585b19bc1554770e55832327b503bc"
+ },
+ "Andar": {
+  "fonte": "clipes30/LoboAncestral_Andar.json",
+  "lote": "base v30/v31",
+  "quadros": 36,
+  "fps": 30,
+  "duracao": 1.2,
+  "loop": true,
+  "marcadores": [],
+  "velocidade": 3.024,
+  "bytes": 9736,
+  "md5_json": "053c8cabd267fc86ad253a9f40ae05b5"
+ },
+ "Trote": {
+  "fonte": "clipes30/LoboAncestral_Trote.json",
+  "lote": "base v30/v31",
+  "quadros": 20,
+  "fps": 30,
+  "duracao": 0.6666666666666666,
+  "loop": true,
+  "marcadores": [],
+  "velocidade": 7.667,
+  "bytes": 6893,
+  "md5_json": "61a235f1f49768a40dd7a6762de285a1"
+ },
+ "Corrida": {
+  "fonte": "clipes30/LoboAncestral_Corrida.json",
+  "lote": "base v30/v31",
+  "quadros": 14,
+  "fps": 30,
+  "duracao": 0.4666666666666667,
+  "loop": true,
+  "marcadores": [],
+  "velocidade": 21.429,
+  "bytes": 5790,
+  "md5_json": "2f9fd73c71aab0d89925f2f1d256847a"
+ },
+ "Partida": {
+  "fonte": "clipes30/LoboAncestral_Partida.json",
+  "lote": "base v30/v31",
+  "quadros": 41,
+  "fps": 30,
+  "duracao": 1.3333333333333333,
+  "loop": false,
+  "marcadores": [
+   {
+    "nome": "EmTrote",
+    "t": 1.3333333333333333
+   }
+  ],
+  "velocidade": 7.667,
+  "bytes": 10520,
+  "md5_json": "0c24e5a4cace24ae5473cc775e94a259"
+ },
+ "Freada": {
+  "fonte": "clipes30/LoboAncestral_Freada.json",
+  "lote": "base v30/v31",
+  "quadros": 41,
+  "fps": 30,
+  "duracao": 1.3333333333333333,
+  "loop": false,
+  "marcadores": [
+   {
+    "nome": "Parado",
+    "t": 1.3333333333333333
+   }
+  ],
+  "velocidade": 0.0,
+  "bytes": 10647,
+  "md5_json": "c194c0fd425058bd9656fa1ef61ebc85"
+ },
+ "VirarE": {
+  "fonte": "clipes30/LoboAncestral_VirarE.json",
+  "lote": "base v30/v31",
+  "quadros": 73,
+  "fps": 30,
+  "duracao": 2.4,
+  "loop": false,
+  "marcadores": [
+   {
+    "nome": "GiroCompleto",
+    "t": 2.35
+   }
+  ],
+  "velocidade": 0.0,
+  "bytes": 14377,
+  "md5_json": "408b1ab916a5e9cf10779cf74d6fbdd2"
+ },
+ "VirarD": {
+  "fonte": "clipes30/LoboAncestral_VirarD.json",
+  "lote": "base v30/v31",
+  "quadros": 73,
+  "fps": 30,
+  "duracao": 2.4,
+  "loop": false,
+  "marcadores": [
+   {
+    "nome": "GiroCompleto",
+    "t": 2.35
+   }
+  ],
+  "velocidade": 0.0,
+  "bytes": 14384,
+  "md5_json": "862424a5b7a432ded2b6f43661fc171e"
+ },
+ "Sentar": {
+  "fonte": "clipes30/LoboAncestral_Sentar.json",
+  "lote": "base v30/v31",
+  "quadros": 49,
+  "fps": 30,
+  "duracao": 1.6,
+  "loop": false,
+  "marcadores": [
+   {
+    "nome": "Sentado",
+    "t": 1.6
+   }
+  ],
+  "velocidade": 0.0,
+  "bytes": 10784,
+  "md5_json": "bd3c537d990a6f4dc4045dda52777875"
+ },
+ "Sentado": {
+  "fonte": "comportamento/clipes_l5/LoboAncestral_Sentado.json",
+  "lote": "vida L5 (revisao)",
+  "quadros": 240,
+  "fps": 30,
+  "duracao": 8.0,
+  "loop": true,
+  "marcadores": [],
+  "velocidade": 0.0,
+  "bytes": 28915,
+  "md5_json": "1da0574ef29a57ebca6077776865acb1"
+ },
+ "LevantarSentado": {
+  "fonte": "clipes30/LoboAncestral_LevantarSentado.json",
+  "lote": "base v30/v31",
+  "quadros": 43,
+  "fps": 30,
+  "duracao": 1.4,
+  "loop": false,
+  "marcadores": [
+   {
+    "nome": "EmPe",
+    "t": 1.4
+   }
+  ],
+  "velocidade": 0.0,
+  "bytes": 10089,
+  "md5_json": "72c86f7f22b9ae9cbeb98e6bea9f0110"
+ },
+ "Deitar": {
+  "fonte": "clipes30/LoboAncestral_Deitar.json",
+  "lote": "base v30/v31",
+  "quadros": 94,
+  "fps": 30,
+  "duracao": 3.1,
+  "loop": false,
+  "marcadores": [
+   {
+    "nome": "Cotovelos",
+    "t": 0.9
+   },
+   {
+    "nome": "Deitado",
+    "t": 1.9
+   },
+   {
+    "nome": "CaraNoChao",
+    "t": 3.1
+   }
+  ],
+  "velocidade": 0.0,
+  "bytes": 19830,
+  "md5_json": "dbb95ceebb42fcb7ff4dfb9cff63abc0"
+ },
+ "Deitado": {
+  "fonte": "clipes30/LoboAncestral_Deitado.json",
+  "lote": "base v30/v31",
+  "quadros": 120,
+  "fps": 30,
+  "duracao": 4.0,
+  "loop": true,
+  "marcadores": [],
+  "velocidade": 0.0,
+  "bytes": 13301,
+  "md5_json": "3d234ee10fd10928693e3f72022f07f5"
+ },
+ "Descanso": {
+  "fonte": "clipes30/LoboAncestral_Descanso.json",
+  "lote": "base v30/v31",
+  "quadros": 165,
+  "fps": 30,
+  "duracao": 5.5,
+  "loop": true,
+  "marcadores": [],
+  "velocidade": 0.0,
+  "bytes": 18348,
+  "md5_json": "fe9b02446c09f3de5fdebe4da76d55b8"
+ },
+ "Adormecer": {
+  "fonte": "comportamento/clipes_l5/LoboAncestral_Adormecer.json",
+  "lote": "vida L5 (revisao)",
+  "quadros": 73,
+  "fps": 30,
+  "duracao": 2.4,
+  "loop": false,
+  "marcadores": [
+   {
+    "nome": "Dormindo",
+    "t": 2.4
+   }
+  ],
+  "velocidade": 0.0,
+  "bytes": 15533,
+  "md5_json": "83727d62da5b80b415303ba542117e78"
+ },
+ "Despertar": {
+  "fonte": "comportamento/clipes_l5/LoboAncestral_Despertar.json",
+  "lote": "vida L5 (revisao)",
+  "quadros": 91,
+  "fps": 30,
+  "duracao": 3.0,
+  "loop": false,
+  "marcadores": [
+   {
+    "nome": "Alerta",
+    "t": 1.1
+   }
+  ],
+  "velocidade": 0.0,
+  "bytes": 17566,
+  "md5_json": "8426d18a3f9530aa23848684a41039ec"
+ },
+ "LevantarDeitado": {
+  "fonte": "clipes30/LoboAncestral_LevantarDeitado.json",
+  "lote": "base v30/v31",
+  "quadros": 70,
+  "fps": 30,
+  "duracao": 2.3,
+  "loop": false,
+  "marcadores": [
+   {
+    "nome": "Apoios",
+    "t": 1.1
+   },
+   {
+    "nome": "EmPe",
+    "t": 2.3
+   }
+  ],
+  "velocidade": 0.0,
+  "bytes": 15319,
+  "md5_json": "404fff477e34bbdebbf9d630a9bf41be"
+ },
+ "Salto": {
+  "fonte": "clipes30/LoboAncestral_Salto.json",
+  "lote": "base v30/v31",
+  "quadros": 45,
+  "fps": 30,
+  "duracao": 1.45,
+  "loop": false,
+  "marcadores": [
+   {
+    "nome": "Impulso",
+    "t": 0.3
+   },
+   {
+    "nome": "Decolagem",
+    "t": 0.42
+   },
+   {
+    "nome": "Aterrissagem",
+    "t": 0.9
+   },
+   {
+    "nome": "Recuperado",
+    "t": 1.45
+   }
+  ],
+  "velocidade": 0.0,
+  "bytes": 9612,
+  "md5_json": "fe4e98403e5dd2f95bffaafe173b3502"
+ },
+ "Uivo": {
+  "fonte": "comportamento/clipes_l5/LoboAncestral_Uivo.json",
+  "lote": "vida L5 (revisao)",
+  "quadros": 121,
+  "fps": 30,
+  "duracao": 4.0,
+  "loop": false,
+  "marcadores": [
+   {
+    "nome": "UivoInicio",
+    "t": 0.78
+   },
+   {
+    "nome": "UivoFim",
+    "t": 3.2
+   }
+  ],
+  "velocidade": 0.0,
+  "bytes": 15185,
+  "md5_json": "c68eeb59b99d27b269bb490032ffec15"
+ },
+ "Rosnar": {
+  "fonte": "clipes30/LoboAncestral_Rosnar.json",
+  "lote": "base v30/v31",
+  "quadros": 73,
+  "fps": 30,
+  "duracao": 2.4,
+  "loop": false,
+  "marcadores": [
+   {
+    "nome": "RosnadoInicio",
+    "t": 0.42
+   },
+   {
+    "nome": "RosnadoFim",
+    "t": 2.0
+   }
+  ],
+  "velocidade": 0.0,
+  "bytes": 12069,
+  "md5_json": "629f512a93bbaa295aa2da4b7a12dfc6"
+ },
+ "Mordida": {
+  "fonte": "clipes30/LoboAncestral_Mordida.json",
+  "lote": "base v30/v31",
+  "quadros": 31,
+  "fps": 30,
+  "duracao": 1.0,
+  "loop": false,
+  "marcadores": [
+   {
+    "nome": "Antecipacao",
+    "t": 0.26
+   },
+   {
+    "nome": "Contato",
+    "t": 0.48
+   },
+   {
+    "nome": "Recuperacao",
+    "t": 0.62
+   }
+  ],
+  "velocidade": 0.0,
+  "bytes": 6122,
+  "md5_json": "1062b88b4d0312ea121969743c744a49"
+ },
+ "Garra": {
+  "fonte": "clipes30/LoboAncestral_Garra.json",
+  "lote": "base v30/v31",
+  "quadros": 33,
+  "fps": 30,
+  "duracao": 1.05,
+  "loop": false,
+  "marcadores": [
+   {
+    "nome": "Antecipacao",
+    "t": 0.3
+   },
+   {
+    "nome": "Contato",
+    "t": 0.5
+   },
+   {
+    "nome": "Recuperacao",
+    "t": 0.64
+   }
+  ],
+  "velocidade": 0.0,
+  "bytes": 6627,
+  "md5_json": "479fa1d0fbb4dafd17dea7fcceb83f12"
+ },
+ "Impacto": {
+  "fonte": "clipes30/LoboAncestral_Impacto.json",
+  "lote": "base v30/v31",
+  "quadros": 21,
+  "fps": 30,
+  "duracao": 0.65,
+  "loop": false,
+  "marcadores": [
+   {
+    "nome": "Impacto",
+    "t": 0.1
+   }
+  ],
+  "velocidade": 0.0,
+  "bytes": 4815,
+  "md5_json": "5fa7bc62b2bb23a10b110d84c67a9fee"
+ },
+ "Beber": {
+  "fonte": "comportamento/clipes_l1/LoboAncestral_Beber.json",
+  "lote": "vida L1",
+  "quadros": 211,
+  "fps": 30,
+  "duracao": 7.0,
+  "loop": false,
+  "marcadores": [
+   {
+    "nome": "Desceu",
+    "t": 1.0
+   },
+   {
+    "nome": "Lambe",
+    "t": 1.0
+   },
+   {
+    "nome": "Olha",
+    "t": 3.6
+   },
+   {
+    "nome": "Lambe2",
+    "t": 4.5
+   },
+   {
+    "nome": "Ergue",
+    "t": 6.0
+   },
+   {
+    "nome": "Fim",
+    "t": 7.0
+   }
+  ],
+  "velocidade": 0.0,
+  "bytes": 29217,
+  "md5_json": "d4702752450c0f9317c0ac9a6748af57"
+ },
+ "Comer": {
+  "fonte": "comportamento/clipes_l1/LoboAncestral_Comer.json",
+  "lote": "vida L1",
+  "quadros": 241,
+  "fps": 30,
+  "duracao": 8.0,
+  "loop": false,
+  "marcadores": [
+   {
+    "nome": "Desceu",
+    "t": 1.0
+   },
+   {
+    "nome": "Mordida",
+    "t": 1.2
+   },
+   {
+    "nome": "Puxao",
+    "t": 1.65
+   },
+   {
+    "nome": "Mordida2",
+    "t": 2.5
+   },
+   {
+    "nome": "Puxao2",
+    "t": 2.95
+   },
+   {
+    "nome": "Mastiga",
+    "t": 3.6
+   },
+   {
+    "nome": "Fim",
+    "t": 8.0
+   }
+  ],
+  "velocidade": 0.0,
+  "bytes": 34571,
+  "md5_json": "eee4f8fd35d133a913ce3547310cbf60"
+ },
+ "Farejar": {
+  "fonte": "comportamento/clipes_l1/LoboAncestral_Farejar.json",
+  "lote": "vida L1",
+  "quadros": 120,
+  "fps": 30,
+  "duracao": 4.0,
+  "loop": true,
+  "marcadores": [],
+  "velocidade": 0.0,
+  "bytes": 4534,
+  "md5_json": "0255e10d4a53f26be180f041182d9c0c"
+ },
+ "Sacudir": {
+  "fonte": "comportamento/clipes_l1/LoboAncestral_Sacudir.json",
+  "lote": "vida L1",
+  "quadros": 55,
+  "fps": 30,
+  "duracao": 1.8,
+  "loop": false,
+  "marcadores": [
+   {
+    "nome": "Inicio",
+    "t": 0.3
+   },
+   {
+    "nome": "Fim",
+    "t": 1.6
+   }
+  ],
+  "velocidade": 0.0,
+  "bytes": 12663,
+  "md5_json": "02ab723aa5d9a61abad38aed5bd859bc"
+ },
+ "Espreguicar": {
+  "fonte": "comportamento/clipes_l1/LoboAncestral_Espreguicar.json",
+  "lote": "vida L1",
+  "quadros": 121,
+  "fps": 30,
+  "duracao": 4.0,
+  "loop": false,
+  "marcadores": [
+   {
+    "nome": "Reverencia",
+    "t": 0.9
+   },
+   {
+    "nome": "Traseira",
+    "t": 2.9
+   },
+   {
+    "nome": "Fim",
+    "t": 4.0
+   }
+  ],
+  "velocidade": 0.0,
+  "bytes": 19610,
+  "md5_json": "335ea0f1aab171fa32308bc7694a91b3"
+ },
+ "Bocejar": {
+  "fonte": "comportamento/clipes_l1/LoboAncestral_Bocejar.json",
+  "lote": "vida L1",
+  "quadros": 73,
+  "fps": 30,
+  "duracao": 2.4,
+  "loop": false,
+  "marcadores": [
+   {
+    "nome": "BocaAberta",
+    "t": 0.85
+   },
+   {
+    "nome": "Fecha",
+    "t": 1.6
+   }
+  ],
+  "velocidade": 0.0,
+  "bytes": 9044,
+  "md5_json": "a5f5cca5de92becabca901d0ee365236"
+ },
+ "LamberPata": {
+  "fonte": "comportamento/clipes_l2/LoboAncestral_LamberPata.json",
+  "lote": "vida L2",
+  "quadros": 151,
+  "fps": 30,
+  "duracao": 5.0,
+  "loop": false,
+  "marcadores": [
+   {
+    "nome": "NaPata",
+    "t": 0.8
+   },
+   {
+    "nome": "Pausa",
+    "t": 2.5
+   },
+   {
+    "nome": "Deitado",
+    "t": 5.0
+   }
+  ],
+  "velocidade": 0.0,
+  "bytes": 10766,
+  "md5_json": "5b4e13d5771f21ce1e4d23f981470e4e"
+ },
+ "Cavar": {
+  "fonte": "comportamento/clipes_l2/LoboAncestral_Cavar.json",
+  "lote": "vida L2",
+  "quadros": 121,
+  "fps": 30,
+  "duracao": 4.0,
+  "loop": false,
+  "marcadores": [
+   {
+    "nome": "Baixou",
+    "t": 0.5
+   },
+   {
+    "nome": "Cava",
+    "t": 0.5
+   },
+   {
+    "nome": "Fim",
+    "t": 4.0
+   }
+  ],
+  "velocidade": 0.0,
+  "bytes": 20719,
+  "md5_json": "c4ee5a2a51b8c9c8481f8a9d2419ef7c"
+ },
+ "DormirEnrolado": {
+  "fonte": "comportamento/clipes_l2/LoboAncestral_DormirEnrolado.json",
+  "lote": "vida L2",
+  "quadros": 180,
+  "fps": 30,
+  "duracao": 6.0,
+  "loop": true,
+  "marcadores": [],
+  "velocidade": 0.0,
+  "bytes": 18591,
+  "md5_json": "083ebcd973edbac96493253be067be48"
+ },
+ "Alerta": {
+  "fonte": "comportamento/clipes_l3/LoboAncestral_Alerta.json",
+  "lote": "vida L3",
+  "quadros": 121,
+  "fps": 30,
+  "duracao": 4.0,
+  "loop": false,
+  "marcadores": [
+   {
+    "nome": "Congela",
+    "t": 0.35
+   },
+   {
+    "nome": "FarejaAr",
+    "t": 1.6
+   },
+   {
+    "nome": "Relaxa",
+    "t": 3.3
+   }
+  ],
+  "velocidade": 0.0,
+  "bytes": 15183,
+  "md5_json": "4c70ae33b7b4dda3144980841518fc7c"
+ },
+ "Espreita": {
+  "fonte": "comportamento/clipes_l3/LoboAncestral_Espreita.json",
+  "lote": "vida L3",
+  "quadros": 64,
+  "fps": 30,
+  "duracao": 2.1333333333333333,
+  "loop": true,
+  "marcadores": [],
+  "velocidade": 0.863,
+  "bytes": 12502,
+  "md5_json": "6ff76ccb9d726033942a996a05b8d0c0"
+ },
+ "FarejarAndando": {
+  "fonte": "comportamento/clipes_l3/LoboAncestral_FarejarAndando.json",
+  "lote": "vida L3",
+  "quadros": 48,
+  "fps": 30,
+  "duracao": 1.6,
+  "loop": true,
+  "marcadores": [],
+  "velocidade": 1.61,
+  "bytes": 12387,
+  "md5_json": "c962f1acbd41e56d9aca8d584180ca17"
+ },
+ "OlharTras": {
+  "fonte": "comportamento/clipes_l3/LoboAncestral_OlharTras.json",
+  "lote": "vida L3",
+  "quadros": 109,
+  "fps": 30,
+  "duracao": 3.6,
+  "loop": false,
+  "marcadores": [
+   {
+    "nome": "Olhando",
+    "t": 1.0
+   },
+   {
+    "nome": "Volta",
+    "t": 2.4
+   }
+  ],
+  "velocidade": 0.0,
+  "bytes": 14562,
+  "md5_json": "a322e9183270cd7f9d99209f9a4df360"
+ },
+ "Bote": {
+  "fonte": "comportamento/clipes_l3/LoboAncestral_Bote.json",
+  "lote": "vida L3",
+  "quadros": 85,
+  "fps": 30,
+  "duracao": 2.8,
+  "loop": false,
+  "marcadores": [
+   {
+    "nome": "Fixa",
+    "t": 0.5
+   },
+   {
+    "nome": "Salto",
+    "t": 1.2
+   },
+   {
+    "nome": "Prende",
+    "t": 1.78
+   },
+   {
+    "nome": "Recuperado",
+    "t": 2.8
+   }
+  ],
+  "velocidade": 0.0,
+  "bytes": 16630,
+  "md5_json": "6fecb307bb17b3744b271dc3e668ba28"
+ },
+ "UivoSentado": {
+  "fonte": "comportamento/clipes_l4/LoboAncestral_UivoSentado.json",
+  "lote": "vida L4",
+  "quadros": 211,
+  "fps": 30,
+  "duracao": 7.0,
+  "loop": false,
+  "marcadores": [
+   {
+    "nome": "Inspira",
+    "t": 0.6
+   },
+   {
+    "nome": "UivoInicio",
+    "t": 1.8
+   },
+   {
+    "nome": "UivoFim",
+    "t": 5.6
+   }
+  ],
+  "velocidade": 0.0,
+  "bytes": 26828,
+  "md5_json": "d2d0c3ebfbe6df8220b12983f29d2ba1"
+ },
+ "UivoEmPe": {
+  "fonte": "comportamento/clipes_l4/LoboAncestral_UivoEmPe.json",
+  "lote": "vida L4",
+  "quadros": 193,
+  "fps": 30,
+  "duracao": 6.4,
+  "loop": false,
+  "marcadores": [
+   {
+    "nome": "Inspira",
+    "t": 0.6
+   },
+   {
+    "nome": "UivoInicio",
+    "t": 1.8
+   },
+   {
+    "nome": "UivoFim",
+    "t": 5.0
+   }
+  ],
+  "velocidade": 0.0,
+  "bytes": 22776,
+  "md5_json": "91cb301a98109bed50fc6e6a24af8509"
+ },
+ "LatidoAviso": {
+  "fonte": "comportamento/clipes_l4/LoboAncestral_LatidoAviso.json",
+  "lote": "vida L4",
+  "quadros": 73,
+  "fps": 30,
+  "duracao": 2.4,
+  "loop": false,
+  "marcadores": [
+   {
+    "nome": "Latido1",
+    "t": 0.75
+   },
+   {
+    "nome": "Latido2",
+    "t": 1.3
+   }
+  ],
+  "velocidade": 0.0,
+  "bytes": 10477,
+  "md5_json": "03a557c2757b93ac6ed41df98517c3dd"
+ },
+ "Ganido": {
+  "fonte": "comportamento/clipes_l4/LoboAncestral_Ganido.json",
+  "lote": "vida L4",
+  "quadros": 109,
+  "fps": 30,
+  "duracao": 3.6,
+  "loop": false,
+  "marcadores": [
+   {
+    "nome": "Ganido1",
+    "t": 0.6
+   },
+   {
+    "nome": "Ganido2",
+    "t": 1.9
+   }
+  ],
+  "velocidade": 0.0,
+  "bytes": 18021,
+  "md5_json": "0b95fcf118177e6ba1e1b521f72d330c"
+ },
+ "RosnadoAmeaca": {
+  "fonte": "comportamento/clipes_l4/LoboAncestral_RosnadoAmeaca.json",
+  "lote": "vida L4",
+  "quadros": 103,
+  "fps": 30,
+  "duracao": 3.4,
+  "loop": false,
+  "marcadores": [
+   {
+    "nome": "RosnadoInicio",
+    "t": 0.5
+   },
+   {
+    "nome": "Ameaca",
+    "t": 1.7
+   },
+   {
+    "nome": "RosnadoFim",
+    "t": 2.8
+   }
+  ],
+  "velocidade": 0.0,
+  "bytes": 16991,
+  "md5_json": "9c03f8753aa7f8aaf3693e1b5f66ab98"
+ },
+ "Saudacao": {
+  "fonte": "comportamento/clipes_l4/LoboAncestral_Saudacao.json",
+  "lote": "vida L4",
+  "quadros": 109,
+  "fps": 30,
+  "duracao": 3.6,
+  "loop": false,
+  "marcadores": [
+   {
+    "nome": "Lambe1",
+    "t": 1.0
+   },
+   {
+    "nome": "Lambe2",
+    "t": 2.0
+   }
+  ],
+  "velocidade": 0.0,
+  "bytes": 23064,
+  "md5_json": "bf436b26a6bd7e95f4268990049b2291"
+ },
+ "Hab_SaltoPredatorio": {
+  "fonte": "habilidades/clipes_kit28/LoboAncestral_Hab_SaltoPredatorio.json",
+  "lote": "kit v28",
+  "quadros": 41,
+  "fps": 30,
+  "duracao": 1.35,
+  "loop": false,
+  "marcadores": [
+   {
+    "nome": "Mira",
+    "t": 0.3
+   },
+   {
+    "nome": "Impulso",
+    "t": 0.36
+   },
+   {
+    "nome": "Decolagem",
+    "t": 0.42
+   },
+   {
+    "nome": "Golpe",
+    "t": 0.86
+   },
+   {
+    "nome": "Aterrissagem",
+    "t": 0.86
+   },
+   {
+    "nome": "Recuperado",
+    "t": 1.35
+   }
+  ],
+  "velocidade": 0.0,
+  "bytes": 9493,
+  "md5_json": "33184a87e1cef234c14d43d0b511c8f5"
+ },
+ "Hab_UivoAncestral": {
+  "fonte": "habilidades/clipes_kit28/LoboAncestral_Hab_UivoAncestral.json",
+  "lote": "kit v28",
+  "quadros": 79,
+  "fps": 30,
+  "duracao": 2.6,
+  "loop": false,
+  "marcadores": [
+   {
+    "nome": "UivoInicio",
+    "t": 0.55
+   },
+   {
+    "nome": "BuffInicio",
+    "t": 0.6
+   },
+   {
+    "nome": "UivoFim",
+    "t": 1.85
+   },
+   {
+    "nome": "Fim",
+    "t": 2.6
+   }
+  ],
+  "velocidade": 0.0,
+  "bytes": 12075,
+  "md5_json": "abce47f3b96d34c55e0cf27e0a50baed"
+ },
+ "Hab_Investida": {
+  "fonte": "habilidades/clipes_kit30/LoboAncestral_Hab_Investida.json",
+  "lote": "kit v30 (Investida sobre a Corrida v30)",
+  "quadros": 37,
+  "fps": 30,
+  "duracao": 1.2,
+  "loop": false,
+  "marcadores": [
+   {
+    "nome": "Carga",
+    "t": 0.0
+   },
+   {
+    "nome": "Arranque",
+    "t": 0.22
+   },
+   {
+    "nome": "Contato",
+    "t": 0.86
+   },
+   {
+    "nome": "Freia",
+    "t": 0.96
+   },
+   {
+    "nome": "Fim",
+    "t": 1.2
+   }
+  ],
+  "velocidade": 0.0,
+  "bytes": 10819,
+  "md5_json": "c4164e0c9e25a90304eca25948317e1c"
+ },
+ "Montar_E": {
+  "fonte": "montaria/clipes_m2_v31/LoboAncestral_Montar_E.json",
+  "lote": "montaria M2 r3 no rig de 60 ossos",
+  "quadros": 91,
+  "fps": 30,
+  "duracao": 3.0,
+  "loop": false,
+  "marcadores": [
+   {
+    "nome": "Agarra",
+    "t": 1.32
+   },
+   {
+    "nome": "Pulo",
+    "t": 1.6
+   },
+   {
+    "nome": "Sentado",
+    "t": 2.4
+   }
+  ],
+  "velocidade": 0.0,
+  "bytes": 11165,
+  "md5_json": "a60a4c276eae060eaefd4a1347e541e9"
+ },
+ "Montar_D": {
+  "fonte": "montaria/clipes_m2_v31/LoboAncestral_Montar_D.json",
+  "lote": "montaria M2 r3 no rig de 60 ossos",
+  "quadros": 91,
+  "fps": 30,
+  "duracao": 3.0,
+  "loop": false,
+  "marcadores": [
+   {
+    "nome": "Agarra",
+    "t": 1.32
+   },
+   {
+    "nome": "Pulo",
+    "t": 1.6
+   },
+   {
+    "nome": "Sentado",
+    "t": 2.4
+   }
+  ],
+  "velocidade": 0.0,
+  "bytes": 11160,
+  "md5_json": "bf3e7010b24518c0bcd39eb22a2ea7f4"
+ },
+ "Desmontar_E": {
+  "fonte": "montaria/clipes_m2_v31/LoboAncestral_Desmontar_E.json",
+  "lote": "montaria M2 r3 no rig de 60 ossos",
+  "quadros": 97,
+  "fps": 30,
+  "duracao": 3.2,
+  "loop": false,
+  "marcadores": [
+   {
+    "nome": "Pendurado",
+    "t": 1.25
+   },
+   {
+    "nome": "Solta",
+    "t": 1.55
+   },
+   {
+    "nome": "NoChao",
+    "t": 1.85
+   }
+  ],
+  "velocidade": 0.0,
+  "bytes": 11244,
+  "md5_json": "3f1039148880157cb44374d99106a64a"
+ },
+ "Desmontar_D": {
+  "fonte": "montaria/clipes_m2_v31/LoboAncestral_Desmontar_D.json",
+  "lote": "montaria M2 r3 no rig de 60 ossos",
+  "quadros": 97,
+  "fps": 30,
+  "duracao": 3.2,
+  "loop": false,
+  "marcadores": [
+   {
+    "nome": "Pendurado",
+    "t": 1.25
+   },
+   {
+    "nome": "Solta",
+    "t": 1.55
+   },
+   {
+    "nome": "NoChao",
+    "t": 1.85
+   }
+  ],
+  "velocidade": 0.0,
+  "bytes": 11243,
+  "md5_json": "203ca4e9544f9ee0bd95b06c5403c4aa"
+ }
+}

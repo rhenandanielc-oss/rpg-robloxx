@@ -1,0 +1,101 @@
+00:02.656  blend            | Read blend: "C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Lobo_Ancestral_Ref\rig18\Lobo_Ancestral_Rig_v28.blend"
+BlenderMCP addon registered
+
+Wiggle Bones registered
+CAUDA verts 1391 CORPO verts 9012 TRONCO verts 403
+ASSENTAR_TRONCO  raiz dz -1.637
+ASSENTAR_TRONCO  raiz dz -1.656
+ASSENTAR_TRONCO  raiz dz -1.677
+ASSENTAR_TRONCO  raiz dz -1.702
+ASSENTAR_TRONCO  raiz dz -1.732
+ASSENTAR_TRONCO  raiz dz -1.769
+ASSENTAR_TRONCO  raiz dz -1.811
+ASSENTAR_TRONCO  raiz dz -1.859
+ASSENTAR_TRONCO  raiz dz -1.913
+ASSENTAR_TRONCO  raiz dz -1.971
+ASSENTAR_TRONCO  raiz dz -2.033
+ASSENTAR_TRONCO  raiz dz -2.100
+ASSENTAR_TRONCO  raiz dz -2.171
+ASSENTAR_TRONCO  raiz dz -2.246
+ASSENTAR_TRONCO  raiz dz -2.324
+ASSENTAR_TRONCO  raiz dz -2.405
+ASSENTAR_TRONCO  raiz dz -2.489
+ASSENTAR_TRONCO  raiz dz -2.575
+ASSENTAR_TRONCO  raiz dz -2.665
+ASSENTAR_TRONCO  raiz dz -2.246
+SENTADO pitch -34, ombro-pata 0.03
+ASSENTAR_TRONCO sentado raiz dz -2.309
+PES_SENTADO MetatarsoE inc -49 z 0.50 MetatarsoD inc -49 z 0.50
+CAUDA_NO_CHAO sentado angulos 22 20 -70 -36 -19 -17 -17 | pelo mais baixo por osso -0.18 0.01 0.80 0.83 0.39 0.46 0.24
+ASSENTAR_DEITADO deitado pitch -8.0 dz -1.36 antebracos -0.076 tras 0.107 esterno 1.540
+ASSENTAR_DEITADO deitado pitch -8.0 dz -2.82 antebracos 0.137 tras 0.427 esterno 0.281
+ASSENTAR_DEITADO deitado pitch -8.0 dz -3.07 antebracos 0.090 tras 0.042 esterno -0.055
+PATA_RETA deitado MaoE inc -49 bola z 0.35 punho z 0.43 cotovelo z 0.27
+PATA_RETA deitado MaoD inc -49 bola z 0.35 punho z 0.43 cotovelo z 0.27
+PE_RENTE deitado MetatarsoE inc -49 bola z 0.50 tufo enterra 0.08
+PE_RENTE deitado MetatarsoD inc -49 bola z 0.50 tufo enterra 0.08
+ASSENTAR_DEITADO deitado pitch -8.0 dz -3.07 antebracos 0.072 tras 0.050 esterno -0.047
+PES_DEITADO MaoE inc -49 z 0.35 dedos 30 MaoD inc -49 z 0.35 dedos 30 MetatarsoE inc -49 z 0.50 dedos 0 MetatarsoD inc -49 z 0.50 dedos 0
+CAUDA_NO_CHAO deitado angulos 0 48 -70 -37 -1 -15 -15 | pelo mais baixo por osso -0.31 -0.39 0.51 0.43 -0.06 0.16 -0.02
+ASSENTAR_DEITADO deitado pitch -8.0 dz -1.36 antebracos -0.076 tras 0.107 esterno 1.540
+ASSENTAR_DEITADO deitado pitch -8.0 dz -2.82 antebracos 0.137 tras 0.427 esterno 0.281
+ASSENTAR_DEITADO deitado pitch -8.0 dz -3.07 antebracos 0.090 tras 0.042 esterno -0.055
+PATA_RETA deitado MaoE inc -49 bola z 0.35 punho z 0.43 cotovelo z 0.27
+PATA_RETA deitado MaoD inc -49 bola z 0.35 punho z 0.43 cotovelo z 0.27
+PE_RENTE deitado MetatarsoE inc -49 bola z 0.50 tufo enterra 0.08
+PE_RENTE deitado MetatarsoD inc -49 bola z 0.50 tufo enterra 0.08
+ASSENTAR_DEITADO deitado pitch -8.0 dz -3.07 antebracos 0.072 tras 0.050 esterno -0.047
+PES_DEITADO MaoE inc -49 z 0.35 dedos 30 MaoD inc -49 z 0.35 dedos 30 MetatarsoE inc -49 z 0.50 dedos 0 MetatarsoD inc -49 z 0.50 dedos 0
+CAUDA_NO_CHAO deitado angulos 0 48 -70 -37 -1 -15 -15 | pelo mais baixo por osso -0.31 -0.39 0.51 0.43 -0.06 0.16 -0.02
+CARA_NO_CHAO varredura deitado_baixa a0:1.84 a10:1.77 a20:1.70 a30:1.61 a40:1.52 a50:1.42 a60:1.25 a70:0.99 a80:0.72 a90:0.46 a100:0.21 a110:-0.03 a120:-0.25
+CARA_NO_CHAO deitado_baixa a 106.8 graus, queixo z 0.050
+ASSENTAR_DEITADO deitado_baixa pitch -8.0 dz -3.07 antebracos 0.072 tras 0.045 esterno -0.052
+CARA_NO_CHAO varredura deitado_baixa a0:-0.07 a10:-0.28 a20:-0.48 a30:-0.66 a40:-0.81 a50:-0.93 a60:-1.02 a70:-1.09 a80:-1.14 a90:-1.15 a100:-1.13 a110:-1.09 a120:-1.02
+CARA_NO_CHAO deitado_baixa a 0.0 graus, queixo z -0.067
+CAUDA_NO_CHAO deitado_baixa angulos 0 48 -70 -38 -1 -15 -15 | pelo mais baixo por osso -0.31 -0.39 0.51 0.43 -0.08 0.14 -0.04
+COTOVELOS pitch 30 erro IK 0.000 raiz dz -1.60
+CAUDA_NO_CHAO cotovelos angulos -17 -38 -38 -33 -13 1 1 | pelo mais baixo por osso 3.46 2.30 1.78 1.04 0.54 0.39 0.45
+ASSENTAR_DEITADO apoios pitch -7.6 dz -3.13 antebracos 0.044 tras 0.057 esterno -0.050
+MEIO_SENTAR f 0.30 raiz dz -0.69 erro dianteiras 0.000
+MEIO_SENTAR f 0.60 raiz dz -1.39 erro dianteiras 0.000
+MEIO_SENTAR f 0.85 raiz dz -1.96 erro dianteiras 0.000
+ASSENTAR_DEITADO dormindo pitch -8.0 dz -1.77 antebracos -0.036 tras 0.197 esterno 1.445
+ASSENTAR_DEITADO dormindo pitch -8.0 dz -2.91 antebracos 0.156 tras 0.045 esterno 0.081
+ASSENTAR_DEITADO dormindo pitch -8.0 dz -2.89 antebracos 0.130 tras 0.093 esterno 0.115
+PATA_RETA dormindo MaoD inc -49 bola z 0.39 punho z 0.47 cotovelo z 1.16
+ASSENTAR_DEITADO dormindo pitch -8.0 dz -2.86 antebracos 0.124 tras 0.177 esterno 0.174
+CAUDA_NO_CHAO dormindo angulos 0 100 92 92 83 65 71 | pelo mais baixo por osso 0.12 -0.40 0.09 -0.30 -0.30 -0.06 0.63
+CAUDA_BASE dormindo de -0.40 para -0.29
+CARA_NO_CHAO varredura  a-60:1.45 a-50:1.29 a-40:1.13 a-30:0.98 a-20:0.83 a-10:0.68 a0:0.55 a10:0.43 a20:0.33 a30:0.23 a40:0.07 a50:-0.06 a60:-0.16 a70:-0.24 a80:-0.28 a90:-0.30 a100:-0.28 a110:-0.24 a120:-0.18
+CARA_NO_CHAO  a 45.2 graus, queixo z 0.000
+CARA_NO_CHAO varredura  a-60:1.41 a-50:1.25 a-40:1.10 a-30:0.94 a-20:0.79 a-10:0.65 a0:0.52 a10:0.41 a20:0.31 a30:0.20 a40:0.04 a50:-0.08 a60:-0.18 a70:-0.25 a80:-0.29 a90:-0.29 a100:-0.28 a110:-0.23 a120:-0.15
+CARA_NO_CHAO  a 43.2 graus, queixo z 0.000
+CARA_NO_CHAO varredura  a-60:1.37 a-50:1.22 a-40:1.07 a-30:0.91 a-20:0.77 a-10:0.63 a0:0.50 a10:0.39 a20:0.29 a30:0.16 a40:0.01 a50:-0.11 a60:-0.20 a70:-0.26 a80:-0.29 a90:-0.30 a100:-0.27 a110:-0.21 a120:-0.13
+CARA_NO_CHAO  a 41.1 graus, queixo z 0.000
+CARA_NO_CHAO varredura  a-60:1.34 a-50:1.19 a-40:1.04 a-30:0.89 a-20:0.75 a-10:0.61 a0:0.49 a10:0.38 a20:0.28 a30:0.13 a40:-0.02 a50:-0.13 a60:-0.22 a70:-0.27 a80:-0.30 a90:-0.30 a100:-0.26 a110:-0.20 a120:-0.12
+CARA_NO_CHAO  a 38.7 graus, queixo z -0.000
+CARA_NO_CHAO varredura  a-60:1.31 a-50:1.16 a-40:1.01 a-30:0.87 a-20:0.73 a-10:0.60 a0:0.48 a10:0.37 a20:0.25 a30:0.09 a40:-0.05 a50:-0.16 a60:-0.24 a70:-0.29 a80:-0.31 a90:-0.30 a100:-0.26 a110:-0.19 a120:-0.10
+CARA_NO_CHAO  a 36.2 graus, queixo z 0.000
+CARA_NO_CHAO varredura  a-60:1.28 a-50:1.14 a-40:0.99 a-30:0.85 a-20:0.72 a-10:0.59 a0:0.47 a10:0.37 a20:0.21 a30:0.05 a40:-0.09 a50:-0.19 a60:-0.27 a70:-0.31 a80:-0.33 a90:-0.31 a100:-0.26 a110:-0.18 a120:-0.08
+CARA_NO_CHAO  a 33.3 graus, queixo z 0.000
+CARA_NO_CHAO varredura  a-60:1.26 a-50:1.12 a-40:0.98 a-30:0.84 a-20:0.71 a-10:0.59 a0:0.47 a10:0.34 a20:0.16 a30:0.00 a40:-0.13 a50:-0.23 a60:-0.30 a70:-0.34 a80:-0.35 a90:-0.32 a100:-0.26 a110:-0.18 a120:-0.06
+CARA_NO_CHAO  a 30.3 graus, queixo z 0.000
+CARA_NO_CHAO varredura  a-60:1.24 a-50:1.10 a-40:0.96 a-30:0.83 a-20:0.71 a-10:0.59 a0:0.48 a10:0.29 a20:0.11 a30:-0.04 a40:-0.17 a50:-0.27 a60:-0.33 a70:-0.37 a80:-0.37 a90:-0.34 a100:-0.27 a110:-0.17 a120:-0.05
+CARA_NO_CHAO  a 27.2 graus, queixo z -0.000
+CARA_NO_CHAO varredura  a-60:1.22 a-50:1.08 a-40:0.95 a-30:0.83 a-20:0.71 a-10:0.59 a0:0.44 a10:0.24 a20:0.07 a30:-0.09 a40:-0.21 a50:-0.31 a60:-0.37 a70:-0.40 a80:-0.40 a90:-0.36 a100:-0.28 a110:-0.17 a120:-0.03
+CARA_NO_CHAO  a 24.1 graus, queixo z 0.000
+CARA_NO_CHAO varredura  a-60:1.20 a-50:1.07 a-40:0.95 a-30:0.83 a-20:0.71 a-10:0.60 a0:0.39 a10:0.19 a20:0.02 a30:-0.13 a40:-0.26 a50:-0.35 a60:-0.41 a70:-0.44 a80:-0.43 a90:-0.38 a100:-0.29 a110:-0.17 a120:-0.02
+CARA_NO_CHAO  a 21.0 graus, queixo z -0.000
+CABECA_FORA_DA_PERNA giro do pescoco 30 graus, vertices dentro 24
+DORMINDO queixo z -0.000 MaoE:(0.55,-2.72,0.42) MaoD:(-1.75,-7.42,0.39) MetatarsoE:(1.20,-0.97,0.50) MetatarsoD:(-2.00,-0.97,0.50)
+CLIPE Montar_E {"duracao_s": 3.0, "loop": false, "quadros": 91, "velocidade_studs_s": 0.0, "marcadores": {"Agarra": 1.32, "Pulo": 1.6, "Sentado": 2.4}, "rotacao_raiz_graus": 0.0, "erro_ik_max": 0.0, "desliza_pe_max_studs_s": 0.0, "dedo_min_z": 0.1, "malha_min_z_fora_das_patas": 0.268, "onde": [-1.22, -3.62, 0.27], "patas_dist_min": 1.9, "erro_ik_por_pe": {"MaoE": 0.0, "MaoD": 0.0, "MetatarsoE": 0.0, "MetatarsoD": 0.0}, "alinhamento": {"tronco_x_meio": {"min": -0.003, "max": 0.006, "media": 0.001}, "tronco_x_media": {"min": -0.009, "max": 0.028, "media": 0.005}, "apoio_dian_x_centro": {"min": -0.0, "max": 0.0, "media": -0.0}, "apoio_tras_x_centro": {"min": 0.0, "max": 0.0, "media": 0.0}, "apoio_dian_dy": {"min": -0.0, "max": 0.0, "media": -0.0}, "apoio_tras_dy": {"min": -0.0, "max": 0.0, "media": -0.0}, "ombros_dz": {"min": -0.043, "max": 0.157, "media": 0.03}, "quadris_dz": {"min": 0.0, "max": 0.0, "media": 0.0}, "ombros_x_centro": {"min": -0.01, "max": 0.032, "media": 0.006}, "quadris_x_centro": {"min": 0.0, "max": 0.0, "media": 0.0}}}
+CLIPE Montar_D {"duracao_s": 3.0, "loop": false, "quadros": 91, "velocidade_studs_s": 0.0, "marcadores": {"Agarra": 1.32, "Pulo": 1.6, "Sentado": 2.4}, "rotacao_raiz_graus": 0.0, "erro_ik_max": 0.0, "desliza_pe_max_studs_s": 0.0, "dedo_min_z": 0.1, "malha_min_z_fora_das_patas": 0.268, "onde": [1.22, -3.62, 0.27], "patas_dist_min": 1.9, "erro_ik_por_pe": {"MaoE": 0.0, "MaoD": 0.0, "MetatarsoE": 0.0, "MetatarsoD": 0.0}, "alinhamento": {"tronco_x_meio": {"min": -0.006, "max": 0.003, "media": -0.001}, "tronco_x_media": {"min": -0.028, "max": 0.009, "media": -0.005}, "apoio_dian_x_centro": {"min": -0.0, "max": 0.0, "media": 0.0}, "apoio_tras_x_centro": {"min": 0.0, "max": 0.0, "media": 0.0}, "apoio_dian_dy": {"min": -0.0, "max": 0.0, "media": 0.0}, "apoio_tras_dy": {"min": -0.0, "max": 0.0, "media": -0.0}, "ombros_dz": {"min": -0.157, "max": 0.043, "media": -0.03}, "quadris_dz": {"min": 0.0, "max": 0.0, "media": 0.0}, "ombros_x_centro": {"min": -0.032, "max": 0.01, "media": -0.006}, "quadris_x_centro": {"min": 0.0, "max": 0.0, "media": 0.0}}}
+CLIPE Desmontar_E {"duracao_s": 3.2, "loop": false, "quadros": 97, "velocidade_studs_s": 0.0, "marcadores": {"Pendurado": 1.25, "Solta": 1.55, "NoChao": 1.85}, "rotacao_raiz_graus": 0.0, "erro_ik_max": 0.0, "desliza_pe_max_studs_s": 0.0, "dedo_min_z": 0.1, "malha_min_z_fora_das_patas": 0.268, "onde": [-1.22, -3.62, 0.27], "patas_dist_min": 1.9, "erro_ik_por_pe": {"MaoE": 0.0, "MaoD": 0.0, "MetatarsoE": 0.0, "MetatarsoD": 0.0}, "alinhamento": {"tronco_x_meio": {"min": -0.002, "max": 0.006, "media": 0.001}, "tronco_x_media": {"min": -0.007, "max": 0.028, "media": 0.004}, "apoio_dian_x_centro": {"min": -0.0, "max": 0.0, "media": -0.0}, "apoio_tras_x_centro": {"min": 0.0, "max": 0.0, "media": 0.0}, "apoio_dian_dy": {"min": -0.0, "max": 0.0, "media": -0.0}, "apoio_tras_dy": {"min": -0.0, "max": 0.0, "media": -0.0}, "ombros_dz": {"min": -0.033, "max": 0.157, "media": 0.025}, "quadris_dz": {"min": 0.0, "max": 0.0, "media": 0.0}, "ombros_x_centro": {"min": -0.008, "max": 0.032, "media": 0.005}, "quadris_x_centro": {"min": 0.0, "max": 0.0, "media": 0.0}}}
+CLIPE Desmontar_D {"duracao_s": 3.2, "loop": false, "quadros": 97, "velocidade_studs_s": 0.0, "marcadores": {"Pendurado": 1.25, "Solta": 1.55, "NoChao": 1.85}, "rotacao_raiz_graus": 0.0, "erro_ik_max": 0.0, "desliza_pe_max_studs_s": 0.0, "dedo_min_z": 0.1, "malha_min_z_fora_das_patas": 0.268, "onde": [1.22, -3.62, 0.27], "patas_dist_min": 1.9, "erro_ik_por_pe": {"MaoE": 0.0, "MaoD": 0.0, "MetatarsoE": 0.0, "MetatarsoD": 0.0}, "alinhamento": {"tronco_x_meio": {"min": -0.006, "max": 0.002, "media": -0.001}, "tronco_x_media": {"min": -0.028, "max": 0.007, "media": -0.004}, "apoio_dian_x_centro": {"min": -0.0, "max": 0.0, "media": -0.0}, "apoio_tras_x_centro": {"min": 0.0, "max": 0.0, "media": 0.0}, "apoio_dian_dy": {"min": -0.0, "max": 0.0, "media": 0.0}, "apoio_tras_dy": {"min": -0.0, "max": 0.0, "media": -0.0}, "ombros_dz": {"min": -0.157, "max": 0.033, "media": -0.025}, "quadris_dz": {"min": 0.0, "max": 0.0, "media": 0.0}, "ombros_x_centro": {"min": -0.032, "max": 0.008, "media": -0.005}, "quadris_x_centro": {"min": 0.0, "max": 0.0, "media": 0.0}}}
+Info: Saved as "_m2v31.blend"
+ANIM_OK ['Montar_E', 'Montar_D', 'Desmontar_E', 'Desmontar_D']
+BlenderMCP addon unregistered
+Wiggle Bones unregistered
+Blender 5.2.2 LTS (hash d13f752e3b9c built 2026-09-15 01:37:04)
+
+Blender quit

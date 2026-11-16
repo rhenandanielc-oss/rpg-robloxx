@@ -1,0 +1,160 @@
+{
+ "Corrida": {
+  "duracao_s": 0.467,
+  "loop": true,
+  "quadros": 14,
+  "velocidade_studs_s": 21.43,
+  "marcadores": {},
+  "rotacao_raiz_graus": 0.0,
+  "erro_ik_max": 0.0002,
+  "desliza_pe_max_studs_s": 0.0,
+  "dedo_min_z": 0.1,
+  "malha_min_z_fora_das_patas": 0.239,
+  "onde": [
+   -1.22,
+   -4.02,
+   0.24
+  ],
+  "patas_dist_min": 1.644,
+  "erro_ik_por_pe": {
+   "MaoE": 0.0,
+   "MaoD": 0.0,
+   "MetatarsoE": 0.0,
+   "MetatarsoD": 0.0
+  },
+  "alinhamento": {
+   "tronco_x_meio": {
+    "min": -0.005,
+    "max": 0.003,
+    "media": -0.0
+   },
+   "tronco_x_media": {
+    "min": -0.004,
+    "max": 0.004,
+    "media": -0.001
+   },
+   "apoio_dian_x_centro": {
+    "min": -0.0,
+    "max": 0.0,
+    "media": -0.0
+   },
+   "apoio_tras_x_centro": {
+    "min": -0.068,
+    "max": 0.046,
+    "media": -0.013
+   },
+   "apoio_dian_dy": {
+    "min": -1.0,
+    "max": 0.719,
+    "media": 0.035
+   },
+   "apoio_tras_dy": {
+    "min": -0.566,
+    "max": 0.8,
+    "media": -0.058
+   },
+   "ombros_dz": {
+    "min": -0.195,
+    "max": 0.278,
+    "media": -0.009
+   },
+   "quadris_dz": {
+    "min": -0.015,
+    "max": 0.012,
+    "media": 0.0
+   },
+   "ombros_x_centro": {
+    "min": -0.0,
+    "max": 0.005,
+    "media": 0.003
+   },
+   "quadris_x_centro": {
+    "min": -0.0,
+    "max": 0.0,
+    "media": -0.0
+   }
+  }
+ },
+ "Hab_Investida": {
+  "duracao_s": 1.2,
+  "loop": false,
+  "quadros": 37,
+  "velocidade_studs_s": 0.0,
+  "marcadores": {
+   "Carga": 0.0,
+   "Arranque": 0.22,
+   "Contato": 0.86,
+   "Freia": 0.96,
+   "Fim": 1.2
+  },
+  "rotacao_raiz_graus": 0.0,
+  "erro_ik_max": 0.0003,
+  "desliza_pe_max_studs_s": 0.0,
+  "dedo_min_z": 0.1,
+  "malha_min_z_fora_das_patas": 0.024,
+  "onde": [
+   -1.21,
+   -4.33,
+   0.02
+  ],
+  "patas_dist_min": 1.642,
+  "erro_ik_por_pe": {
+   "MaoE": 0.0,
+   "MaoD": 0.0,
+   "MetatarsoE": 0.0,
+   "MetatarsoD": 0.0
+  },
+  "alinhamento": {
+   "tronco_x_meio": {
+    "min": -0.006,
+    "max": 0.002,
+    "media": -0.0
+   },
+   "tronco_x_media": {
+    "min": -0.007,
+    "max": 0.003,
+    "media": -0.0
+   },
+   "apoio_dian_x_centro": {
+    "min": -0.0,
+    "max": 0.0,
+    "media": -0.0
+   },
+   "apoio_tras_x_centro": {
+    "min": -0.044,
+    "max": 0.039,
+    "media": -0.002
+   },
+   "apoio_dian_dy": {
+    "min": -1.4,
+    "max": 0.483,
+    "media": -0.077
+   },
+   "apoio_tras_dy": {
+    "min": -0.787,
+    "max": 0.706,
+    "media": 0.013
+   },
+   "ombros_dz": {
+    "min": -0.205,
+    "max": 0.25,
+    "media": -0.001
+   },
+   "quadris_dz": {
+    "min": -0.013,
+    "max": 0.014,
+    "media": -0.001
+   },
+   "ombros_x_centro": {
+    "min": -0.0,
+    "max": 0.005,
+    "media": 0.001
+   },
+   "quadris_x_centro": {
+    "min": -0.0,
+    "max": 0.0,
+    "media": -0.0
+   }
+  }
+ }
+}

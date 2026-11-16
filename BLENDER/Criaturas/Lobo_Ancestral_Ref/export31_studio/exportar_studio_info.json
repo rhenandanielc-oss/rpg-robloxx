@@ -1,0 +1,15 @@
+{
+ "glb": "C:\\Users\\Rhenan\\Downloads\\RPG_Roblox_GitHub_Pacote_Inicial\\BLENDER\\Criaturas\\Lobo_Ancestral_Ref\\export31_studio\\Lobo_Ancestral_Studio.glb",
+ "bytes": 6253152,
+ "lobo": "Lobo_Ancestral_LOW",
+ "lobo_tris": 19818,
+ "sela": "Lobo_Ancestral_Sela",
+ "sela_tris": 8441,
+ "ossos": 60,
+ "bind_dif_sela_x_lobo": 0.0,
+ "triangulo_raiz": [
+  4356,
+  4357,
+  4358
+ ]
+}

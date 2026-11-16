@@ -113,6 +113,7 @@ Arquivo: [DOCS/estado/criaturas-gerais.md](DOCS/estado/criaturas-gerais.md)
 - CRIATURAS — REFINAMENTO + FINALIZAÇÃO + RIG + ANIMAÇÕES (2026-10-26, noite; "refine, termine o desenho e a animação, não me pergunte nada")
 - OPERAÇÃO CRIATURAS V2 (2026-10-27)
 - Lobo Ancestral V3: piloto de refinamento (27/10/2026, em revisão, não finalizado)
+- Lobo Ancestral (15/11/2026): v31 + sela + 51 clipes IMPORTADOS e testados em Play/PC no place isolado "Testes-loboancestral" (placeId 73543092389791; cópia limpa com consentimento); kit Natureza (2 passivas + 3 ativas) em PROTÓTIPO com validação no servidor testada; números [PROPOSTA]; montado, sons, celular e multiplayer pendentes. Detalhes: DOCS/criaturas/lobo-ancestral.md §6am. Commit 15/11 (só arquivos do lobo; vídeos fora).
 - Master Prompt — Grupo 1: Lobo Ártico (27/10/2026, aguardando aprovação de anatomia)
 - Produção autônoma V5 das 15 criaturas (27/10/2026): concluída tecnicamente, aguardando avaliação
 

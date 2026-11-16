@@ -1,0 +1,168 @@
+{
+ "name": "LoboAncestral",
+ "tree": {
+  "$className": "Folder",
+  "Dados": {
+   "$className": "Folder",
+   "Repouso": {
+    "$path": "dados/Repouso.txt"
+   },
+   "Observar": {
+    "$path": "dados/Observar.txt"
+   },
+   "Andar": {
+    "$path": "dados/Andar.txt"
+   },
+   "Trote": {
+    "$path": "dados/Trote.txt"
+   },
+   "Corrida": {
+    "$path": "dados/Corrida.txt"
+   },
+   "Partida": {
+    "$path": "dados/Partida.txt"
+   },
+   "Freada": {
+    "$path": "dados/Freada.txt"
+   },
+   "VirarE": {
+    "$path": "dados/VirarE.txt"
+   },
+   "VirarD": {
+    "$path": "dados/VirarD.txt"
+   },
+   "Sentar": {
+    "$path": "dados/Sentar.txt"
+   },
+   "Sentado": {
+    "$path": "dados/Sentado.txt"
+   },
+   "LevantarSentado": {
+    "$path": "dados/LevantarSentado.txt"
+   },
+   "Deitar": {
+    "$path": "dados/Deitar.txt"
+   },
+   "Deitado": {
+    "$path": "dados/Deitado.txt"
+   },
+   "Descanso": {
+    "$path": "dados/Descanso.txt"
+   },
+   "Adormecer": {
+    "$path": "dados/Adormecer.txt"
+   },
+   "Despertar": {
+    "$path": "dados/Despertar.txt"
+   },
+   "LevantarDeitado": {
+    "$path": "dados/LevantarDeitado.txt"
+   },
+   "Salto": {
+    "$path": "dados/Salto.txt"
+   },
+   "Uivo": {
+    "$path": "dados/Uivo.txt"
+   },
+   "Rosnar": {
+    "$path": "dados/Rosnar.txt"
+   },
+   "Mordida": {
+    "$path": "dados/Mordida.txt"
+   },
+   "Garra": {
+    "$path": "dados/Garra.txt"
+   },
+   "Impacto": {
+    "$path": "dados/Impacto.txt"
+   },
+   "Beber": {
+    "$path": "dados/Beber.txt"
+   },
+   "Comer": {
+    "$path": "dados/Comer.txt"
+   },
+   "Farejar": {
+    "$path": "dados/Farejar.txt"
+   },
+   "Sacudir": {
+    "$path": "dados/Sacudir.txt"
+   },
+   "Espreguicar": {
+    "$path": "dados/Espreguicar.txt"
+   },
+   "Bocejar": {
+    "$path": "dados/Bocejar.txt"
+   },
+   "LamberPata": {
+    "$path": "dados/LamberPata.txt"
+   },
+   "Cavar": {
+    "$path": "dados/Cavar.txt"
+   },
+   "DormirEnrolado": {
+    "$path": "dados/DormirEnrolado.txt"
+   },
+   "Alerta": {
+    "$path": "dados/Alerta.txt"
+   },
+   "Espreita": {
+    "$path": "dados/Espreita.txt"
+   },
+   "FarejarAndando": {
+    "$path": "dados/FarejarAndando.txt"
+   },
+   "OlharTras": {
+    "$path": "dados/OlharTras.txt"
+   },
+   "Bote": {
+    "$path": "dados/Bote.txt"
+   },
+   "UivoSentado": {
+    "$path": "dados/UivoSentado.txt"
+   },
+   "UivoEmPe": {
+    "$path": "dados/UivoEmPe.txt"
+   },
+   "LatidoAviso": {
+    "$path": "dados/LatidoAviso.txt"
+   },
+   "Ganido": {
+    "$path": "dados/Ganido.txt"
+   },
+   "RosnadoAmeaca": {
+    "$path": "dados/RosnadoAmeaca.txt"
+   },
+   "Saudacao": {
+    "$path": "dados/Saudacao.txt"
+   },
+   "Hab_SaltoPredatorio": {
+    "$path": "dados/Hab_SaltoPredatorio.txt"
+   },
+   "Hab_UivoAncestral": {
+    "$path": "dados/Hab_UivoAncestral.txt"
+   },
+   "Hab_Investida": {
+    "$path": "dados/Hab_Investida.txt"
+   },
+   "Montar_E": {
+    "$path": "dados/Montar_E.txt"
+   },
+   "Montar_D": {
+    "$path": "dados/Montar_D.txt"
+   },
+   "Desmontar_E": {
+    "$path": "dados/Desmontar_E.txt"
+   },
+   "Desmontar_D": {
+    "$path": "dados/Desmontar_D.txt"
+   },
+   "Perfil_Hab_Investida": {
+    "$path": "dados/Perfil_Hab_Investida.txt"
+   }
+  },
+  "AdaptadorLobo": {
+   "$path": "AdaptadorLobo.luau"
+  }
+ }
+}

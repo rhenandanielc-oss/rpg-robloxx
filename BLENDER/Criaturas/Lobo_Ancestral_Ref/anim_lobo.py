@@ -42,6 +42,19 @@ def pose_raiz(r):
     return Matrix.Translation(C + V((dx, dy, dz))) @ R @ Matrix.Translation(-C)
 DEDOS_SOLTOS = 8.0                                                    # v20: dedos soltos (leve flexao)
 GIRO_PE = {"MaoE": 14.0, "MaoD": -14.0, "MetatarsoE": 0.0, "MetatarsoD": 0.0}   # v20: dianteiras relaxadas para fora (traseiras giradas erguiam o corpo)
+def _eixo_perna(k):
+    """v27 (10/11): eixo de dobra da pata = normal do PLANO da perna em repouso (ombro-cotovelo-punho / quadril-joelho-jarrete).
+    A perna do modelo e inclinada (14 graus na frente, 9 atras); dobrar a pata em volta do X do MUNDO tirava a pata do plano da
+    perna e a ponta desviava para o lado no balanco (pata torta de frente)."""
+    if not k.startswith("Mao"): return V((1, 0, 0))       # traseiras: o eixo inclinado (9 graus) torcia a coxa no galope (plano 12 -> 21)
+    l = k[-1]; ch = ("Braco" + l, "Antebraco" + l, "Mao" + l)
+    a_, b_, c_ = (BD[n].head_local for n in ch); n = (b_ - a_).cross(c_ - a_).normalized()
+    return n if n.x > 0 else -n
+EIXO_PATA = {k: _eixo_perna(k) for k in PES}
+def _plano_tras(l):
+    a_, b_, c_ = (BD[n + l].head_local for n in ("Coxa", "Canela", "Metatarso")); n = (b_ - a_).cross(c_ - a_).normalized()
+    return n if n.x > 0 else -n
+PLANO_TRAS = {l: _plano_tras(l) for l in ("E", "D")}                   # v30: normal do plano de repouso das traseiras
 PALP_FECHA = json.loads(arm["palpebra_fecha_graus"]) if "palpebra_fecha_graus" in arm else {}   # rig18 (palpebras.py)
 POLOS = {o.name: o for o in bpy.data.objects if o.name.startswith("Polo_")}
 POLO0 = {n: o.location.copy() for n, o in POLOS.items()}
@@ -53,24 +66,61 @@ def aplicar(p):
     # parados na altura de pe: deitado (corpo 3,5 mais baixo) puxavam cotovelos e joelhos PARA CIMA (cotovelo z 1,8,
     # joelho 2,0) e os antebracos nao deitavam. Peso 0 de pe (andar/correr intactos) -> 1 quando a raiz desce > 1,3.
     wp = max(0.0, min(1.0, (-p["raiz"][2] - 0.3) / 1.0))
+    if p.get("polo_corpo"): wp = max(wp, p["polo_corpo"])            # v30 (so marcha v30): o polo acompanha a raiz (arfagem/rolagem)
     for n, o in POLOS.items(): o.location = POLO0[n].lerp(M @ POLO0[n], wp)
+    if p.get("eixo_perna"):                                             # v27: na marcha, polos mais longe (frente: atras; traseira: a
+        for k_, (bola_, _, _) in p["pes"].items():                       # v28: o polo do joelho acompanha o desvio lateral do alvo
+            if not k_.startswith("Mao") and POLO_SEGUE:                 # (o jarrete abria e o joelho entrava: coxa torcia no galope)
+                POLOS["Polo_Canela" + k_[-1]].location.x += POLO_SEGUE * (bola_.x - B0[k_].x)
+        for n, o in POLOS.items():                                      # frente) -> o plano da perna nao gira quando a pata sobe perto
+            o.location = o.location + (V((-POLO_TX * (1 if n.endswith("E") else -1), -POLO_LONGE_T, 0)) if "Canela" in n else V((0, POLO_LONGE, 0)))   # do quadril (coxa torcia no galope)
     for nm, ang in p["ossos"].items():
         if nm in PB: PB[nm].rotation_quaternion = rot_mundo(nm, ang)
     for l_, g_ in PALP_FECHA.items():                                   # v25: palpebras - "F" = fracao fechada (0 aberto, 1 fechado)
         PB["Palpebra" + l_].rotation_quaternion = Quaternion((1, 0, 0), rad(g_ * p["ossos"].get("Palpebra" + l_, {}).get("F", 0.0)))
     wy = max(0.0, min(1.0, (-p["raiz"][2] - 2.0) / 0.8))               # 0 de pe/sentado -> 1 deitado
     for k, (bola, incl, dedo) in p["pes"].items():
-        R = Matrix.Rotation(rad(incl), 4, "X")
+        R = Matrix.Rotation(rad(incl), 4, EIXO_PATA[k] if p.get("eixo_perna") else "X")   # v27: marcha dobra no plano da perna
         if wy > 0: R = Matrix.Rotation(rad(GIRO_PE[k] * wy), 4, "Z") @ R     # deitado: patas relaxadas, viradas um pouco para fora
+        if p.get("yaw_pe"): R = Matrix.Rotation(rad(p["yaw_pe"].get(k, 0.0)), 4, "Z") @ R   # 11/11 vida L2: pata acompanha o giro da garupa (dormir enrolado)
         ALVO[k].location = bola + (R @ (W0[k] - B0[k]))
         ALVO[k].rotation_quaternion = R.to_quaternion() @ Q0[k]
+    if p.get("polo_plano"):                                             # v30 (so marcha v30): polo do JOELHO no plano de repouso da perna
+        bpy.context.view_layer.update()                                 # (perpendicular a quadril->jarrete, para a frente): o plano da
+        for l_ in ("E", "D"):                                           # perna nao gira quando a pata vai para tras/cima (coxa torcia)
+            H = arm.matrix_world @ PB["Coxa" + l_].head; T_ = ALVO["Metatarso" + l_].location; d_ = T_ - H
+            n_ = (PB["Pelve"].matrix.to_3x3() @ BD["Pelve"].matrix_local.to_3x3().inverted()) @ PLANO_TRAS[l_]
+            fw = n_.cross(d_).normalized()
+            if fw.y > 0: fw = -fw
+            POLOS["Polo_Canela" + l_].location = H + d_ * 0.5 + fw * 3.0
+    if p.get("polo_frente_vert"):                                       # 11/11 vida (espreguicar): polo do COTOVELO no plano VERTICAL
+        bpy.context.view_layer.update()                                 # ombro->alvo (atras/acima): o antebraco nao abre nem torce
+        for l_ in ("E", "D"):                                           # quando a pata vai longe a frente; peso 0..1
+            H = arm.matrix_world @ PB["Braco" + l_].head; d_ = ALVO["Mao" + l_].location - H
+            fw = d_.cross(V((0, 0, 1))).cross(d_).normalized()
+            if fw.y < 0: fw = -fw
+            o_ = POLOS["Polo_Antebraco" + l_]; o_.location = o_.location.lerp(H + d_ * 0.5 + fw * 3.0, p["polo_frente_vert"])
     bpy.context.view_layer.update()
     for k, (bola, incl, dedo) in p["pes"].items():                  # dedos: orientacao de repouso (deitados) + curvatura
         pb = PB[DEDO[k]]; base = PB[k].tail
         Rd = Matrix.Rotation(rad(dedo), 3, "X") @ BD[DEDO[k]].matrix_local.to_3x3()
         pb.matrix = Matrix.Translation(base) @ Rd.to_4x4()
     bpy.context.view_layer.update()
+    carpo_meio()
     cauda_acima()
+CARPO_FR = float(os.environ.get("LOBO_CARPO_FR", "0.5"))              # v28: fracao do giro da Mao que o osso auxiliar do carpo recebe
+def carpo_meio():
+    """v28: osso auxiliar CarpoE/D (rig com review/pernas2/osso_carpo.py) recebe METADE do giro da Mao em relacao ao Antebraco
+    (arredonda a dobra do punho; sem ele a pele do lado palmar colapsava no skin linear). Sem o osso no rig, nao faz nada."""
+    feito = False
+    for l in ("E", "D"):
+        if "Carpo" + l not in PB: continue
+        pa, pm, pc = PB["Antebraco" + l], PB["Mao" + l], PB["Carpo" + l]
+        segue = pa.matrix @ BD["Antebraco" + l].matrix_local.inverted() @ BD["Mao" + l].matrix_local      # Mao presa ao antebraco
+        delta = (pm.matrix.to_3x3() @ segue.to_3x3().inverted()).to_quaternion()
+        meio = Quaternion().slerp(delta, CARPO_FR).to_matrix() @ segue.to_3x3()
+        pc.matrix = Matrix.Translation(pm.head) @ meio.to_4x4(); feito = True
+    if feito: bpy.context.view_layer.update()
 CAUDA_MALHA = True
 CAUDA_LIMITE = 0.04                                                   # pelo da cauda mais baixo permitido (passo de malha)
 CAUDA_ZMIN = 0.62                                                     # raio do pelo da cauda: a pelagem nao entra no chao
@@ -173,25 +223,46 @@ def vento(p, t, dur, vel=0.0, clipe=""):
     somar_ossos(p["ossos"], o)
 
 # ------------------------------------------------------------------ marchas (ciclos)
+FLEX_DIAN = float(os.environ.get("LOBO_FLEX_DIAN", "0.8"))            # v27: fracao da dobra do balanco (dianteiras)
+FLEX_TRAS = float(os.environ.get("LOBO_FLEX_TRAS", "1.0"))            # v27: traseiras com a dobra do v26 (menos torcia a coxa no galope)
+DEDO_BAL = float(os.environ.get("LOBO_DEDO_BAL", "0.55"))             # v27: dedos menos enrolados no balanco
+INCL_POUSO = float(os.environ.get("LOBO_INCL_POUSO", "1.0"))          # v27: pousa plana (v26: 4-6 graus de ponta)
+POLO_LONGE = float(os.environ.get("LOBO_POLO_LONGE", "4.0"))          # v27: afastamento extra dos polos do IK na marcha (dianteiras, para tras)
+POLO_LONGE_T = float(os.environ.get("LOBO_POLO_LONGE_T", "0.0"))      # v27: idem traseiras (para a frente)
+POLO_TX = float(os.environ.get("LOBO_POLO_TX", "0.0"))                # v27: polo do joelho para a linha media (x)
+ABRE_TRAS = float(os.environ.get("LOBO_ABRE_TRAS", "1.0"))           # v28: fracao da abertura lateral do balanco nas traseiras
+POLO_SEGUE = float(os.environ.get("LOBO_POLO_SEGUE", "1.0"))         # v28: polo do joelho segue o desvio lateral do alvo
+TRAS_APLAINA = float(os.environ.get("LOBO_TRAS_APLAINA", "0.6"))     # v27: quanto da dobra traseira some no fim do balanco
 def marcha(T, L, apoio, fases, alt, flex, bob, cfg):
     """fases: {pe: fase 0..1 do toque}; o pe apoiado recua de -L/2 a +L/2 (o lobo anda para -Y)."""
     def f(t):
         u = (t / T) % 1.0; p = pose_base(); pes = {}
         for k in PES:
             uk = (u - fases[k]) % 1.0
+            dian = k.startswith("Mao")
             if uk < apoio:
                 s = uk / apoio; dy = -L / 2 + L * s; dz = 0.0
-                incl = lerp(-cfg.get("incl_toque", 4), cfg.get("incl_saida", 14), s)
+                # v27: a sola fica plana e sustenta o peso na maior parte do apoio; o calcanhar so sobe no fim (impulsao).
+                # (v26 levantava desde o pouso: a pata rolava para a ponta durante todo o apoio)
+                incl = lerp(-INCL_POUSO, cfg.get("incl_saida", 14), suave((s - 0.55) / 0.45))
                 dedo = -incl * 0.0
             else:
                 s = (uk - apoio) / (1 - apoio); e = suave(s)
                 dy = L / 2 - L * e; dz = alt * math.sin(math.pi * s) ** 0.85
-                incl = cfg.get("incl_saida", 14) * (1 - s) + flex * math.sin(math.pi * s ** 0.8) - cfg.get("incl_toque", 4) * suave((s - 0.8) / 0.2)
-                dedo = cfg.get("dedo_balanco", 18) * math.sin(math.pi * s)
+                # v27: dobra do balanco limitada (dianteira x0,8, traseira x0,75) e TERMINA antes do pouso (s 0,82): a pata chega
+                # plana ao chao. (v26: dobra cheia ate o pouso -> pata da frente virava um "toco" com a malha amassada no punho e a
+                # traseira pousava de ponta, dedos para baixo)
+                fx = flex * (FLEX_DIAN if dian else FLEX_TRAS)
+                u_ = min(1.0, s / 0.82)
+                if dian: incl = cfg.get("incl_saida", 14) * (1 - suave(s / 0.35)) + fx * math.sin(math.pi * u_ ** 0.8) - INCL_POUSO * suave((s - 0.82) / 0.18)
+                else:    # traseira: perfil do v26 (o rapido torcia a coxa no galope), so a dobra some antes do pouso
+                    incl = cfg.get("incl_saida", 14) * (1 - s) + fx * math.sin(math.pi * s ** 0.8) * (1 - suave((s - 0.7) / 0.3) * TRAS_APLAINA) - INCL_POUSO * suave((s - 0.8) / 0.2)
+                dedo = cfg.get("dedo_balanco", 18) * DEDO_BAL * math.sin(math.pi * min(1.0, s / 0.85))
             dx = cfg.get("abre", 0.0) * (1 if k.endswith("E") else -1) * (math.sin(math.pi * ((uk - apoio) / (1 - apoio))) if uk >= apoio else 0)
+            if not dian: dx *= ABRE_TRAS                                   # v28: abertura lateral do balanco nas traseiras
             if k.startswith("Meta"): dy += cfg.get("tras_atras", 0.30) * L          # apoio traseiro centrado atras do quadril
             pes[k] = (B0[k] + V((dx, dy, dz)), incl, dedo)
-        p["pes"] = pes
+        p["pes"] = pes; p["eixo_perna"] = True
         w = 2 * math.pi * u
         z = bob * math.cos(2 * w + cfg.get("fase_bob", 0.0))
         pit = cfg.get("arfagem", 0.0) * math.sin(w + cfg.get("fase_arf", 0.0))
@@ -872,12 +943,30 @@ CLIPES = {  # nome: (funcao, duracao s, loop, velocidade de deslocamento studs/s
 if os.environ.get("LOBO_MONTARIA"):                  # montaria (10/11): Montar_E/D e Desmontar_E/D (montaria/clipes_montaria.py)
     APOIO_P = APOIO
     exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "montaria", "clipes_montaria.py"), encoding="utf-8").read(), globals())
+if os.environ.get("LOBO_VIDA"):                      # comportamentos de vida (11/11): lote 1 (comportamento/clipes_vida_l1.py)
+    exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "comportamento", "clipes_vida_l1.py"), encoding="utf-8").read(), globals())
+    if os.environ.get("LOBO_VIDA") in ("2", "3", "4", "5"):               # lote 2 (11/11): conforto e higiene
+        exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "comportamento", "clipes_vida_l2.py"), encoding="utf-8").read(), globals())
+if os.environ.get("LOBO_KIT"):                       # kit de habilidades (10/11): Hab_* (habilidades/clipes_kit.py)
+    exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "habilidades", "clipes_kit.py"), encoding="utf-8").read(), globals())
 QUAIS = A[1].split(",") if len(A) > 1 else list(CLIPES)
 ROT_RAIZ = {"VirarE": 90.0, "VirarD": -90.0}
 
 # ------------------------------------------------------------------ amostragem -> QA -> FK -> acao + JSON
 APOIO = {"Andar": ANDAR, "Trote": TROTE, "Corrida": GALOPE}
-dg = bpy.context.evaluated_depsgraph_get()
+if os.environ.get("LOBO_MARCHA30"):                   # marcha v30 (10/11): correcao da v29 (marcha/marcha_v30.py); v29 intacta
+    exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "marcha", "marcha_v30.py"), encoding="utf-8").read(), globals())
+elif os.environ.get("LOBO_MARCHA29"):                   # marcha v29 (10/11): SO Andar e Corrida inspirados no Lobo Artico (marcha/marcha_v29.py)
+    exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "marcha", "marcha_v29.py"), encoding="utf-8").read(), globals())
+if os.environ.get("LOBO_KIT") and os.environ.get("LOBO_MARCHA30"):   # 15/11: Hab_Investida sobre a Corrida v30 (habilidades/clipes_kit_v30.py)
+    exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "habilidades", "clipes_kit_v30.py"), encoding="utf-8").read(), globals())
+if os.environ.get("LOBO_VIDA") == "3":                # lote 3 (11/11): alerta e caca - usa a marcha v30 (exige LOBO_MARCHA30=1)
+    exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "comportamento", "clipes_vida_l3.py"), encoding="utf-8").read(), globals())
+if os.environ.get("LOBO_VIDA") == "4":                # lote 4 (12/11): vocal e social (comportamento/clipes_vida_l4.py)
+    exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "comportamento", "clipes_vida_l4.py"), encoding="utf-8").read(), globals())
+if os.environ.get("LOBO_VIDA") == "5":                # lote 5 (12/11): revisao dos existentes (comportamento/clipes_vida_l5.py; base v31 intacta)
+    exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "comportamento", "clipes_vida_l5.py"), encoding="utf-8").read(), globals())
+dg =bpy.context.evaluated_depsgraph_get()
 manifesto = {}; QUADROS = {}
 paw_idx = None
 def malha_zmin():
