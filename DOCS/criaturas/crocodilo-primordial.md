@@ -288,6 +288,7 @@ Três gerações, nenhuma aprovada artisticamente pelo criador:
 - Instalados os 3 KFS (53 animações no place); marcador `solta` do SoltarPresa caiu em 0,133 s (quadro 4; o JSON pede 0,12).
 - `PoderesTeste`: sustentação = `SegurarPresa` (terra) / `SegurarPresaAgua` (água) no lugar de ArrastarPresa; fim normal toca `SoltarPresa` e o marcador libera o boneco (dano para no início do SoltarPresa); cancelar, alvo removido e crocodilo removido soltam na hora; Giro só encadeia durante a sustentação. Backup no place: `ServerStorage.PoderesTeste_ANTES_P2_2026-11-16`; cópia local antiga em `versao_P1/`.
 - Testes em Play (todos ok, sem erro no console): terra e água com soltura no marcador (0,13 s após o início do SoltarPresa), cancelar na sustentação e no SoltarPresa, alvo removido, crocodilo removido (sustentação e soltura), fora do alcance, reativação imediata, Giro encadeado e Giro bloqueado na soltura. Evidência: `review/studio_1611/testes_P2_play.txt`. Place salvo (arquivo local).
+- **Sustentação do agarrão: 3,5 s** (decisão do usuário 16/11, "por enquanto"; era 2,5 de teste). Aplicada no `ConfigPoderes_Teste` (place e `studio/`) e testada em Play: terra 3,52 s e água 3,50 s segurando, soltura no marcador nos dois.
 - Não verificado: aparência do SoltarPresa na água (é clipe de terra tocado boiando); vários jogadores; celular. Duração do agarrão e regra PvP continuam pendentes.
 
 ## 6. Pendências
@@ -297,7 +298,7 @@ Três gerações, nenhuma aprovada artisticamente pelo criador:
    - lista final de passivas e ativas e seus efeitos;
    - **mergulho com cavaleiro** (sim/não; respiração, câmera, profundidade, segurança);
    - velocidades em terra e água; números (24.2 é só proposta);
-   - duração do agarrão PvE e tamanho máximo de presa;
+   - duração do agarrão PvE: **3,5 s por enquanto** (usuário 16/11); tamanho máximo de presa;
    - cores dos 3 padrões; tamanhos por estágio.
 2. **Modelo:** escolher a base (V2 ou V5) e revisar contra o painel 03; boca/dentes/língua; custo da V5 (56 mil tris) precisa de LOD.
 3. **Estágios:** só existe o Adulto. Faltam Bebê, Jovem, Pré-adulto, Ancião e ovo.

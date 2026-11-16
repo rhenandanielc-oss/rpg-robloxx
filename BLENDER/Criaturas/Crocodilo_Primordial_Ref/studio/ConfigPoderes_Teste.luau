@@ -6,7 +6,7 @@ return {
 	Agarrao = {
 		alcance = 6.5,                      -- studs da PONTA DOS DENTES ate o centro do boneco no contato
 		ponta = 4.5,                        -- ponta dos dentes = 4,5 a frente do osso Mandibula (+Y do osso)
-		sustentacao = 2.5,                  -- s segurando antes de soltar
+		sustentacao = 3.5,                  -- s segurando antes de soltar (usuario 16/11: 3,5 s por enquanto)
 		dano_contato = 10, dano_por_segundo = 4,
 	},
 	Giro = {voltas = 2, dano_por_volta = 8},
