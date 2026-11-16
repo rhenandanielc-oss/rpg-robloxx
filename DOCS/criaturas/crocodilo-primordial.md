@@ -277,6 +277,19 @@ Três gerações, nenhuma aprovada artisticamente pelo criador:
 - **Protótipos [PROPOSTA]** (`studio/PoderesTeste.luau` + `ConfigPoderes_Teste.luau`, valores provisórios, só bonecos `BonecoTeste`, servidor decide alvo/alcance/estado/efeitos/cancelamento): Mordida de Agarrão (terra: MordidaLateral do lado do alvo; água: desce + BoteAquatico; **sustentação provisória = ArrastarPresa — falta clipe próprio de sustentação/recuperação**), Giro Predatório (RolarDaMorte, efeito no fim de cada volta), Submersão (água: Mergulho→Espreita/Aproximação→Emersão, sempre visível; terra: Deitar→Descanso→Levantar), Cauda de Maré (varredura + empurrão no raio). Testados em Play: acerto, erro de alcance, cancelamento, alvo removido (4 instantes), crocodilo removido, reativação — `review/studio_1511/testes_poderes_play.txt`.
 - **Continuam decisões do criador:** elemento, passiva, kit final, regra do agarrão PvP (protótipo bloqueado a bonecos), mergulho montado. Não testado: rede com vários jogadores, celular, desempenho com várias criaturas. Nada publicado; rpg_roblox e mapa intocados.
 
+**16/11/2026 — P2: clipes de segurar e soltar a presa (protótipo do agarrão, só Blender). APROVADO no Blender pelo usuário em 16/11 (53 clipes).**
+- Motivo: no protótipo do agarrão a sustentação usava `ArrastarPresa` (anda de ré). Crocodilo real segurando: mandíbula travada, corpo firme nas 4 patas, puxões curtos para trás, rajada de sacudidas laterais da cabeça e reajuste rápido da mordida; ao soltar abre a boca e dá um tranco da cabeça para trás.
+- **`SegurarPresa`** (laço 2,0 s, terra; de MordidaLateralE/D, para SoltarPresa/RolarDaMorte), **`SoltarPresa`** (1,0 s; evento `solta` 0,12 s; do quadro 0 do SegurarPresa ao Repouso), **`SegurarPresaAgua`** (laço 2,0 s, boiando; de BoteAquatico, para RolarDaMorte/NadoParado).
+- QA: IK 0,000; pés sem escorregar; boca fecha_alem 0,00° / lateral 0,07° / desloca 0,000 (igual MordidaLateral); malha × chão: pés −0,23 (igual ao Repouso), cabeça ≥ 1,45, focinho ≥ 1,60. Os 50 clipes antigos regenerados saíram **idênticos byte a byte**. Total: 53 JSON. Backup do gerador: `versao_P1/`.
+- Renders: `review/p2/render/`. Studio não testado (precisa liberação para trocar ArrastarPresa por SegurarPresa no PoderesTeste). Duração do agarrão e regra PvP continuam decisão do criador.
+- Uso previsto: o marcador `solta` (0,12 s) do SoltarPresa sincroniza a liberação do boneco no fim normal do agarrão; no cancelamento e na remoção do crocodilo a liberação é imediata pelo servidor (a validar no Studio).
+
+**16/11/2026 — P2 no Studio (RBX Crocodilo, autorizado). APROVADO pelo usuário em 16/11.**
+- Instalados os 3 KFS (53 animações no place); marcador `solta` do SoltarPresa caiu em 0,133 s (quadro 4; o JSON pede 0,12).
+- `PoderesTeste`: sustentação = `SegurarPresa` (terra) / `SegurarPresaAgua` (água) no lugar de ArrastarPresa; fim normal toca `SoltarPresa` e o marcador libera o boneco (dano para no início do SoltarPresa); cancelar, alvo removido e crocodilo removido soltam na hora; Giro só encadeia durante a sustentação. Backup no place: `ServerStorage.PoderesTeste_ANTES_P2_2026-11-16`; cópia local antiga em `versao_P1/`.
+- Testes em Play (todos ok, sem erro no console): terra e água com soltura no marcador (0,13 s após o início do SoltarPresa), cancelar na sustentação e no SoltarPresa, alvo removido, crocodilo removido (sustentação e soltura), fora do alcance, reativação imediata, Giro encadeado e Giro bloqueado na soltura. Evidência: `review/studio_1611/testes_P2_play.txt`. Place salvo (arquivo local).
+- Não verificado: aparência do SoltarPresa na água (é clipe de terra tocado boiando); vários jogadores; celular. Duração do agarrão e regra PvP continuam pendentes.
+
 ## 6. Pendências
 1. **Decisões do criador:**
    - **conflito do agarrão PvP** (só empurra × agarrão mais longo interrompível por aliados);

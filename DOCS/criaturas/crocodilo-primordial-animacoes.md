@@ -92,6 +92,18 @@ Cavaleiro (demonstração, não publicado): ações `DEMO_Cav_Montar`, `DEMO_Cav
 
 Sela: `CR_Croc_Sela` (`scripts/sela_crocodilo.py`), pesada na pele do crocodilo. Cavaleiro: ações `DEMO_Cav_MontarDireita` / `DEMO_Cav_DesmontarDireita` em `CR_Crocodilo_Montaria_L5.blend`. Números na ficha principal e em `review/L5/RESUMO_L5.txt`.
 
+### 1.1f Comportamento real R1–R4, poderes P1–P2 e total atual (16/11/2026)
+| Lote | Clipes | Situação |
+|---|---|---|
+| R1 postura real (11/11) | NadoParado, CurvaLentaEsquerda, CurvaLentaDireita, DeitadoBocaAberta (+ cauda arrastando no chão em todos os clipes de terra) | aprovado 11/11 |
+| R2 caça (11/11) | Espreita, AproximacaoSubmersa, BoteAquatico, MordidaLateralEsquerda, MordidaLateralDireita, ArrastarPresa, Engolir, RolarDaMorte (r2 de 15/11: pernas presas ao corpo) | aprovado 11/11 |
+| R3 sinais (11/11) | AmeacaInflada, BatidaDeCabeca, Bramido | aprovado 11/11 |
+| R4 margem (11/11) | FugaDeBarriga, EscorregarBarranco | aprovado 11/11 |
+| P1 poder (15/11) | CaudaDeMare (1,5 s, água; evento `impacto_cauda` 0,56 s) | protótipo; tocado no Studio, aprovado no vídeo de 15/11 |
+| **P2 agarrão (16/11)** | **SegurarPresa** (laço 2,0 s, terra), **SoltarPresa** (1,0 s; evento `solta` 0,12 s), **SegurarPresaAgua** (laço 2,0 s, boiando) | **aprovado no Blender 16/11**; Studio não testado |
+
+**Total atual: 53 clipes JSON** em `BLENDER/Criaturas/Crocodilo_Primordial_Ref/clipes/` (manifesto `manifesto_clipes.json`). Os 50 anteriores ficaram idênticos byte a byte ao gerar o P2. No Studio de teste (RBX Crocodilo) estão os 53 (os 3 do P2 instalados e testados no protótipo do agarrão em 16/11). Duração do agarrão e regra PvP: decisão do criador.
+
 ### 1.2 Históricos (outros rigs — NÃO transplantar sem retarget e inspeção)
 | Arquivo | Rig | Ações | Status |
 |---|---|---|---|

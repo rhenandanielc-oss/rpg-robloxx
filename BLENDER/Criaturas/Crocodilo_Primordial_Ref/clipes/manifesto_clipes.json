@@ -707,5 +707,49 @@
    "para": "NadoParado",
    "obs": "PROTOTIPO de poder (Cauda de Mare = referencia historica); varre de +X para -X"
   }
+ },
+ "SegurarPresa": {
+  "duracao": 2.0,
+  "loop": true,
+  "quadros": 60,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.18,
+  "sincronizacao": {
+   "de": "MordidaLateralE/D",
+   "para": "SoltarPresa/RolarDaMorte",
+   "obs": "PROTOTIPO do agarrao em terra: segura no lugar (substitui ArrastarPresa)"
+  }
+ },
+ "SoltarPresa": {
+  "duracao": 1.0,
+  "loop": false,
+  "quadros": 31,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.18,
+  "sincronizacao": {
+   "eventos": {
+    "solta": 0.12
+   },
+   "de": "SegurarPresa",
+   "para": "Repouso"
+  }
+ },
+ "SegurarPresaAgua": {
+  "duracao": 2.0,
+  "loop": true,
+  "quadros": 60,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.011,
+  "sincronizacao": {
+   "de": "BoteAquatico",
+   "para": "RolarDaMorte/NadoParado",
+   "obs": "PROTOTIPO do agarrao na agua"
+  }
  }
 }

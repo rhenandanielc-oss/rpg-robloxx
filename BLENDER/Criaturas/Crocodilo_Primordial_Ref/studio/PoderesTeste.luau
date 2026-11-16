@@ -43,14 +43,14 @@ function M.cancelar(motivo)
 	est.gen += 1; limparCons(); soltar(motivo)
 	T.parar()
 	modelo:PivotTo(PIVO0)                                   -- profundidade/posicao de teste voltam ao normal
-	est.poder = nil
+	est.poder = nil; est.fase = nil
 	if modelo:IsDescendantOf(workspace) then T.tocar("Crocodilo_Repouso", 0.2) end
 	return motivo
 end
 
 local function iniciar(poder)
 	if est.poder then return false end
-	est.poder = poder; est.gen += 1; est.t0 = os.clock(); M.log = {}
+	est.poder = poder; est.fase = nil; est.gen += 1; est.t0 = os.clock(); M.log = {}
 	log("INICIO %s", poder)
 	-- crocodilo removido: solta tudo
 	table.insert(est.cons, modelo.AncestryChanged:Connect(function()
@@ -70,7 +70,7 @@ end
 -- ================================================================ Mordida de Agarrao
 -- aproximacao (terra: MordidaLateral do lado do alvo; agua: desce a profundidade de teste e da o BoteAquatico; a Mordida
 -- basica fica separada) -> contato no evento fecha_boca (alcance medido no servidor da PONTA DOS DENTES ao centro do
--- alvo) -> sustentacao (ArrastarPresa, SEQUENCIA PROVISORIA: falta clipe proprio de sustentacao/recuperacao) -> soltura
+-- alvo) -> sustentacao (SegurarPresa / SegurarPresaAgua) -> SoltarPresa (marcador solta libera; cancelamento/remocao soltam na hora)
 function M.agarrao(alvo, cena)
 	local g = iniciar("Agarrao"); if not g then return "ocupado" end
 	if not alvoValido(alvo) then M.cancelar("alvo_invalido"); return "alvo_invalido" end
@@ -100,14 +100,27 @@ function M.agarrao(alvo, cena)
 	table.insert(est.cons, f.Stopped:Connect(function()
 		if est.gen ~= g then return end
 		if resultado ~= "acerto" then M.cancelar(resultado); return end
-		local s = T.tocar("Crocodilo_ArrastarPresa", 0.2)    -- sustentacao provisoria
-		log("SUSTENTACAO (provisoria: ArrastarPresa)")
+		-- 16/11 (P2): sustentacao com clipe proprio (terra SegurarPresa, agua SegurarPresaAgua) no lugar de ArrastarPresa
+		local nomeSeg = (cena == "agua") and "Crocodilo_SegurarPresaAgua" or "Crocodilo_SegurarPresa"
+		T.tocar(nomeSeg, 0.2); est.fase = "segurando"
+		log("SUSTENTACAO: %s", nomeSeg:sub(11))
 		local t = 0
 		table.insert(est.cons, RS.Heartbeat:Connect(function(dt)
-			if est.gen ~= g or not est.alvo then return end
-			if not alvoValido(est.alvo) then M.cancelar("alvo_removido_ou_derrotado"); return end   -- 15/11: o alvo podia sumir neste quadro
+			if est.gen ~= g or not est.alvo or est.fase ~= "segurando" then return end
+			if not alvoValido(est.alvo) then M.cancelar("alvo_removido_ou_derrotado"); return end
 			t += dt; est.alvo:FindFirstChildOfClass("Humanoid"):TakeDamage(CFG.Agarrao.dano_por_segundo * dt)
-			if t >= CFG.Agarrao.sustentacao then M.cancelar("fim_sustentacao") end
+			if t < CFG.Agarrao.sustentacao then return end
+			-- fim normal: o dano para; SoltarPresa abre a boca e o marcador "solta" libera o boneco
+			est.fase = "soltando"
+			local fs = T.tocar("Crocodilo_SoltarPresa", 0.15)
+			log("FIM DA SUSTENTACAO (%.2f s): SoltarPresa", t)
+			table.insert(est.cons, fs:GetMarkerReachedSignal("solta"):Connect(function()
+				if est.gen ~= g then return end
+				soltar("marcador_solta"); est.fase = "solto"
+			end))
+			table.insert(est.cons, fs.Stopped:Connect(function()
+				if est.gen == g then M.cancelar("fim_agarrao") end
+			end))
 		end))
 	end))
 	return "iniciado"
@@ -125,7 +138,7 @@ local function anelAgua(pos, cor)
 	game:GetService("Debris"):AddItem(p, 0.9)
 end
 function M.giro()
-	local preso = est.poder == "Agarrao" and est.alvo or nil
+	local preso = est.poder == "Agarrao" and est.fase == "segurando" and est.alvo or nil
 	if est.poder and not preso then return "ocupado" end
 	local alvoAntes = preso
 	if preso then est.gen += 1; limparCons(); est.poder = nil end   -- encadeia: o alvo continua preso
@@ -207,5 +220,5 @@ function M.caudaDeMare()
 	return "iniciado"
 end
 
-function M.estado() return {poder = est.poder, alvo = est.alvo and est.alvo.Name or nil} end
+function M.estado() return {poder = est.poder, fase = est.fase, alvo = est.alvo and est.alvo.Name or nil} end
 return M

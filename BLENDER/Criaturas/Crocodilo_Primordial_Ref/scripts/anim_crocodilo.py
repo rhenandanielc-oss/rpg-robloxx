@@ -749,6 +749,45 @@ CLIPES["CaudaDeMare"] = (boca_acompanha(clipe_cauda_de_mare), 1.5, False, 0.0)
 EXTRA["CaudaDeMare"] = {"eventos": {"arma": 0.20, "impacto_cauda": 0.56, "fim_varredura": 0.75}, "de": "NadoParado", "para": "NadoParado",
                         "obs": "PROTOTIPO de poder (Cauda de Mare = referencia historica); varre de +X para -X"}
 PES_CORPO["CaudaDeMare"] = 1.0
+# ================================================================== Poderes P2 (16/11): segurar/soltar a presa (PROTOTIPO)
+# O prototipo do agarrao usava ArrastarPresa (anda de re) para segurar. Crocodilo real segurando: mandibula travada, corpo
+# firme nas 4 patas, puxoes curtos para tras e sacudidas laterais da cabeca em rajada, reajuste rapido da mordida; ao
+# soltar abre e da um tranco da cabeca para tras. So animacao: duracao, dano e regra de agarrao/PvP sao do criador.
+def segurar(t, T, agua=False):
+    r = {} if agua else mix(REP0, {}, 0.0)
+    if agua: nado_corpo(r, t, T, 1.0, 3.0, 0.0, 0.5)
+    u = 2 * math.pi * t / T
+    env = math.sin(u / 2) ** 2                                       # rajada de sacudidas no meio do laco (0 nas pontas)
+    sac = 9.0 * env * math.sin(3 * u)                                # 3 sacudidas por laco
+    pux = math.sin(2 * u) ** 2                                       # 2 puxoes por laco
+    soma(r, "Pescoco", X_, 5.0 - 2.5 * pux); soma_cab(r, X_, 4.0 - 2.0 * pux)
+    soma(r, "Pescoco", Z_, 0.55 * sac); soma(r, "Pescoco2", Z_, 0.20 * sac); soma_cab(r, Z_, 0.35 * sac)
+    soma(r, "Coluna2", Z_, -0.12 * sac); soma(r, "Coluna2", X_, -1.0 - 1.0 * pux)
+    for i, nm in enumerate(CAUDA): soma(r, nm, Z_, -2.0 * (i / 7) * sac / 9.0)          # cauda contrapesa a sacudida
+    reaj = math.exp(-((t - 0.78 * T) / (0.05 * T)) ** 2)             # reajuste da mordida (abre um pouco e trava)
+    r["Mandibula"] = boca_frac(0.12 + 0.25 * reaj)
+    raiz = V((0, 0.12 + 0.10 * pux, (0.02 * math.sin(u)) if agua else 0.0))           # corpo puxa para tras (+Y)
+    return r, raiz, (pes_boiando() if agua else {})
+def clipe_segurar_presa(t): return segurar(t, 2.0)
+def clipe_segurar_presa_agua(t): return segurar(t, 2.0, True)
+def clipe_soltar_presa(t):
+    """solta (1,0 s, do quadro 0 do SegurarPresa ao quadro 0 do Repouso): abre a boca, tranco da cabeca para tras/cima, fecha"""
+    w = 1.0 - suave((t - 0.30) / 0.60)
+    rh, raiz_h, _ = segurar(0.0, 2.0)
+    r = mix(REP0, rh, w)                                             # w=1: pose de segurar; w=0: Repouso
+    r.pop("Mandibula", None)
+    tr = kf(t, [(0, 0), (0.18, -9), (0.40, -6), (1.0, 0)])
+    soma(r, "Pescoco", X_, 0.6 * tr); soma_cab(r, X_, 0.4 * tr)
+    r["Mandibula"] = boca_frac(kf(t, [(0, 0.12), (0.12, 0.80), (0.35, 0.80), (0.62, 0.0), (1.0, 0.0)]))
+    raiz = V((0, kf(t, [(0, raiz_h.y), (0.30, raiz_h.y + 0.15), (1.0, 0.0)]), 0))
+    return r, raiz, {}
+CLIPES["SegurarPresa"] = (boca_acompanha(clipe_segurar_presa), 2.0, True, 0.0)
+CLIPES["SoltarPresa"] = (boca_acompanha(clipe_soltar_presa), 1.0, False, 0.0)
+CLIPES["SegurarPresaAgua"] = (boca_acompanha(clipe_segurar_presa_agua), 2.0, True, 0.0)
+EXTRA["SegurarPresa"] = {"de": "MordidaLateralE/D", "para": "SoltarPresa/RolarDaMorte", "obs": "PROTOTIPO do agarrao em terra: segura no lugar (substitui ArrastarPresa)"}
+EXTRA["SoltarPresa"] = {"eventos": {"solta": 0.12}, "de": "SegurarPresa", "para": "Repouso"}
+EXTRA["SegurarPresaAgua"] = {"de": "BoteAquatico", "para": "RolarDaMorte/NadoParado", "obs": "PROTOTIPO do agarrao na agua"}
+PES_CORPO["SegurarPresaAgua"] = 1.0
 # ================================================================== Lote 4: montaria (so apresentacao; o cavaleiro e demonstracao separada)
 BAIXA_MONT = 0.20                                                  # baixa a postura para receber o peso (patas plantadas)
 def montaria(t, baixa, rola, olha, amortece, lado=1.0):
@@ -804,7 +843,7 @@ def mandibula_segue_cabeca(rots):
 # ate a altura-alvo (Cauda3 a meio caminho, 4 a 8 no chao). k = 0 na agua; nas transicoes terra<->agua acompanha as patas.
 RAIO_CAUDA = {"Cauda2": 1.43, "Cauda3": 1.32, "Cauda4": 1.11, "Cauda5": 0.92, "Cauda6": 0.77, "Cauda7": 0.56, "Cauda8": 0.22}  # junta -> pele de baixo (repouso)
 PELE_ALVO = {"Cauda3": 0.40, "Cauda4": 0.04, "Cauda5": 0.04, "Cauda6": 0.04, "Cauda7": 0.04, "Cauda8": 0.04}
-SEM_CHAO = ("Nado", "NadoParado", "CurvaAquaticaEsquerda", "CurvaAquaticaDireita", "Mergulho", "Emersao", "CurvaLentaEsquerda", "CurvaLentaDireita", "Espreita", "AproximacaoSubmersa", "BoteAquatico", "RolarDaMorte", "BatidaDeCabeca", "Bramido", "CaudaDeMare")
+SEM_CHAO = ("Nado", "NadoParado", "CurvaAquaticaEsquerda", "CurvaAquaticaDireita", "Mergulho", "Emersao", "CurvaLentaEsquerda", "CurvaLentaDireita", "Espreita", "AproximacaoSubmersa", "BoteAquatico", "RolarDaMorte", "BatidaDeCabeca", "Bramido", "CaudaDeMare", "SegurarPresaAgua")
 def k_cauda(nome, t):
     if nome in SEM_CHAO: return 0.0
     if nome == "EntradaAgua": return 1.0 - suave((t - 1.0) / 0.8)
