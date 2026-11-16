@@ -1,0 +1,1053 @@
+{
+ "LOW": {
+  "ossos": 37,
+  "nomes_faltando": [],
+  "hierarquia_diferente": [],
+  "malhas": {
+   "LOW_Cabeca": {
+    "tris": 19168,
+    "max_influencias": 4,
+    "sem_influencia": 0,
+    "soma_pesos": [
+     1.0,
+     1.0
+    ],
+    "materiais": [
+     "M_LoboArtico_Cabeca_LOW"
+    ]
+   },
+   "LOW_Corpo": {
+    "tris": 19956,
+    "max_influencias": 4,
+    "sem_influencia": 0,
+    "soma_pesos": [
+     1.0,
+     1.0
+    ],
+    "materiais": [
+     "M_LoboArtico_Corpo_LOW"
+    ]
+   },
+   "LOW_Cristais": {
+    "tris": 340,
+    "max_influencias": 4,
+    "sem_influencia": 0,
+    "soma_pesos": [
+     1.0,
+     1.0
+    ],
+    "materiais": [
+     "M_LoboArtico_Cristal.001"
+    ]
+   },
+   "LOW_Marca": {
+    "tris": 1352,
+    "max_influencias": 4,
+    "sem_influencia": 0,
+    "soma_pesos": [
+     1.0,
+     1.0
+    ],
+    "materiais": [
+     "M_LoboArtico_Marca"
+    ]
+   },
+   "LOW_Pelagem": {
+    "tris": 3548,
+    "max_influencias": 4,
+    "sem_influencia": 0,
+    "soma_pesos": [
+     1.0,
+     1.0
+    ],
+    "materiais": [
+     "M_LoboArtico_Pelagem_LOW"
+    ]
+   }
+  },
+  "acoes": {
+   "Adormecer": {
+    "quadros": [
+     0.0,
+     66.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 0.535935,
+    "desvio_max_vs_rig_original": 0.00022,
+    "quadros_comparados": 67
+   },
+   "Andar": {
+    "quadros": [
+     0.0,
+     36.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 1e-06,
+    "desvio_max_vs_rig_original": 0.00016,
+    "quadros_comparados": 37
+   },
+   "AndarParaTrote": {
+    "quadros": [
+     0.0,
+     70.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 0.578695,
+    "desvio_max_vs_rig_original": 0.00021,
+    "quadros_comparados": 71
+   },
+   "Arrancada": {
+    "quadros": [
+     0.0,
+     75.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 0.737324,
+    "desvio_max_vs_rig_original": 0.00034,
+    "quadros_comparados": 76
+   },
+   "Corrida": {
+    "quadros": [
+     0.0,
+     14.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 1e-06,
+    "desvio_max_vs_rig_original": 0.00034,
+    "quadros_comparados": 15
+   },
+   "CorridaParaTrote": {
+    "quadros": [
+     0.0,
+     62.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 0.827975,
+    "desvio_max_vs_rig_original": 0.00034,
+    "quadros_comparados": 63
+   },
+   "Deitar": {
+    "quadros": [
+     0.0,
+     80.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 2.538962,
+    "desvio_max_vs_rig_original": 0.00041,
+    "quadros_comparados": 81
+   },
+   "Descanso": {
+    "quadros": [
+     0.0,
+     150.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 9e-06,
+    "desvio_max_vs_rig_original": 0.00019,
+    "quadros_comparados": 151
+   },
+   "Despertar": {
+    "quadros": [
+     0.0,
+     45.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 0.535921,
+    "desvio_max_vs_rig_original": 0.00022,
+    "quadros_comparados": 46
+   },
+   "Dormindo": {
+    "quadros": [
+     0.0,
+     180.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 0.000175,
+    "desvio_max_vs_rig_original": 0.00022,
+    "quadros_comparados": 181
+   },
+   "Frenagem": {
+    "quadros": [
+     0.0,
+     48.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 0.737324,
+    "desvio_max_vs_rig_original": 0.00034,
+    "quadros_comparados": 49
+   },
+   "LevantarDeitado": {
+    "quadros": [
+     0.0,
+     66.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 2.538962,
+    "desvio_max_vs_rig_original": 0.00022,
+    "quadros_comparados": 67
+   },
+   "LevantarSentado": {
+    "quadros": [
+     0.0,
+     48.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 3.197211,
+    "desvio_max_vs_rig_original": 0.0003,
+    "quadros_comparados": 49
+   },
+   "Repouso": {
+    "quadros": [
+     0.0,
+     240.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 1e-06,
+    "desvio_max_vs_rig_original": 3e-05,
+    "quadros_comparados": 61
+   },
+   "Sentado": {
+    "quadros": [
+     0.0,
+     150.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 2e-06,
+    "desvio_max_vs_rig_original": 0.00025,
+    "quadros_comparados": 151
+   },
+   "Sentar": {
+    "quadros": [
+     0.0,
+     57.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 3.197211,
+    "desvio_max_vs_rig_original": 0.00029,
+    "quadros_comparados": 58
+   },
+   "Trote": {
+    "quadros": [
+     0.0,
+     18.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 1e-06,
+    "desvio_max_vs_rig_original": 0.00021,
+    "quadros_comparados": 19
+   },
+   "TroteParaAndar": {
+    "quadros": [
+     0.0,
+     75.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 0.578692,
+    "desvio_max_vs_rig_original": 0.00021,
+    "quadros_comparados": 76
+   },
+   "TroteParaCorrida": {
+    "quadros": [
+     0.0,
+     63.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 0.827981,
+    "desvio_max_vs_rig_original": 0.00034,
+    "quadros_comparados": 64
+   },
+   "VirarDireita": {
+    "quadros": [
+     0.0,
+     92.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 1e-06,
+    "desvio_max_vs_rig_original": 0.00013,
+    "quadros_comparados": 93
+   },
+   "VirarEsquerda": {
+    "quadros": [
+     0.0,
+     92.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 1e-06,
+    "desvio_max_vs_rig_original": 0.00014,
+    "quadros_comparados": 93
+   }
+  },
+  "imagens": [
+   "LoboArtico_Cabeca_cor 1024x1024",
+   "LoboArtico_Cabeca_emissao 1024x1024",
+   "LoboArtico_Cabeca_normal 1024x1024",
+   "LoboArtico_Cabeca_rugosidade 1024x1024",
+   "LoboArtico_Corpo_cor 1024x1024",
+   "LoboArtico_Corpo_emissao 1024x1024",
+   "LoboArtico_Corpo_normal 1024x1024",
+   "LoboArtico_Corpo_rugosidade 1024x1024",
+   "LoboArtico_Cristal_cor 512x512",
+   "LoboArtico_Marca_cor 512x512",
+   "LoboArtico_pelo_atlas 1024x1024"
+  ],
+  "escala": {
+   "z_min": -0.049,
+   "z_max": 7.421
+  }
+ },
+ "LOD1": {
+  "ossos": 37,
+  "nomes_faltando": [],
+  "hierarquia_diferente": [],
+  "malhas": {
+   "LOD1_Cabeca": {
+    "tris": 3887,
+    "max_influencias": 4,
+    "sem_influencia": 0,
+    "soma_pesos": [
+     1.0,
+     1.0
+    ],
+    "materiais": [
+     "M_LoboArtico_Cabeca_LOW"
+    ]
+   },
+   "LOD1_Corpo": {
+    "tris": 6605,
+    "max_influencias": 4,
+    "sem_influencia": 0,
+    "soma_pesos": [
+     1.0,
+     1.0
+    ],
+    "materiais": [
+     "M_LoboArtico_Corpo_LOW"
+    ]
+   },
+   "LOD1_Pelagem": {
+    "tris": 1776,
+    "max_influencias": 4,
+    "sem_influencia": 0,
+    "soma_pesos": [
+     1.0,
+     1.0
+    ],
+    "materiais": [
+     "M_LoboArtico_Pelagem_LOW"
+    ]
+   },
+   "LOW_Cristais": {
+    "tris": 340,
+    "max_influencias": 4,
+    "sem_influencia": 0,
+    "soma_pesos": [
+     1.0,
+     1.0
+    ],
+    "materiais": [
+     "M_LoboArtico_Cristal.001"
+    ]
+   },
+   "LOW_Marca": {
+    "tris": 1352,
+    "max_influencias": 4,
+    "sem_influencia": 0,
+    "soma_pesos": [
+     1.0,
+     1.0
+    ],
+    "materiais": [
+     "M_LoboArtico_Marca"
+    ]
+   }
+  },
+  "acoes": {
+   "Adormecer": {
+    "quadros": [
+     0.0,
+     66.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 0.535935,
+    "desvio_max_vs_rig_original": 0.00036,
+    "quadros_comparados": 67
+   },
+   "Andar": {
+    "quadros": [
+     0.0,
+     36.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 1e-06,
+    "desvio_max_vs_rig_original": 0.0002,
+    "quadros_comparados": 37
+   },
+   "AndarParaTrote": {
+    "quadros": [
+     0.0,
+     70.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 0.578695,
+    "desvio_max_vs_rig_original": 0.00025,
+    "quadros_comparados": 71
+   },
+   "Arrancada": {
+    "quadros": [
+     0.0,
+     75.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 0.737324,
+    "desvio_max_vs_rig_original": 0.00034,
+    "quadros_comparados": 76
+   },
+   "Corrida": {
+    "quadros": [
+     0.0,
+     14.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 1e-06,
+    "desvio_max_vs_rig_original": 0.00034,
+    "quadros_comparados": 15
+   },
+   "CorridaParaTrote": {
+    "quadros": [
+     0.0,
+     62.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 0.827975,
+    "desvio_max_vs_rig_original": 0.00034,
+    "quadros_comparados": 63
+   },
+   "Deitar": {
+    "quadros": [
+     0.0,
+     80.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 2.538962,
+    "desvio_max_vs_rig_original": 0.00047,
+    "quadros_comparados": 81
+   },
+   "Descanso": {
+    "quadros": [
+     0.0,
+     150.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 9e-06,
+    "desvio_max_vs_rig_original": 0.00028,
+    "quadros_comparados": 151
+   },
+   "Despertar": {
+    "quadros": [
+     0.0,
+     45.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 0.535921,
+    "desvio_max_vs_rig_original": 0.00036,
+    "quadros_comparados": 46
+   },
+   "Dormindo": {
+    "quadros": [
+     0.0,
+     180.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 0.000175,
+    "desvio_max_vs_rig_original": 0.00036,
+    "quadros_comparados": 181
+   },
+   "Frenagem": {
+    "quadros": [
+     0.0,
+     48.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 0.737324,
+    "desvio_max_vs_rig_original": 0.00034,
+    "quadros_comparados": 49
+   },
+   "LevantarDeitado": {
+    "quadros": [
+     0.0,
+     66.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 2.538962,
+    "desvio_max_vs_rig_original": 0.00028,
+    "quadros_comparados": 67
+   },
+   "LevantarSentado": {
+    "quadros": [
+     0.0,
+     48.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 3.197211,
+    "desvio_max_vs_rig_original": 0.00034,
+    "quadros_comparados": 49
+   },
+   "Repouso": {
+    "quadros": [
+     0.0,
+     240.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 1e-06,
+    "desvio_max_vs_rig_original": 2e-05,
+    "quadros_comparados": 61
+   },
+   "Sentado": {
+    "quadros": [
+     0.0,
+     150.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 2e-06,
+    "desvio_max_vs_rig_original": 0.00029,
+    "quadros_comparados": 151
+   },
+   "Sentar": {
+    "quadros": [
+     0.0,
+     57.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 3.197211,
+    "desvio_max_vs_rig_original": 0.00033,
+    "quadros_comparados": 58
+   },
+   "Trote": {
+    "quadros": [
+     0.0,
+     18.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 1e-06,
+    "desvio_max_vs_rig_original": 0.00025,
+    "quadros_comparados": 19
+   },
+   "TroteParaAndar": {
+    "quadros": [
+     0.0,
+     75.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 0.578692,
+    "desvio_max_vs_rig_original": 0.00025,
+    "quadros_comparados": 76
+   },
+   "TroteParaCorrida": {
+    "quadros": [
+     0.0,
+     63.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 0.827981,
+    "desvio_max_vs_rig_original": 0.00034,
+    "quadros_comparados": 64
+   },
+   "VirarDireita": {
+    "quadros": [
+     0.0,
+     92.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 1e-06,
+    "desvio_max_vs_rig_original": 0.00015,
+    "quadros_comparados": 93
+   },
+   "VirarEsquerda": {
+    "quadros": [
+     0.0,
+     92.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 1e-06,
+    "desvio_max_vs_rig_original": 0.00016,
+    "quadros_comparados": 93
+   }
+  },
+  "imagens": [
+   "LoboArtico_Cabeca_cor 1024x1024",
+   "LoboArtico_Cabeca_emissao 1024x1024",
+   "LoboArtico_Cabeca_normal 1024x1024",
+   "LoboArtico_Cabeca_rugosidade 1024x1024",
+   "LoboArtico_Corpo_cor 1024x1024",
+   "LoboArtico_Corpo_emissao 1024x1024",
+   "LoboArtico_Corpo_normal 1024x1024",
+   "LoboArtico_Corpo_rugosidade 1024x1024",
+   "LoboArtico_Cristal_cor 512x512",
+   "LoboArtico_Marca_cor 512x512",
+   "LoboArtico_pelo_atlas 1024x1024"
+  ],
+  "escala": {
+   "z_min": -0.039,
+   "z_max": 7.421
+  }
+ },
+ "LOD2": {
+  "ossos": 37,
+  "nomes_faltando": [],
+  "hierarquia_diferente": [],
+  "malhas": {
+   "LOD2_Cabeca": {
+    "tris": 1400,
+    "max_influencias": 4,
+    "sem_influencia": 0,
+    "soma_pesos": [
+     1.0,
+     1.0
+    ],
+    "materiais": [
+     "M_LoboArtico_Cabeca_LOW"
+    ]
+   },
+   "LOD2_Corpo": {
+    "tris": 2045,
+    "max_influencias": 4,
+    "sem_influencia": 0,
+    "soma_pesos": [
+     1.0,
+     1.0
+    ],
+    "materiais": [
+     "M_LoboArtico_Corpo_LOW"
+    ]
+   },
+   "LOW_Cristais": {
+    "tris": 340,
+    "max_influencias": 4,
+    "sem_influencia": 0,
+    "soma_pesos": [
+     1.0,
+     1.0
+    ],
+    "materiais": [
+     "M_LoboArtico_Cristal.001"
+    ]
+   }
+  },
+  "acoes": {
+   "Adormecer": {
+    "quadros": [
+     0.0,
+     66.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 0.535935,
+    "desvio_max_vs_rig_original": 0.00021,
+    "quadros_comparados": 67
+   },
+   "Andar": {
+    "quadros": [
+     0.0,
+     36.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 1e-06,
+    "desvio_max_vs_rig_original": 9e-05,
+    "quadros_comparados": 37
+   },
+   "AndarParaTrote": {
+    "quadros": [
+     0.0,
+     70.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 0.578695,
+    "desvio_max_vs_rig_original": 0.00015,
+    "quadros_comparados": 71
+   },
+   "Arrancada": {
+    "quadros": [
+     0.0,
+     75.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 0.737324,
+    "desvio_max_vs_rig_original": 0.00018,
+    "quadros_comparados": 76
+   },
+   "Corrida": {
+    "quadros": [
+     0.0,
+     14.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 1e-06,
+    "desvio_max_vs_rig_original": 0.00017,
+    "quadros_comparados": 15
+   },
+   "CorridaParaTrote": {
+    "quadros": [
+     0.0,
+     62.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 0.827975,
+    "desvio_max_vs_rig_original": 0.00017,
+    "quadros_comparados": 63
+   },
+   "Deitar": {
+    "quadros": [
+     0.0,
+     80.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 2.538962,
+    "desvio_max_vs_rig_original": 0.00021,
+    "quadros_comparados": 81
+   },
+   "Descanso": {
+    "quadros": [
+     0.0,
+     150.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 9e-06,
+    "desvio_max_vs_rig_original": 0.0001,
+    "quadros_comparados": 151
+   },
+   "Despertar": {
+    "quadros": [
+     0.0,
+     45.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 0.535921,
+    "desvio_max_vs_rig_original": 0.00021,
+    "quadros_comparados": 46
+   },
+   "Dormindo": {
+    "quadros": [
+     0.0,
+     180.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 0.000175,
+    "desvio_max_vs_rig_original": 0.00021,
+    "quadros_comparados": 181
+   },
+   "Frenagem": {
+    "quadros": [
+     0.0,
+     48.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 0.737324,
+    "desvio_max_vs_rig_original": 0.00016,
+    "quadros_comparados": 49
+   },
+   "LevantarDeitado": {
+    "quadros": [
+     0.0,
+     66.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 2.538962,
+    "desvio_max_vs_rig_original": 0.00014,
+    "quadros_comparados": 67
+   },
+   "LevantarSentado": {
+    "quadros": [
+     0.0,
+     48.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 3.197211,
+    "desvio_max_vs_rig_original": 6e-05,
+    "quadros_comparados": 49
+   },
+   "Repouso": {
+    "quadros": [
+     0.0,
+     240.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 1e-06,
+    "desvio_max_vs_rig_original": 2e-05,
+    "quadros_comparados": 61
+   },
+   "Sentado": {
+    "quadros": [
+     0.0,
+     150.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 2e-06,
+    "desvio_max_vs_rig_original": 6e-05,
+    "quadros_comparados": 151
+   },
+   "Sentar": {
+    "quadros": [
+     0.0,
+     57.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 3.197211,
+    "desvio_max_vs_rig_original": 6e-05,
+    "quadros_comparados": 58
+   },
+   "Trote": {
+    "quadros": [
+     0.0,
+     18.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 1e-06,
+    "desvio_max_vs_rig_original": 0.00015,
+    "quadros_comparados": 19
+   },
+   "TroteParaAndar": {
+    "quadros": [
+     0.0,
+     75.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 0.578692,
+    "desvio_max_vs_rig_original": 0.00014,
+    "quadros_comparados": 76
+   },
+   "TroteParaCorrida": {
+    "quadros": [
+     0.0,
+     63.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 0.827981,
+    "desvio_max_vs_rig_original": 0.00017,
+    "quadros_comparados": 64
+   },
+   "VirarDireita": {
+    "quadros": [
+     0.0,
+     92.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 1e-06,
+    "desvio_max_vs_rig_original": 7e-05,
+    "quadros_comparados": 93
+   },
+   "VirarEsquerda": {
+    "quadros": [
+     0.0,
+     92.0
+    ],
+    "ossos_animados": 37,
+    "canais_por_osso": [
+     "location+rotation_quaternion+scale"
+    ],
+    "laco_ultimo_menos_primeiro_max": 1e-06,
+    "desvio_max_vs_rig_original": 7e-05,
+    "quadros_comparados": 93
+   }
+  },
+  "imagens": [
+   "LoboArtico_Cabeca_cor 1024x1024",
+   "LoboArtico_Cabeca_emissao 1024x1024",
+   "LoboArtico_Cabeca_normal 1024x1024",
+   "LoboArtico_Cabeca_rugosidade 1024x1024",
+   "LoboArtico_Corpo_cor 1024x1024",
+   "LoboArtico_Corpo_emissao 1024x1024",
+   "LoboArtico_Corpo_normal 1024x1024",
+   "LoboArtico_Corpo_rugosidade 1024x1024",
+   "LoboArtico_Cristal_cor 512x512"
+  ],
+  "escala": {
+   "z_min": 0.0,
+   "z_max": 7.421
+  }
+ }
+}

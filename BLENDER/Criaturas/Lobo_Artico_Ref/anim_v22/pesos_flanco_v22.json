@@ -1,0 +1,35 @@
+{
+ "parametros": {
+  "W_FAIXA": 0.45,
+  "W_TIB": 0.3,
+  "PASSADAS": 25,
+  "X_MAX": 0.35,
+  "Y_MAX": 2.4
+ },
+ "LOW": {
+  "vertices_regiao": 573,
+  "fronteira": 67,
+  "faixa": 192,
+  "faixa_lado_perna": 98,
+  "tibia_para_coxa": 57,
+  "coxaD_max_na_linha_media_da_barriga": 0.38,
+  "cartoes_repesados": 24
+ },
+ "LOD1": {
+  "vertices_regiao": 279,
+  "fronteira": 47,
+  "faixa": 99,
+  "faixa_lado_perna": 51,
+  "tibia_para_coxa": 30,
+  "coxaD_max_na_linha_media_da_barriga": 0.314,
+  "cartoes_repesados": 16
+ },
+ "LOD2": {
+  "vertices_regiao": 64,
+  "fronteira": 19,
+  "faixa": 29,
+  "faixa_lado_perna": 13,
+  "tibia_para_coxa": 10,
+  "coxaD_max_na_linha_media_da_barriga": 0.26
+ }
+}

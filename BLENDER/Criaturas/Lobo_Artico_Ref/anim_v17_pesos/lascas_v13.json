@@ -1,0 +1,26 @@
+{
+ "parametros": {
+  "R_BORDA": 0.6,
+  "D_OCULTO": 0.25,
+  "MAX_D": 0.2,
+  "PASSADAS": 12
+ },
+ "LOW": {
+  "vertices_alisados": 120,
+  "maior_deslocamento": 0.2,
+  "medio": null,
+  "sairam_da_faixa_escondida": 0
+ },
+ "LOD1": {
+  "vertices_alisados": 30,
+  "maior_deslocamento": 0.2,
+  "medio": null,
+  "sairam_da_faixa_escondida": 2
+ },
+ "LOD2": {
+  "vertices_alisados": 5,
+  "maior_deslocamento": 0.1511,
+  "medio": null,
+  "sairam_da_faixa_escondida": 0
+ }
+}

@@ -1,0 +1,54 @@
+{
+ "contrato": "no lugar; Raiz fixa no chao (sem translacao); frente = -Y do Blender; deslocamento e velocidade pelo controlador do jogo",
+ "fps": 30,
+ "andar": {
+  "T": 1.2,
+  "D": 3.6,
+  "apoio": 0.62,
+  "fases": {
+   "TE": 0.0,
+   "DE": 0.25,
+   "TD": 0.5,
+   "DD": 0.75
+  },
+  "altura_dianteira": 0.42,
+  "altura_traseira": 0.36,
+  "rolamento_graus": 28.0,
+  "dobra_balanco_dianteira_graus": 95.0,
+  "dobra_balanco_traseira_graus": 70.0,
+  "v_studs_s": 3.0
+ },
+ "repouso": {
+  "T": 8.0,
+  "respiracao_s": 4.0,
+  "piscada_s": 5.3
+ },
+ "acoes": {
+  "Andar": {
+   "quadros": 36,
+   "duracao_s": 1.2,
+   "laco": true,
+   "v_studs_s": 3.0,
+   "erro_ik_max": 0.02087
+  },
+  "Repouso": {
+   "quadros": 240,
+   "duracao_s": 8.0,
+   "laco": true,
+   "erro_ik_max": 0.0
+  },
+  "Teste_Transicao": {
+   "quadros": 264,
+   "trechos_s": [
+    2.0,
+    0.6,
+    3.5999999999999996,
+    0.6,
+    2.0
+   ],
+   "exportar": false,
+   "erro_ik_max": 0.054,
+   "nota": "rampa da amplitude da passada; v instantanea = v * amplitude"
+  }
+ }
+}

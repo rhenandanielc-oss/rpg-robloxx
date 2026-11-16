@@ -1,0 +1,67 @@
+{
+ "parametros": {
+  "MAX_D": 0.08,
+  "PASSADAS": 10,
+  "DOBRA": -0.3
+ },
+ "LOW": {
+  "antes": {
+   "cantos_tampa": 846,
+   "ruins_lt_0_3": 54,
+   "invertidos": 27,
+   "arestas_enrolamento_oposto": 2,
+   "arestas_dobradas": 38
+  },
+  "faces_tampa_invertidas": 1,
+  "faces_tampa_sem_vizinha_orientada": 0,
+  "vertices_internos_alisados": 6,
+  "maior_deslocamento": 0.08,
+  "depois": {
+   "arestas_enrolamento_oposto": 0,
+   "arestas_dobradas": 36,
+   "cantos_tampa": 846,
+   "ruins_lt_0_3": 51,
+   "invertidos": 23
+  }
+ },
+ "LOD1": {
+  "antes": {
+   "cantos_tampa": 360,
+   "ruins_lt_0_3": 98,
+   "invertidos": 64,
+   "arestas_enrolamento_oposto": 19,
+   "arestas_dobradas": 53
+  },
+  "faces_tampa_invertidas": 26,
+  "faces_tampa_sem_vizinha_orientada": 0,
+  "vertices_internos_alisados": 7,
+  "maior_deslocamento": 0.08,
+  "depois": {
+   "arestas_enrolamento_oposto": 0,
+   "arestas_dobradas": 35,
+   "cantos_tampa": 360,
+   "ruins_lt_0_3": 47,
+   "invertidos": 25
+  }
+ },
+ "LOD2": {
+  "antes": {
+   "cantos_tampa": 144,
+   "ruins_lt_0_3": 41,
+   "invertidos": 20,
+   "arestas_enrolamento_oposto": 5,
+   "arestas_dobradas": 23
+  },
+  "faces_tampa_invertidas": 4,
+  "faces_tampa_sem_vizinha_orientada": 0,
+  "vertices_internos_alisados": 4,
+  "maior_deslocamento": 0.08,
+  "depois": {
+   "arestas_enrolamento_oposto": 0,
+   "arestas_dobradas": 23,
+   "cantos_tampa": 144,
+   "ruins_lt_0_3": 35,
+   "invertidos": 18
+  }
+ }
+}

@@ -1,0 +1,176 @@
+{
+ "contrato": "no lugar; Raiz fixa no chao (sem translacao); frente = -Y do Blender; deslocamento e velocidade pelo controlador do jogo",
+ "fps": 30,
+ "andar": {
+  "T": 1.2,
+  "D": 3.6,
+  "apoio": 0.62,
+  "fases": {
+   "TE": 0.0,
+   "DE": 0.25,
+   "TD": 0.5,
+   "DD": 0.75
+  },
+  "altura_dianteira": 0.42,
+  "altura_traseira": 0.36,
+  "rolamento_graus": 28.0,
+  "dobra_balanco_dianteira_graus": 95.0,
+  "dobra_balanco_traseira_graus": 70.0,
+  "v_studs_s": 3.0
+ },
+ "repouso": {
+  "T": 8.0,
+  "respiracao_s": 4.0,
+  "piscada_s": 5.3
+ },
+ "acoes": {
+  "Andar": {
+   "quadros": 36,
+   "duracao_s": 1.2,
+   "laco": true,
+   "v_studs_s": 3.0,
+   "erro_ik_max": 0.02087
+  },
+  "Repouso": {
+   "quadros": 240,
+   "duracao_s": 8.0,
+   "laco": true,
+   "erro_ik_max": 0.0
+  },
+  "Teste_Transicao": {
+   "quadros": 264,
+   "trechos_s": [
+    2.0,
+    0.6,
+    3.5999999999999996,
+    0.6,
+    2.0
+   ],
+   "exportar": false,
+   "erro_ik_max": 0.054,
+   "nota": "rampa da amplitude da passada; v instantanea = v * amplitude"
+  }
+ },
+ "marchas": {
+  "Andar": {
+   "T": 1.2,
+   "D": 3.6,
+   "apoio": 0.62,
+   "fases": {
+    "TE": 0.0,
+    "DE": 0.25,
+    "TD": 0.5,
+    "DD": 0.75
+   },
+   "altura_dianteira": 0.42,
+   "altura_traseira": 0.36,
+   "rolamento_graus": 28.0,
+   "dobra_balanco_dianteira_graus": 95.0,
+   "dobra_balanco_traseira_graus": 70.0,
+   "v_studs_s": 3.0,
+   "centro": {
+    "DE": 0.0,
+    "DD": 0.0,
+    "TE": 0.0,
+    "TD": 0.0
+   }
+  },
+  "Trote": {
+   "T": 0.6,
+   "D": 4.0,
+   "apoio": 0.4,
+   "fases": {
+    "DE": 0.0,
+    "TD": 0.0,
+    "DD": 0.5,
+    "TE": 0.5
+   },
+   "centro": {
+    "DE": -0.35,
+    "DD": -0.35,
+    "TE": 0.0,
+    "TD": 0.0
+   },
+   "altura": {
+    "D": 0.55,
+    "T": 0.45
+   },
+   "rolamento_graus": 15.0,
+   "rolo_ini": 0.7,
+   "dobra_graus": {
+    "D": 105.0,
+    "T": 75.0
+   },
+   "quadril_z": -0.12,
+   "v_studs_s": 6.667,
+   "varredura_apoio": 1.6,
+   "cadencia_hz": 1.667
+  },
+  "Corrida": {
+   "T": 0.4666666666666667,
+   "D": 9.5,
+   "apoio": 0.28,
+   "fases": {
+    "TE": 0.0,
+    "TD": 0.08,
+    "DD": 0.3,
+    "DE": 0.4
+   },
+   "centro": {
+    "DE": -0.45,
+    "DD": -0.45,
+    "TE": -0.25,
+    "TD": -0.25
+   },
+   "altura": {
+    "D": 0.8,
+    "T": 0.75
+   },
+   "rolamento_graus": 20.0,
+   "rolo_ini": 0.6,
+   "dobra_graus": {
+    "D": 125.0,
+    "T": 85.0
+   },
+   "quadril_z": -0.32,
+   "suspensao_centro": 0.84,
+   "coluna_graus": 5.0,
+   "compensa_coluna": 0.8,
+   "arfagem_graus": 3.5,
+   "subida": 0.16,
+   "v_studs_s": 20.357,
+   "varredura_apoio": 2.66,
+   "cadencia_hz": 2.222
+  }
+ },
+ "lote2_L2a": {
+  "Trote": {
+   "quadros": 18,
+   "duracao_s": 0.6,
+   "laco": true,
+   "v_studs_s": 6.667,
+   "varredura_apoio": 1.6,
+   "erro_ik_max": 0.0,
+   "extensao_max_perna": {
+    "DE": 0.952,
+    "DD": 0.943,
+    "TE": 0.931,
+    "TD": 0.854
+   }
+  },
+  "Corrida": {
+   "quadros": 14,
+   "duracao_s": 0.4667,
+   "laco": true,
+   "v_studs_s": 20.357,
+   "varredura_apoio": 2.66,
+   "erro_ik_max": 0.0,
+   "extensao_max_perna": {
+    "DE": 0.926,
+    "DD": 0.989,
+    "TE": 0.981,
+    "TD": 0.858
+   }
+  }
+ }
+}

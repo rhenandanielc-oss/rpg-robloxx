@@ -1,0 +1,66 @@
+{
+ "arquivo": "CR_LoboArtico_LOD1.glb",
+ "malhas": {
+  "LOD1_Cabeca": {
+   "tris": 3597,
+   "materiais": [
+    "M_LoboArtico_Cabeca_LOW"
+   ],
+   "uv": 1,
+   "acima_20k": false
+  },
+  "LOD1_Corpo": {
+   "tris": 6329,
+   "materiais": [
+    "M_LoboArtico_Corpo_LOW"
+   ],
+   "uv": 1,
+   "acima_20k": false
+  },
+  "LOW_Cristais": {
+   "tris": 276,
+   "materiais": [
+    "M_LoboArtico_Cristal"
+   ],
+   "uv": 0,
+   "acima_20k": false
+  }
+ },
+ "imagens": {
+  "LoboArtico_Cabeca_cor": [
+   1024,
+   1024
+  ],
+  "LoboArtico_Cabeca_emissao": [
+   1024,
+   1024
+  ],
+  "LoboArtico_Cabeca_normal": [
+   1024,
+   1024
+  ],
+  "LoboArtico_Cabeca_rugosidade": [
+   1024,
+   1024
+  ],
+  "LoboArtico_Corpo_cor": [
+   1024,
+   1024
+  ],
+  "LoboArtico_Corpo_emissao": [
+   1024,
+   1024
+  ],
+  "LoboArtico_Corpo_normal": [
+   1024,
+   1024
+  ],
+  "LoboArtico_Corpo_rugosidade": [
+   1024,
+   1024
+  ]
+ },
+ "tris_total": 10202,
+ "cernelha_z": 6.659,
+ "z_min": 0.01
+}

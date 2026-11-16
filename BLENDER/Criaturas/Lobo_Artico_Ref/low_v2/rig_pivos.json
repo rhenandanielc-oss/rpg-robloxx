@@ -1,0 +1,71 @@
+{
+ "mandibula": {
+  "canto_y": -5.788961410522461,
+  "linha_boca": [
+   7.158443752693878,
+   0.3183315797681862
+  ],
+  "pivo_sugerido": [
+   0.0,
+   -5.238961410522461,
+   5.335634521665195
+  ],
+  "nota": "corte dos labios a frente do canto; saco bucal soldado as bordas: grupo Boca_Inferior segue a mandibula, Boca_Superior o cranio"
+ },
+ "olhos": {
+  "E": {
+   "centro_globo": [
+    0.20987281203269958,
+    -5.506512641906738,
+    6.190126419067383
+   ],
+   "raio_globo": 0.18587267916141179,
+   "eixo": [
+    -0.9283854961395264,
+    -0.3109157979488373,
+    -0.2035476267337799
+   ],
+   "fechar_sup_graus": -19.993696074632904,
+   "fechar_inf_graus": 11.378623486907385,
+   "fenda": [
+    0.21097,
+    0.09928000000000001
+   ],
+   "inclinacao_graus": 12.000000000000002,
+   "nota": "girar a pele ponderada em torno do eixo no centro do globo; a margem desliza sobre ele"
+  },
+  "D": {
+   "centro_globo": [
+    -0.34241074323654175,
+    -5.608489990234375,
+    6.167387008666992
+   ],
+   "raio_globo": 0.18482932089239382,
+   "eixo": [
+    -0.9283854961395264,
+    0.3109157979488373,
+    0.2035476267337799
+   ],
+   "fechar_sup_graus": -21.735649621424518,
+   "fechar_inf_graus": 9.590283619737352,
+   "fenda": [
+    0.21097,
+    0.09928000000000001
+   ],
+   "inclinacao_graus": 12.000000000000002,
+   "nota": "girar a pele ponderada em torno do eixo no centro do globo; a margem desliza sobre ele"
+  }
+ },
+ "costura": {
+  "ponto": [
+   0.0,
+   -4.550000190734863,
+   4.900000095367432
+  ],
+  "normal": [
+   0.0,
+   -0.7432941198348999,
+   0.668964684009552
+  ]
+ }
+}

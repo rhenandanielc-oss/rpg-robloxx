@@ -1,0 +1,563 @@
+{
+ "LOW": {
+  "armatures": 1,
+  "ossos": 37,
+  "nomes_faltando": [],
+  "nomes_extras": [],
+  "hierarquia_diferente": [],
+  "malhas": {
+   "LOW_Cabeca": {
+    "tris": 19168,
+    "vertices": 17161,
+    "grupos": 37,
+    "grupos_nao_osso": [],
+    "max_influencias": 4,
+    "sem_influencia": 0,
+    "soma_pesos_min_max": [
+     1.0,
+     1.0
+    ],
+    "armature": true,
+    "materiais": [
+     "M_LoboArtico_Cabeca_LOW"
+    ],
+    "imagens": [
+     "LoboArtico_Cabeca_cor",
+     "LoboArtico_Cabeca_emissao",
+     "LoboArtico_Cabeca_normal",
+     "LoboArtico_Cabeca_rugosidade"
+    ]
+   },
+   "LOW_Corpo": {
+    "tris": 19930,
+    "vertices": 28600,
+    "grupos": 37,
+    "grupos_nao_osso": [],
+    "max_influencias": 4,
+    "sem_influencia": 0,
+    "soma_pesos_min_max": [
+     1.0,
+     1.0
+    ],
+    "armature": true,
+    "materiais": [
+     "M_LoboArtico_Corpo_LOW"
+    ],
+    "imagens": [
+     "LoboArtico_Corpo_cor",
+     "LoboArtico_Corpo_emissao",
+     "LoboArtico_Corpo_normal",
+     "LoboArtico_Corpo_rugosidade"
+    ]
+   },
+   "LOW_Cristais": {
+    "tris": 340,
+    "vertices": 742,
+    "grupos": 37,
+    "grupos_nao_osso": [],
+    "max_influencias": 4,
+    "sem_influencia": 0,
+    "soma_pesos_min_max": [
+     1.0,
+     1.0
+    ],
+    "armature": true,
+    "materiais": [
+     "M_LoboArtico_Cristal.001"
+    ],
+    "imagens": [
+     "LoboArtico_Cristal_cor"
+    ]
+   },
+   "LOW_Marca": {
+    "tris": 1352,
+    "vertices": 729,
+    "grupos": 37,
+    "grupos_nao_osso": [],
+    "max_influencias": 4,
+    "sem_influencia": 0,
+    "soma_pesos_min_max": [
+     1.0,
+     1.0
+    ],
+    "armature": true,
+    "materiais": [
+     "M_LoboArtico_Marca"
+    ],
+    "imagens": [
+     "LoboArtico_Marca_cor"
+    ]
+   },
+   "LOW_Pelagem": {
+    "tris": 3548,
+    "vertices": 7924,
+    "grupos": 37,
+    "grupos_nao_osso": [],
+    "max_influencias": 4,
+    "sem_influencia": 0,
+    "soma_pesos_min_max": [
+     1.0,
+     1.0
+    ],
+    "armature": true,
+    "materiais": [
+     "M_LoboArtico_Pelagem_LOW"
+    ],
+    "imagens": [
+     "LoboArtico_pelo_atlas"
+    ]
+   }
+  },
+  "imagens": {
+   "LoboArtico_Cabeca_cor": [
+    1024,
+    1024
+   ],
+   "LoboArtico_Cabeca_emissao": [
+    1024,
+    1024
+   ],
+   "LoboArtico_Cabeca_normal": [
+    1024,
+    1024
+   ],
+   "LoboArtico_Cabeca_rugosidade": [
+    1024,
+    1024
+   ],
+   "LoboArtico_Corpo_cor": [
+    1024,
+    1024
+   ],
+   "LoboArtico_Corpo_emissao": [
+    1024,
+    1024
+   ],
+   "LoboArtico_Corpo_normal": [
+    1024,
+    1024
+   ],
+   "LoboArtico_Corpo_rugosidade": [
+    1024,
+    1024
+   ],
+   "LoboArtico_Cristal_cor": [
+    512,
+    512
+   ],
+   "LoboArtico_Marca_cor": [
+    512,
+    512
+   ],
+   "LoboArtico_pelo_atlas": [
+    1024,
+    1024
+   ]
+  },
+  "escala": {
+   "z_min": -0.049,
+   "cernelha_z": 6.666,
+   "malhas_importadas": [
+    "LOW_Cabeca",
+    "LOW_Corpo",
+    "LOW_Cristais",
+    "LOW_Marca",
+    "LOW_Pelagem"
+   ],
+   "comprimento_y": [
+    -6.687,
+    5.35
+   ]
+  },
+  "acoes": {
+   "Teste_Piloto": {
+    "quadros": [
+     0.0,
+     890.0
+    ],
+    "ossos_animados": 37
+   }
+  },
+  "deformacao_vs_rig_original": {
+   "casamento_repouso_dist_max": {
+    "LOW_Cabeca": 2e-06,
+    "LOW_Corpo": 2e-06,
+    "LOW_Cristais": 1e-06,
+    "LOW_Marca": 1e-06,
+    "LOW_Pelagem": 2e-06
+   },
+   "vertices_extras_sem_par": {
+    "LOW_Cabeca": 0,
+    "LOW_Corpo": 3,
+    "LOW_Cristais": 0,
+    "LOW_Marca": 0,
+    "LOW_Pelagem": 0
+   },
+   "desvio_max_por_malha": {
+    "LOW_Cabeca": 1e-05,
+    "LOW_Corpo": 1e-05,
+    "LOW_Cristais": 0.0,
+    "LOW_Marca": 0.0,
+    "LOW_Pelagem": 7e-05
+   },
+   "quadro_pior": 528,
+   "quadros_comparados": 134
+  }
+ },
+ "LOD1": {
+  "armatures": 1,
+  "ossos": 37,
+  "nomes_faltando": [],
+  "nomes_extras": [],
+  "hierarquia_diferente": [],
+  "malhas": {
+   "LOD1_Cabeca": {
+    "tris": 3887,
+    "vertices": 3186,
+    "grupos": 37,
+    "grupos_nao_osso": [],
+    "max_influencias": 4,
+    "sem_influencia": 0,
+    "soma_pesos_min_max": [
+     1.0,
+     1.0
+    ],
+    "armature": true,
+    "materiais": [
+     "M_LoboArtico_Cabeca_LOW"
+    ],
+    "imagens": [
+     "LoboArtico_Cabeca_cor",
+     "LoboArtico_Cabeca_emissao",
+     "LoboArtico_Cabeca_normal",
+     "LoboArtico_Cabeca_rugosidade"
+    ]
+   },
+   "LOD1_Corpo": {
+    "tris": 6606,
+    "vertices": 10622,
+    "grupos": 37,
+    "grupos_nao_osso": [],
+    "max_influencias": 4,
+    "sem_influencia": 0,
+    "soma_pesos_min_max": [
+     1.0,
+     1.0
+    ],
+    "armature": true,
+    "materiais": [
+     "M_LoboArtico_Corpo_LOW"
+    ],
+    "imagens": [
+     "LoboArtico_Corpo_cor",
+     "LoboArtico_Corpo_emissao",
+     "LoboArtico_Corpo_normal",
+     "LoboArtico_Corpo_rugosidade"
+    ]
+   },
+   "LOD1_Pelagem": {
+    "tris": 1776,
+    "vertices": 4638,
+    "grupos": 37,
+    "grupos_nao_osso": [],
+    "max_influencias": 4,
+    "sem_influencia": 0,
+    "soma_pesos_min_max": [
+     1.0,
+     1.0
+    ],
+    "armature": true,
+    "materiais": [
+     "M_LoboArtico_Pelagem_LOW"
+    ],
+    "imagens": [
+     "LoboArtico_pelo_atlas"
+    ]
+   },
+   "LOW_Cristais": {
+    "tris": 340,
+    "vertices": 742,
+    "grupos": 37,
+    "grupos_nao_osso": [],
+    "max_influencias": 4,
+    "sem_influencia": 0,
+    "soma_pesos_min_max": [
+     1.0,
+     1.0
+    ],
+    "armature": true,
+    "materiais": [
+     "M_LoboArtico_Cristal.001"
+    ],
+    "imagens": [
+     "LoboArtico_Cristal_cor"
+    ]
+   },
+   "LOW_Marca": {
+    "tris": 1352,
+    "vertices": 729,
+    "grupos": 37,
+    "grupos_nao_osso": [],
+    "max_influencias": 4,
+    "sem_influencia": 0,
+    "soma_pesos_min_max": [
+     1.0,
+     1.0
+    ],
+    "armature": true,
+    "materiais": [
+     "M_LoboArtico_Marca"
+    ],
+    "imagens": [
+     "LoboArtico_Marca_cor"
+    ]
+   }
+  },
+  "imagens": {
+   "LoboArtico_Cabeca_cor": [
+    1024,
+    1024
+   ],
+   "LoboArtico_Cabeca_emissao": [
+    1024,
+    1024
+   ],
+   "LoboArtico_Cabeca_normal": [
+    1024,
+    1024
+   ],
+   "LoboArtico_Cabeca_rugosidade": [
+    1024,
+    1024
+   ],
+   "LoboArtico_Corpo_cor": [
+    1024,
+    1024
+   ],
+   "LoboArtico_Corpo_emissao": [
+    1024,
+    1024
+   ],
+   "LoboArtico_Corpo_normal": [
+    1024,
+    1024
+   ],
+   "LoboArtico_Corpo_rugosidade": [
+    1024,
+    1024
+   ],
+   "LoboArtico_Cristal_cor": [
+    512,
+    512
+   ],
+   "LoboArtico_Marca_cor": [
+    512,
+    512
+   ],
+   "LoboArtico_pelo_atlas": [
+    1024,
+    1024
+   ]
+  },
+  "escala": {
+   "z_min": -0.039,
+   "cernelha_z": 6.709,
+   "malhas_importadas": [
+    "LOD1_Cabeca",
+    "LOD1_Corpo",
+    "LOD1_Pelagem",
+    "LOW_Cristais",
+    "LOW_Marca"
+   ],
+   "comprimento_y": [
+    -6.687,
+    5.063
+   ]
+  },
+  "acoes": {
+   "Teste_Piloto": {
+    "quadros": [
+     0.0,
+     890.0
+    ],
+    "ossos_animados": 37
+   }
+  },
+  "deformacao_vs_rig_original": {
+   "casamento_repouso_dist_max": {
+    "LOD1_Cabeca": 1e-06,
+    "LOD1_Corpo": 2e-06,
+    "LOD1_Pelagem": 2e-06,
+    "LOW_Cristais": 1e-06,
+    "LOW_Marca": 1e-06
+   },
+   "vertices_extras_sem_par": {
+    "LOD1_Cabeca": 0,
+    "LOD1_Corpo": 3,
+    "LOD1_Pelagem": 0,
+    "LOW_Cristais": 0,
+    "LOW_Marca": 0
+   },
+   "desvio_max_por_malha": {
+    "LOD1_Cabeca": 1e-05,
+    "LOD1_Corpo": 1e-05,
+    "LOD1_Pelagem": 0.00018,
+    "LOW_Cristais": 0.0,
+    "LOW_Marca": 0.0
+   },
+   "quadro_pior": 528,
+   "quadros_comparados": 134
+  }
+ },
+ "LOD2": {
+  "armatures": 1,
+  "ossos": 37,
+  "nomes_faltando": [],
+  "nomes_extras": [],
+  "hierarquia_diferente": [],
+  "malhas": {
+   "LOD2_Cabeca": {
+    "tris": 1400,
+    "vertices": 1603,
+    "grupos": 37,
+    "grupos_nao_osso": [],
+    "max_influencias": 4,
+    "sem_influencia": 0,
+    "soma_pesos_min_max": [
+     1.0,
+     1.0
+    ],
+    "armature": true,
+    "materiais": [
+     "M_LoboArtico_Cabeca_LOW"
+    ],
+    "imagens": [
+     "LoboArtico_Cabeca_cor",
+     "LoboArtico_Cabeca_emissao",
+     "LoboArtico_Cabeca_normal",
+     "LoboArtico_Cabeca_rugosidade"
+    ]
+   },
+   "LOD2_Corpo": {
+    "tris": 2040,
+    "vertices": 4147,
+    "grupos": 37,
+    "grupos_nao_osso": [],
+    "max_influencias": 4,
+    "sem_influencia": 0,
+    "soma_pesos_min_max": [
+     1.0,
+     1.0
+    ],
+    "armature": true,
+    "materiais": [
+     "M_LoboArtico_Corpo_LOW"
+    ],
+    "imagens": [
+     "LoboArtico_Corpo_cor",
+     "LoboArtico_Corpo_emissao",
+     "LoboArtico_Corpo_normal",
+     "LoboArtico_Corpo_rugosidade"
+    ]
+   },
+   "LOW_Cristais": {
+    "tris": 340,
+    "vertices": 742,
+    "grupos": 37,
+    "grupos_nao_osso": [],
+    "max_influencias": 4,
+    "sem_influencia": 0,
+    "soma_pesos_min_max": [
+     1.0,
+     1.0
+    ],
+    "armature": true,
+    "materiais": [
+     "M_LoboArtico_Cristal.001"
+    ],
+    "imagens": [
+     "LoboArtico_Cristal_cor"
+    ]
+   }
+  },
+  "imagens": {
+   "LoboArtico_Cabeca_cor": [
+    1024,
+    1024
+   ],
+   "LoboArtico_Cabeca_emissao": [
+    1024,
+    1024
+   ],
+   "LoboArtico_Cabeca_normal": [
+    1024,
+    1024
+   ],
+   "LoboArtico_Cabeca_rugosidade": [
+    1024,
+    1024
+   ],
+   "LoboArtico_Corpo_cor": [
+    1024,
+    1024
+   ],
+   "LoboArtico_Corpo_emissao": [
+    1024,
+    1024
+   ],
+   "LoboArtico_Corpo_normal": [
+    1024,
+    1024
+   ],
+   "LoboArtico_Corpo_rugosidade": [
+    1024,
+    1024
+   ],
+   "LoboArtico_Cristal_cor": [
+    512,
+    512
+   ]
+  },
+  "escala": {
+   "z_min": 0.0,
+   "cernelha_z": 6.709,
+   "malhas_importadas": [
+    "LOD2_Cabeca",
+    "LOD2_Corpo",
+    "LOW_Cristais"
+   ],
+   "comprimento_y": [
+    -6.702,
+    4.819
+   ]
+  },
+  "acoes": {
+   "Teste_Piloto": {
+    "quadros": [
+     0.0,
+     890.0
+    ],
+    "ossos_animados": 37
+   }
+  },
+  "deformacao_vs_rig_original": {
+   "casamento_repouso_dist_max": {
+    "LOD2_Cabeca": 1e-06,
+    "LOD2_Corpo": 2e-06,
+    "LOW_Cristais": 1e-06
+   },
+   "vertices_extras_sem_par": {
+    "LOD2_Cabeca": 0,
+    "LOD2_Corpo": 3,
+    "LOW_Cristais": 0
+   },
+   "desvio_max_por_malha": {
+    "LOD2_Cabeca": 1e-05,
+    "LOD2_Corpo": 1e-05,
+    "LOW_Cristais": 0.0
+   },
+   "quadro_pior": 240,
+   "quadros_comparados": 134
+  }
+ }
+}

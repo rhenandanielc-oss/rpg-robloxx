@@ -1,0 +1,19 @@
+{
+ "parametros": {
+  "T0": 0.3
+ },
+ "LOW": {
+  "vertices_lobo": 318,
+  "transicao_no_vinco": 94,
+  "cartoes_do_lobo": 39
+ },
+ "LOD1": {
+  "vertices_lobo": 124,
+  "transicao_no_vinco": 36,
+  "cartoes_do_lobo": 28
+ },
+ "LOD2": {
+  "vertices_lobo": 30,
+  "transicao_no_vinco": 4
+ }
+}

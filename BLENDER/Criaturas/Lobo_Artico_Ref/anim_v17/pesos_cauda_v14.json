@@ -1,0 +1,37 @@
+{
+ "parametros": {
+  "X_MEIO": 0.35,
+  "PASSADAS": 2
+ },
+ "LOW": {
+  "corpo_vertices_corrigidos": {
+   "cauda": 80,
+   "pata": 28,
+   "meio": 24
+  },
+  "pelagem_cartoes_corrigidos": {
+   "cauda": 9,
+   "pata": 0,
+   "meio": 8
+  }
+ },
+ "LOD1": {
+  "corpo_vertices_corrigidos": {
+   "cauda": 22,
+   "pata": 20,
+   "meio": 10
+  },
+  "pelagem_cartoes_corrigidos": {
+   "cauda": 8,
+   "pata": 1,
+   "meio": 5
+  }
+ },
+ "LOD2": {
+  "corpo_vertices_corrigidos": {
+   "cauda": 6,
+   "pata": 8,
+   "meio": 3
+  }
+ }
+}

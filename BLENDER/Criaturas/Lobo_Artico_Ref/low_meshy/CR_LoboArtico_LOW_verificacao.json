@@ -1,0 +1,42 @@
+{
+ "arquivo": "CR_LoboArtico_LOW.glb",
+ "malhas": {
+  "LOW_Corpo": {
+   "tris": 18716,
+   "materiais": [
+    "M_LoboArtico_Corpo_LOW"
+   ],
+   "uv": 1,
+   "acima_20k": false
+  },
+  "LOW_Cristais": {
+   "tris": 276,
+   "materiais": [
+    "M_LoboArtico_Cristal"
+   ],
+   "uv": 0,
+   "acima_20k": false
+  }
+ },
+ "imagens": {
+  "LoboArtico_cor": [
+   1024,
+   1024
+  ],
+  "LoboArtico_emissao": [
+   1024,
+   1024
+  ],
+  "LoboArtico_normal": [
+   1024,
+   1024
+  ],
+  "LoboArtico_rugosidade": [
+   1024,
+   1024
+  ]
+ },
+ "tris_total": 18992,
+ "cernelha_z": 7.048,
+ "z_min": -0.002
+}

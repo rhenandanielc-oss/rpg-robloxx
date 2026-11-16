@@ -1,0 +1,26 @@
+{
+ "limiar": 0.72,
+ "mediana_luminancia_regiao": 0.8303,
+ "faces_regiao": 2873,
+ "faces_escuras": 17,
+ "faces_repintadas": 48,
+ "por_lado": {
+  "cauda": {
+   "faces": 16,
+   "texels_escritos": 555
+  },
+  "pata": {
+   "faces": 4,
+   "texels_escritos": 123
+  },
+  "fora_do_corte": {
+   "faces": 28,
+   "texels_escritos": 1842
+  }
+ },
+ "luminancia_escuras_antes_depois": [
+  0.4931,
+  0.6445
+ ],
+ "escuras_restantes": 5
+}

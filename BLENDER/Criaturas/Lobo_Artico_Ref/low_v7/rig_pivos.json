@@ -1,0 +1,158 @@
+{
+ "mandibula": {
+  "canto_y": -5.788961410522461,
+  "linha_boca": [
+   7.158443752693878,
+   0.3183315797681862
+  ],
+  "pivo_sugerido": [
+   0.0,
+   -5.25595760345459,
+   5.335634708404541
+  ],
+  "nota": "grupo Mandibula: 1 no queixo abaixo do corte, gradiente continuo atras do canto; saco bucal: Boca_Inferior/Boca_Superior com faixas intermediarias na garganta e na bochecha interna"
+ },
+ "olhos": {
+  "E": {
+   "centro_globo": [
+    0.26593828201293945,
+    -5.529110431671143,
+    6.194016456604004
+   ],
+   "raio_globo": 0.1889589311047129,
+   "raio_margem": 0.20495893110471292,
+   "eixo": [
+    -0.959526777267456,
+    -0.1946193277835846,
+    -0.2035476267337799
+   ],
+   "fechar_sup_graus": -17.806887752969352,
+   "fechar_inf_graus": 9.465247251598882,
+   "fenda": [
+    0.21097,
+    0.09928000000000001
+   ],
+   "inclinacao_graus": 12.000000000000002,
+   "nota": "palpebras = pele do anel; girar com os pesos em torno do eixo no centro do globo (a margem desliza por fora dele)"
+  },
+  "D": {
+   "centro_globo": [
+    -0.26907265186309814,
+    -5.541042327880859,
+    6.17673397064209
+   ],
+   "raio_globo": 0.2146886194480373,
+   "raio_margem": 0.2306886194480373,
+   "eixo": [
+    -0.8832060098648071,
+    0.42251089215278625,
+    0.2035476267337799
+   ],
+   "fechar_sup_graus": -15.898523652760627,
+   "fechar_inf_graus": 8.437666582255723,
+   "fenda": [
+    0.21097,
+    0.09928000000000001
+   ],
+   "inclinacao_graus": 12.000000000000002,
+   "nota": "palpebras = pele do anel; girar com os pesos em torno do eixo no centro do globo (a margem desliza por fora dele)"
+  }
+ },
+ "costura": {
+  "ponto": [
+   0.0,
+   -4.550000190734863,
+   4.900000095367432
+  ],
+  "normal": [
+   0.0,
+   -0.7432941198348999,
+   0.668964684009552
+  ]
+ },
+ "endireitar_v6": {
+  "giro_pescoco_graus": -7.050000000000001,
+  "pivo": [
+   -0.1809215247631073,
+   -4.550000190734863,
+   4.900000095367432
+  ],
+  "faixa_pescoco_s": 0.7,
+  "focinho_dx": -0.05747821927070618,
+  "focinho_y": [
+   -5.85,
+   -6.35
+  ],
+  "nariz_depois": [
+   0.0,
+   -6.684493064880371,
+   5.3744001388549805
+  ],
+  "custo_espelho_antes_depois": [
+   0.09958221191025547,
+   0.04714320564230064
+  ],
+  "nota": "campo de deformacao por posicao (corpo/costura intactos); UV/texturas inalteradas"
+ },
+ "pose_neutra": {
+  "traseira_direita_graus": 16.912992357321663,
+  "dianteira_esquerda_graus": 7.850839643861091,
+  "patas_xy_depois": [
+   [
+    1.236,
+    -3.523
+   ],
+   [
+    -0.973,
+    -3.785
+   ],
+   [
+    1.487,
+    2.107
+   ],
+   [
+    -1.047,
+    2.011
+   ]
+  ],
+  "nota": "ajuste so na malha de jogo; texturas/UV inalteradas"
+ },
+ "marca_direita": "opcao A (sem marca) - decisao do usuario 03/11/2026",
+ "lod_v7": {
+  "lod0_nao_manifold_antes": 1,
+  "lod0_nao_manifold_depois": 0,
+  "lod0_invertidas_antes": 20,
+  "lod0_invertidas_depois": 10,
+  "lod0_dobras_restantes": 0,
+  "lod0_tris": 19340,
+  "LOD1": {
+   "peso_corpo": 0.8,
+   "ratio": 0.26215270996093754,
+   "fator_protecao": 10.0,
+   "ratio_pecas": 0.35,
+   "tris_pele": 3307,
+   "tris_pecas": 556,
+   "faces_viradas_antes_depois": [
+    5,
+    0
+   ],
+   "tris_cabeca": 3863,
+   "tris_corpo": 6497
+  },
+  "LOD2": {
+   "peso_corpo": 0.8,
+   "ratio": 0.0849267578125,
+   "fator_protecao": 3.0,
+   "ratio_pecas": 0.14,
+   "tris_pele": 1178,
+   "tris_pecas": 222,
+   "faces_viradas_antes_depois": [
+    12,
+    8
+   ],
+   "tris_cabeca": 1400,
+   "tris_corpo": 1998
+  },
+  "nota": "LOD1/LOD2 = cabeca+corpo decimados juntos (costura compartilhada) com grupo Protecao_LOD (margens das palpebras, corte dos labios/cantos, articulacao da mandibula, saco bucal); grupos interpolados pelo Decimate. Pivos iguais aos do LOD0 (mesma escala/posicao)."
+ }
+}

@@ -1,0 +1,38 @@
+{
+ "base": "Meshy image-to-3D (pose neutra por meshy_neutro.py)",
+ "HIGH_tris": 6165484,
+ "LOD0": {
+  "LOW_Corpo": 18716,
+  "LOW_Cristais": 276,
+  "total": 18992
+ },
+ "LOD1": {
+  "LOD1_Corpo": 6818,
+  "LOW_Cristais": 276,
+  "total": 7094
+ },
+ "LOD2": {
+  "LOD2_Corpo": 2318,
+  "LOW_Cristais": 276,
+  "total": 2594
+ },
+ "texturas_finais": [
+  "LoboArtico_cor.png (1024)",
+  "LoboArtico_normal.png (1024)",
+  "LoboArtico_rugosidade.png (1024)",
+  "LoboArtico_emissao.png (1024)"
+ ],
+ "bake_intermediario": 2048,
+ "marca_caixa_esquerda": [
+  [
+   0.4399999976158142,
+   -3.700000047683716,
+   4.28000020980835
+  ],
+  [
+   1.9700000286102295,
+   -0.8299999833106995,
+   5.989999771118164
+  ]
+ ]
+}

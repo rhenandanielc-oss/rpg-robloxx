@@ -1,0 +1,73 @@
+{
+ "mandibula": {
+  "canto_y": -5.788961410522461,
+  "linha_boca": [
+   7.158443752693878,
+   0.3183315797681862
+  ],
+  "pivo_sugerido": [
+   0.0,
+   -5.238961410522461,
+   5.335634521665195
+  ],
+  "nota": "grupo Mandibula: 1 no queixo abaixo do corte, gradiente continuo atras do canto; saco bucal: Boca_Inferior/Boca_Superior com faixas intermediarias na garganta e na bochecha interna"
+ },
+ "olhos": {
+  "E": {
+   "centro_globo": [
+    0.20317761600017548,
+    -5.489067554473877,
+    6.194016456604004
+   ],
+   "raio_globo": 0.1889589311047129,
+   "raio_margem": 0.20495893110471292,
+   "eixo": [
+    -0.9283854961395264,
+    -0.3109157979488373,
+    -0.2035476267337799
+   ],
+   "fechar_sup_graus": -17.806887752969352,
+   "fechar_inf_graus": 9.465247251598882,
+   "fenda": [
+    0.21097,
+    0.09928000000000001
+   ],
+   "inclinacao_graus": 12.000000000000002,
+   "nota": "palpebras = pele do anel; girar com os pesos em torno do eixo no centro do globo (a margem desliza por fora dele)"
+  },
+  "D": {
+   "centro_globo": [
+    -0.32632386684417725,
+    -5.5665740966796875,
+    6.17673397064209
+   ],
+   "raio_globo": 0.2146886194480373,
+   "raio_margem": 0.2306886194480373,
+   "eixo": [
+    -0.9283854961395264,
+    0.3109157979488373,
+    0.2035476267337799
+   ],
+   "fechar_sup_graus": -15.898523652760627,
+   "fechar_inf_graus": 8.437666582255723,
+   "fenda": [
+    0.21097,
+    0.09928000000000001
+   ],
+   "inclinacao_graus": 12.000000000000002,
+   "nota": "palpebras = pele do anel; girar com os pesos em torno do eixo no centro do globo (a margem desliza por fora dele)"
+  }
+ },
+ "costura": {
+  "ponto": [
+   0.0,
+   -4.550000190734863,
+   4.900000095367432
+  ],
+  "normal": [
+   0.0,
+   -0.7432941198348999,
+   0.668964684009552
+  ]
+ }
+}

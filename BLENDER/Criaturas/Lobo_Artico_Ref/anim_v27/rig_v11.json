@@ -1,0 +1,1225 @@
+{
+ "ossos": [
+  {
+   "nome": "Raiz",
+   "pai": null,
+   "cabeca": [
+    0.0,
+    -0.708,
+    0.0
+   ],
+   "cauda": [
+    0.0,
+    -1.708,
+    0.0
+   ],
+   "eixo_x": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "deforma": false
+  },
+  {
+   "nome": "Quadril",
+   "pai": "Raiz",
+   "cabeca": [
+    0.0,
+    2.55,
+    4.1458
+   ],
+   "cauda": [
+    0.0,
+    1.45,
+    4.5438
+   ],
+   "eixo_x": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "deforma": true
+  },
+  {
+   "nome": "Coluna1",
+   "pai": "Quadril",
+   "cabeca": [
+    0.0,
+    1.45,
+    4.5438
+   ],
+   "cauda": [
+    0.0,
+    0.15,
+    4.6258
+   ],
+   "eixo_x": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "deforma": true
+  },
+  {
+   "nome": "Coluna2",
+   "pai": "Coluna1",
+   "cabeca": [
+    0.0,
+    0.15,
+    4.6258
+   ],
+   "cauda": [
+    0.0,
+    -1.2,
+    4.9354
+   ],
+   "eixo_x": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "deforma": true
+  },
+  {
+   "nome": "Coluna3",
+   "pai": "Coluna2",
+   "cabeca": [
+    0.0,
+    -1.2,
+    4.9354
+   ],
+   "cauda": [
+    0.0,
+    -2.35,
+    5.0801
+   ],
+   "eixo_x": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "deforma": true
+  },
+  {
+   "nome": "Pescoco1",
+   "pai": "Coluna3",
+   "cabeca": [
+    0.0,
+    -2.35,
+    5.0801
+   ],
+   "cauda": [
+    0.0,
+    -3.535,
+    5.715
+   ],
+   "eixo_x": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "deforma": true
+  },
+  {
+   "nome": "Pescoco2",
+   "pai": "Pescoco1",
+   "cabeca": [
+    0.0,
+    -3.535,
+    5.715
+   ],
+   "cauda": [
+    0.0,
+    -4.72,
+    6.05
+   ],
+   "eixo_x": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "deforma": true
+  },
+  {
+   "nome": "Cabeca",
+   "pai": "Pescoco2",
+   "cabeca": [
+    0.0,
+    -4.72,
+    6.05
+   ],
+   "cauda": [
+    0.0,
+    -6.25,
+    5.72
+   ],
+   "eixo_x": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "deforma": true
+  },
+  {
+   "nome": "Mandibula",
+   "pai": "Cabeca",
+   "cabeca": [
+    0.0,
+    -5.256,
+    5.3356
+   ],
+   "cauda": [
+    0.0,
+    -6.3,
+    5.033
+   ],
+   "eixo_x": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "deforma": true
+  },
+  {
+   "nome": "Palpebra_Sup_E",
+   "pai": "Cabeca",
+   "cabeca": [
+    0.2659,
+    -5.5291,
+    6.194
+   ],
+   "cauda": [
+    0.2945,
+    -5.6762,
+    6.2401
+   ],
+   "eixo_x": [
+    -0.9514,
+    -0.2437,
+    -0.1885
+   ],
+   "deforma": true
+  },
+  {
+   "nome": "Palpebra_Inf_E",
+   "pai": "Cabeca",
+   "cabeca": [
+    0.2659,
+    -5.5291,
+    6.194
+   ],
+   "cauda": [
+    0.2945,
+    -5.6762,
+    6.1601
+   ],
+   "eixo_x": [
+    -0.9707,
+    -0.1441,
+    -0.1921
+   ],
+   "deforma": true
+  },
+  {
+   "nome": "Palpebra_Sup_D",
+   "pai": "Cabeca",
+   "cabeca": [
+    -0.2691,
+    -5.541,
+    6.1767
+   ],
+   "cauda": [
+    -0.3308,
+    -5.677,
+    6.231
+   ],
+   "eixo_x": [
+    -0.8644,
+    0.467,
+    0.1863
+   ],
+   "deforma": true
+  },
+  {
+   "nome": "Palpebra_Inf_D",
+   "pai": "Cabeca",
+   "cabeca": [
+    -0.2691,
+    -5.541,
+    6.1767
+   ],
+   "cauda": [
+    -0.3308,
+    -5.677,
+    6.151
+   ],
+   "eixo_x": [
+    -0.9064,
+    0.3748,
+    0.1947
+   ],
+   "deforma": true
+  },
+  {
+   "nome": "Orelha_E",
+   "pai": "Cabeca",
+   "cabeca": [
+    0.4972,
+    -5.2161,
+    6.8882
+   ],
+   "cauda": [
+    0.6098,
+    -5.3337,
+    7.3829
+   ],
+   "eixo_x": [
+    0.9763,
+    0.05,
+    -0.2104
+   ],
+   "deforma": true
+  },
+  {
+   "nome": "Orelha_D",
+   "pai": "Cabeca",
+   "cabeca": [
+    -0.7282,
+    -5.2016,
+    6.9391
+   ],
+   "cauda": [
+    -0.7816,
+    -5.3622,
+    7.4211
+   ],
+   "eixo_x": [
+    0.9945,
+    -0.0331,
+    0.0993
+   ],
+   "deforma": true
+  },
+  {
+   "nome": "Escapula_E",
+   "pai": "Coluna3",
+   "cabeca": [
+    0.42,
+    -2.2089,
+    5.25
+   ],
+   "cauda": [
+    0.9811,
+    -3.2589,
+    3.65
+   ],
+   "eixo_x": [
+    0.9596,
+    0.1544,
+    0.2352
+   ],
+   "deforma": true
+  },
+  {
+   "nome": "Umero_E",
+   "pai": "Escapula_E",
+   "cabeca": [
+    0.9811,
+    -3.2589,
+    3.65
+   ],
+   "cauda": [
+    0.8811,
+    -2.5389,
+    2.45
+   ],
+   "eixo_x": [
+    0.9975,
+    0.0367,
+    -0.0611
+   ],
+   "deforma": true
+  },
+  {
+   "nome": "Antebraco_E",
+   "pai": "Umero_E",
+   "cabeca": [
+    0.8811,
+    -2.5389,
+    2.45
+   ],
+   "cauda": [
+    0.8934,
+    -2.8826,
+    0.85
+   ],
+   "eixo_x": [
+    1.0,
+    0.0016,
+    0.0074
+   ],
+   "deforma": true
+  },
+  {
+   "nome": "Metacarpo_E",
+   "pai": "Antebraco_E",
+   "cabeca": [
+    0.8934,
+    -2.8826,
+    0.85
+   ],
+   "cauda": [
+    1.1641,
+    -3.4659,
+    0.3
+   ],
+   "eixo_x": [
+    0.9474,
+    0.2328,
+    0.2195
+   ],
+   "deforma": true
+  },
+  {
+   "nome": "Dedos_E",
+   "pai": "Metacarpo_E",
+   "cabeca": [
+    1.1641,
+    -3.4659,
+    0.3
+   ],
+   "cauda": [
+    1.2643,
+    -3.8789,
+    0.12
+   ],
+   "eixo_x": [
+    0.9761,
+    0.199,
+    0.0867
+   ],
+   "deforma": true
+  },
+  {
+   "nome": "Escapula_D",
+   "pai": "Coluna3",
+   "cabeca": [
+    -0.42,
+    -2.3429,
+    5.25
+   ],
+   "cauda": [
+    -1.0547,
+    -3.3929,
+    3.65
+   ],
+   "eixo_x": [
+    0.9492,
+    -0.1727,
+    -0.2632
+   ],
+   "deforma": true
+  },
+  {
+   "nome": "Umero_D",
+   "pai": "Escapula_D",
+   "cabeca": [
+    -1.0547,
+    -3.3929,
+    3.65
+   ],
+   "cauda": [
+    -0.9547,
+    -2.6729,
+    2.45
+   ],
+   "eixo_x": [
+    0.9975,
+    -0.0367,
+    0.0611
+   ],
+   "deforma": true
+  },
+  {
+   "nome": "Antebraco_D",
+   "pai": "Umero_D",
+   "cabeca": [
+    -0.9547,
+    -2.6729,
+    2.45
+   ],
+   "cauda": [
+    -0.8636,
+    -3.1008,
+    0.85
+   ],
+   "eixo_x": [
+    0.9985,
+    0.0142,
+    0.053
+   ],
+   "deforma": true
+  },
+  {
+   "nome": "Metacarpo_D",
+   "pai": "Antebraco_D",
+   "cabeca": [
+    -0.8636,
+    -3.1008,
+    0.85
+   ],
+   "cauda": [
+    -0.9529,
+    -3.6488,
+    0.3
+   ],
+   "eixo_x": [
+    0.9935,
+    -0.0806,
+    -0.0809
+   ],
+   "deforma": true
+  },
+  {
+   "nome": "Dedos_D",
+   "pai": "Metacarpo_D",
+   "cabeca": [
+    -0.9529,
+    -3.6488,
+    0.3
+   ],
+   "cauda": [
+    -0.9793,
+    -4.1007,
+    0.12
+   ],
+   "eixo_x": [
+    0.9985,
+    -0.0504,
+    -0.0201
+   ],
+   "deforma": true
+  },
+  {
+   "nome": "Coxa_E",
+   "pai": "Quadril",
+   "cabeca": [
+    0.72,
+    2.7612,
+    4.2
+   ],
+   "cauda": [
+    0.901,
+    2.0112,
+    2.7
+   ],
+   "eixo_x": [
+    0.9942,
+    0.048,
+    0.096
+   ],
+   "deforma": true
+  },
+  {
+   "nome": "Tibia_E",
+   "pai": "Coxa_E",
+   "cabeca": [
+    0.901,
+    2.0112,
+    2.7
+   ],
+   "cauda": [
+    1.1703,
+    2.6682,
+    1.15
+   ],
+   "eixo_x": [
+    0.9874,
+    -0.0616,
+    0.1455
+   ],
+   "deforma": true
+  },
+  {
+   "nome": "Metatarso_E",
+   "pai": "Tibia_E",
+   "cabeca": [
+    1.1703,
+    2.6682,
+    1.15
+   ],
+   "cauda": [
+    1.4289,
+    2.1927,
+    0.3
+   ],
+   "eixo_x": [
+    0.9665,
+    0.1253,
+    0.2239
+   ],
+   "deforma": true
+  },
+  {
+   "nome": "DedosPe_E",
+   "pai": "Metatarso_E",
+   "cabeca": [
+    1.4289,
+    2.1927,
+    0.3
+   ],
+   "cauda": [
+    1.4955,
+    1.7496,
+    0.12
+   ],
+   "eixo_x": [
+    0.9904,
+    0.1279,
+    0.0519
+   ],
+   "deforma": true
+  },
+  {
+   "nome": "Coxa_D",
+   "pai": "Quadril",
+   "cabeca": [
+    -0.72,
+    2.2405,
+    4.2
+   ],
+   "cauda": [
+    -0.7906,
+    1.4905,
+    2.7
+   ],
+   "eixo_x": [
+    0.9991,
+    -0.0188,
+    -0.0376
+   ],
+   "deforma": true
+  },
+  {
+   "nome": "Tibia_D",
+   "pai": "Coxa_D",
+   "cabeca": [
+    -0.7906,
+    1.4905,
+    2.7
+   ],
+   "cauda": [
+    -0.8495,
+    2.5513,
+    1.15
+   ],
+   "eixo_x": [
+    0.9995,
+    0.0177,
+    -0.0259
+   ],
+   "deforma": true
+  },
+  {
+   "nome": "Metatarso_D",
+   "pai": "Tibia_D",
+   "cabeca": [
+    -0.8495,
+    2.5513,
+    1.15
+   ],
+   "cauda": [
+    -1.0523,
+    2.109,
+    0.3
+   ],
+   "eixo_x": [
+    0.9783,
+    -0.0956,
+    -0.1837
+   ],
+   "deforma": true
+  },
+  {
+   "nome": "DedosPe_D",
+   "pai": "Metatarso_D",
+   "cabeca": [
+    -1.0523,
+    2.109,
+    0.3
+   ],
+   "cauda": [
+    -1.0847,
+    1.7421,
+    0.12
+   ],
+   "eixo_x": [
+    0.9969,
+    -0.0709,
+    -0.0348
+   ],
+   "deforma": true
+  },
+  {
+   "nome": "Cauda1",
+   "pai": "Quadril",
+   "cabeca": [
+    0.0,
+    2.95,
+    4.55
+   ],
+   "cauda": [
+    0.0,
+    3.55,
+    3.75
+   ],
+   "eixo_x": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "deforma": true
+  },
+  {
+   "nome": "Cauda2",
+   "pai": "Cauda1",
+   "cabeca": [
+    0.0,
+    3.55,
+    3.75
+   ],
+   "cauda": [
+    0.0,
+    4.02,
+    2.85
+   ],
+   "eixo_x": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "deforma": true
+  },
+  {
+   "nome": "Cauda3",
+   "pai": "Cauda2",
+   "cabeca": [
+    0.0,
+    4.02,
+    2.85
+   ],
+   "cauda": [
+    0.0,
+    4.35,
+    1.9
+   ],
+   "eixo_x": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "deforma": true
+  },
+  {
+   "nome": "Cauda4",
+   "pai": "Cauda3",
+   "cabeca": [
+    0.0,
+    4.35,
+    1.9
+   ],
+   "cauda": [
+    0.0,
+    4.58,
+    0.75
+   ],
+   "eixo_x": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "deforma": true
+  }
+ ],
+ "heat_ok": true,
+ "estatisticas": {
+  "LOW_Cabeca": {
+   "truncados_>0.02": 261,
+   "sem_influencia": 0,
+   "max_influencias": 4
+  },
+  "LOW_Corpo": {
+   "truncados_>0.02": 1637,
+   "sem_influencia": 0,
+   "max_influencias": 4
+  },
+  "LOW_costura": {
+   "pares_coincidentes": 777,
+   "dif_max_antes_da_media": 0
+  },
+  "LOD1_Cabeca": {
+   "truncados_>0.02": 8,
+   "sem_influencia": 0,
+   "max_influencias": 4
+  },
+  "LOD1_Corpo": {
+   "truncados_>0.02": 521,
+   "sem_influencia": 0,
+   "max_influencias": 4
+  },
+  "LOD1_costura": {
+   "pares_coincidentes": 85,
+   "dif_max_antes_da_media": 0
+  },
+  "LOD2_Cabeca": {
+   "truncados_>0.02": 7,
+   "sem_influencia": 0,
+   "max_influencias": 4
+  },
+  "LOD2_Corpo": {
+   "truncados_>0.02": 172,
+   "sem_influencia": 0,
+   "max_influencias": 4
+  },
+  "LOD2_costura": {
+   "pares_coincidentes": 81,
+   "dif_max_antes_da_media": 0
+  },
+  "LOW_Pelagem": {
+   "modo": "ilha",
+   "dist_raiz_pele_max": 0.0667,
+   "dist_raiz_pele_media": 0.008,
+   "sem_influencia": 0,
+   "max_influencias": 4
+  },
+  "LOD1_Pelagem": {
+   "modo": "ilha",
+   "dist_raiz_pele_max": 0.0758,
+   "dist_raiz_pele_media": 0.01,
+   "sem_influencia": 0,
+   "max_influencias": 4
+  },
+  "LOW_Marca": {
+   "modo": "vertice",
+   "dist_raiz_pele_max": 0.0142,
+   "dist_raiz_pele_media": 0.012,
+   "sem_influencia": 0,
+   "max_influencias": 4
+  },
+  "LOW_Cristais": {
+   "modo": "ilha",
+   "dist_raiz_pele_max": 0.0716,
+   "dist_raiz_pele_media": 0.0223,
+   "sem_influencia": 0,
+   "max_influencias": 4
+  }
+ },
+ "pes": {
+  "E": [
+   1.236,
+   -3.523,
+   0.0
+  ],
+  "D": [
+   -0.973,
+   -3.785,
+   0.0
+  ],
+  "TE": [
+   1.487,
+   2.107,
+   0.0
+  ],
+  "TD": [
+   -1.047,
+   2.011,
+   0.0
+  ]
+ },
+ "v10_cauda": {
+  "LOW": {
+   "faces_lobo_para_cauda": 372,
+   "faces_crista_para_cauda": 130,
+   "ilhas_trocadas_v17": [
+    1,
+    1,
+    1
+   ],
+   "lacos_fechados_v17": [],
+   "arestas_cortadas": 46,
+   "faces_cauda": 1660,
+   "faces_pata": 422,
+   "cauda": {
+    "furos_pequenos_fechados": 0,
+    "arestas_borda": 46,
+    "pontas": 2,
+    "cadeias": 1,
+    "fechos": 2,
+    "area_tampa": 1.9798,
+    "aresta_alvo": 0.1807,
+    "faces_tampa": 140
+   },
+   "pata": {
+    "furos_pequenos_fechados": 1,
+    "arestas_borda": 46,
+    "pontas": 2,
+    "cadeias": 2,
+    "fechos": 2,
+    "area_tampa": 1.986,
+    "aresta_alvo": 0.181,
+    "faces_tampa": 140
+   },
+   "tampas_faces_reorientadas": 1,
+   "contato_alisado": {
+    "cauda": {
+     "vertices": 145,
+     "maior_deslocamento": 0.08
+    },
+    "pata": {
+     "vertices": 144,
+     "maior_deslocamento": 0.08
+    }
+   },
+   "forma_tampa": {
+    "cauda": {
+     "vertices": 47,
+     "maior_deslocamento": 0.1454,
+     "raio_borda_min_max": [
+      1.079,
+      1.516
+     ]
+    },
+    "pata": {
+     "vertices": 48,
+     "maior_deslocamento": 0.1851,
+     "raio_borda_min_max": [
+      0.1,
+      0.81
+     ]
+    }
+   },
+   "faces_tampa": 280,
+   "tris_antes_depois": [
+    19652,
+    19932
+   ],
+   "vertices_cauda": 1367,
+   "vertices_pata": 480,
+   "vertices_nos_dois_componentes": 0,
+   "vertices_sem_peso": 0,
+   "pesos_do_outro_lado_abaixo_de_z_total": 0,
+   "aresta_media_corte": 0.1711,
+   "z_raiz_z_total": [
+    3.7,
+    3.25
+   ],
+   "pontas_corte_z": [
+    3.835,
+    3.79
+   ]
+  },
+  "LOD1": {
+   "faces_lobo_para_cauda": 142,
+   "faces_crista_para_cauda": 77,
+   "ilhas_trocadas_v17": [
+    1,
+    1,
+    1
+   ],
+   "lacos_fechados_v17": [],
+   "arestas_cortadas": 40,
+   "faces_cauda": 670,
+   "faces_pata": 196,
+   "cauda": {
+    "furos_pequenos_fechados": 1,
+    "arestas_borda": 40,
+    "pontas": 2,
+    "cadeias": 2,
+    "fechos": 2,
+    "area_tampa": 1.9644,
+    "aresta_alvo": 0.275,
+    "faces_tampa": 60
+   },
+   "pata": {
+    "furos_pequenos_fechados": 0,
+    "arestas_borda": 40,
+    "pontas": 2,
+    "cadeias": 1,
+    "fechos": 2,
+    "area_tampa": 1.9546,
+    "aresta_alvo": 0.2743,
+    "faces_tampa": 60
+   },
+   "tampas_faces_reorientadas": 35,
+   "contato_alisado": {
+    "cauda": {
+     "vertices": 59,
+     "maior_deslocamento": 0.08
+    },
+    "pata": {
+     "vertices": 59,
+     "maior_deslocamento": 0.08
+    }
+   },
+   "forma_tampa": {
+    "cauda": {
+     "vertices": 11,
+     "maior_deslocamento": 0.2074,
+     "raio_borda_min_max": [
+      0.896,
+      1.581
+     ]
+    },
+    "pata": {
+     "vertices": 10,
+     "maior_deslocamento": 0.1901,
+     "raio_borda_min_max": [
+      0.041,
+      0.793
+     ]
+    }
+   },
+   "faces_tampa": 120,
+   "tris_antes_depois": [
+    6493,
+    6613
+   ],
+   "vertices_cauda": 542,
+   "vertices_pata": 250,
+   "vertices_nos_dois_componentes": 0,
+   "vertices_sem_peso": 0,
+   "pesos_do_outro_lado_abaixo_de_z_total": 0,
+   "aresta_media_corte": 0.2418,
+   "z_raiz_z_total": [
+    3.627,
+    3.177
+   ],
+   "pontas_corte_z": [
+    3.677,
+    3.777
+   ]
+  },
+  "LOD2": {
+   "faces_lobo_para_cauda": 19,
+   "faces_crista_para_cauda": 0,
+   "ilhas_trocadas_v17": [],
+   "lacos_fechados_v17": [],
+   "arestas_cortadas": 20,
+   "faces_cauda": 193,
+   "faces_pata": 100,
+   "cauda": {
+    "furos_pequenos_fechados": 0,
+    "arestas_borda": 20,
+    "pontas": 2,
+    "cadeias": 1,
+    "fechos": 2,
+    "area_tampa": 2.6954,
+    "aresta_alvo": 0.5093,
+    "faces_tampa": 24
+   },
+   "pata": {
+    "furos_pequenos_fechados": 0,
+    "arestas_borda": 20,
+    "pontas": 2,
+    "cadeias": 1,
+    "fechos": 2,
+    "area_tampa": 2.6954,
+    "aresta_alvo": 0.5093,
+    "faces_tampa": 24
+   },
+   "tampas_faces_reorientadas": 4,
+   "contato_alisado": {
+    "cauda": {
+     "vertices": 23,
+     "maior_deslocamento": 0.08
+    },
+    "pata": {
+     "vertices": 26,
+     "maior_deslocamento": 0.08
+    }
+   },
+   "forma_tampa": {
+    "cauda": {
+     "vertices": 2,
+     "maior_deslocamento": 0.0789,
+     "raio_borda_min_max": [
+      0.815,
+      1.631
+     ]
+    },
+    "pata": {
+     "vertices": 2,
+     "maior_deslocamento": 0.1208,
+     "raio_borda_min_max": [
+      0.275,
+      0.99
+     ]
+    }
+   },
+   "faces_tampa": 48,
+   "tris_antes_depois": [
+    1994,
+    2042
+   ],
+   "vertices_cauda": 161,
+   "vertices_pata": 90,
+   "vertices_nos_dois_componentes": 0,
+   "vertices_sem_peso": 0,
+   "pesos_do_outro_lado_abaixo_de_z_total": 0,
+   "aresta_media_corte": 0.456,
+   "z_raiz_z_total": [
+    3.621,
+    3.171
+   ],
+   "pontas_corte_z": [
+    3.77,
+    3.671
+   ]
+  },
+  "LOW_pelagem": {
+   "cartoes_repesados": 167
+  },
+  "LOD1_pelagem": {
+   "cartoes_repesados": 127
+  }
+ },
+ "v10_textura": {
+  "LOW": {
+   "cauda": {
+    "faces_limpas": 1391,
+    "faces_contato_repintadas": 119,
+    "texels_escritos": 1350,
+    "faces_tampa": 140
+   },
+   "pata": {
+    "faces_limpas": 120,
+    "faces_contato_repintadas": 134,
+    "texels_escritos": 1488,
+    "faces_tampa": 140
+   }
+  },
+  "LOD1": {
+   "cauda": {
+    "faces_limpas": 562,
+    "faces_contato_repintadas": 0,
+    "texels_escritos": 0,
+    "faces_tampa": 60
+   },
+   "pata": {
+    "faces_limpas": 65,
+    "faces_contato_repintadas": 0,
+    "texels_escritos": 0,
+    "faces_tampa": 60
+   }
+  },
+  "LOD2": {
+   "cauda": {
+    "faces_limpas": 165,
+    "faces_contato_repintadas": 0,
+    "texels_escritos": 0,
+    "faces_tampa": 24
+   },
+   "pata": {
+    "faces_limpas": 35,
+    "faces_contato_repintadas": 0,
+    "texels_escritos": 0,
+    "faces_tampa": 24
+   }
+  },
+  "imagens": [
+   "LoboArtico_Corpo_cor.png",
+   "LoboArtico_Corpo_normal.png",
+   "LoboArtico_Corpo_rugosidade.png"
+  ]
+ },
+ "v11_garganta": {
+  "parametros": {
+   "RECUO_VENTRAL": 0.9,
+   "PROF0": 0.4,
+   "FAIXA": 0.45,
+   "juntas_y": [
+    -1.2,
+    -2.35,
+    -3.535,
+    -4.72,
+    -6.25
+   ]
+  },
+  "LOW": {
+   "LOW_Cabeca": {
+    "vertices_alterados": 2923,
+    "membro_>0.1_a_frente_do_ombro_antes_depois": [
+     335,
+     78
+    ]
+   },
+   "LOW_Corpo": {
+    "vertices_alterados": 4584,
+    "membro_>0.1_a_frente_do_ombro_antes_depois": [
+     898,
+     374
+    ]
+   },
+   "costura": {
+    "pares": 777,
+    "dif_max_antes_da_media": 0.0224
+   }
+  },
+  "LOD1": {
+   "LOD1_Cabeca": {
+    "vertices_alterados": 95,
+    "membro_>0.1_a_frente_do_ombro_antes_depois": [
+     11,
+     1
+    ]
+   },
+   "LOD1_Corpo": {
+    "vertices_alterados": 1186,
+    "membro_>0.1_a_frente_do_ombro_antes_depois": [
+     233,
+     126
+    ]
+   },
+   "costura": {
+    "pares": 86,
+    "dif_max_antes_da_media": 0.1871
+   }
+  },
+  "LOD2": {
+   "LOD2_Cabeca": {
+    "vertices_alterados": 95,
+    "membro_>0.1_a_frente_do_ombro_antes_depois": [
+     11,
+     2
+    ]
+   },
+   "LOD2_Corpo": {
+    "vertices_alterados": 382,
+    "membro_>0.1_a_frente_do_ombro_antes_depois": [
+     84,
+     48
+    ]
+   },
+   "costura": {
+    "pares": 82,
+    "dif_max_antes_da_media": 0.2515
+   }
+  },
+  "LOW_pelagem": {
+   "cartoes_repesados": 342,
+   "dist_raiz_pele_max": 0.0667
+  },
+  "LOD1_pelagem": {
+   "cartoes_repesados": 258,
+   "dist_raiz_pele_max": 0.0758
+  },
+  "LOW_Marca": {
+   "repesado": "vertice",
+   "vertices": 729
+  },
+  "LOW_Cristais": {
+   "repesado": "ilha",
+   "vertices": 180
+  }
+ }
+}

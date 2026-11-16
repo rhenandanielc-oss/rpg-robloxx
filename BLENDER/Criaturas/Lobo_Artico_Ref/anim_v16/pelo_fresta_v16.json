@@ -1,0 +1,35 @@
+{
+ "parametros": {
+  "S_MIN": 0.35
+ },
+ "LOW": {
+  "perna_sobre_cauda": {
+   "cartoes": 5,
+   "escala_min": 0.35,
+   "escala_media": 0.35,
+   "no_minimo": 5
+  },
+  "cauda_sobre_perna": {
+   "cartoes": 1,
+   "escala_min": 0.55,
+   "escala_media": 0.55,
+   "no_minimo": 0
+  },
+  "perna_sobre_cauda_passou_de_lado": 6
+ },
+ "LOD1": {
+  "perna_sobre_cauda": {
+   "cartoes": 4,
+   "escala_min": 0.35,
+   "escala_media": 0.562,
+   "no_minimo": 2
+  },
+  "cauda_sobre_perna": {
+   "cartoes": 0,
+   "escala_min": null,
+   "escala_media": null,
+   "no_minimo": 0
+  },
+  "perna_sobre_cauda_passou_de_lado": 5
+ }
+}

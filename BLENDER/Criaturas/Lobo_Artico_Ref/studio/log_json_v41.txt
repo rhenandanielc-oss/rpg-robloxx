@@ -1,0 +1,44 @@
+00:03.141  blend            | Read blend: "C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Lobo_Artico_Ref\anim_v41\CR_LoboArtico_Anim.blend"
+BlenderMCP addon registered
+
+Wiggle Bones registered
+JSON Repouso 241 quadros laco
+JSON Andar 37 quadros laco
+JSON Trote 19 quadros laco
+JSON Corrida 15 quadros laco
+JSON Arrancada 76 quadros uma vez
+JSON Frenagem 49 quadros uma vez
+JSON VirarEsquerda 93 quadros uma vez
+JSON VirarDireita 93 quadros uma vez
+JSON AndarParaTrote 71 quadros uma vez
+JSON TroteParaAndar 76 quadros uma vez
+JSON TroteParaCorrida 64 quadros uma vez
+JSON CorridaParaTrote 63 quadros uma vez
+JSON Deitar 81 quadros uma vez
+JSON Descanso 151 quadros laco
+JSON Adormecer 67 quadros uma vez
+JSON Dormindo 181 quadros laco
+JSON Despertar 46 quadros uma vez
+JSON LevantarDeitado 67 quadros uma vez
+JSON Sentar 58 quadros uma vez
+JSON Sentado 151 quadros laco
+JSON LevantarSentado 49 quadros uma vez
+JSON Farejar 31 quadros uma vez
+JSON Farejando 121 quadros laco
+JSON PararFarejar 31 quadros uma vez
+JSON Comer 46 quadros uma vez
+JSON Comendo 151 quadros laco
+JSON PararComer 46 quadros uma vez
+JSON Beber 55 quadros uma vez
+JSON Bebendo 91 quadros laco
+JSON PararBeber 55 quadros uma vez
+JSON Uivar 37 quadros uma vez
+JSON Uivando 151 quadros laco
+JSON PararUivar 37 quadros uma vez
+JSON Sacudir 61 quadros uma vez
+JSON_OK escala_max_desvio 4.76837158203125e-07
+BlenderMCP addon unregistered
+Wiggle Bones unregistered
+Blender 5.2.2 LTS (hash d13f752e3b9c built 2026-09-15 01:37:04)
+
+Blender quit

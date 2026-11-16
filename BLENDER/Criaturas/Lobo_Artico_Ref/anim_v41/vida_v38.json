@@ -1,0 +1,228 @@
+{
+ "pose_sentado": {
+  "rotulo": "cB",
+  "parametros": {
+   "pitch_graus": 34,
+   "desce_quadril": 3.4,
+   "y_quadril": 0.0,
+   "coluna_achata": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "pata_D_y": -0.75,
+   "pata_D_x": 0.0,
+   "pata_D_z": 0.3,
+   "pe_D_graus": 0.0,
+   "dedo_D_graus": 0.0,
+   "pata_T_y": -1.5,
+   "pata_T_x": 0.35,
+   "pata_T_z": 0.5,
+   "pe_T_graus": null,
+   "dedo_T_graus": null,
+   "pescoco_graus": 22,
+   "pescoco_divisao": [
+    0.55,
+    0.45
+   ],
+   "cabeca_alvo_graus": 8.0,
+   "cauda": [
+    80.0,
+    20.0,
+    10.0,
+    0.0
+   ],
+   "cauda_lado": 55.0,
+   "cauda_modo": "corpo_alto",
+   "cauda_curva": [
+    -10,
+    -12,
+    -14
+   ]
+  },
+  "pitch_tronco_graus": -34,
+  "pescoco_graus": 22,
+  "pernas": {
+   "DE": {
+    "erro_ik": 0.0,
+    "ext": 0.901,
+    "phi": 0.0,
+    "phd": 0.0
+   },
+   "DD": {
+    "erro_ik": 0.0,
+    "ext": 0.922,
+    "phi": 0.0,
+    "phd": 0.0
+   },
+   "TE": {
+    "erro_ik": 0.0,
+    "ext": 0.287,
+    "phi": -60.8,
+    "phd": -22.1
+   },
+   "TD": {
+    "erro_ik": 0.0,
+    "ext": 0.242,
+    "phi": -62.5,
+    "phd": -26.1
+   }
+  },
+  "contatos_min_z": {
+   "patas_D": -0.01,
+   "esterno/peito": 2.02,
+   "cotovelo+antebraco": 0.703,
+   "queixo/cabeca": 3.929,
+   "barriga": 0.977,
+   "jarrete+canela": -0.038,
+   "coxa": 0.424,
+   "pelve/ventre": 0.399,
+   "patas_T": 0.165,
+   "cauda": 0.94
+  },
+  "quadril_z": 0.746,
+  "cernelha_z": 3.497
+ },
+ "acoes": {
+  "Sentar": {
+   "quadros": 57,
+   "erro_ik": 0.0,
+   "plantas": {
+    "DE": [
+     [
+      0,
+      28
+     ],
+     [
+      42,
+      57
+     ]
+    ],
+    "DD": [
+     [
+      0,
+      34
+     ],
+     [
+      48,
+      57
+     ]
+    ],
+    "TE": [
+     [
+      0,
+      16
+     ],
+     [
+      36,
+      57
+     ]
+    ],
+    "TD": [
+     [
+      0,
+      22
+     ],
+     [
+      42,
+      57
+     ]
+    ]
+   },
+   "marcadores_s": {
+    "Sentado": 1.53,
+    "Cauda": 1.9
+   }
+  },
+  "Sentado": {
+   "quadros": 150,
+   "laco": true,
+   "erro_ik": 0.0,
+   "plantas": {
+    "DE": [
+     [
+      0,
+      150
+     ]
+    ],
+    "DD": [
+     [
+      0,
+      150
+     ]
+    ],
+    "TE": [
+     [
+      0,
+      150
+     ]
+    ],
+    "TD": [
+     [
+      0,
+      150
+     ]
+    ]
+   }
+  },
+  "LevantarSentado": {
+   "quadros": 48,
+   "erro_ik": 0.0,
+   "plantas": {
+    "DE": [
+     [
+      0,
+      4
+     ],
+     [
+      16,
+      48
+     ]
+    ],
+    "DD": [
+     [
+      0,
+      8
+     ],
+     [
+      20,
+      48
+     ]
+    ],
+    "TE": [
+     [
+      0,
+      14
+     ],
+     [
+      32,
+      48
+     ]
+    ],
+    "TD": [
+     [
+      0,
+      18
+     ],
+     [
+      36,
+      48
+     ]
+    ]
+   },
+   "marcadores_s": {
+    "DePe": 1.33
+   }
+  }
+ },
+ "v38": {
+  "cauda_por_fora": true,
+  "eixo_cauda1": [
+   -1.0,
+   0.0,
+   0.0
+  ],
+  "graus_curto": 139.3,
+  "graus_por_fora": -220.7
+ }
+}

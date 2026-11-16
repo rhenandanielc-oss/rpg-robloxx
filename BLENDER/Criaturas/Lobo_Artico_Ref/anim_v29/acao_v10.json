@@ -1,0 +1,124 @@
+{
+ "acao": "Teste_Piloto",
+ "qps": 30,
+ "quadros": [
+  0,
+  890
+ ],
+ "trechos": {
+  "A_mandibula": [
+   0,
+   58
+  ],
+  "B_piscar": [
+   58,
+   82
+  ],
+  "C_cabeca": [
+   82,
+   184
+  ],
+  "D1_coluna": [
+   184,
+   236
+  ],
+  "D2_inclinacao": [
+   236,
+   282
+  ],
+  "D3_peso": [
+   282,
+   366
+  ],
+  "E_dianteira_E": [
+   366,
+   426
+  ],
+  "E_dianteira_D": [
+   426,
+   486
+  ],
+  "E_traseira_E": [
+   486,
+   546
+  ],
+  "E_traseira_D": [
+   546,
+   606
+  ],
+  "F_cauda": [
+   606,
+   688
+  ],
+  "F_orelhas": [
+   688,
+   758
+  ],
+  "G_combinacao": [
+   758,
+   806
+  ],
+  "H_cauda_pata_E": [
+   806,
+   890
+  ]
+ },
+ "limites_piloto_graus": {
+  "mandibula": 32,
+  "palpebras": "fechar_sup/inf de rig_pivos (100%)",
+  "cabeca_lados": 35,
+  "cabeca_cima": 25,
+  "cabeca_baixo": 18,
+  "coluna_lados_total": 12,
+  "inclinacao_tronco": 8,
+  "peso_lateral_studs": 0.18,
+  "peso_frente_tras_studs": 0.2,
+  "ombro_quadril_frente_tras": [
+   -18,
+   15
+  ],
+  "passo_dianteira_ombro_cotovelo_carpo": [
+   -18,
+   45,
+   95
+  ],
+  "passo_traseira_quadril_joelho_jarrete": [
+   -10,
+   50,
+   -65
+  ],
+  "dedos": [
+   -20,
+   25
+  ],
+  "cauda_lados_total": 35,
+  "cauda_cima_baixo": [
+   30,
+   -10
+  ],
+  "orelhas_tras_frente_giro": [
+   -35,
+   15,
+   25
+  ],
+  "combinacao": {
+   "cabeca_lado": 30,
+   "pescoco_baixo": 15,
+   "mandibula": 32
+  },
+  "H_cauda_pata_E": {
+   "cauda_lados": 25,
+   "cauda_cima": 20,
+   "passo_quadril_joelho_jarrete": [
+    -7,
+    35,
+    -45
+   ],
+   "quadril_tras_frente": [
+    12,
+    -13
+   ]
+  }
+ },
+ "nota": "parametros tecnicos do piloto, nao regras oficiais"
+}

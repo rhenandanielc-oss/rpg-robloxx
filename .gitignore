@@ -50,3 +50,5 @@ sourcemap.json
 .obsidian/
 BLENDER/**/meshy_tex/
 BLENDER/**/final/
+# arquivos de referencia numpy (centenas de MB; GitHub recusa > 100 MB)
+BLENDER/**/*.npz

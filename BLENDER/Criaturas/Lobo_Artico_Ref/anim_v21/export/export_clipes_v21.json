@@ -1,0 +1,212 @@
+{
+ "acoes": {
+  "Repouso": {
+   "quadros": [
+    0,
+    240
+   ]
+  },
+  "Andar": {
+   "quadros": [
+    0,
+    36
+   ]
+  },
+  "Trote": {
+   "quadros": [
+    0,
+    18
+   ]
+  },
+  "Corrida": {
+   "quadros": [
+    0,
+    14
+   ]
+  }
+ },
+ "amostras": {
+  "Andar": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12,
+   13,
+   14,
+   15,
+   16,
+   17,
+   18,
+   19,
+   20,
+   21,
+   22,
+   23,
+   24,
+   25,
+   26,
+   27,
+   28,
+   29,
+   30,
+   31,
+   32,
+   33,
+   34,
+   35,
+   36
+  ],
+  "Repouso": [
+   0,
+   4,
+   8,
+   12,
+   16,
+   20,
+   24,
+   28,
+   32,
+   36,
+   40,
+   44,
+   48,
+   52,
+   56,
+   60,
+   64,
+   68,
+   72,
+   76,
+   80,
+   84,
+   88,
+   92,
+   96,
+   100,
+   104,
+   108,
+   112,
+   116,
+   120,
+   124,
+   128,
+   132,
+   136,
+   140,
+   144,
+   148,
+   152,
+   156,
+   160,
+   164,
+   168,
+   172,
+   176,
+   180,
+   184,
+   188,
+   192,
+   196,
+   200,
+   204,
+   208,
+   212,
+   216,
+   220,
+   224,
+   228,
+   232,
+   236,
+   240
+  ],
+  "Trote": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12,
+   13,
+   14,
+   15,
+   16,
+   17,
+   18
+  ],
+  "Corrida": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12,
+   13,
+   14
+  ]
+ },
+ "lods": {
+  "LOW": {
+   "arquivo": "CR_LoboArtico_LOW_Clipes.glb",
+   "MB": 13.98,
+   "tris": {
+    "LOW_Cabeca": 19168,
+    "LOW_Corpo": 19933,
+    "LOW_Pelagem": 3548,
+    "LOW_Marca": 1352,
+    "LOW_Cristais": 340
+   },
+   "ossos_garantidos_triangulo": [
+    "Raiz"
+   ]
+  },
+  "LOD1": {
+   "arquivo": "CR_LoboArtico_LOD1_Clipes.glb",
+   "MB": 11.97,
+   "tris": {
+    "LOD1_Cabeca": 3887,
+    "LOD1_Corpo": 6614,
+    "LOD1_Pelagem": 1776,
+    "LOW_Marca": 1352,
+    "LOW_Cristais": 340
+   },
+   "ossos_garantidos_triangulo": [
+    "Raiz"
+   ]
+  },
+  "LOD2": {
+   "arquivo": "CR_LoboArtico_LOD2_Clipes.glb",
+   "MB": 10.24,
+   "tris": {
+    "LOD2_Cabeca": 1400,
+    "LOD2_Corpo": 2043,
+    "LOW_Cristais": 340
+   },
+   "ossos_garantidos_triangulo": [
+    "Raiz"
+   ]
+  }
+ }
+}

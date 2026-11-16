@@ -1,0 +1,15 @@
+{
+ "parametros": {
+  "D_PAREDE": 0.25
+ },
+ "LOW": {
+  "vertices_parede": 155,
+  "borda_do_corte": 47,
+  "cartoes_da_parede": 16
+ },
+ "LOD1": {
+  "vertices_parede": 70,
+  "borda_do_corte": 41,
+  "cartoes_da_parede": 12
+ }
+}

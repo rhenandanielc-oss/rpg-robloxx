@@ -1,0 +1,21 @@
+{
+ "LOD0": {
+  "LOW_Cabeca": 11760,
+  "LOW_Corpo": 19820,
+  "LOW_Cristais": 276,
+  "total": 31856
+ },
+ "LOD1": {
+  "LOD1_Cabeca": 3444,
+  "LOD1_Corpo": 6329,
+  "LOW_Cristais": 276,
+  "total": 10049
+ },
+ "LOD2": {
+  "LOD2_Cabeca": 944,
+  "LOD2_Corpo": 1829,
+  "LOW_Cristais": 276,
+  "total": 3049
+ },
+ "texturas": "Cabeca e Corpo: cor/normal/rugosidade/emissao 1024 cada (bake 2048)"
+}

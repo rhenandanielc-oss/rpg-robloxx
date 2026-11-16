@@ -1,0 +1,38 @@
+{
+ "parametros": {
+  "CLARA": 0.9,
+  "MARGEM_px": 3
+ },
+ "textura": [
+  1024,
+  1024
+ ],
+ "quadrado_livre_px": {
+  "lado": 46,
+  "x0": 491,
+  "y0": 0,
+  "util": 40
+ },
+ "mediana_luminancia": 0.8301,
+ "lado_-1": {
+  "faces_tampa_LOW": 141,
+  "faces_origem_limpas": 1850,
+  "texels": 760,
+  "escala_px_por_stud": 14.12
+ },
+ "lado_1": {
+  "faces_tampa_LOW": 141,
+  "faces_origem_limpas": 1703,
+  "texels": 760,
+  "escala_px_por_stud": 14.32
+ },
+ "LOW": {
+  "faces_tampa_com_uv_propria": 282
+ },
+ "LOD1": {
+  "faces_tampa_com_uv_propria": 120
+ },
+ "LOD2": {
+  "faces_tampa_com_uv_propria": 48
+ }
+}
