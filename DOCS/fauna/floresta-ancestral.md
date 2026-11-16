@@ -170,3 +170,5 @@ Nada disso foi feito. Este arquivo é só leitura e organização.
   - 1 `__pycache__`.
 - Os caminhos absolutos de textura foram corrigidos em 44 `.blend` da fauna e em 8 `.blend` do Javali-do-Brejo que apontavam para as texturas do Javali Silvestre; agora todas as texturas são encontradas.
 - Os pedidos antigos em `DOCS/pedidos/` mantêm o caminho antigo, como registro histórico.
+
+- **16/11 — Studio (rpg_roblox, autorizado):** GLBs com esqueleto (cervo r2, javali r4, coruja r4) + 87 clipes (31/24/32) em `ReplicatedStorage.FaunaFloresta`; área `Workspace.Teste_FaunaFloresta` (y=2600), escala ×3 [PROPOSTA]. Em Play, todos os clipes carregaram e a pose ficou a ≤0,005 stud da do Blender. Cervo cinza resolvido no mesmo dia (reimportado com texturas de hash novo). Detalhes em `BLENDER/Criaturas/Fauna_Floresta_Ancestral/studio/LEIA-ME.md`.

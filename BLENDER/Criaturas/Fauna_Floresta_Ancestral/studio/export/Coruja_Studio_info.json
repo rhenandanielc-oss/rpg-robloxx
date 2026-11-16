@@ -1,0 +1,16 @@
+{
+ "glb": "export\\Coruja_Studio.glb",
+ "bytes": 7585524,
+ "origem": "CR_Coruja_Rig.blend",
+ "malhas_tris_origem": {
+  "Coruja_Cabeca": 3350,
+  "Coruja_Corpo": 5958
+ },
+ "ossos": 32,
+ "triangulo_raiz": [
+  3018,
+  3019,
+  3020
+ ],
+ "altura_m": 0.619
+}

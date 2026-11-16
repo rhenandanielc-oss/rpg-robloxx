@@ -1,0 +1,288 @@
+{
+ "name": "FaunaFloresta",
+ "tree": {
+  "$className": "Folder",
+  "AdaptadorFauna": {
+   "$path": "AdaptadorFauna.luau"
+  },
+  "Cervo": {
+   "$className": "Folder",
+   "Dados": {
+    "$className": "Folder",
+    "Alerta": {
+     "$path": "dados/Cervo/Alerta.txt"
+    },
+    "Andar": {
+     "$path": "dados/Cervo/Andar.txt"
+    },
+    "AndarParaTrote": {
+     "$path": "dados/Cervo/AndarParaTrote.txt"
+    },
+    "Arrancada": {
+     "$path": "dados/Cervo/Arrancada.txt"
+    },
+    "Beber": {
+     "$path": "dados/Cervo/Beber.txt"
+    },
+    "BeberEntrar": {
+     "$path": "dados/Cervo/BeberEntrar.txt"
+    },
+    "BeberSair": {
+     "$path": "dados/Cervo/BeberSair.txt"
+    },
+    "Caido": {
+     "$path": "dados/Cervo/Caido.txt"
+    },
+    "CocarCabeca": {
+     "$path": "dados/Cervo/CocarCabeca.txt"
+    },
+    "Corrida": {
+     "$path": "dados/Cervo/Corrida.txt"
+    },
+    "CorridaParaTrote": {
+     "$path": "dados/Cervo/CorridaParaTrote.txt"
+    },
+    "DefesaGalhada": {
+     "$path": "dados/Cervo/DefesaGalhada.txt"
+    },
+    "Deitado": {
+     "$path": "dados/Cervo/Deitado.txt"
+    },
+    "Deitar": {
+     "$path": "dados/Cervo/Deitar.txt"
+    },
+    "Derrota": {
+     "$path": "dados/Cervo/Derrota.txt"
+    },
+    "Frenagem": {
+     "$path": "dados/Cervo/Frenagem.txt"
+    },
+    "Levantar": {
+     "$path": "dados/Cervo/Levantar.txt"
+    },
+    "Pastar": {
+     "$path": "dados/Cervo/Pastar.txt"
+    },
+    "PastarEntrar": {
+     "$path": "dados/Cervo/PastarEntrar.txt"
+    },
+    "PastarSair": {
+     "$path": "dados/Cervo/PastarSair.txt"
+    },
+    "ReacaoD": {
+     "$path": "dados/Cervo/ReacaoD.txt"
+    },
+    "ReacaoE": {
+     "$path": "dados/Cervo/ReacaoE.txt"
+    },
+    "ReacaoFrente": {
+     "$path": "dados/Cervo/ReacaoFrente.txt"
+    },
+    "Repouso": {
+     "$path": "dados/Cervo/Repouso.txt"
+    },
+    "Sacudir": {
+     "$path": "dados/Cervo/Sacudir.txt"
+    },
+    "Susto": {
+     "$path": "dados/Cervo/Susto.txt"
+    },
+    "Trote": {
+     "$path": "dados/Cervo/Trote.txt"
+    },
+    "TroteParaAndar": {
+     "$path": "dados/Cervo/TroteParaAndar.txt"
+    },
+    "TroteParaCorrida": {
+     "$path": "dados/Cervo/TroteParaCorrida.txt"
+    },
+    "VirarD": {
+     "$path": "dados/Cervo/VirarD.txt"
+    },
+    "VirarE": {
+     "$path": "dados/Cervo/VirarE.txt"
+    }
+   }
+  },
+  "Javali": {
+   "$className": "Folder",
+   "Dados": {
+    "$className": "Folder",
+    "Alerta": {
+     "$path": "dados/Javali/Alerta.txt"
+    },
+    "AlertaParaRepouso": {
+     "$path": "dados/Javali/AlertaParaRepouso.txt"
+    },
+    "Ameaca": {
+     "$path": "dados/Javali/Ameaca.txt"
+    },
+    "Andar": {
+     "$path": "dados/Javali/Andar.txt"
+    },
+    "AndarParaParado": {
+     "$path": "dados/Javali/AndarParaParado.txt"
+    },
+    "AndarParaTrote": {
+     "$path": "dados/Javali/AndarParaTrote.txt"
+    },
+    "Arrancada": {
+     "$path": "dados/Javali/Arrancada.txt"
+    },
+    "Corrida": {
+     "$path": "dados/Javali/Corrida.txt"
+    },
+    "CorridaParaTrote": {
+     "$path": "dados/Javali/CorridaParaTrote.txt"
+    },
+    "Derrota": {
+     "$path": "dados/Javali/Derrota.txt"
+    },
+    "Derrotado": {
+     "$path": "dados/Javali/Derrotado.txt"
+    },
+    "Farejar": {
+     "$path": "dados/Javali/Farejar.txt"
+    },
+    "Frenagem": {
+     "$path": "dados/Javali/Frenagem.txt"
+    },
+    "Fucar": {
+     "$path": "dados/Javali/Fucar.txt"
+    },
+    "Investida": {
+     "$path": "dados/Javali/Investida.txt"
+    },
+    "ParadoParaAndar": {
+     "$path": "dados/Javali/ParadoParaAndar.txt"
+    },
+    "ReacaoImpacto": {
+     "$path": "dados/Javali/ReacaoImpacto.txt"
+    },
+    "RecuperacaoInvestida": {
+     "$path": "dados/Javali/RecuperacaoInvestida.txt"
+    },
+    "Repouso": {
+     "$path": "dados/Javali/Repouso.txt"
+    },
+    "Trote": {
+     "$path": "dados/Javali/Trote.txt"
+    },
+    "TroteParaAndar": {
+     "$path": "dados/Javali/TroteParaAndar.txt"
+    },
+    "TroteParaCorrida": {
+     "$path": "dados/Javali/TroteParaCorrida.txt"
+    },
+    "VirarD": {
+     "$path": "dados/Javali/VirarD.txt"
+    },
+    "VirarE": {
+     "$path": "dados/Javali/VirarE.txt"
+    }
+   }
+  },
+  "Coruja": {
+   "$className": "Folder",
+   "Dados": {
+    "$className": "Folder",
+    "Adormecer": {
+     "$path": "dados/Coruja/Adormecer.txt"
+    },
+    "AjeitarPenas": {
+     "$path": "dados/Coruja/AjeitarPenas.txt"
+    },
+    "Ameaca": {
+     "$path": "dados/Coruja/Ameaca.txt"
+    },
+    "BaterAsas": {
+     "$path": "dados/Coruja/BaterAsas.txt"
+    },
+    "BaterParaPlanar": {
+     "$path": "dados/Coruja/BaterParaPlanar.txt"
+    },
+    "Comer": {
+     "$path": "dados/Coruja/Comer.txt"
+    },
+    "Decolar": {
+     "$path": "dados/Coruja/Decolar.txt"
+    },
+    "Derrota": {
+     "$path": "dados/Coruja/Derrota.txt"
+    },
+    "DerrotaEmVoo": {
+     "$path": "dados/Coruja/DerrotaEmVoo.txt"
+    },
+    "Derrotada": {
+     "$path": "dados/Coruja/Derrotada.txt"
+    },
+    "Despertar": {
+     "$path": "dados/Coruja/Despertar.txt"
+    },
+    "Dormindo": {
+     "$path": "dados/Coruja/Dormindo.txt"
+    },
+    "Espreitar": {
+     "$path": "dados/Coruja/Espreitar.txt"
+    },
+    "EsticarAsaD": {
+     "$path": "dados/Coruja/EsticarAsaD.txt"
+    },
+    "EsticarAsaE": {
+     "$path": "dados/Coruja/EsticarAsaE.txt"
+    },
+    "FugaDecolando": {
+     "$path": "dados/Coruja/FugaDecolando.txt"
+    },
+    "InclinarCabeca": {
+     "$path": "dados/Coruja/InclinarCabeca.txt"
+    },
+    "MergulhoCaca": {
+     "$path": "dados/Coruja/MergulhoCaca.txt"
+    },
+    "OlharD": {
+     "$path": "dados/Coruja/OlharD.txt"
+    },
+    "OlharE": {
+     "$path": "dados/Coruja/OlharE.txt"
+    },
+    "Piar": {
+     "$path": "dados/Coruja/Piar.txt"
+    },
+    "Planar": {
+     "$path": "dados/Coruja/Planar.txt"
+    },
+    "PlanarCurvaD": {
+     "$path": "dados/Coruja/PlanarCurvaD.txt"
+    },
+    "PlanarCurvaE": {
+     "$path": "dados/Coruja/PlanarCurvaE.txt"
+    },
+    "PlanarParaBater": {
+     "$path": "dados/Coruja/PlanarParaBater.txt"
+    },
+    "Pousar": {
+     "$path": "dados/Coruja/Pousar.txt"
+    },
+    "ReacaoImpacto": {
+     "$path": "dados/Coruja/ReacaoImpacto.txt"
+    },
+    "ReacaoImpactoVoo": {
+     "$path": "dados/Coruja/ReacaoImpactoVoo.txt"
+    },
+    "Repouso": {
+     "$path": "dados/Coruja/Repouso.txt"
+    },
+    "Saltitar": {
+     "$path": "dados/Coruja/Saltitar.txt"
+    },
+    "VirarNoLugarD": {
+     "$path": "dados/Coruja/VirarNoLugarD.txt"
+    },
+    "VirarNoLugarE": {
+     "$path": "dados/Coruja/VirarNoLugarE.txt"
+    }
+   }
+  }
+ }
+}

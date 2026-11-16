@@ -1,0 +1,16 @@
+{
+ "glb": "export\\Javali_Studio.glb",
+ "bytes": 10127448,
+ "origem": "CR_Javali_Rig_r4.blend",
+ "malhas_tris_origem": {
+  "Javali_Cabeca": 3357,
+  "Javali_Corpo": 6643
+ },
+ "ossos": 30,
+ "triangulo_raiz": [
+  3365,
+  3366,
+  3367
+ ],
+ "altura_m": 0.827
+}

@@ -1,0 +1,16 @@
+{
+ "glb": "export\\Cervo_Studio.glb",
+ "bytes": 8147872,
+ "origem": "CR_Cervo_Rig_r2.blend",
+ "malhas_tris_origem": {
+  "Cervo_Cabeca": 5245,
+  "Cervo_Corpo": 6752
+ },
+ "ossos": 30,
+ "triangulo_raiz": [
+  3484,
+  3485,
+  3486
+ ],
+ "altura_m": 1.96
+}
