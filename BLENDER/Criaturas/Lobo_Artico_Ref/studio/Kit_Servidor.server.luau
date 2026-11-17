@@ -458,12 +458,14 @@ local function basico()
 	if lobo:GetAttribute("PoderAtivo") or lobo:GetAttribute("UivoFase") == "Uivar" then return recusar("Basico", "ocupado") end
 	if t < basicoProx - 0.05 then return false end                          -- r11b: tolerancia de 0,05 s (pedido que chegava um pouco cedo era recusado e reiniciava a sequencia)
 	local alvoAtk = escolherAlvo()
-	local seq = ehPresaPequena(alvoAtk) and B.seq or B.seqCombate       -- r11: garras so na caca de presa pequena
+	-- r12 (usuario 17/11: "esqueca da garra, nao e necessario"): ataque basico = SO mordidas, em combate e na caca.
+	-- Os clipes de garra ficam no place sem uso (B.seq e ehPresaPequena mantidos so como historico).
+	local seq = B.seqCombate
 	if t - basicoUlt > B.reinicio or seq ~= basicoSeq then basicoIdx = 0 end
 	basicoSeq = seq
 	basicoIdx = basicoIdx % #seq + 1; basicoUlt = t
 	local nome = seq[basicoIdx]
-	lobo:SetAttribute("BasicoModo", seq == B.seq and "caca" or "combate")
+	lobo:SetAttribute("BasicoModo", "mordidas")
 	-- r10: escolhe a versao pela marcha; garra andando espera o descolamento da pata que descola primeiro
 	local marcha, ft = faixaMarcha()
 	local atraso, ritmo = 0, 1
@@ -536,4 +538,4 @@ rede.OnServerEvent:Connect(function(j, acao, a1, a2)
 	end
 end)
 Players.PlayerRemoving:Connect(function(j) if j.UserId == dono() then travado = nil end end)
-pasta:SetAttribute("Kit_Versao", "r11 17/11 (combate so mordidas, garras so na caca de presa pequena; garras sincronizadas por marcha v43r5, sem piscar no golpe; piscar + ataque basico andando + Cometa r7 segue o alvo, Avalanche, Instinto Boreal, Pelagem Polar)")
+pasta:SetAttribute("Kit_Versao", "r12 17/11 (ataque basico so mordidas, sem garras; garras sincronizadas por marcha v43r5, sem piscar no golpe; piscar + ataque basico andando + Cometa r7 segue o alvo, Avalanche, Instinto Boreal, Pelagem Polar)")

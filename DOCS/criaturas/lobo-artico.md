@@ -3946,3 +3946,8 @@ Pendente: aprovação visual → export/reimport (GLB por LOD) → JSON → KFS 
   - r11b: tolerância de 0,05 s no intervalo e reinício da sequência 1,0 → 1,2 s (segurando o botão a sequência voltava à Mordida1 quando um pedido chegava um pouco cedo).
 - **Teste em Play (17/11):** combate andando 7/7 só mordidas; caça andando contra `Javali_Teste` 7/7 com GarraD_Andar/GarraE_Andar entre as mordidas (−64); combate parado após r11b: Mordida1 > Mordida2 alternando 9/9 (−90). Sem erros de script.
 - Clipes de garra (parados e sincronizados) continuam no place para a caça.
+
+### 8.70 Sem garras + boca do kit corrigida (17/11/2026)
+- **Decisão do usuário:** "esqueça da garra, não é necessário" → **ataque básico = só mordidas** (Mordida1 ↔ Mordida2, `_Corrida` correndo), em combate e na caça. `studio/Kit_Servidor.server.luau` **r12** (backup `Kit_Servidor_r11b` local e no place); `BasicoModo = mordidas`. Os clipes de garra continuam no place **sem uso** (histórico na §8.66–8.69).
+- **Boca do kit:** o mesmo sinal invertido da mandíbula da mordida r1 estava em `gen_kit_v42.py` (a boca FECHAVA para dentro do crânio). `gen_kit_v42b.py` (cópia, só o sinal muda; `anim_v42b/`, a v42 fica intacta): AvalancheOnda abre até 28° (antes ia para dentro), CometaPouso 8° → 4° (ofegante, antes 0°), AvalancheCorrida 11° (rosnado, antes 3°). Prancha `review/v42b_boca/boca_kit_v42_x_v42b.jpg`. Export `studio/json_v42b/` + `studio/montar_kfs_lobo_v42b.luau`; 5 clipes do kit remontados no place.
+- **Teste em Play:** contra `Javali_Teste` só mordidas alternando 7/7 (−70); Avalanche contra o javali acertou (−12) com a boca aberta na corrida e na onda (`review/studio_v42b/avalanche`, `folha_avalanche.jpg`). Sem erros de script.
