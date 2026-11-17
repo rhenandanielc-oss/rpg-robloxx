@@ -25,8 +25,20 @@ local function dec(s, n)
 end
 
 local cache = {}
+-- 18/11 (pedido do usuario: atacar ANDANDO para o PvP): clipes PARCIAIS derivados dos aprovados, sem mexer nos dados.
+-- So os ossos listados recebem pose; os demais ficam com peso 0 e continuam com a marcha (Andar/Corrida) por baixo.
+local CABECA = {"Pescoco1", "Pescoco2", "Cabeca", "Mandibula", "OrelhaE", "OrelhaD", "PeloBochechaE", "PeloBochechaD", "PalpebraE",
+	"PalpebraD", "JubaE", "JubaD", "PeloJubaE1", "PeloJubaE2", "PeloJubaD1", "PeloJubaD2", "PeloNuca1", "PeloNuca2", "JubaPeito"}
+local PATA_D = {"EscapulaD", "BracoD", "AntebracoD", "CarpoD", "MaoD", "DedosD", "PeloCotoveloD"}   -- a Garra golpeia com a direita
+local function conjunto(...) local s = {} for _, l in ipairs({...}) do for _, b in ipairs(l) do s[b] = true end end return s end
+M.PARCIAIS = {Mordida_Andando = {base = "Mordida", ossos = conjunto(CABECA)}, Garra_Andando = {base = "Garra", ossos = conjunto(CABECA, PATA_D)}}
 function M.clipe(nome)
 	if cache[nome] then return cache[nome] end
+	local pc = M.PARCIAIS[nome]
+	if pc then
+		local b = M.clipe(pc.base); local c = table.clone(b); c.nome = nome; c.parcial = pc.ossos
+		cache[nome] = c; return c
+	end
 	local L = string.split(PASTA.Dados[nome].Value, "\n")
 	local h = string.split(L[1], "|")
 	local c = {nome = h[1], fps = tonumber(h[2]), loop = h[3] == "1", quadros = tonumber(h[4]), ossos = {}, marcadores = {}}
@@ -112,7 +124,8 @@ function M.montar(modelo, nome)
 		local t = M.arvore(modelo)
 		for _, p in ipairs(t:GetDescendants()) do
 			local cf = M.cframe(c, p.Name, i % c.quadros, nova)
-			if cf then p.CFrame = cf; n += 1 elseif i == 0 then table.insert(faltam, p.Name) end
+			if c.parcial and not c.parcial[p.Name] then p.Weight = 0                -- parcial: osso fica com a marcha
+			elseif cf then p.CFrame = cf; n += 1 elseif i == 0 then table.insert(faltam, p.Name) end
 		end
 		t.Parent = kf; kf.Parent = kfs; kfs_por_t[i] = kf
 	end

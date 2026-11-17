@@ -221,6 +221,33 @@ Sem tocar em `src/` nem em scripts compartilhados. A ligação com `N.ferir`, al
   - teste contra criatura real (exige copiar um modelo real ao place isolado);
   - PvP real, multiplayer e celular.
 
+## 11. r7: Mordida e Garra andando e correndo (18/11/2026; pedido do usuário: "o lobo em vez de atacar parado, possa atacar andando, pois se não, não existirá PvP de verdade")
+- **`AdaptadorLobo.luau`:** clipes **parciais** derivados dos aprovados, sem dado novo nem Blender.
+  - `Mordida_Andando`: pescoço, cabeça, mandíbula, orelhas, pálpebras, juba e pelos do pescoço.
+  - `Garra_Andando`: os mesmos ossos mais a pata dianteira **direita** (a Garra golpeia com a direita: maior amplitude em MaoD 0,78 e AntebracoD 0,60).
+  - Os outros ossos ficam com peso 0 e seguem a marcha por baixo.
+- **`LoboKit_Servidor.luau`:**
+  - **Em movimento** (seguindo o dono, ou IA voltando ao posto): o básico usa o clipe parcial e **não** prende o estado (continua "Livre"). `L.basicoAte` impede outra habilidade até o fim do golpe.
+  - **Parado:** clipe inteiro, como antes.
+  - Na r7b a detecção de movimento passou a ignorar o lobo parado pelo gancho de teste.
+- **Studio:** instalado e conferido por checksum (servidor 52452 bytes, adaptador 7156). Backups `LoboKit_Servidor_r6_antes_andando` e `AdaptadorLobo_antes_andando`. Place salvo (v37).
+- **Testes em Play** (o Lobo seguindo o dono; alvo de ensaio Humanoid 3×5×2 posto à frente; acionado pelo gancho, sem tecla física):
+
+| Caso | Resultado | Valores |
+|---|---|---|
+| Mordida andando (3,2 studs/s) | **funciona** | estado "Livre" durante o golpe; Lobo andou 5,4 studs em 1,8 s; dano 10 |
+| Garra andando | **funciona** | andou 5,4; dano 8,8 |
+| Mordida correndo (22 studs/s) | **funciona** | correu 38,2–38,6 studs em 1,8 s; dano 10–11 |
+| Garra correndo | **funciona** | 38,6 studs; dano 8,8 |
+| Patas durante o golpe (cliente, altura relativa ao pivô) | **funciona** | andando: PeE 0,47 contra 0,50 na marcha; MaoE 0,71 contra 0,71. Correndo: PeE 0,85 contra 0,88; MaoE 1,13 contra 1,16. Só MaoD muda (patada) |
+| Mordida parado (controle) | **funciona** | estado "Mordida" (clipe inteiro), dano 11 |
+
+- **Limites e pendências:**
+  - a cabeça morde na direção em que o Lobo corre (cone de 70°), sem virar o corpo para o alvo;
+  - não há clipe próprio de "mordida em corrida" (a parcial reaproveita a Mordida parada);
+  - PvP real e multiplayer não testados (um só jogador; o kit continua aceitando só a pasta Alvos).
+- **Evidências:** `studio/review/Lobo_r7_ataque_andando.mp4`, `r7_ataque_andando_prancha.jpg`, `r7_lobo_referencia_x_studio.jpg`.
+
 ## Evidências (`BLENDER/Criaturas/Lobo_Ancestral_Ref/studio/review/`)
 - `Lobo_Compatibilidade_ensaios.mp4` (21 s, Play, tempo real):
   - colossal: Mordida, Salto e Investida;

@@ -303,6 +303,7 @@ end)
 local function podeUsar(L, nome, c)
 	if not vivo(L) then return false, "lobo inativo" end
 	if L.estado ~= "Livre" then return false, "ocupado (" .. L.estado .. ")" end
+	if L.basicoAte and os.clock() < L.basicoAte then return false, "ocupado (golpe andando)" end   -- r7
 	local r = L.recargas[nome]; if r and os.clock() < r then return false, string.format("recarga %.1fs", r - os.clock()) end
 	if c.energia and L.energia < c.energia then return false, "energia" end
 	return true
@@ -341,10 +342,17 @@ local function ate(L, t0, t) while vivo(L) and os.clock() - t0 < t do RS.Heartbe
 local function basico(L, nome)
 	local c = CFG.Basico[nome]
 	local ok, por = podeUsar(L, nome, c); if not ok then return false, por end
-	gastar(L, nome, c); L.estado = nome
-	local cl = LA.clipe(c.clipe); local tC
+	-- r7 (18/11, pedido do usuario: atacar ANDANDO para haver PvP de verdade): em movimento o basico NAO para o lobo.
+	-- Usa o clipe PARCIAL (cabeca/pescoco; Garra + pata dianteira D) por cima da marcha e o estado continua "Livre"
+	-- (o seguir/IA seguem andando); L.basicoAte impede outra habilidade ate o fim do golpe. Parado = clipe inteiro, como antes.
+	local andando = ((L.seguindo and not L.parado and not L.virando) or (L.ia and L.ia.andando)) and true or false   -- r7b: so em movimento real
+	gastar(L, nome, c)
+	local clip = andando and (c.clipe .. "_Andando") or c.clipe
+	local cl = LA.clipe(clip); local tC
 	for _, mk in ipairs(cl.marcadores) do if mk.nome == c.marcador then tC = mk.t end end
-	L.C.acao(c.clipe, 0.08)
+	if andando then L.basicoAte = os.clock() + cl.quadros / cl.fps else L.estado = nome end
+	L.C.acao(clip, 0.08)
+	logc("HABILIDADE", L, nome .. (andando and " ANDANDO (clipe parcial, marcha continua)" or " parado"))
 	tarefa(L, function()
 		local t0 = os.clock()
 		if not ate(L, t0, tC or 0.5) then return end
@@ -358,7 +366,7 @@ local function basico(L, nome)
 			end
 		end
 		if melhor then causarDano(L, melhor, c.dano, nome) else logc("HABILIDADE", L, nome .. " sem alvo") end
-		ate(L, t0, cl.quadros / cl.fps); if vivo(L) then L.estado = "Livre" end
+		ate(L, t0, cl.quadros / cl.fps); if vivo(L) and not andando then L.estado = "Livre" end
 	end)
 	return true
 end
@@ -409,6 +417,7 @@ local function salto(L, dados)
 	local custo = (alvo and SP.energia or SP.energiaSemAlvo) * (cadeia and SP.cadeiaFatorEnergia or 1)
 	if not vivo(L) then return false, "lobo inativo" end
 	if L.estado ~= "Livre" then return false, "ocupado (" .. L.estado .. ")" end
+	if L.basicoAte and os.clock() < L.basicoAte then return false, "ocupado (golpe andando)" end   -- r7
 	if not cadeia then
 		local r = L.recargas.SaltoPredatorio; if r and os.clock() < r then return false, string.format("recarga %.1fs", r - os.clock()) end
 	end
