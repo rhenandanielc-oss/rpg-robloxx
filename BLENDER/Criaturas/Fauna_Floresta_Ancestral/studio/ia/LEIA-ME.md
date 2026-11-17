@@ -182,3 +182,11 @@ Pedido do usuário: o javali deve soar "mais natural e contínuo, que acabe deva
 - **Teste em Play:** no roteiro `javali_aprox`, todos os Sounds saíram com volume 0,000 (esmaecidos) e todos carregaram.
 - **Estado:** hash do Sons 1815937609. A r1 ficou em `Backup_IA_antes_1711.Sons_r1` e em `scratchpad/Sons_r1.luau`. Falta o usuário ouvir.
 - **APROVADO pelo usuário em 17/11** depois de ver e ouvir o javali em Play: Sons r2 é a base atual. O `IA_FaunaFloresta.rbxm` foi recompilado.
+
+### 17/11: Sons r3 — cervo e coruja
+
+- **Cervo:** os bufos continuam curtos (cerca de 0,75 s), com sorteio entre 2 takes e uma entrada leve. Só a cauda esmaece: em takes sem `dur`, o fade fica limitado a 45% da duração.
+- **Coruja:** o piado sorteia entre os 6 takes "Owl Hooting Reverberant Dry". Toca uns 4,5 s e esmaece em 1,6 s. As asas ganharam fade-in e fade-out.
+- **Teste em Play:** com a câmera no animal, todos os Sounds carregaram e saíram com volume 0,00 (esmaecidos).
+- **Estado:** hash do Sons 1428836852. A r2 ficou em `Backup_IA_antes_1711.Sons_r2`. Aguarda o usuário ouvir.
+- **APROVADO pelo usuário em 17/11** (cervo e coruja r3). Todos os sons do piloto estão aprovados. O `IA_FaunaFloresta.rbxm` foi recompilado.

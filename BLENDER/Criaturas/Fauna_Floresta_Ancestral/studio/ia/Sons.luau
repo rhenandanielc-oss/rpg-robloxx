@@ -1,4 +1,4 @@
--- IA_FaunaFloresta/Sons (17/11/2026, r2) - sons dos animais do PILOTO (cervo, javali, coruja), tocados pelo SERVIDOR em Sounds
+-- IA_FaunaFloresta/Sons (17/11/2026, r3: cervo e coruja com sorteio + fades; javali r2 aprovado) - sons dos animais do PILOTO (cervo, javali, coruja), tocados pelo SERVIDOR em Sounds
 -- posicionais dentro do modelo (o cliente ouve em 3D pela distancia). So audio LICENCIADO da biblioteca Pro Sound Effects
 -- do Creator Store. Volumes/tons/trechos [A TESTAR] pelo usuario (ninguem do lado da IA ouve o audio).
 -- Gatilhos: mudanca de estado (Controlador:mudar -> Sons.estado), evento pontual (Sons.evento) e "vida" em repouso.
@@ -18,10 +18,11 @@ local function id(n) return "rbxassetid://" .. n end
 --        fadeIn (s), fadeOut (s), varia (+-tom aleatorio), voz (true = canal de voz do animal), laco (true = Looped)}
 S.biblioteca = {
 	Cervo = {
-		-- "Deer Lip Smack, Snort, Heavy Exhale, Mouth Purse" 1..4 (Pro Sound Effects)
-		alerta = { id = id(9114037159), vol = 0.7, tom = 1.0, varia = 0.04, fadeOut = 0.25, voz = true },   -- Deer Lip Smack 1: bufo de atencao
-		fuga = { id = id(9114037335), vol = 1.0, tom = 0.95, varia = 0.03, fadeOut = 0.25, voz = true },    -- Deer Lip Smack 4: bufo de alarme
-		vida = { id = id(9114037338), vol = 0.35, tom = 1.0, varia = 0.06, fadeOut = 0.25, voz = true },    -- Deer Lip Smack 3: resfolego calmo
+		-- "Deer Lip Smack, Snort, Heavy Exhale, Mouth Purse" (Pro Sound Effects): sao bufos curtos por natureza (~1 s);
+		-- r3: sorteio entre takes + leve entrada e cauda esmaecida, para o bufo nao terminar seco
+		alerta = { ids = { id(9114037159), id(9114037338) }, vol = 0.7, tom = 1.0, varia = 0.05, fadeIn = 0.04, fadeOut = 0.55, voz = true },  -- bufo de atencao
+		fuga = { id = id(9114037335), vol = 1.0, tom = 0.95, varia = 0.03, fadeIn = 0.02, fadeOut = 0.5, voz = true },     -- Lip Smack 4: bufo de alarme
+		vida = { ids = { id(9114037338), id(9114037159) }, vol = 0.32, tom = 0.97, varia = 0.06, fadeIn = 0.08, fadeOut = 0.6, voz = true },   -- resfolego calmo
 	},
 	Javali = {
 		-- Pig Grunts 13/14/15 "Pitched Down Growls, Lethargic" (4,9/4,3/4,7 s): grunhido grave arrastado em repouso
@@ -42,9 +43,11 @@ S.biblioteca = {
 		tensao = { id = id(9117345997), vol = 0.32, tom = 0.78, fadeIn = 1.0, fadeOut = 1.6, laco = true },
 	},
 	Coruja = {
-		vida = { id = id(9117181543), vol = 0.6, tom = 1.0, inicio = 0.0, dur = 3.4, fadeOut = 0.8, varia = 0.03, voz = true },  -- Owl Hooting Dry 5
-		decolagem = { id = id(9113444620), vol = 0.22, tom = 0.7, varia = 0.04, fadeOut = 0.5 },      -- Bird Wing Flaps Pigeon Two 1, grave e baixo
-		pouso = { id = id(9113444792), vol = 0.18, tom = 0.72, dur = 1.2, fadeOut = 0.5 },            -- Bird Wing Flaps Small Two 1
+		-- r3: sorteio entre os 6 takes "Owl Hooting, Reverberant, Dry" (Several 1..6, 7,4-8,8 s); toca ~4,5 s e esmaece 1,6 s
+		vida = { ids = { id(9117181035), id(9117181273), id(9117181271), id(9117181321), id(9117181543), id(9117181539) },
+			vol = 0.6, tom = 1.0, dur = 4.5, fadeIn = 0.1, fadeOut = 1.6, varia = 0.03, voz = true },
+		decolagem = { id = id(9113444620), vol = 0.22, tom = 0.7, varia = 0.04, fadeIn = 0.1, fadeOut = 0.9 },   -- Bird Wing Flaps Pigeon Two 1, grave e baixo
+		pouso = { id = id(9113444792), vol = 0.18, tom = 0.72, dur = 1.4, fadeIn = 0.05, fadeOut = 0.8 },        -- Bird Wing Flaps Small Two 1
 	},
 }
 
@@ -113,7 +116,9 @@ function S.tocar(m, especie, nome)
 	task.spawn(function()
 		if not s.IsLoaded then s.Loaded:Wait() end
 		local tam = d.dur or math.max(0.1, s.TimeLength - (d.inicio or 0))
-		task.wait(math.max(0, tam / s.PlaybackSpeed - fo))      -- comeca a esmaecer 'fo' s antes do fim
+		local real = tam / s.PlaybackSpeed
+		if not d.dur then fo = math.min(fo, real * 0.45) end    -- take curto (bufo): so a cauda esmaece, o corpo do som fica inteiro
+		task.wait(math.max(0, real - fo))      -- comeca a esmaecer 'fo' s antes do fim
 		if vozes[m] == s then vozes[m] = nil end
 		apagar(s, fo)
 	end)
