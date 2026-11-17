@@ -1,0 +1,133 @@
+{
+ "versao": "r8",
+ "espinhos": [
+  {
+   "nome": "Espinho_01",
+   "osso": "Pescoco2",
+   "base": [
+    0.0,
+    -3.6163,
+    6.773
+   ],
+   "eixo": [
+    0.0,
+    0.89,
+    0.456
+   ],
+   "altura": 1.35
+  },
+  {
+   "nome": "Espinho_02",
+   "osso": "Pescoco1",
+   "base": [
+    -0.0151,
+    -2.8536,
+    6.4446
+   ],
+   "eixo": [
+    0.0752,
+    0.8626,
+    0.5003
+   ],
+   "altura": 1.11841
+  },
+  {
+   "nome": "Espinho_03",
+   "osso": "Pescoco1",
+   "base": [
+    0.0193,
+    -2.1098,
+    6.061
+   ],
+   "eixo": [
+    -0.1077,
+    0.8362,
+    0.5377
+   ],
+   "altura": 0.995
+  },
+  {
+   "nome": "Espinho_04",
+   "osso": "Coluna3",
+   "base": [
+    -0.0083,
+    -1.3698,
+    5.7471
+   ],
+   "eixo": [
+    0.0559,
+    0.8757,
+    0.4795
+   ],
+   "altura": 0.82353
+  },
+  {
+   "nome": "Espinho_05",
+   "osso": "Coluna2",
+   "base": [
+    -0.0026,
+    -0.6334,
+    5.5405
+   ],
+   "eixo": [
+    0.0207,
+    0.8872,
+    0.4608
+   ],
+   "altura": 0.71
+  },
+  {
+   "nome": "Espinho_06",
+   "osso": "Coluna2",
+   "base": [
+    0.0092,
+    0.1147,
+    5.4883
+   ],
+   "eixo": [
+    -0.0919,
+    0.8486,
+    0.521
+   ],
+   "altura": 0.55872
+  },
+  {
+   "nome": "Espinho_07",
+   "osso": "Coluna1",
+   "base": [
+    -0.008,
+    0.8522,
+    5.4738
+   ],
+   "eixo": [
+    0.1,
+    0.8446,
+    0.5259
+   ],
+   "altura": 0.446
+  },
+  {
+   "nome": "Espinho_08",
+   "osso": "Quadril",
+   "base": [
+    0.002,
+    1.5505,
+    5.3589
+   ],
+   "eixo": [
+    -0.0357,
+    0.8852,
+    0.4638
+   ],
+   "altura": 0.3104
+  }
+ ],
+ "espinhos_tris": 662,
+ "linhas_pontos": {
+  "pescoco": 44,
+  "dorso": 168,
+  "flanco": 140,
+  "pata_frente": 14
+ },
+ "linhas_tris": 990
+}

@@ -7,6 +7,9 @@
 --   Esquiva = chance sorteada no servidor a cada golpe (BindableFunction SortearEsquiva), separada da Esquiva Perfeita.
 --   Lentidao: teto global de 60% somado por alvo (regra 7 do balanceamento); jogadores so se CFG.lentidao.jogadores
 --   (PvP [A CONFIRMAR]); o dono/controlador nunca e afetado.
+-- r5 (16/11, kit completo): o Uivo passa a gravar BONUS (BonusVel_Uivo / BonusEsquiva_Uivo) e o Kit_Servidor soma todos
+--   os bonus em MultVelocidade / ChanceEsquiva (teto 35%); a lentidao virou generica (BindableEvent AplicarLentidao:
+--   modelo, valor, duracao) e a energia e compartilhada (BindableFunction GastarEnergia: custo -> true/false).
 -- Historico: E1/r3 (15-16/11) usava 15% / 20% de janela / 6 s / 18 s / 15 e regen 6 (copia: Uivo_Servidor_r3_antes_boreal).
 -- Roteiro (aprovado): Uivar (1,2 s, parado) -> efeito comeca no FIM do Uivar -> Uivando ate 3,67 s -> PararUivar (1,2 s).
 -- Interrupcao (aprovada): no Uivar = sem efeito (energia e recarga gastas); depois = efeito mantido, so a animacao corta.
@@ -38,6 +41,7 @@ local function agora() return workspace:GetServerTimeNow() end
 local energia = CFG.energiaMax
 lobo:SetAttribute("EnergiaMax", CFG.energiaMax); lobo:SetAttribute("Energia", energia)
 lobo:SetAttribute("MultVelocidade", 1); lobo:SetAttribute("ChanceEsquiva", CFG.esquivaBase)
+lobo:SetAttribute("BonusVel_Uivo", 0); lobo:SetAttribute("BonusEsquiva_Uivo", 0)
 lobo:SetAttribute("MultEsquiva", nil)
 lobo:SetAttribute("UivoFase", ""); lobo:SetAttribute("Parado", false)
 lobo:SetAttribute("RecargaFim_Uivo", 0); lobo:SetAttribute("RecargaDur_Uivo", CFG.recarga); lobo:SetAttribute("UivoDur", CFG.duracao)
@@ -86,17 +90,18 @@ local function recalcular(m)
 		lentos[m] = nil
 	end
 end
-local function aplicarLentidao(m)
+local function aplicarLentidao(m, valor, dur)
+	valor = valor or CFG.lentidao.valor; dur = dur or CFG.lentidao.dur
 	local reg = lentos[m]
 	if not reg then
 		local hum = m:FindFirstChildOfClass("Humanoid")
 		reg = {fontes = {}, base = hum and hum.WalkSpeed or nil}; lentos[m] = reg
 	end
-	local fim = agora() + CFG.lentidao.dur
-	table.insert(reg.fontes, {CFG.lentidao.valor, fim})
+	local fim = agora() + dur
+	table.insert(reg.fontes, {valor, fim})
 	m:SetAttribute("Lentidao_Boreal_Fim", fim)       -- o cliente desenha a geada no corpo do alvo
 	recalcular(m)
-	task.delay(CFG.lentidao.dur + 0.05, function() recalcular(m) end)
+	task.delay(dur + 0.05, function() recalcular(m) end)
 end
 local function alvoDe(parte)                        -- sobe ate o Model com Humanoid ou atributo Criatura
 	local m = parte:FindFirstAncestorOfClass("Model")
@@ -129,13 +134,13 @@ local function aplicarEfeito(id)
 	if id ~= ciclo then return end
 	ativoFim = agora() + CFG.duracao
 	lobo:SetAttribute("UivoAtivoFim", ativoFim)
-	lobo:SetAttribute("MultVelocidade", CFG.multVel)
-	lobo:SetAttribute("ChanceEsquiva", math.min(CFG.tetoEsquiva, CFG.esquivaBase + CFG.bonusEsquiva))
+	lobo:SetAttribute("BonusVel_Uivo", CFG.multVel - 1)
+	lobo:SetAttribute("BonusEsquiva_Uivo", CFG.bonusEsquiva)
 	lentidaoEmArea()
 	local fim = ativoFim
 	task.delay(CFG.duracao, function()
 		if ativoFim == fim then          -- outro uivo nao renovou
-			lobo:SetAttribute("MultVelocidade", 1); lobo:SetAttribute("ChanceEsquiva", CFG.esquivaBase)
+			lobo:SetAttribute("BonusVel_Uivo", 0); lobo:SetAttribute("BonusEsquiva_Uivo", 0)
 		end
 	end)
 end
@@ -144,6 +149,7 @@ local function uivar(origem)
 	local t = agora()
 	if lobo:GetAttribute("Incapacitado") then return recusar("incapacitado") end
 	if lobo:GetAttribute("UivoFase") ~= "" then return recusar("ja uivando") end
+	if lobo:GetAttribute("PoderAtivo") then return recusar("outro poder ativo") end          -- r5 (kit)
 	if (lobo:GetAttribute("VelAtual") or 0) > 0.3 then return recusar("em movimento") end   -- uiva parado (o controlador freia antes)
 	if t < recargaFim then return recusar(string.format("recarga %.1f s", recargaFim - t)) end
 	if energia < CFG.custo then return recusar(string.format("energia %.0f < %d", energia, CFG.custo)) end
@@ -201,6 +207,18 @@ sortear.OnInvoke = function()
 	return math.random() < math.min(CFG.tetoEsquiva, lobo:GetAttribute("ChanceEsquiva") or CFG.esquivaBase)
 end
 
+-- r5: lentidao generica e energia compartilhada (para o Kit_Servidor)
+local evLent = pasta:FindFirstChild("AplicarLentidao") or Instance.new("BindableEvent")
+evLent.Name = "AplicarLentidao"; evLent.Parent = pasta
+evLent.Event:Connect(function(m, valor, dur) if typeof(m) == "Instance" and m:IsA("Model") then aplicarLentidao(m, valor, dur) end end)
+local fnEn = pasta:FindFirstChild("GastarEnergia") or Instance.new("BindableFunction")
+fnEn.Name = "GastarEnergia"; fnEn.Parent = pasta
+fnEn.OnInvoke = function(custo)
+	if type(custo) ~= "number" or custo < 0 then return false end
+	if energia < custo then return false end
+	energia -= custo; lobo:SetAttribute("Energia", math.floor(energia)); return true
+end
+
 Players.PlayerRemoving:Connect(function(j)
 	-- o estado e do lobo: efeito e recarga continuam na hora do servidor; nada e reiniciado ao reconectar
 	if lobo:GetAttribute("DonoUserId") == j.UserId then lobo:SetAttribute("DonoAusente", true) end
@@ -216,7 +234,7 @@ task.spawn(function()
 	end
 end)
 
-pasta:SetAttribute("Uivo_Versao", "Boreal r4 16/11")
+pasta:SetAttribute("Uivo_Versao", "Boreal r5 16/11 (bonus somados no Kit, lentidao generica, energia compartilhada)")
 -- so ensaio: permite zerar/ajustar energia pelo servidor para testar a recusa
 local definir = pasta:FindFirstChild("Ensaio_DefinirEnergia") or Instance.new("BindableEvent")
 definir.Name = "Ensaio_DefinirEnergia"; definir.Parent = pasta

@@ -156,7 +156,7 @@ RunService.RenderStepped:Connect(function()
 	local fim = lobo:GetAttribute("UivoAtivoFim") or 0
 	local dur = lobo:GetAttribute("UivoDur") or 8
 	local resta = fim - agora
-	local ativo = resta > 0 and (lobo:GetAttribute("MultVelocidade") or 1) > 1
+	local ativo = resta > 0 and (lobo:GetAttribute("BonusVel_Uivo") or 0) > 0   -- r6: so o bonus do Uivo (a nevasca tambem mexe no MultVelocidade)
 	if not ativo then
 		if ligado then
 			ligado = false

@@ -1,0 +1,16 @@
+{
+ "versao": "E3",
+ "centro": [
+  0.0,
+  -0.4000000059604645,
+  0.0
+ ],
+ "cristais_chao": 78,
+ "lascas_ar_e_po": 225,
+ "placas": 23,
+ "tris": {
+  "Estilhacos_Chao_E3": 1504,
+  "Lascas_Ar_E3": 1800,
+  "Placa_Gelo_E3": 109
+ }
+}

@@ -123,6 +123,16 @@ entrarParado(0)
 lobo:SetAttribute("Controlador", 0); lobo:SetAttribute("VelAtual", 0)
 
 RunService.Heartbeat:Connect(function(dt)
+	-- r3 (16/11, kit): durante um poder que move o lobo (Cometa, Avalanche) o Kit_Servidor e dono do movimento e das
+	-- faixas; o controlador so espera e, ao voltar, retoma do Repouso
+	if lobo:GetAttribute("PoderAtivo") then
+		if E.modo ~= "Pausado" then E.modo = "Pausado"; E.clipe = nil; tocando = nil
+			for _, t in pairs(faixas) do if t.IsPlaying then t:Stop(0.15) end end end
+		lobo:SetAttribute("VelAtual", lobo:GetAttribute("VelPoder") or 0)
+		return
+	elseif E.modo == "Pausado" then
+		entrarParado(0.2)
+	end
 	local mult = lobo:GetAttribute("MultVelocidade") or 1
 	local agora = os.clock()
 	-- intencao valida (Uivo/Parado, pacote velho ou sem controlador = sem direcao)
@@ -232,4 +242,4 @@ rede.OnServerEvent:Connect(function(j, acao, a1, a2)
 end)
 
 Players.PlayerRemoving:Connect(function(j) if j == ctrl.jogador then soltar("saiu do jogo") end end)
-pasta:SetAttribute("Controle_Versao", "r2 16/11 (chao a frente das patas)")
+pasta:SetAttribute("Controle_Versao", "r3 16/11 (pausa durante PoderAtivo)")

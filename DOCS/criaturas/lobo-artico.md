@@ -3628,3 +3628,236 @@ Dois arquivos novos na raiz do repositório, ainda fora do git: `REFERENCIAS_POD
 - Não testado no celular.
 
 **Status:** efeitos do Uivo Boreal só no corpo, funcionando no Studio. **Visual APROVADO pelo usuário em 16/11/2026** ("Aprovado"): linhas pintadas no corpo (máscara r7b) + espinhos que crescem do dorso + olhos azul-gelo, sem nada flutuando. Place não salvo, sem commit.
+
+### 8.59 Kit completo do Lobo Ártico no ensaio (16/11/2026)
+
+**Commit anterior:** `f233ede`, com só o Lobo Ártico, autorizado pelo usuário ("Sim, commit"). `PROJECT-STATE.md` e `studio-em-uso.md` ficaram fora porque têm linhas de outros chats.
+
+**Pedido:** "Prossiga com os poderes, seguindo o documento de poderes, já faça todos os poderes de uma vez."
+- Base: `REFERENCIAS_PODERES_E_EFEITOS.md` v5.2, §1, §3, §0b e §5.4–5.7.
+- O Uivo Boreal já estava pronto. Foram feitos os outros 4.
+
+**Instalado (só em `Workspace.Teste_LoboArtico`; fontes em `studio/`):**
+- **`Kit_Servidor` r3** (autoridade do servidor):
+  - **Cometa Glacial:**
+    - energia 22, recarga 9 s;
+    - preparo de 0,25 s, depois voo em arco até 35 studs;
+    - curva máxima de 120°/s;
+    - obstáculo no caminho explode no ponto;
+    - explosão: raio 8, dano 0,8 × mordida (8), lentidão 30% por 2 s.
+  - **Avalanche:**
+    - energia 15, recarga 6 s;
+    - corrida teleguiada até 30 studs, curva máxima de 90°/s, inclina nas curvas;
+    - para ao chegar no alvo, em obstáculo ou sem chão;
+    - termina numa onda cônica: dano 1,2 × mordida (12), lentidão 30%;
+    - deixa uma trilha de gelo por 3 s, e o inimigo que pisa nela ganha `Escorregando`.
+  - **Mira:**
+    - ordem: alvo travado, depois o mais próximo num cone de 60° até 40 studs, depois a direção do cliente (mouse/câmera);
+    - exige linha de visão; um alvo travado escondido continua valendo por até 0,5 s.
+  - **Instinto Boreal:**
+    - marca de 8 s ao travar ou acertar;
+    - detecta inimigos `SobNeve` a até 90 studs;
+    - em nevasca (`workspace.Nevasca`): +12% de velocidade e +10% de esquiva.
+  - **Pelagem Polar:**
+    - `ImuneFrio` e `ImuneNeveProfunda`;
+    - −20% de dano de gelo (`ReceberDano`);
+    - parado ≥ 2 s na neve: `Camuflado`, alcance em que inimigos o notam ×0,6; some ao atacar ou ao se mover.
+  - **Bônus somados:** `BonusVel_*` → `MultVelocidade` e `BonusEsquiva_*` → `ChanceEsquiva`, com teto de 35%.
+  - **`ReceberDano`:** sorteia a esquiva antes de aplicar a resistência.
+- **`Kit_Cliente`:**
+  - **Comandos:**
+    - PC: Q = Cometa, E = Avalanche, clique num inimigo trava o alvo, T solta;
+    - toque: botões;
+    - a direção da Avalanche é enviada a 10 Hz.
+  - **Efeitos no corpo:**
+    - casca de gelo (Highlight azul-gelo no próprio lobo) no voo do Cometa;
+    - linhas do corpo e espinhos no preparo;
+    - FOV +8 no voo;
+    - no impacto: flash, estouro curto de 0,3 s, tremor e som de vidro;
+    - neve compactada (Highlight branco) na Avalanche, com som de neve;
+    - camuflagem (contraste cai em 1 s).
+  - **Só para o dono:** marca (contorno + seta), pegadas dos inimigos (8 s) e luz azul nos inimigos detectados sob a neve.
+- **Ajustes em scripts existentes:**
+  - `Uivo_Servidor` r5: bônus somados, `AplicarLentidao` e `GastarEnergia` compartilhados, recusa com outro poder ativo;
+  - `Uivo_Cliente` r6: o visual depende de `BonusVel_Uivo` (a nevasca não liga o Uivo);
+  - `Controle_Servidor` r3: pausa durante `PoderAtivo`.
+- **[ENSAIO], fora do documento:**
+  - Cometa: velocidade 34, altura 5,5, alcance mínimo 8;
+  - Avalanche: velocidade 24, cone de 10 studs com meio-ângulo de 35°, lentidão de 2 s;
+  - trilha: o efeito é só o atributo `Escorregando`;
+  - jogadores fora como alvo (PvP [A CONFIRMAR]).
+- **Animações [PENDENTE no documento]:** usam os clipes aprovados como substitutos. Preparo = Arrancada; voo = quadro da Corrida congelado; fim = Frenagem.
+
+**Testes em Play (16/11, alvos de ensaio criados só no Play):**
+| Caso | Resultado |
+|---|---|
+| Nevasca liga/desliga | velocidade 1,12/0,15 de esquiva → 1,00/0,05 |
+| 2000 golpes de gelo 10 | 4,9% de esquiva; dano por acerto 8,00 (físico 10,00) |
+| Cometa no alvo travado | arco 5,5; dano 8 (100→92); WalkSpeed 16→11,2; marca; recarga recusada (6,7 s) |
+| Cometa com parede | parou antes da parede ("obstaculo: Ensaio_Parede"); alvo atrás sem dano |
+| Avalanche sem alvo | percorreu 30, seguindo a direção; trilha marcou `Escorregando` no inimigo do caminho |
+| Avalanche com alvo atrás a 28,8 | não chega (curva de 90°/s gasta os 30 studs), sem acerto |
+| Avalanche com alvo à frente | chegou em 11,6; dano 12; lentidão por 2 s |
+| Camuflagem | ligou após 1,9 s parado na neve (×0,6); desligou ao atacar |
+| Inimigo sob a neve a 81 studs | detectado |
+| Pegadas | 3 em 10 studs do inimigo andando |
+
+- **Defeitos achados e corrigidos:**
+  - r1: o chão do voo era consultado com Y=0, achava o mapa embaixo e fazia o Cometa explodir parado;
+  - r2: o Cometa pousava em cima do alvo; a r3 pousa 2,5 studs antes. **A r3 está instalada mas não foi testada em Play.**
+- **Evidências:** `review/studio_v41/folha_kit_r1.jpg` e os quadros em `kit_r1/`. A câmera ficou longe; precisa de capturas de perto para a revisão visual.
+
+**Não testado:**
+- teclas reais, clique e toque;
+- celular;
+- vários jogadores;
+- encosta, água e trilha de fato escorregadia;
+- o giro medido no cliente deu até 118°/s por ruído de replicação (o servidor limita a 90°/s por código).
+
+**Status:** kit completo funcionando no Studio (ensaio). Place não salvo; sem commit desta etapa. Pendentes:
+- clipes próprios do Cometa e da Avalanche;
+- revisão visual de perto;
+- números [ENSAIO].
+
+### 8.60 Clipes próprios do Cometa Glacial e da Avalanche — v42 no Blender (17/11/2026, aguardando revisão)
+
+Gerador `BLENDER/Criaturas/Lobo_Artico_Ref/gen_kit_v42.py` sobre `anim_v41` (34 ações intactas) → `anim_v42/CR_LoboArtico_Anim.blend` (39 ações) + `anim_v42/kit_v42.json`. Mesmo construtor do bloco 4 (Repouso q0, tronco com pivô no quadril, patas plantadas por IK).
+
+| Ação | Quadros | Tipo | Conteúdo |
+|---|---|---|---|
+| CometaPreparar | 8 (0,27 s) | uma vez | agacha (quadril −0,95, peso para trás), cabeça baixa mirando, orelhas para trás; marcador Salto 0,27 s |
+| CometaVoo | 24 | laço | corpo esticado: dianteiras à frente, traseiras para trás, pescoço na linha das costas, cauda reta; leve ondulação. Sem altura (a trajetória é do servidor) |
+| CometaPouso | 24 (0,8 s) | uma vez | toque (q0, marcador Impacto) → amortece fundo (q5) → Repouso (q24) |
+| AvalancheCorrida | 14 (= Corrida) | laço | Corrida aprovada com camadas só em pescoço/cabeça baixos, orelhas coladas, boca entreaberta, cauda reta (patas idênticas à Corrida) |
+| AvalancheOnda | 30 (1 s) | uma vez | finca as dianteiras e empurra peito e cabeça para baixo e à frente com a boca aberta (marcador Onda 0,2 s), volta ao Repouso |
+
+QA: erro de IK 0 em todas; ponto mais baixo: sola dianteira −0,09 stud em CometaPouso q20 e −0,08 em AvalancheOnda q26 (mistura FK→IK perto do Repouso, mesmo método do v41); cauda do Preparar corrigida (descia abaixo do chão, agora sobe +8°). Pranchas: `review/v42_kit/revisao/kit_v42_{perfil_E,34_E,frente}.png` (`prancha_kit_v42.py`).
+Pendente: aprovação visual → export/reimport (GLB por LOD) → JSON → KFS no Teste-animacoes → trocar os placeholders no `Kit_Servidor`. Inclinação nas curvas da Avalanche fica no código (rolagem do modelo), não no clipe.
+
+**Vídeo-teste no Studio (17/11, pedido do usuário antes de aprovar):**
+- Ponte: `studio/exportar_clipes_json_v42.py` → `studio/json_v42/` (5 JSON + `matrizes_v41.json`, mesmo rig) → `studio/montar_kfs_lobo_v42.luau`. Os 5 KFS foram para `ReplicatedStorage.Animacoes_LoboArtico` (laço só em CometaVoo e AvalancheCorrida; prioridade Action).
+- Conferência: AvalancheCorrida × Corrida no Studio, mesma pose das pernas (diferença ≤ 0,006) e só pescoço/cabeça mudam.
+- `Kit_Servidor` r4: troca os substitutos pelos clipes (Preparar acelerado para 0,25 s; Pouso 0,75 s; Onda 0,9 s). Backup local `Kit_Servidor_r3_placeholders.server.luau`; no place, `ServerStorage.LoboArtico_Backups.Kit_Servidor_r3`/`_r4`.
+- **Achado no 1º vídeo:** nos dois poderes o peito do lobo terminava DENTRO do alvo. O pivô fica nas ancas e o código não contava os ~6 studs do corpo à frente.
+- **r5:** `CFG.focinho = 6.2`, `folgaAlvo = 1.2`. O Cometa pousa a d − 7,4; os raios de obstáculo vão até o focinho; a explosão sai do peito (pivô + 3 à frente). A Avalanche para a 7,9 do alvo.
+- Teste em Play r5:
+  - Cometa: pivô a 7,85 do alvo, 8 de dano;
+  - Avalanche: "chegou no alvo" após 16,6 studs, a 7,67, 12 de dano.
+- Vídeo: `review/studio_v42/video_kit_v42_r1.mp4` (velocidade real + metade). Capturas em `cometa_r3/` e `avalanche_r2/`; o 1º vídeo, com o defeito, está em `cometa_r2/` e `avalanche_r1/`.
+- Status: aguardando a revisão do usuário. Place não salvo; sem commit.
+
+**Mais testes (17/11, pedido: alvo mais longe e Cometa mais alto) — Kit_Servidor r6:**
+- Arco do Cometa: altura = min(10, distância × 0,32) [ENSAIO] (antes fixo 5,5). Saltos longos sobem até 10; saltos curtos não sobem reto.
+- Play:
+  - Cometa a 30 studs: atingiu, parou a 7,99 do alvo;
+  - Cometa a 38 studs: atingiu, parou a 7,89;
+  - Avalanche a 36 studs: "chegou no alvo" após 28,2 studs, a 8,00, 12 de dano.
+- Vídeo: `review/studio_v42/video_kit_v42_r2.mp4`. Backups: `studio/Kit_Servidor_r5.server.luau` e `ServerStorage.LoboArtico_Backups.Kit_Servidor_r5`.
+- Achado: os modelos `LODs_Reserva` estão no chão por volta de z −645, no caminho de testes mais longos para o norte.
+- **Pedido novo (17/11):** efeitos 100% fiéis à imagem de referência PREPARO/VOO/POUSO enviada no chat, iguais em todos os poderes. Plano em etapas, aguardando aprovação.
+
+### 8.61 Efeitos de gelo fiéis à referência — E1 no Blender (17/11/2026, aguardando revisão)
+
+**Pedido:** efeitos 100% fiéis à imagem PREPARO/VOO/POUSO enviada no chat, iguais em todos os poderes (Uivo, Cometa, Avalanche). A imagem não está salva em disco (só no chat). Etapas: E1 espinhos + linhas; E2 casca de gelo do voo; E3 estilhaços do pouso e rastro; E4 Studio.
+
+**E1 (r8):**
+- Fontes:
+  - `boreal/boreal_fx_r8.py` (sobre `anim_v42`) → `boreal/CR_LoboArtico_Boreal_r8.blend` + `export/boreal_fx_r8.json`;
+  - `boreal/assar_linhas_r8.py` → `tex/LoboArtico_Corpo_linhas_raw_r8.png`;
+  - `boreal/mascara_r8.py` → `tex/LoboArtico_Corpo_emissao_gelo_r8.png`;
+  - render de revisão: `boreal/render_r8.py`.
+- **Espinhos:** crista alta de cristais translúcidos em 11 posições, da nuca até o meio das costas.
+  - Pico na cernelha: 2,35 × 0,86–1,08 de variação; menores para trás (0,46 no fim).
+  - Cristais laterais em leque, ponta secundária e lascas na base.
+  - Material de vidro com brilho nas bordas.
+  - 1.088 tris. Cada posição é um objeto preso ao osso mais próximo (mesmo contrato do r6).
+- **Linhas** (máscara de emissão na UV da LOW_Corpo, como no r7b):
+  - espiral no ombro, atrás da juba; na juba o pelo cobria e borrava;
+  - onda pelo flanco até a anca com volta, linha alta nas costas, barriga, pernas e cauda;
+  - dos dois lados.
+- **Iterações:**
+  - r8a: fita torcida no peito virou "escada";
+  - r8b: espiral borrada sob a juba;
+  - r8d: fita mais fina não afina (o bake abre em leque);
+  - r8e: erosão de 5 px, como no r7b → linhas finas.
+- A "espinha de peixe" no ombro é a marca original do modelo aprovado, não uma linha nova.
+- Prancha: `boreal/prancha_gelo_r8.jpg` (Repouso e CometaPreparar q8, perfil e 3/4).
+- Pendente: aprovação do E1; no Roblox, trocar os espinhos (FX_Boreal) e a máscara (upload) e testar.
+- **r8f (17/11, pedido "cristais mais baixos e decrescentes"):**
+  - alturas 1,35 → 0,32, sempre caindo da nuca até o meio das costas (antes: pico 2,35 na cernelha);
+  - variação leve de ±3% que nunca inverte a ordem;
+  - linhas iguais ao r8e;
+  - prancha `boreal/prancha_gelo_r8f.jpg`.
+- **r8g (17/11, pedido "linhas alinhadas como a referência"):** a espiral do ombro passa a ser o centro (y −1,95, z 3,62, raio 0,62, 2 voltas) e as linhas saem dela.
+  - **Do topo:** sobe ao dorso, corre sob a crista e desce na anca.
+  - **Da ponta de trás:** corre pelo flanco, sobe ao quadril, contorna a coxa e continua pela perna traseira (Tíbia/Metatarso).
+  - **De baixo:** desce pela pata dianteira (Antebraço/Metacarpo).
+  - **Retiradas:** linha da barriga e linha solta das costas.
+  - Prancha: `boreal/prancha_gelo_r8g.jpg`.
+  - **Limite:** a juba (pelagem com atlas compartilhado) cobre a frente do ombro e a ligação espiral→pata dianteira perto do cotovelo, então essas partes ficam menos nítidas que na imagem.
+- **r8h–r8j (17/11, "ainda não está igual" + "mais espaço entre os cristais, penteados para trás"):**
+  - **Cristais:** 8 posições a cada ~0,72 (antes 11), eixo ~60° para trás; laterais e lascas também para trás; alturas 1,35 → 0,32 decrescentes.
+  - **Espiral:** desceu para cima da pata dianteira (y −2,45, z 3,30, raio 0,62, 1,9 volta). Dela saem 4 linhas:
+    - pescoço;
+    - dorso → anca;
+    - flanco → coxa → traseira;
+    - frente da pata dianteira.
+  - **Lição:** a máscara do jogo é 1024 (~25 px/stud no corpo). Voltas da espiral com menos de ~7 px de espaço viram borrão (r8h: raio 0,5 com 2,6 voltas = 4 px). A projeção curta do bake (r8i) não resolvia e engrossava as linhas; o bake voltou ao do r7b com erosão de 5 px.
+  - **Arquivos:** `boreal/prancha_gelo_r8j.jpg` e `boreal/zoom_ombro_r8j.jpg`.
+  - **Observação:** a pequena espiral com "seta" no alto do ombro é a marca original do modelo aprovado (máscara antiga), não faz parte da referência.
+- **r8k–r8l (17/11, pedido "o símbolo redondo em sua perna"):**
+  - **Posição:** espiral na parte de cima da pata dianteira, nos dois lados (y −3,06, z 2,62, raio 0,42, 1,5 volta).
+  - **r8k falhou:** o bake deformava a espiral na perna estreita e curva, e o anel cruzava costuras de UV (erro ~700 px).
+  - **Correção r8l:**
+    - `boreal/uv_simbolo_r8.py` varreu a perna atrás de um ponto sem costura (anel de raio 0,42 sem salto > 4 px; erro E 2,9 px, D 7,7 px);
+    - o mesmo script converte cada ponto da espiral redonda em 3D para UV;
+    - `mascara_r8.py` desenha a espiral direto na máscara (4096 → 1024).
+  - **Conectores:** as 4 linhas (pescoço, dorso → anca, flanco → coxa → traseira, frente da pata) partem do anel.
+  - **Arquivos:** `boreal/prancha_gelo_r8l.jpg` e `boreal/zoom_perna_r8l.jpg`.
+  - **E1 r8l APROVADA pelo usuário (17/11).**
+
+### 8.62 Efeitos de gelo E2 — casca vítrea do voo + rastro (17/11/2026)
+- **Pedido:** VOO da referência PREPARO/VOO/POUSO; casca de gelo vítreo sobre corpo e patas + rastro de cristais.
+- **Script:** `boreal/casca_e2.py` (roda sobre `CR_LoboArtico_Boreal_r8.blend` → `CR_LoboArtico_Boreal_E2.blend`, relatório `export/casca_e2.json`).
+  - **Casca** `Casca_Gelo_E2`: cópia da LOW_Corpo com Decimate 0,10 em repouso (pesos mantidos), empurrada 0,08–0,15 pela normal com variação (placas irregulares), sombreamento plano, Armature no mesmo rig → acompanha qualquer clipe. 1.994 tris. Material vidro (Transmission 0,9, IOR 1,31), borda ciano por Layer Weight (emissão ×3, alfa 0,10–0,75).
+  - **Rastro** `Rastro_Gelo_E2`: 70 cristais alongados + 160 grãos de pó num cone que sai da anca para trás, diminuindo com a distância; preso ao osso Quadril só para revisão. 1.900 tris. No Roblox vira ParticleEmitter.
+- **Render:** `boreal/render_e2.py` (cópia do render_r8 com vista traseira 3/4), CometaVoo q0 e q12 → `boreal/review_e2/`, prancha `boreal/prancha_gelo_e2.jpg`.
+- **Status:** só Blender; aguarda revisão do usuário. Studio não tocado.
+- **E2 APROVADA pelo usuário (17/11).**
+
+### 8.63 Efeitos de gelo E3 — estilhaços do pouso (17/11/2026)
+- **Pedido:** POUSO da referência: lascas de gelo explodindo no impacto. A casca do voo some e "vira" as lascas.
+- **Script:** `boreal/estilhacos_e3.py` (sobre `CR_LoboArtico_Boreal_E2.blend` → `CR_LoboArtico_Boreal_E3.blend`, relatório `export/estilhacos_e3.json`).
+  - `Estilhacos_Chao_E3`: coroa de 78 cristais cravados em 2 anéis elípticos, inclinados para fora, maiores perto do lobo (1.504 tris).
+  - `Lascas_Ar_E3`: 55 lascas voando para fora/cima + 170 grãos de pó (1.800 tris).
+  - `Placa_Gelo_E3`: crosta rachada em placas irregulares (r2; a r1 em fatias regulares parecia pizza) (109 tris).
+  - Casca e rastro da E2 escondidos no render do pouso.
+- **Roblox (E4):** coroa = Parts que crescem e somem; lascas/pó = ParticleEmitter; crosta = decal/placas que derretem.
+- **Render:** CometaPouso q1 e q6 → `boreal/review_e3/`, prancha `boreal/prancha_gelo_e3.jpg`. Só Blender; Studio não tocado.
+- **E3 APROVADA pelo usuário (17/11).**
+
+### 8.64 Efeitos de gelo E4 — no Studio (Teste-animacoes, 17/11/2026)
+- **Export:** `boreal/exportar_e4.py` → `boreal/export/CR_LoboArtico_GeloFX_E4.glb` (0,4 MB): rig, Espinho_01..08 (r8l), Casca_Gelo (pele), Molde_Coroa_1..3, Molde_Lasca_1..2, crosta.
+- **Import 3D (usuário):** entrou como `Scene`. Lição: o Import 3D nomeia as peças pela **malha**, não pelo objeto (`Casca_Gelo_E2`, `Placa_Gelo_E3`) → `studio/montar_gelo_e4.luau` renomeia antes de montar; o que sobra fica em `Workspace.Import_GeloFX_E4`.
+- **Montagem:** `montar_gelo_e4.luau` (T por 30 ossos, giro 0). FX_Boreal anterior guardado em `ServerStorage.LoboArtico_Backups.FX_Boreal_r6`. Base dos espinhos: Blender (x,y,z) → Roblox (−x, z, y) a partir do pivô (conferido com o r6). Moldes guardados em y −300 (acima do FallenPartsDestroyHeight).
+- **Imagens enviadas à conta do usuário:** máscara das linhas r8l `rbxassetid://103482067734616` (LOW_Corpo SurfaceAppearance; a anterior 111250623946372 ficou no atributo `MascaraAnterior`) e lasca do rastro `rbxassetid://89705690599635` (`boreal/tex/LoboArtico_LascaGelo_sprite.png`; levou alguns minutos para ficar disponível).
+- **`studio/Kit_Cliente.client.luau` r2** (backup local `Kit_Cliente_r1_highlight`, no place `LoboArtico_Backups.Kit_Cliente_r1`):
+  - Cometa: casca real (`Casca_Gelo`, Glass) só no VOO (forma em 0,15 s); rastro = 2 ParticleEmitter no osso Quadril (lascas 160/s + pó 300/s); pouso = coroa de cristais (2 anéis elípticos, crescem 0,12 s, afundam e somem até 1,7 s) + 28 lascas balísticas + crosta que derrete em 2,4 s + pó.
+  - Avalanche: mantém a neve no corpo; ganhou espinhos, linhas e olhos; estouro de gelo menor (escala 0,6) na onda.
+  - Olhos azul-gelo nos dois poderes (pontos Neon nas pálpebras, como no Uivo).
+- **Teste em Play (17/11):** Cometa a 30 studs (2 vezes; r2 com rastro reforçado) e Avalanche a 30 studs; sem erros de script no console. Capturas `review/studio_v42/e4_cometa_r1`, `e4_cometa_r2`, `e4_avalanche_r1`, folhas `folha_e4_*.jpg`, zoom `zoom_e4_r2.jpg`, vídeo **`review/studio_v42/video_kit_e4_r1.mp4`** (36 s, real + metade).
+- **Uivo Boreal:** usa os mesmos espinhos/máscara (contrato igual); não foi gravado nesta rodada.
+- **Place não salvo.** Aguarda revisão do usuário.
+- **E4 APROVADA pelo usuário (17/11).**
+
+### 8.65 Cometa r7 — segue o alvo, longo alcance (17/11/2026)
+- **Pedido:** "esse ataque segue o alvo, pois ele deve ter um longo alcance".
+- **Antes (r6):** a distância do salto era fixada na partida (teto 35) e a mira só travava até 40 → alvo em movimento ou longe ficava fora.
+- **`studio/Kit_Servidor.server.luau` r7** (backup local `Kit_Servidor_r6.server.luau`; no place `LoboArtico_Backups.Kit_Servidor_r6`):
+  - cometa.alcance 35 → **60**, giro 120 → **240 °/s**, vel 34 → **40**; mira.dist 40 → **65** (todos [ENSAIO]);
+  - no voo, o ponto de pouso **acompanha o alvo** a cada quadro (distância restante − focinho − folga, suavizada, teto = alcance); a altura do arco é fixada na partida (teto 10) para não pular.
+- **Teste em Play na `Pista_Ensaio`** (o piso do teste acaba antes de 55 studs; o personagem precisou ir para perto da pista por causa do streaming — sem isso a câmera mostrava só o vazio):
+  - alvo parado a 55 studs: percorreu 46,6, atingiu (8 de dano);
+  - alvo fugindo a 6 studs/s em zigue-zague (começo a 40): percorreu 42,1, virou junto e atingiu (8 de dano).
+- **Evidência:** `review/studio_v42/r7_cometa_55`, `r7_cometa_fuga`, folhas `folha_r7_*.jpg`, vídeo **`review/studio_v42/video_cometa_r7.mp4`** (30 s). O avatar do jogador aparece no quadro.
+- **Place:** Team Create já gravou (save_place: sem mudanças pendentes); conferido no Edit: servidor r7, cliente r2, casca, 6 moldes, máscara nova.
