@@ -26,6 +26,15 @@ local lib = game:GetService("ReplicatedStorage"):WaitForChild("Animacoes_LoboArt
 
 local CFG = {
 	mordida = 10, vida = 400,                                   -- base dos lobos (§0b)
+	-- r8 (pedido 17/11: atacar ANDANDO, PvP): ataque basico fora dos slots, sequencia variada de mordidas e garras;
+	-- clipes PARCIAIS v43 (so pescoco/cabeca/boca/orelhas e, na garra, uma pata dianteira) por cima da locomocao.
+	-- NAO marca PoderAtivo: o Controle_Servidor continua movendo o lobo. Valores [ENSAIO].
+	basico = {seq = {"Mordida1", "GarraE", "Mordida2", "GarraD"}, danoMordida = 1.0, danoGarra = 0.8,   -- x mordida (10)
+		-- r11 (decisao do usuario 17/11: "sem garras ... somente para animais pequenos de caca, como javali, coruja, etc...
+		-- No combate nao"): combate = so mordidas; garras so contra presa pequena de caca.
+		seqCombate = {"Mordida1", "Mordida2"},
+		presaAtributo = "PresaPequena", presaNomes = {"Javali", "Coruja"},     -- [PROVISORIO] contrato com a fauna; outras especies = decisao do usuario
+		intervalo = 0.5, reinicio = 1.2, alcance = 3.5, cone = 75, contato = {Mordida1 = 0.2, Mordida2 = 0.2, GarraE = 0.233, GarraD = 0.233}},   -- r11b: reinicio 1,0 -> 1,2 (segurar o botao repete a cada 0,5 s)
 	esquivaBase = 0.05, tetoEsquiva = 0.35,
 	mira = {cone = 60, dist = 65, perdaVisao = 0.5},      -- r7: trava/escolhe alvo ate 65 (Cometa de longo alcance) [ENSAIO]
 	cometa = {custo = 22, recarga = 9, alcance = 60, mult = 0.8, raio = 8, lent = 0.30, lentDur = 2, giro = 240, prep = 0.25,
@@ -82,6 +91,43 @@ local function faixa(n)
 	return faixas[n]
 end
 for _, n in ipairs({"CometaPreparar", "CometaVoo", "CometaPouso", "AvalancheCorrida", "AvalancheOnda", "Repouso"}) do faixa(n) end
+-- r8: faixas do ataque basico (parciais) ficam FORA de `faixas` para o so()/pararTodas() dos poderes nao as tocarem
+local golpes = {}
+local function golpe(n)
+	if not golpes[n] then
+		local a = Instance.new("Animation"); a.AnimationId = KSP:RegisterKeyframeSequence(lib["LoboArtico_" .. n])
+		golpes[n] = animator:LoadAnimation(a); golpes[n].Priority = Enum.AnimationPriority.Action2; golpes[n].Looped = false
+	end
+	return golpes[n]
+end
+for _, n in ipairs(CFG.basico.seq) do if lib:FindFirstChild("LoboArtico_" .. n) then golpe(n) end end
+-- r10 (v43 r5, aprovado 17/11 "Aprovar e integrar"): garras SINCRONIZADAS por marcha (comecam no quadro em que aquela pata
+-- DESCOLA na passada e devolvem a pata onde a passada a apoia) + mordidas com variante de Corrida (corpo baixo do galope).
+for _, n in ipairs({"GarraE_Andar", "GarraD_Andar", "GarraE_Trote", "GarraD_Trote", "GarraE_Corrida", "GarraD_Corrida",
+	"Mordida1_Corrida", "Mordida2_Corrida"}) do if lib:FindFirstChild("LoboArtico_" .. n) then golpe(n) end end
+local LOCO_LEN = {Andar = 36 / 30, Trote = 18 / 30, Corrida = 14 / 30}             -- ciclo dos clipes de locomocao (s)
+local DESCOLA = {Andar = {E = 32 / 30, D = 14 / 30}, Trote = {E = 8 / 30, D = 17 / 30}, Corrida = {E = 10 / 30, D = 9 / 30}}  -- gen_garra_v43r5
+local golpeAte = 0                                                                  -- r10: sem Piscar durante golpe (+0,2 s)
+local function faixaMarcha()
+	if lobo:GetAttribute("CtrlModo") ~= "Laco" then return nil end
+	local m = lobo:GetAttribute("CtrlMarcha"); local L = LOCO_LEN[m]; if not L then return nil end
+	for _, tr in ipairs(animator:GetPlayingAnimationTracks()) do
+		if tr.Looped and math.abs(tr.Length - L) < 0.02 and tr.WeightCurrent > 0.5 and tr.Priority ~= Enum.AnimationPriority.Action then return m, tr end
+	end
+	return nil
+end
+-- r9 (usuario 17/11 "quero animacao nos olhos"): os golpes ja animam as palpebras (estreitam mirando, fecham no contato);
+-- alem disso o lobo PISCA de tempos em tempos (clipe parcial so das 4 palpebras, Action3) andando, correndo ou parado.
+if lib:FindFirstChild("LoboArtico_Piscar") then
+	task.spawn(function()
+		local a = Instance.new("Animation"); a.AnimationId = KSP:RegisterKeyframeSequence(lib.LoboArtico_Piscar)
+		local f = animator:LoadAnimation(a); f.Priority = Enum.AnimationPriority.Action3; f.Looped = false
+		while lobo.Parent do
+			task.wait(2.5 + math.random() * 4)
+			if not f.IsPlaying and os.clock() > golpeAte then f:Play(0.03) end      -- r10: nao mascara a expressao do golpe
+		end
+	end)
+end
 local function so(n, t, ritmo, fade)
 	for nome, f in pairs(faixas) do if nome ~= n and f.IsPlaying then f:Stop(fade or 0.12) end end
 	local f = faixa(n)
@@ -396,6 +442,72 @@ task.spawn(function()
 	end
 end)
 
+-- ATAQUE BASICO (r8) ---------------------------------------------------------------------------------------------------
+-- O servidor decide: intervalo, sequencia, alvo no cone a frente do focinho NO INSTANTE DO CONTATO (o lobo e o alvo podem
+-- estar se movendo), dano. Nada de PoderAtivo: andar/trotar/correr/virar continuam.
+local basicoProx, basicoIdx, basicoUlt, basicoSeq = 0, 0, 0, nil
+local function ehPresaPequena(m)
+	if not m then return false end
+	if m:GetAttribute(CFG.basico.presaAtributo) == true then return true end
+	local esp = tostring(m:GetAttribute("Especie") or "") .. " " .. m.Name
+	for _, n in ipairs(CFG.basico.presaNomes) do if esp:find(n, 1, true) then return true end end
+	return false
+end
+local function basico()
+	local B = CFG.basico; local t = os.clock()
+	if lobo:GetAttribute("PoderAtivo") or lobo:GetAttribute("UivoFase") == "Uivar" then return recusar("Basico", "ocupado") end
+	if t < basicoProx - 0.05 then return false end                          -- r11b: tolerancia de 0,05 s (pedido que chegava um pouco cedo era recusado e reiniciava a sequencia)
+	local alvoAtk = escolherAlvo()
+	local seq = ehPresaPequena(alvoAtk) and B.seq or B.seqCombate       -- r11: garras so na caca de presa pequena
+	if t - basicoUlt > B.reinicio or seq ~= basicoSeq then basicoIdx = 0 end
+	basicoSeq = seq
+	basicoIdx = basicoIdx % #seq + 1; basicoUlt = t
+	local nome = seq[basicoIdx]
+	lobo:SetAttribute("BasicoModo", seq == B.seq and "caca" or "combate")
+	-- r10: escolhe a versao pela marcha; garra andando espera o descolamento da pata que descola primeiro
+	local marcha, ft = faixaMarcha()
+	local atraso, ritmo = 0, 1
+	if nome:sub(1, 5) == "Garra" then
+		if marcha then
+			local tp, sp, L = ft.TimePosition, math.max(ft.Speed, 0.05), LOCO_LEN[marcha]
+			local lado, w = nil, math.huge
+			for l, t0 in pairs(DESCOLA[marcha]) do local esp = ((t0 - tp) % L) / sp; if esp < w then lado, w = l, esp end end
+			nome = "Garra" .. lado .. "_" .. marcha; atraso = w; ritmo = sp
+		end
+	elseif marcha == "Corrida" and golpes[nome .. "_Corrida"] then nome = nome .. "_Corrida" end
+	local contato = (nome:sub(1, 5) == "Garra" and 7 / 30 or 6 / 30) / ritmo
+	basicoProx = t + atraso + B.intervalo
+	basicoUlt = t + atraso                       -- r10b: o reinicio da sequencia conta do golpe tocado (a espera da garra o fazia voltar a Mordida1)
+	golpeAte = t + atraso + 0.5 / ritmo + 0.2
+	local function tocar()
+		local f = golpes[nome] or golpe(nome)
+		for _, g in pairs(golpes) do if g ~= f and g.IsPlaying then g:Stop(0.08) end end
+		f:Play(0.06, 1, ritmo); f.TimePosition = 0
+		lobo:SetAttribute("BasicoAtual", nome); lobo:SetAttribute("BasicoN", (lobo:GetAttribute("BasicoN") or 0) + 1)
+		lobo:SetAttribute("BasicoEspera", math.floor(atraso * 1000 + 0.5) / 1000)
+		fx:FireAllClients("basico", nome)
+	end
+	revelar()
+	if atraso > 0.005 then task.delay(atraso, tocar) else tocar() end
+	task.delay(atraso + contato, function()
+		if lobo:GetAttribute("PoderAtivo") then return end
+		local pv = lobo:GetPivot(); local fr = plano(pv.LookVector).Unit
+		local focinho = pv.Position + fr * CFG.focinho
+		local melhor, dm = nil, math.huge
+		for _, m in ipairs(inimigosEm(focinho, B.alcance + 4)) do
+			local d = plano(posDe(m) - focinho)
+			local ang = math.abs(math.deg(angulo(fr, plano(posDe(m) - pv.Position).Unit)))
+			if d.Magnitude <= B.alcance + 1.5 and ang <= B.cone / 2 and d.Magnitude < dm then melhor, dm = m, d.Magnitude end
+		end
+		if melhor then
+			local mult = nome:sub(1, 5) == "Garra" and B.danoGarra or B.danoMordida
+			causarDano(melhor, CFG.mordida * mult, "Fisico")
+			lobo:SetAttribute("BasicoAcertou", melhor.Name .. string.format(" %.1f", dm))
+		else lobo:SetAttribute("BasicoAcertou", "") end
+	end)
+	return true
+end
+
 -- rede -------------------------------------------------------------------------------------------------------------------
 local janela, n = 0, 0
 rede.OnServerEvent:Connect(function(j, acao, a1, a2)
@@ -413,6 +525,10 @@ rede.OnServerEvent:Connect(function(j, acao, a1, a2)
 		local m = typeof(a1) == "Instance" and modeloAlvo(a1) or nil
 		if m and alvoValido(m) and visivel(m) then travado = m; marcar(m); lobo:SetAttribute("AlvoTravado", m.Name)
 		else travado = nil; lobo:SetAttribute("AlvoTravado", "") end
+	elseif acao == "basico" then
+		local d = dirValida(a1); if d then dirCliente, dirT = d, c end
+		if typeof(a2) == "Instance" then local m = modeloAlvo(a2); if m and alvoValido(m) then travado = m; marcar(m) end end
+		basico()
 	elseif acao == "cometa" or acao == "avalanche" then
 		local d = dirValida(a1); if d then dirCliente, dirT = d, c end
 		if typeof(a2) == "Instance" then local m = modeloAlvo(a2); if m and alvoValido(m) then travado = m end end
@@ -420,4 +536,4 @@ rede.OnServerEvent:Connect(function(j, acao, a1, a2)
 	end
 end)
 Players.PlayerRemoving:Connect(function(j) if j.UserId == dono() then travado = nil end end)
-pasta:SetAttribute("Kit_Versao", "r3 16/11 (Cometa, Avalanche, Instinto Boreal, Pelagem Polar)")
+pasta:SetAttribute("Kit_Versao", "r11 17/11 (combate so mordidas, garras so na caca de presa pequena; garras sincronizadas por marcha v43r5, sem piscar no golpe; piscar + ataque basico andando + Cometa r7 segue o alvo, Avalanche, Instinto Boreal, Pelagem Polar)")

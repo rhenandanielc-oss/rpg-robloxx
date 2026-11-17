@@ -1,4 +1,4 @@
--- Kit_Cliente r2 E4 (17/11) (Script com RunContext = Client, Workspace.Teste_LoboArtico) - comandos e efeitos do KIT do Lobo Artico.
+-- Kit_Cliente r3 (17/11: ataque basico andando; r2 E4) (Script com RunContext = Client, Workspace.Teste_LoboArtico) - comandos e efeitos do KIT do Lobo Artico.
 -- So manda pedidos (o Kit_Servidor decide tudo) e desenha efeitos. Regra do usuario: efeitos NO CORPO, nada flutuando
 -- em volta do lobo. Fora do corpo so o que e do ALVO (marca, pegadas, deteccao) e o estouro curto do impacto.
 -- PC: Q Cometa Glacial | E Avalanche | clique num inimigo = travar alvo | T solta o alvo. Celular: botoes de toque.
@@ -52,14 +52,39 @@ CAS:BindAction("Lobo_Cometa", function(_, e) if e == Enum.UserInputState.Begin t
 CAS:BindAction("Lobo_Avalanche", function(_, e) if e == Enum.UserInputState.Begin then pedir("avalanche") end return Enum.ContextActionResult.Pass end, true, Enum.KeyCode.E)
 CAS:BindAction("Lobo_SoltarAlvo", function(_, e) if e == Enum.UserInputState.Begin then alvoTravado = nil; rede:FireServer("travar", nil) end return Enum.ContextActionResult.Pass end, false, Enum.KeyCode.T)
 CAS:SetTitle("Lobo_Cometa", "Cometa"); CAS:SetTitle("Lobo_Avalanche", "Avalanche")
-UIS.InputBegan:Connect(function(i, gp)
-	if gp or i.UserInputType ~= Enum.UserInputType.MouseButton1 or not souDono() then return end
+-- r3 (17/11): ATAQUE BASICO andando - clique esquerdo ataca (mordidas e garras em sequencia; segurar repete) e, se o
+-- clique cair num inimigo, tambem trava o alvo. Celular: botao "Atacar" (segurar repete). O servidor decide tudo.
+local segurando = false
+local function atacar()
+	if not souDono() then return end
+	rede:FireServer("basico", direcao(), alvoTravado)
+end
+local function inimigoSobMouse()
 	local m = UIS:GetMouseLocation(); local raio = camera:ViewportPointToRay(m.X, m.Y)
 	local rp = RaycastParams.new(); rp.FilterType = Enum.RaycastFilterType.Exclude; rp.FilterDescendantsInstances = {lobo, jogador.Character}
 	local r = workspace:Raycast(raio.Origin, raio.Direction * 300, rp)
 	local alvo = r and r.Instance and r.Instance:FindFirstAncestorOfClass("Model")
-	if alvo and (alvo:FindFirstChildOfClass("Humanoid") or alvo:GetAttribute("Criatura")) then alvoTravado = alvo; rede:FireServer("travar", alvo) end
+	if alvo and (alvo:FindFirstChildOfClass("Humanoid") or alvo:GetAttribute("Criatura")) then return alvo end
+end
+local function comecarAtaque()
+	if segurando then return end
+	segurando = true
+	task.spawn(function()
+		while segurando and lobo.Parent do atacar(); task.wait(0.5) end
+	end)
+end
+UIS.InputBegan:Connect(function(i, gp)
+	if gp or i.UserInputType ~= Enum.UserInputType.MouseButton1 or not souDono() then return end
+	local alvo = inimigoSobMouse()
+	if alvo then alvoTravado = alvo; rede:FireServer("travar", alvo) end
+	comecarAtaque()
 end)
+UIS.InputEnded:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 then segurando = false end end)
+CAS:BindAction("Lobo_Ataque", function(_, e)
+	if e == Enum.UserInputState.Begin then comecarAtaque() elseif e == Enum.UserInputState.End or e == Enum.UserInputState.Cancel then segurando = false end
+	return Enum.ContextActionResult.Pass
+end, true, Enum.KeyCode.ButtonR2)
+CAS:SetTitle("Lobo_Ataque", "Atacar")
 -- direcao continua durante a Avalanche (segue mouse/camera sem alvo)
 task.spawn(function()
 	while lobo.Parent do

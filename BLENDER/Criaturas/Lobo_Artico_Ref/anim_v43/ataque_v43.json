@@ -1,0 +1,100 @@
+{
+ "acoes": {
+  "Mordida1": {
+   "quadros": 15,
+   "parcial": true,
+   "ossos": [
+    "Pescoco1",
+    "Pescoco2",
+    "Cabeca",
+    "Mandibula",
+    "Orelha_E",
+    "Orelha_D",
+    "Palpebra_Sup_E",
+    "Palpebra_Inf_E",
+    "Palpebra_Sup_D",
+    "Palpebra_Inf_D"
+   ],
+   "marcadores_s": {
+    "Contato": 0.2
+   }
+  },
+  "Mordida2": {
+   "quadros": 15,
+   "parcial": true,
+   "ossos": [
+    "Pescoco1",
+    "Pescoco2",
+    "Cabeca",
+    "Mandibula",
+    "Orelha_E",
+    "Orelha_D",
+    "Palpebra_Sup_E",
+    "Palpebra_Inf_E",
+    "Palpebra_Sup_D",
+    "Palpebra_Inf_D"
+   ],
+   "marcadores_s": {
+    "Contato": 0.2
+   }
+  },
+  "GarraE": {
+   "quadros": 15,
+   "parcial": true,
+   "ossos": [
+    "Pescoco1",
+    "Pescoco2",
+    "Cabeca",
+    "Mandibula",
+    "Orelha_E",
+    "Orelha_D",
+    "Palpebra_Sup_E",
+    "Palpebra_Inf_E",
+    "Palpebra_Sup_D",
+    "Palpebra_Inf_D",
+    "Umero_E",
+    "Antebraco_E",
+    "Metacarpo_E",
+    "Dedos_E"
+   ],
+   "marcadores_s": {
+    "Contato": 0.233
+   }
+  },
+  "GarraD": {
+   "quadros": 15,
+   "parcial": true,
+   "ossos": [
+    "Pescoco1",
+    "Pescoco2",
+    "Cabeca",
+    "Mandibula",
+    "Orelha_E",
+    "Orelha_D",
+    "Palpebra_Sup_E",
+    "Palpebra_Inf_E",
+    "Palpebra_Sup_D",
+    "Palpebra_Inf_D",
+    "Umero_D",
+    "Antebraco_D",
+    "Metacarpo_D",
+    "Dedos_D"
+   ],
+   "marcadores_s": {
+    "Contato": 0.233
+   }
+  },
+  "Piscar": {
+   "quadros": 8,
+   "parcial": true,
+   "ossos": [
+    "Palpebra_Sup_E",
+    "Palpebra_Inf_E",
+    "Palpebra_Sup_D",
+    "Palpebra_Inf_D"
+   ],
+   "marcadores_s": {}
+  }
+ },
+ "nota": "clipes PARCIAIS: so os ossos listados tem chave; tocar em prioridade Action sobre a locomocao"
+}
