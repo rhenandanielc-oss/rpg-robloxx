@@ -102,6 +102,17 @@ function M.montar(modelo, nome, prioridade)
 			local cf = M.cframe(c, p.Name, i % c.quadros, nova)
 			if cf then p.CFrame = cf; n += 1 elseif i == 0 then table.insert(faltam, p.Name) end
 		end
+		-- O1 (17/11): osso que o clipe NAO grava nao entra na pose (senao o Animator o prende no repouso: clipe de
+		-- corpo travaria os olhos e o Piscar travaria o corpo). Ancestral sem dado fica so de caminho (Weight 0).
+		local function poda(p)
+			local temFilho = false
+			for _, f in ipairs(p:GetChildren()) do if f:IsA("Pose") and poda(f) then temFilho = true end end
+			local tem = c.ossos[p.Name] ~= nil
+			if not tem then p.Weight = 0 end
+			if not tem and not temFilho and p ~= t then p:Destroy(); return false end
+			return tem or temFilho
+		end
+		poda(t)
 		t.Parent = kf; kf.Parent = kfs; kfsPorQuadro[i] = kf
 	end
 	for evn, tev in pairs(c.eventos) do                 -- eventos de sincronizacao -> KeyframeMarker no quadro mais perto

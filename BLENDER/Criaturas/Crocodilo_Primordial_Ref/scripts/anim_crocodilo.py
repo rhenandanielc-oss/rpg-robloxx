@@ -749,6 +749,23 @@ CLIPES["CaudaDeMare"] = (boca_acompanha(clipe_cauda_de_mare), 1.5, False, 0.0)
 EXTRA["CaudaDeMare"] = {"eventos": {"arma": 0.20, "impacto_cauda": 0.56, "fim_varredura": 0.75}, "de": "NadoParado", "para": "NadoParado",
                         "obs": "PROTOTIPO de poder (Cauda de Mare = referencia historica); varre de +X para -X"}
 PES_CORPO["CaudaDeMare"] = 1.0
+def clipe_cauda_de_mare_terra(t):
+    """P4 16/11: Cauda de Mare EM TERRA (1,5 s): mesmas fases da versao na agua (arma +X -> varre para -X com a ponta
+    atrasada -> recupera), mas apoiado nas 4 patas plantadas, corpo baixo e a cauda varrendo rente ao chao (cauda_no_chao)."""
+    r = mix(REP0, {}, 0.0)
+    arma = suave(t / 0.45); varre = suave((t - 0.45) / 0.22); volta = suave((t - 0.80) / 0.70)
+    for i, nm in enumerate(CAUDA):
+        k = i / 7; v_ = suave((t - 0.45 - 0.06 * k) / 0.22)
+        soma(r, nm, Z_, (14.0 * arma - 30.0 * v_) * (0.5 + 0.5 * k) * (1 - volta))
+    tor = (6.0 * arma - 12.0 * varre) * (1 - volta)
+    soma(r, "Pelve", Z_, -0.8 * tor); soma(r, "Coluna1", Z_, 0.5 * tor)
+    soma(r, "Pescoco", Z_, 0.6 * tor); soma_cab(r, Z_, 0.4 * tor)
+    r["Mandibula"] = [(X_, FECHADA)]
+    baixa = 0.12 * math.sin(math.pi * min(1.0, t / 1.2))                 # firma nas patas durante o golpe
+    return r, V((0, 0, -baixa)), {}
+CLIPES["CaudaDeMareTerra"] = (boca_acompanha(clipe_cauda_de_mare_terra), 1.5, False, 0.0)
+EXTRA["CaudaDeMareTerra"] = {"eventos": {"arma": 0.20, "impacto_cauda": 0.56, "fim_varredura": 0.75}, "de": "Repouso", "para": "Repouso",
+                             "obs": "PROTOTIPO: variante em terra da Cauda de Mare (patas plantadas, cauda rente ao chao)"}
 # ================================================================== Poderes P2 (16/11): segurar/soltar a presa (PROTOTIPO)
 # O prototipo do agarrao usava ArrastarPresa (anda de re) para segurar. Crocodilo real segurando: mandibula travada, corpo
 # firme nas 4 patas, puxoes curtos para tras e sacudidas laterais da cabeca em rajada, reajuste rapido da mordida; ao
@@ -788,6 +805,55 @@ EXTRA["SegurarPresa"] = {"de": "MordidaLateralE/D", "para": "SoltarPresa/RolarDa
 EXTRA["SoltarPresa"] = {"eventos": {"solta": 0.12}, "de": "SegurarPresa", "para": "Repouso"}
 EXTRA["SegurarPresaAgua"] = {"de": "BoteAquatico", "para": "RolarDaMorte/NadoParado", "obs": "PROTOTIPO do agarrao na agua"}
 PES_CORPO["SegurarPresaAgua"] = 1.0
+# ================================================================== Poderes P4 (16/11): Giro de Emboscada (PROTOTIPO)
+# Saida da agua com impulso da cauda ate a pose de giro do RolarDaMorte r2, e pouso com peso em terra. O voo, a rotacao
+# no eixo longo (RolarDaMorte em laco) e a distancia sao do jogo. So animacao: dano/derrubar/janela sao do criador.
+def _rolar0():
+    r = {}
+    for i, nm in enumerate(CAUDA): r[nm] = [(Z_, math.radians(3.5 + 1.5 * (i / 7)))]
+    r["Pelve"] = [(Z_, math.radians(-6.0))]; r["Coluna1"] = [(Z_, math.radians(3.0))]
+    r["Mandibula"] = boca_frac(0.0)
+    return r
+def _pes_mix(pa, pb, k, k_ang=None):
+    k_ang = k if k_ang is None else k_ang
+    out = {}
+    for kk in PATAS:
+        a = pa.get(kk, (V((0, 0, 0)), 0.0)); b = pb.get(kk, (V((0, 0, 0)), 0.0))
+        out[kk] = (a[0].lerp(b[0], k), a[1] + (b[1] - a[1]) * k_ang)
+    return out
+def clipe_giro_saida(t):
+    """sai da agua (0,6 s): afunda o nariz e arma a cauda -> chicotada da cauda (impulso) com o nariz subindo -> chega na
+    pose de giro (patas coladas, cauda dobrada) do RolarDaMorte. Evento impulso no pico da chicotada."""
+    r = {}; nado_corpo(r, t, 1.2, 4.0, 10.0, 0.0, 2.0)
+    arma = suave(t / 0.22) * (1 - suave((t - 0.22) / 0.10))
+    chic = math.sin(math.pi * max(0.0, min(1.0, (t - 0.18) / 0.30)))
+    for i, nm in enumerate(CAUDA):
+        k = i / 7
+        r[nm] = r.get(nm, []) + [(Z_, math.radians(-16.0 * arma * k + 38.0 * chic * (0.35 + 0.65 * k) * math.sin(math.pi * k + 0.5)))]
+    r["Raiz"] = [(X_, math.radians(8.0 * arma - 16.0 * chic))]
+    soma(r, "Pescoco", X_, -6.0 * chic); r["Mandibula"] = boca_frac(0.0)
+    w = suave((t - 0.38) / 0.22)                                       # ultimos 0,22 s: entra na pose de giro
+    r = mix(r, _rolar0(), w)
+    pes = _pes_mix(pes_boiando(), pes_recolhidos(), suave(t / 0.35))
+    return r, V((0, 0, -0.25 * arma)), pes
+def clipe_giro_pouso(t):
+    """pouso com peso (1,0 s) a partir da pose de giro: patas abrem e plantam na hora do impacto, o corpo afunda nas patas
+    (compressao) e volta, cabeca e cauda batem depois do corpo (atraso), termina no quadro 0 do Repouso."""
+    k = suave(t / 0.14)                                                # patas saem da pose de giro e plantam
+    comp = kf(t, [(0, 0), (0.08, 1.0), (0.22, 0.75), (0.55, 0.1), (1.0, 0)])
+    r = mix(_rolar0(), REP0, suave(t / 0.30))
+    soma(r, "Pescoco", X_, 9.0 * kf(t, [(0, 0), (0.12, 1.0), (0.35, -0.3), (0.7, 0.0), (1.0, 0)]))
+    soma_cab(r, X_, 5.0 * kf(t, [(0, 0), (0.16, 1.0), (0.4, -0.2), (1.0, 0)]))
+    for i, nm in enumerate(CAUDA):
+        soma(r, nm, X_, 5.0 * (i / 7) * kf(t, [(0, 0), (0.10 + 0.04 * i / 7, 0), (0.22 + 0.06 * i / 7, 1.0), (0.6, 0.0), (1.0, 0)]))
+    soma(r, "Coluna1", X_, 2.5 * comp); soma(r, "Coluna2", X_, -2.0 * comp)
+    pes = _pes_mix(pes_recolhidos(), {}, k, suave(t / 0.07))       # dedos abrem antes de tocar (nao furam o chao)
+    return r, V((0, 0, -0.22 * comp)), pes
+CLIPES["GiroSaida"] = (boca_acompanha(clipe_giro_saida), 0.6, False, 0.0)
+CLIPES["GiroPouso"] = (boca_acompanha(clipe_giro_pouso), 1.0, False, 0.0)
+EXTRA["GiroSaida"] = {"eventos": {"impulso": 0.33}, "de": "Espreita/NadoParado", "para": "RolarDaMorte (laco, no ar)", "obs": "PROTOTIPO Giro de Emboscada: voo e rotacao do jogo"}
+EXTRA["GiroPouso"] = {"eventos": {"impacto": 0.06}, "de": "RolarDaMorte (fim da volta)", "para": "Repouso", "obs": "PROTOTIPO Giro de Emboscada: pouso em terra com peso"}
+PES_CORPO["GiroSaida"] = 1.0
 # ================================================================== Lote 4: montaria (so apresentacao; o cavaleiro e demonstracao separada)
 BAIXA_MONT = 0.20                                                  # baixa a postura para receber o peso (patas plantadas)
 def montaria(t, baixa, rola, olha, amortece, lado=1.0):
@@ -843,7 +909,7 @@ def mandibula_segue_cabeca(rots):
 # ate a altura-alvo (Cauda3 a meio caminho, 4 a 8 no chao). k = 0 na agua; nas transicoes terra<->agua acompanha as patas.
 RAIO_CAUDA = {"Cauda2": 1.43, "Cauda3": 1.32, "Cauda4": 1.11, "Cauda5": 0.92, "Cauda6": 0.77, "Cauda7": 0.56, "Cauda8": 0.22}  # junta -> pele de baixo (repouso)
 PELE_ALVO = {"Cauda3": 0.40, "Cauda4": 0.04, "Cauda5": 0.04, "Cauda6": 0.04, "Cauda7": 0.04, "Cauda8": 0.04}
-SEM_CHAO = ("Nado", "NadoParado", "CurvaAquaticaEsquerda", "CurvaAquaticaDireita", "Mergulho", "Emersao", "CurvaLentaEsquerda", "CurvaLentaDireita", "Espreita", "AproximacaoSubmersa", "BoteAquatico", "RolarDaMorte", "BatidaDeCabeca", "Bramido", "CaudaDeMare", "SegurarPresaAgua")
+SEM_CHAO = ("Nado", "NadoParado", "CurvaAquaticaEsquerda", "CurvaAquaticaDireita", "Mergulho", "Emersao", "CurvaLentaEsquerda", "CurvaLentaDireita", "Espreita", "AproximacaoSubmersa", "BoteAquatico", "RolarDaMorte", "BatidaDeCabeca", "Bramido", "CaudaDeMare", "SegurarPresaAgua", "GiroSaida")
 def k_cauda(nome, t):
     if nome in SEM_CHAO: return 0.0
     if nome == "EntradaAgua": return 1.0 - suave((t - 1.0) / 0.8)
@@ -871,6 +937,38 @@ def cauda_no_chao(rots, kc):
             a = math.asin(max(-1.0, min(1.0, zt / math.hypot(dh, d.z)))) - fi
             rots[nm] = list(rots.get(nm, [])) + [(eixo, a)]
             PB[nm].rotation_quaternion = rot_mundo(nm, rots[nm])
+# ================================================================== Olhos (O1, 17/11): so com o rig CR_Crocodilo_Rig_Olhos
+# Os clipes de corpo NAO gravam os ossos de olho (o jogo controla olhar/piscada por script e por estes clipes curtos,
+# tocados por cima). Os clipes de olho gravam SO os ossos de olho. Fechar = PalpebraSup -22 e PalpebraInf +17 no X do osso.
+OSSOS_OLHO = [n + s for n in ("Olho", "PalpebraSup", "PalpebraInf") for s in ("E", "D")] if "OlhoE" in BD else []
+CLIPES_OLHO = set()
+if OSSOS_OLHO:
+    FECHA_SUP, FECHA_INF = -22.0, 17.0
+    def _palp(f_sup, f_inf):
+        r = {}
+        for s_ in "ED":
+            r["PalpebraSup" + s_] = [(BD["PalpebraSup" + s_].matrix_local.col[0].xyz.normalized(), math.radians(FECHA_SUP * f_sup))]
+            r["PalpebraInf" + s_] = [(BD["PalpebraInf" + s_].matrix_local.col[0].xyz.normalized(), math.radians(FECHA_INF * f_inf))]
+        return r
+    def clipe_piscar(t):
+        """piscada (0,30 s): fecha rapido (0,08), segura 0,03, abre mais devagar; a de baixo sobe menos e um pouco depois"""
+        f = kf(t, [(0, 0), (0.08, 1.0), (0.11, 1.0), (0.30, 0)])
+        g = kf(t, [(0, 0), (0.10, 1.0), (0.13, 1.0), (0.30, 0)])
+        return _palp(f, g), V((0, 0, 0)), {}
+    def clipe_piscar_lento(t):
+        """piscada pesada (0,7 s): descanso/sonolencia, desce devagar e volta devagar"""
+        f = kf(t, [(0, 0), (0.25, 1.0), (0.40, 1.0), (0.70, 0)])
+        return _palp(f, f * 0.9), V((0, 0, 0)), {}
+    def clipe_fechar_agua(t):
+        """entrar na agua (0,8 s): fecha rapido ao tocar a agua, segura, reabre ja submerso"""
+        f = kf(t, [(0, 0), (0.07, 1.0), (0.45, 1.0), (0.80, 0)])
+        return _palp(f, f), V((0, 0, 0)), {}
+    for _n, _fn, _d, _ev in (("Piscar", clipe_piscar, 0.30, {"fechado": 0.08, "aberto": 0.30}),
+                             ("PiscarLento", clipe_piscar_lento, 0.70, {"fechado": 0.25, "aberto": 0.70}),
+                             ("FecharOlhosAgua", clipe_fechar_agua, 0.80, {"fechado": 0.07, "abre": 0.45})):
+        CLIPES[_n] = (_fn, _d, False, 0.0); CLIPES_OLHO.add(_n)
+        EXTRA[_n] = {"eventos": _ev, "obs": "SO OLHOS (O1): tocar por cima dos clipes de corpo; prioridade Action"}
+        if _n not in QUAIS and (not A[1:] or _n in A[1].split(",")): QUAIS.append(_n)
 PERNAS_TRAVADAS = ("RolarDaMorte",)
 OSSOS_PERNA = [n + s for n in ("Braco", "Antebraco", "Mao", "Coxa", "Canela", "Pe") for s in ("E", "D")]
 # ------------------------------------------------------------------ amostragem -> FK -> acao + JSON + QA
@@ -937,6 +1035,8 @@ for nome in QUAIS:
         dado["sincronizacao"] = {k_: v_ for k_, v_ in EXTRA[nome].items()}
         manifesto[nome]["sincronizacao"] = {k_: (v_ if not isinstance(v_, list) else "por quadro no JSON") for k_, v_ in EXTRA[nome].items()}
     for pb in PB:
+        if (pb.name in OSSOS_OLHO) != (nome in CLIPES_OLHO): continue      # O1: corpo sem olhos; clipe de olho so olhos
+        if nome in CLIPES_OLHO and pb.name.startswith("Olho"): continue   # olhar = script do jogo; piscar so palpebras
         seq = []
         for pose in quadros:
             m = pose[pb.name]; q = m.to_quaternion(); tt = m.translation

@@ -21,6 +21,7 @@ Ficha criada em 03/11/2026, só com leitura. Nada foi alterado no Studio nem em 
 | Tamanho por estágio | — | [PENDENTE] |
 | Montaria | A partir do **Adulto**, sela para locomoção em **terra E água** (ambas aprovadas na Etapa 15.1) | [OFICIAL] |
 | Mergulho com cavaleiro | **Não definido** — nem aprovado nem proibido. Faltam respiração, câmera, profundidade, oxigênio/segurança e interações; diferenciar de Serpente/Leviatã (que têm mergulho montado aprovado) | [PENDENTE] |
+| Capacete aquático do cavaleiro | **Ideia do usuário (17/11):** para montar no crocodilo, o cavaleiro deve usar um **capacete aquático**. Só registrado; o usuário vai detalhar depois (item, obtenção, respiração e se vale para toda montaria ou só para o mergulho). Nada implementado | [ANOTADO — A DEFINIR] |
 | Velocidade relativa terra × água | — | [PENDENTE] |
 | Padrões visuais | **Verde Pantanal**, **Marrom Aluvial**, **Negro de Rio**. Só cosméticos: não definem elemento nem raridade | [OFICIAL] |
 | Cores exatas, evolução estética por estágio, adornos por raridade | — | [PENDENTE] |
@@ -42,6 +43,10 @@ Papel ecológico em relação aos vizinhos:
 - **[OFICIAL — 30/10/2026]** Cada criatura tem no mínimo **1 passiva + 3 ativas**; nomes, efeitos e quantidades são aprovados criatura por criatura. Ataques básicos físicos não ocupam slots.
 - **Lista da Etapa 15.1** (era OFICIAL; após 30/10 vale como referência anterior; a lista final está **[PENDENTE]**):
   1. **Mordida de Agarrão** — mordida que agarra. PvE: agarrões prolongados. PvP: ver conflito abaixo. [PROPOSTA] dano inicial, sinais de antecipação, esquiva por ângulo/distância.
+     - **[ANOTADO — A DEFINIR, usuário 17/11] Depois de neutralizar:** quando o crocodilo agarra e balança (rola) até neutralizar o oponente, ele pode escolher entre **(a) soltar o corpo e comer** ou **(b) continuar andando com o corpo na boca para mais longe, para evitar roubos**. Clipes já existentes que podem servir: SegurarPresa/SegurarPresaAgua, ArrastarPresa, SoltarPresa, Comer. Nada implementado.
+       - **Quem decide (usuário 17/11):** quando o crocodilo está **selvagem**, ou **tem dono mas está andando sozinho pelo mundo**, **ele mesmo decide**: verifica se há **oponente próximo**; se houver, **leva o corpo embora para outro lugar**; se não houver, **come**.
+       - **O que é roubo (usuário 17/11):** outro animal — **controlado pela IA ou montado por um jogador** — chegar e **pegar o corpo para comer**.
+       - Ainda a definir: raio de "oponente próximo", para onde leva (distância/abrigo), tempo de comer, o que acontece com o crocodilo montado (o cavaleiro decide?) e a regra em PvP.
   2. **Giro Predatório** — rotação de corpo e cauda, especialmente eficaz na água. [PROPOSTA] redemoinho local que desloca inimigos.
   3. **Submersão** — [OFICIAL] mergulho e aproximação furtiva na água; **fora da água vira postura de camuflagem em lama e vegetação, não desaparecimento mágico total**. [PROPOSTA] bolhas/ondulações/folhas mexidas denunciam.
   4. **Cauda de Maré** — golpe poderoso de cauda que desloca inimigos; aproveita a água para gerar ondas locais. [PROPOSTA] em solo seco, varredura lateral.
@@ -291,6 +296,51 @@ Três gerações, nenhuma aprovada artisticamente pelo criador:
 - **Sustentação do agarrão: 3,5 s** (decisão do usuário 16/11, "por enquanto"; era 2,5 de teste). Aplicada no `ConfigPoderes_Teste` (place e `studio/`) e testada em Play: terra 3,52 s e água 3,50 s segurando, soltura no marcador nos dois.
 - Não verificado: aparência do SoltarPresa na água (é clipe de terra tocado boiando); vários jogadores; celular. Duração do agarrão e regra PvP continuam pendentes.
 
+**16/11/2026 — P3: vídeo dos 4 poderes + correção de altura na água (RBX Crocodilo). Entregue, aguardando avaliação.**
+- Vídeo r1 (50 s, tempo real) dos protótipos: agarrão terra/água, Giro encadeado, Submersão água/terra, Cauda de Maré. Ele mostrou que no agarrão na água o crocodilo afundava 2,4 de uma vez (todo submerso segurando) e voltava num salto.
+- Correção no `PoderesTeste`: mudança de altura sempre suave (`moverPivo`); agarrão na água desce só à altura de espreita (0,85, `Agarrao.profundidade_agua`) e sobe durante o SoltarPresa; cancelar/remoções voltam em 0,4 s; Giro encadeado mantém a altura. Maior salto por quadro: 2,4 → 0,07. Boneco de teste na água agora na linha d'água (presa na margem). Evidência: `review/studio_1611/testes_P3_play.txt`; vídeo r2: `review/video_poderes_1611/Crocodilo_4_poderes_Studio_r2.mp4`.
+- Na água a presa presa fica pendurada abaixo da mandíbula (arrastada para dentro d'água, como o crocodilo real); ao soltar volta ao fundo de teste.
+
+**16/11/2026 — P4 etapa 1: Submersão com água real (RBX Crocodilo). Entregue, aguardando avaliação.**
+- Diagnóstico: a arena antiga tinha só uma placa de vidro em y 4,3 sobre o chão (nenhuma água de terreno), e a Submersão só trocava a pose no lugar.
+- Canal novo `Workspace.Teste_Crocodilo.Canal`: água de terreno de 14, raso de 3 nas duas pontas, fundo de lodo, marcos de 10 em 10 e régua de nível.
+- `PoderesTeste`: o servidor mede superfície e fundo; espreita com olhos/narinas na superfície → mergulho em 0,5 s → deslocamento real no mundo (10 studs/s de teste, 5 de energia/s) checando a profundidade à frente → emerge adiante. Raso (< 8,2) e sem água: recusa clara, sem atravessar o fundo. Terra: postura baixa separada.
+- Efeitos no cliente (`CrocodiloFX_Cliente`, prévia): ondulação na entrada/saída, rastro e poucas bolhas.
+- Testes em Play: fundo, beira, raso, sem água, cancelar, crocodilo removido (3x), reativação, ocupado, terra — ok. Evidência: `review/P4_1611/submersao/` (vídeo, pranchas, antes/depois, `testes_submersao_play.txt`).
+- Pendente nesta tarefa: Giro de Emboscada, Agarrão, Cauda de Maré, Escamas Grossas e olhos (a malha não tem ossos de olho/pálpebra: 28 ossos, olho faz parte da malha única).
+
+**16/11/2026 — P4b: Submersão corrigida + Giro de Emboscada + Cauda de Maré terra/água + Escamas Grossas (RBX Crocodilo). Entregue, aguardando avaliação.**
+- Pedido do usuário: montado afunda mais; mais fundo; subir rápido e pegar o alvo com naturalidade; errou = continua nadando.
+- Submersão: topo 4,0 abaixo da superfície (era 1,5), montado +3,5; canal com 19,6 de fundo. Emboscada: presa à frente → sobe em 0,3 s, investe pela ponta dos dentes e dá o bote (acerto a 4,65 → SegurarPresaAgua 3,5 s → SoltarPresa); errou → segue nadando e vira na beira.
+- Giro de Emboscada: clipes novos `GiroSaida`/`GiroPouso` + RolarDaMorte r2 no ar; janela de 1,5 s após emergir (2,0×, +50% em distraído), raso 1,2×, senão recusa; pouso na praia derruba no raio 12.
+- Cauda de Maré: clipe novo `CaudaDeMareTerra`; acerto pela trajetória real da cauda; cobertura medida ~73° × 360° propostos (decisão de design).
+- Escamas Grossas: −15% (100 → 85) em terra e água; pulso curto nas escamas.
+- 56 clipes (53 + GiroSaida, GiroPouso, CaudaDeMareTerra); os 53 anteriores idênticos byte a byte.
+- Olhos: malha única sem ossos de olho/pálpebra → etapa própria (rig + novo Import 3D).
+- Evidência: `review/P4_1611/testes_P4b_poderes_play.txt`, vídeos em `review/P4_1611/`.
+- 17/11: usuário respondeu "Ok" à proposta de seguir para os olhos (P4b sem novos ajustes pedidos).
+
+**17/11/2026 — O1: olhos (só Blender). APROVADO ("Aprovar e levar", 17/11).**
+- Antes: olho só pintado na textura (~0,25 × 0,14 stud), sem geometria nem osso; cabeça do Meshy levemente assimétrica (olho E x 0,94, D x −0,56).
+- `scripts/olhos_crocodilo.py` → `CR_Crocodilo_Rig_Olhos.blend` (cópia; `CR_Crocodilo_Rig.blend` intacto, cópia em `versao_O0/`):
+  - globo ocular (calota, sai 0,055 da pele) preso a `OlhoE/OlhoD`; o olhar gira o globo (testado ±20°, sem mostrar a borda);
+  - pálpebras superior/inferior com borda em amêndoa, presas a `PalpebraSupE/InfE/SupD/InfD` (filhos de Cabeca). Fechar = Sup −22°, Inf +17° no X do osso;
+  - íris âmbar com pupila vertical pintada na área livre da UV (texturas novas `tex/*_olhos_2048.png`; originais intactas); pele das pálpebras com UV contínua da pele vizinha.
+  - Malha 19.877 tris (+884, limite 20.000), 34 ossos (28 originais sem mudança de nome, posição ou peso).
+- Pele em volta dos olhos 98–100% no osso Cabeca → o olho acompanha a cabeça em todos os clipes.
+- Clipes: os 56 de corpo **não gravam** ossos de olho (regenerados com o rig novo: 56 idênticos byte a byte). 3 clipes novos só de pálpebras, para tocar por cima: `Piscar` (0,30 s), `PiscarLento` (0,70 s), `FecharOlhosAgua` (0,80 s: fecha em 0,07, segura, reabre em 0,45). Olhar fica para script do jogo. Total 59 clipes.
+- Demo (só revisão): piscadas irregulares, olho vira antes da cabeça e volta conforme ela chega, fixação com micro-sacadas, fechamento ao entrar na água. Evidência: `review/O1_1711/` (`PRANCHA_antes_x_O1.png`, `demo_olhos_O1.gif`, `folha_demo.png`).
+- Usuário: "Aprovar e levar" (17/11).
+
+**17/11/2026 — O1 no Studio (Crocodilo-testes). APROVADO pelo usuário em 17/11/2026 ("Aprovar").**
+- `export/CR_Crocodilo_Primordial_Olhos.glb` (34 ossos, 19.877 tris, texturas 1024) importado pelo usuário; modelo trocado (antigo em `ServerStorage.Crocodilo_Primordial_ANTES_O1_2026-11-17`), posição idêntica; 59 KFS remontados (antigos em `Animacoes_ANTES_O1`). Backup do place: `BACKUPS/Crocodilo-testes_ANTES_O1_2026-11-17.rbxl`.
+- `AdaptadorCrocodilo`: osso que o clipe não grava não entra na pose (clipe de corpo não trava os olhos; Piscar não trava o corpo).
+- `OlhosCrocodilo_Cliente` (LocalScript, só visual) [PROPOSTA]: piscada irregular (2,5–7 s, às vezes dupla), olhar no alvo (atributo `AlvoOlhar` do servidor ou boneco/jogador mais perto no campo de visão) com micro-sacadas e olhadas de lado sem alvo, olho guia a cabeça, fecha ao `Submerso`.
+- Lição: o Animator devolve ao repouso, a cada quadro, os ossos sem clipe → ajustar `Bone.Transform` em `RunService.PreSimulation` (no RenderStepped era zerado).
+- Testes em Play: corpo igual ao Blender (0,028°); 5 piscadas em 12 s, fecha 22°; olho segue o alvo com erro 0,5–1,4° antes da cabeça virar; alvo à frente = os dois olhos convergem (cone 110°, sem alternar); mergulho fecha em 0,07 s e reabre até 0,82 s.
+- Evidência: `review/O1_1711/Crocodilo_O1_Olhos_Studio.mp4`, `folha_video_studio.jpg`, `testes_O1_studio_play.txt`.
+- Não testado: celular, vários jogadores, câmera montada. No ângulo de jogo o olho quase não aparece (é pequeno).
+
 ## 6. Pendências
 1. **Decisões do criador:**
    - **conflito do agarrão PvP** (só empurra × agarrão mais longo interrompível por aliados);
@@ -299,7 +349,9 @@ Três gerações, nenhuma aprovada artisticamente pelo criador:
    - **mergulho com cavaleiro** (sim/não; respiração, câmera, profundidade, segurança);
    - velocidades em terra e água; números (24.2 é só proposta);
    - duração do agarrão PvE: **3,5 s por enquanto** (usuário 16/11); tamanho máximo de presa;
-   - cores dos 3 padrões; tamanhos por estágio.
+   - cores dos 3 padrões; tamanhos por estágio;
+   - **capacete aquático** exigido para montar (anotado 17/11, detalhar depois);
+   - **depois do agarrão que neutraliza:** selvagem/sem cavaleiro decide sozinho: oponente próximo → leva o corpo embora; senão → come; roubo = outro animal (IA ou montado) pegar o corpo para comer (17/11). Faltam raio, destino, tempo de comer e o caso montado.
 2. **Modelo:** escolher a base (V2 ou V5) e revisar contra o painel 03; boca/dentes/língua; custo da V5 (56 mil tris) precisa de LOD.
 3. **Estágios:** só existe o Adulto. Faltam Bebê, Jovem, Pré-adulto, Ancião e ovo.
 4. **Roblox:** importar (Import 3D manual), conferir escala, pés no chão, superfície da água (corpo meio submerso), SurfaceAppearance e FPS. Publicar animações exige a conta do usuário.
