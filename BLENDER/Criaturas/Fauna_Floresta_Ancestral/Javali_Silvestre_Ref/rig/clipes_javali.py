@@ -208,6 +208,8 @@ if os.environ.get("JAVALI_LD"):                    # lote D (defesa/derrota, EST
     exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "clipes_javali_ld.py"), encoding="utf-8").read())
     if os.environ.get("JAVALI_LD_R2"):              # refino de peso do lote D (13/11): sobrescreve so os clipes refinados
         exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "clipes_javali_ld_r2.py"), encoding="utf-8").read())
+        if os.environ.get("JAVALI_LE"):             # lote E (17/11): Chifrada no impacto da investida
+            exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "clipes_javali_le.py"), encoding="utf-8").read())
 QUAIS = ARGS[1].split(",") if len(ARGS) > 1 else list(CLIPES)
 # ------------------------------------------------------------------ QA: cascos = vertices da pele com Quartela dominante e baixos
 gr = {g.index: g.name for g in CORPO.vertex_groups}; CASCO_V = {k: [] for k in PATAS}

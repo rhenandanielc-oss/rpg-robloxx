@@ -21,21 +21,28 @@ def enc(vals):
 FONTES = {
     "Cervo": ["Cervo_do_Bosque_Ref/rig/clipes_r2"],                                   # 31 clipes, rig r2 (todos os lotes)
     "Javali": ["Javali_Silvestre_Ref/rig/clipes_LA", "Javali_Silvestre_Ref/rig/clipes_LB",
-               "Javali_Silvestre_Ref/rig/clipes_LC", "Javali_Silvestre_Ref/rig/clipes_LD_r2"],   # 24 clipes, rig r4
+               "Javali_Silvestre_Ref/rig/clipes_LC", "Javali_Silvestre_Ref/rig/clipes_LD_r2",
+               "Javali_Silvestre_Ref/rig/clipes_LE"],   # 24 clipes + Chifrada (lote E, 17/11), rig r4
     "Coruja": ["Coruja_da_Floresta_Ref/rig/clipes_LA_r2", "Coruja_da_Floresta_Ref/rig/clipes_LB",
                "Coruja_da_Floresta_Ref/rig/clipes_LC_r2", "Coruja_da_Floresta_Ref/rig/clipes_LD"],  # 32 clipes, rig r4
 }
+# lotes de onde so entram alguns clipes (o lote E regrava a Corrida so para o render de revisao)
+SO = {"clipes_LE": ("Chifrada",)}
+# clipes PARCIAIS: so estes ossos vao para o Studio (o adaptador poe peso 0 nos demais) -> tocam por cima de outro clipe
+PARCIAIS = {("Javali", "Chifrada"): ("Pescoco", "Pescoco2", "Cabeca", "OrelhaE", "OrelhaD")}
 if __name__ == "__main__":
     inv = {}; arvore = {"$className": "Folder", "AdaptadorFauna": {"$path": "AdaptadorFauna.luau"}}
     for animal, pastas in FONTES.items():
         clipes = {}
         for p in pastas:
             for f in sorted(glob.glob(os.path.join(RAIZ, p, "json", animal + "_*.json"))):
-                clipes[os.path.basename(f)[len(animal) + 1:-5]] = (f, os.path.basename(p))
+                nm_ = os.path.basename(f)[len(animal) + 1:-5]
+                if os.path.basename(p) in SO and nm_ not in SO[os.path.basename(p)]: continue
+                clipes[nm_] = (f, os.path.basename(p))
         os.makedirs(os.path.join(AQUI, "dados", animal), exist_ok=True)
         dados = {"$className": "Folder"}; inv[animal] = {}
         for nome, (f, lote) in sorted(clipes.items()):
-            d = json.load(open(f, encoding="utf-8")); n = d["quadros"]; ossos = list(d["ossos"].keys())
+            d = json.load(open(f, encoding="utf-8")); n = d["quadros"]; ossos = [o for o in d["ossos"] if o in PARCIAIS.get((animal, nome), d["ossos"])]
             mk = ",".join("%s=%.4f" % (m["nome"], m["t"]) for m in d.get("marcadores", []))
             L = ["%s|%d|%d|%d|%s" % (nome, d["fps"], 1 if d["loop"] else 0, n, ",".join(ossos)), "#M|" + mk,
                  "#V|%.4f|%.2f|%s" % (d.get("velocidade", 0.0) or 0.0, d.get("giro_graus_s", 0.0) or 0.0, lote)]

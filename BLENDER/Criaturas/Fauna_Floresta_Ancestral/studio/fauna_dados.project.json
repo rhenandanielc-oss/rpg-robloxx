@@ -129,6 +129,9 @@
     "Arrancada": {
      "$path": "dados/Javali/Arrancada.txt"
     },
+    "Chifrada": {
+     "$path": "dados/Javali/Chifrada.txt"
+    },
     "Corrida": {
      "$path": "dados/Javali/Corrida.txt"
     },

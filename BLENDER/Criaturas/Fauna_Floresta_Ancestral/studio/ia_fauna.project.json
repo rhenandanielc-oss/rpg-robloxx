@@ -1,0 +1,17 @@
+{
+ "name": "IA_FaunaFloresta",
+ "tree": {
+  "$className": "Folder",
+  "$attributes": { "Ativo": false },
+  "Config": { "$path": "ia/Config.luau" },
+  "Perfis": { "$path": "ia/Perfis.luau" },
+  "Anim": { "$path": "ia/Anim.luau" },
+  "Percepcao": { "$path": "ia/Percepcao.luau" },
+  "Movimento": { "$path": "ia/Movimento.luau" },
+  "Controlador": { "$path": "ia/Controlador.luau" },
+  "Sons": { "$path": "ia/Sons.luau" },
+  "Cena": { "$path": "ia/Cena.luau" },
+  "Roteiro": { "$path": "ia/Roteiro.luau" },
+  "IA_FaunaFloresta_Servidor": { "$path": "ia/IA_FaunaFloresta_Servidor.server.luau" }
+ }
+}

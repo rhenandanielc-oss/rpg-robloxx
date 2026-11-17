@@ -1,0 +1,119 @@
+{
+ "Corrida": {
+  "maior_extensao_cascos_u_quadro": [
+   1.057,
+   4
+  ],
+  "cabeca_z_min_cm": 11.86,
+  "alvos_limitados_pelo_alcance": 6,
+  "apoios_limitados_pelo_alcance": 0,
+  "maior_giro_entre_quadros_graus_osso_quadro": [
+   44.76,
+   "QuartelaD",
+   50
+  ],
+  "duracao_s": 2.0,
+  "loop": true,
+  "quadros": 60,
+  "velocidade_u_s_PROPOSTA": 2.8,
+  "giro_graus_s_PROPOSTA": 0.0,
+  "entrada": "laco",
+  "saida": "laco",
+  "erro_ik_max": 0.0,
+  "erro_ik_por_pata": {
+   "QuartelaE": [
+    0.0,
+    59
+   ],
+   "QuartelaD": [
+    0.0,
+    59
+   ],
+   "QuartelaTrasE": [
+    0.0,
+    59
+   ],
+   "QuartelaTrasD": [
+    0.0,
+    59
+   ]
+  },
+  "casco_z_min": {
+   "QuartelaE": 0.0003,
+   "QuartelaD": 0.0003,
+   "QuartelaTrasE": 0.0006,
+   "QuartelaTrasD": 0.0002
+  },
+  "escorregao_casco_apoiado_max": {
+   "QuartelaE": 0.0,
+   "QuartelaD": 0.0,
+   "QuartelaTrasE": 0.0,
+   "QuartelaTrasD": 0.0
+  },
+  "emenda_laco_graus": 0.0,
+  "emenda_laco_transl": 0.0,
+  "avanco_por_ciclo_u": 2.52,
+  "ciclo_s": 0.9
+ },
+ "Chifrada": {
+  "maior_extensao_cascos_u_quadro": [
+   1.057,
+   4
+  ],
+  "cabeca_z_min_cm": 11.83,
+  "alvos_limitados_pelo_alcance": 2,
+  "apoios_limitados_pelo_alcance": 0,
+  "maior_giro_entre_quadros_graus_osso_quadro": [
+   44.76,
+   "QuartelaD",
+   10
+  ],
+  "duracao_s": 0.6667,
+  "loop": false,
+  "quadros": 21,
+  "velocidade_u_s_PROPOSTA": 0.0,
+  "giro_graus_s_PROPOSTA": 0.0,
+  "entrada": "Corrida q0",
+  "saida": "Corrida q0",
+  "erro_ik_max": 0.0,
+  "erro_ik_por_pata": {
+   "QuartelaE": [
+    0.0,
+    20
+   ],
+   "QuartelaD": [
+    0.0,
+    20
+   ],
+   "QuartelaTrasE": [
+    0.0,
+    20
+   ],
+   "QuartelaTrasD": [
+    0.0,
+    20
+   ]
+  },
+  "casco_z_min": {
+   "QuartelaE": 0.0003,
+   "QuartelaD": 0.0003,
+   "QuartelaTrasE": 0.0006,
+   "QuartelaTrasD": 0.0002
+  },
+  "escorregao_casco_apoiado_max": {
+   "QuartelaE": 0.0,
+   "QuartelaD": 0.0,
+   "QuartelaTrasE": 0.0,
+   "QuartelaTrasD": 0.0
+  },
+  "deslocamento_total_u": 1.8667,
+  "emenda_entrada_graus_transl": [
+   0.0,
+   0.0
+  ],
+  "emenda_saida_graus_transl": [
+   0.0,
+   0.0
+  ]
+ }
+}

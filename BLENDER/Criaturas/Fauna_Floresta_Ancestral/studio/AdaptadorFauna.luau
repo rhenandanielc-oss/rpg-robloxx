@@ -98,7 +98,8 @@ function M.arvore(modelo)
 end
 
 local PRIORIDADE = {Repouso = "Idle", Deitado = "Idle", Dormindo = "Idle", Pastar = "Idle", Beber = "Idle", Farejar = "Idle",
-	Andar = "Movement", Trote = "Movement", Corrida = "Movement", BaterAsas = "Movement", Planar = "Movement"}
+	Andar = "Movement", Trote = "Movement", Corrida = "Movement", BaterAsas = "Movement", Planar = "Movement",
+	Chifrada = "Action2"}   -- 17/11: Chifrada e PARCIAL (pescoco/cabeca/orelhas) por cima da Corrida/RecuperacaoInvestida
 
 -- monta o KeyframeSequence (fora do DataModel) com marcadores; loop ganha o quadro de fechamento (= quadro 0)
 function M.montar(modelo, nome)
@@ -115,7 +116,11 @@ function M.montar(modelo, nome)
 		local t = M.arvore(modelo)
 		for _, p in ipairs(t:GetDescendants()) do
 			local cf = M.cframe(c, p.Name, i % c.quadros, nova)
-			if cf then p.CFrame = cf; n += 1 elseif i == 0 then table.insert(faltam, p.Name) end
+			if cf then p.CFrame = cf; n += 1
+			else
+				p.Weight = 0     -- osso fora do clipe (clipe parcial): nao mexe nele; o clipe de baixo continua mandando
+				if i == 0 then table.insert(faltam, p.Name) end
+			end
 		end
 		t.Parent = kf; kf.Parent = kfs; kfs_por_t[i] = kf
 	end

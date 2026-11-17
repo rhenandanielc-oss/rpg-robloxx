@@ -458,6 +458,18 @@
    "bytes": 9833,
    "md5_json": "b888b2fea2a2c455cd54220fc6ed80f5"
   },
+  "Chifrada": {
+   "fonte": "Javali_Silvestre_Ref/rig/clipes_LE/json/Javali_Chifrada.json",
+   "lote": "clipes_LE",
+   "quadros": 21,
+   "fps": 30,
+   "duracao": 0.6666666666666666,
+   "loop": false,
+   "velocidade": 0.0,
+   "ossos": 5,
+   "bytes": 964,
+   "md5_json": "d28ebbe0c47b36790cba69f2426faa5f"
+  },
   "Corrida": {
    "fonte": "Javali_Silvestre_Ref/rig/clipes_LB/json/Javali_Corrida.json",
    "lote": "clipes_LB",

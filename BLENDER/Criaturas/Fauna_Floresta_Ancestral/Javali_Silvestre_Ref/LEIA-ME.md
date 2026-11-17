@@ -450,3 +450,11 @@ Os renders ficam em `rig/clipes_LD/render/cadeia_*/`.
 **13/11: lote D r2 APROVADO pelo usuário** ("Aprovar o lote D r2"). Base oficial do lote D: `rig/clipes_LD_r2/` (o r1 em `rig/clipes_LD/` fica só como histórico). Javali completo no Blender: lotes A, B, C e D r2 = 24 clipes, rig r4. Pendentes: deformação ~4× da nuca no Fucar; Studio (com autorização); commit.
 
 **14/11: commit 087628f** (84 arquivos: scripts, JSON dos clipes, manifestos/medidas, LEIA-ME; GIFs e binários fora do git). Push feito 14/11 (junto com a9d0fb0 da Wyvern).
+
+**17/11: lote E (Chifrada), pedido do usuário** ("na investida ele deve levantar a cabeça como se desse uma chifrada, ao acertar o alvo").
+- `rig/clipes_javali_le.py` (carregado com `JAVALI_LD=1 JAVALI_LD_R2=1 JAVALI_LE=1`):
+  `JAVALI_LD=1 JAVALI_LD_R2=1 JAVALI_LE=1 JAVALI_ANIM_ARQ=Javali_Clipes_LE.blend blender -b rig/CR_Javali_Rig_r4.blend -P rig/clipes_javali.py -- rig/clipes_LE Corrida,Chifrada`
+- Chifrada = 2 ciclos da Corrida (0,67 s, entra e sai no quadro 0 da Corrida) + gancho das presas: abaixa 7°, sobe até −32° em 0,21 s com torção de 9° para o lado, segura e volta. Só Pescoco/Pescoco2/Cabeca/Orelhas mudam.
+- QA: emendas de entrada/saída 0,000; IK 0; escorregão de casco apoiado 0. Render: `rig/clipes_LE/review/chifrada/` (prancha, GIFs, `pico.png`).
+- No Studio o clipe é **parcial** (só esses 5 ossos, prioridade Action2) e toca por cima da freada; o empacotador filtra os ossos (`PARCIAIS`) e o adaptador põe peso 0 nos ossos ausentes. A Corrida regravada no lote E é só para o render (o jogo usa a do lote B).
+- Status: aguarda revisão do usuário (vídeo `studio/ia/review/v3/`).
