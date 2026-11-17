@@ -1470,6 +1470,286 @@ A busca não trouxe referência anatômica do jarrete no chão ao sentar. A pose
 - **Pendências e riscos:** montaria funcional do lobo não existe no place (teste montado PENDENTE); sons do lobo inexistentes (pendente); celular e multiplayer NÃO testados; vídeos normais/lentos do Studio não gravados (os do Blender existem); cor no Studio mais fria que no Blender (iluminação herdada) — CORRIGIDA em 15/11 (ver abaixo); o salto/investida usam chão plano (sem raycast de terreno); o lobo segue o dono a pé com Andar/Corrida (sem Trote nem Partida/Freada nas trocas); a Investida avança 12,4 studs (não os 30 da proposta antiga, que patinariam com este clipe); gancho de teste `ServerStorage.LoboKitTeste` só em Studio.
 
 - **Cor (15/11, a pedido do usuário):** a textura importada estava certa; o tom frio vinha da iluminação herdada dos dragões (céu azul refletido com EnvironmentDiffuseScale 1,0, brilho 3, ambiente cinza). Só neste place: Brightness 3 → 2,2; EnvironmentDiffuseScale 1,0 → 0,35; EnvironmentSpecularScale 1,0 → 0,5; Ambient 0,32/0,30/0,25; OutdoorAmbient 0,52/0,49/0,41; ColorShift_Top 1,0/0,92/0,78; Atmosphere cor 0,78/0,76/0,66 e decay 0,45/0,47/0,38; Bloom 1,0 → 0,6; ColorCorrection `Floresta_CorLobo` (saturação +0,05, contraste +0,05, tom 1/0,98/0,94). Valores antigos em `ServerStorage.Backup_Iluminacao_Lobo_2026-11-15`. Resultado: marrom quente, peito creme e marca verde como no Blender (`studio/review/cor_antes_depois.png`). É iluminação de teste, não a iluminação oficial do bioma.
+- **Vídeo dos 51 clipes no Studio (15/11, aguardando aprovação):** `studio/review/Lobo_Studio_51clipes.mp4` (1280×720, 30 qps, 3 min 16 s, sem som). Gravado em Edit, sem Play: uma cópia temporária do lobo (`_VideoLobo_TEMP`, removida depois, place NÃO salvo) é posada quadro a quadro pelo `AdaptadorLobo.aplicarQuadro`, a mesma conversão dos KFS. Captura por PrintWindow com código do passo na tela: 5.879 passos, 24 perdidos (0,4%, repetidos do vizinho). Ordem: Locomoção (11), Vida (26), Combate (7), Kit (3), Montaria (4), com o nome na legenda. Avanço do corpo pela velocidade do próprio clipe (Andar 3,02; Trote 7,67; Corrida 21,43; Espreita 0,86; FarejarAndando 1,61; Partida/Freada pela rampa; Investida pela curva do kit30). Salto Predatório com arco de demonstração de 16 studs [PROPOSTA]. Montar/Desmontar com a sela visível, mas sem cavaleiro. Iluminação de teste da floresta.
+
+## 6an. Virar andando + patas no giro + pelo do rosnado (16/11/2026; APROVADO pelo usuário 16/11 pelo vídeo de revisão; ida ao Studio em §6ao) → `marcha/curvas_v32.py`, `marcha/review_curvas32/`
+
+Pedido do usuário depois do vídeo do Studio: "ao virar deve ser mais natural, em vez de parar para virar, poder virar andando, e suas patas ficam estranhas ao virar [...] E ao rugir, seu pelo se divide".
+
+- **AndarCurvaE / AndarCurvaD (novos):**
+  - É o Andar v30 andando em curva. O jogo gira o modelo a 30°/s em volta do ponto sob o meio do corpo e avança 3,02 studs/s, o que dá um raio de cerca de 5,8 studs. O giro é `LOBO_CURVA_GIRO`, um parâmetro [PROPOSTA].
+  - A pata apoiada fica parada no mundo, em posição e em direção. A pata no ar vai da saída ao pouso e já pousa virada para dentro da curva.
+  - Na curva, a coluna dobra para dentro, a cabeça olha a curva, o corpo inclina 1,5° e a cauda faz contrapeso.
+  - Gerado com `LOBO_MARCHA30=1 LOBO_CURVAS=1`, mais as patas retas (27,23/9,35).
+  - Saídas: `rig18/Lobo_Ancestral_Anim_Curvas_v32.blend` e JSON em `marcha/clipes_curvas32/`. O Andar regenerado é idêntico ao do clipes30 (diferença 0).
+- **VirarE / VirarD r2:** na r1, as patas mudavam de posição no círculo mas continuavam apontando para a frente antiga, e terminavam a 89° do corpo (medido). Na r2, cada pata gira junto com o próprio passo; no fim ficam a 0,6–1,8° do corpo.
+- **Dedos:** `aplicar()` não passava o giro da pata (`yaw_pe`) para os ossos dos dedos. Agora passa, mas só quando o clipe marca `yaw_dedos`, então os clipes aprovados não mudam.
+- **QA no mundo** (`marcha/render_curvas.py`): pata apoiada com deslize de 0,000 studs/s e giro de 0,0° nas 4 curvas e viradas, com IK 0.
+  - A mesma conta acusa 3,02 studs/s no Andar sem o avanço do corpo, o que prova que ela detecta deslize.
+  - Distância mínima entre patas na curva: 0,67, contra 1,71 na reta.
+- **Pelo do rosnado (RosnadoAmeaca e LatidoAviso r2):**
+  - **Causa medida (renders de perto):** os ossos PeloNuca e PeloDorso, girados para "eriçar", levantam a placa de pelo do dorso como uma aba escura descolada da juba. Isso acontece já com a nuca a 5–10°. Com 0°, a juba fica inteira.
+  - **Correção:** `LOBO_ROS_PELO` passou de 22 para 0 e `LOBO_LAT_PELO` de 8 para 0. Só esses ossos de pelo mudaram; o resto do clipe é idêntico ao aprovado de 12/11.
+  - Saídas: `rig18/Lobo_Ancestral_Anim_Vida_L4_r2.blend` e `comportamento/clipes_l4_r2/`. A comparação antes/depois está em `comportamento/review_pelo_r2/`.
+- **Vídeo de revisão:** `marcha/review_curvas32/Lobo_Curvas_e_Pelo_r2.mp4` (32 s).
+- **Pendente:**
+  - aprovação do usuário;
+  - empacotar os 6 clipes no Studio e girar o modelo no jogo durante a curva (combinação reta + curva, como no urso);
+  - Trote e Corrida em curva.
+
+## 6ao. Curvas v32 + VirarE/D r2 + pelo r2 no Studio (16/11/2026; Testes-loboancestral; vídeo APROVADO pelo usuário 16/11) → `studio/`, `studio/kit/LoboKit_Servidor.luau`
+- **Aprovação:** o usuário aprovou a §6an em 16/11 ("Aprovado").
+- **Pacote:** `studio/empacotar_lobo.py` agora tem 53 clipes:
+  - novos: AndarCurvaE/D (`marcha/clipes_curvas32`);
+  - substituídos pelo nome: VirarE/D (curvas v32, r2) e RosnadoAmeaca/LatidoAviso (`comportamento/clipes_l4_r2`).
+  - O `rojo build` gerou um novo `studio/LoboAncestral.rbxm`. Só esses 6 `dados/*.txt` mudaram.
+- **Studio (testado no Studio):**
+  - Os 6 StringValues foram gravados em `ReplicatedStorage.LoboAncestral.Dados` e conferidos byte a byte (tamanho + checksum) contra os arquivos. Os 4 antigos ficaram em `ServerStorage.Backup_Dados_Lobo_2026-11-16`.
+  - O adaptador lê os 6 com as fontes certas (rotação 36/−36/90/−90; marcadores GiroCompleto e Rosnado/Latido).
+- **Jogo (`LoboKit_Servidor`, bloco "seguir o dono"; patch por âncora, compilação checada; original em `ServerStorage.Backup_LoboKit_Servidor_2026-11-16`):**
+  - Andando, o lobo anda só para a frente e vira em volta de O = 2,196 studs à frente do pivô (o mesmo centro do Blender).
+  - Andar e AndarCurvaE/D tocam juntos e em fase, com pesos 1−|pc| e |pc|; o giro aplicado é pc × 30°/s × ritmo.
+  - Parâmetros [PROPOSTA]: ganho 1,6 e pc limitado a 3/s.
+  - Dono a mais de 120° com o lobo parado: VirarE/D r2, e no marcador GiroCompleto o modelo gira 90° em volta de O.
+  - A Corrida continua com o giro antigo (não há clipe de curva de corrida).
+- **Teste em Play (cliente, 14 qps, Studio fora de foco):** deslize mediano da pata apoiada com o lobo em movimento:
+  - reta: 0,04 studs/s;
+  - curva E: 0,04 (giro total 125°);
+  - curva D: 0,05 (giro total −125°);
+  - dono atrás: VirarE seguido de curva, 0,08.
+  - O peso do clipe de curva chegou a 1,0. Sem erros no console.
+- **Vídeo:** `studio/review/Lobo_Studio_Curvas_e_Pelo_r2.mp4` (35 s, 1.054 passos, 76 perdidos e repetidos do vizinho).
+  - Gravado em Edit pelo AdaptadorLobo, com uma cópia temporária removida depois.
+  - Conteúdo: curvas E/D de cima e de perto, VirarE/D r2 e close do Rosnado/Latido.
+  - A mistura reta+curva só foi medida em Play; não aparece no vídeo.
+- **Place salvo na versão 17.**
+- **Pendente:** aprovação do vídeo; curvas de Trote/Corrida; celular e multiplayer não testados.
+
+## 6ap. Kit do Lobo Ancestral alinhado à v6.2 de REFERENCIAS_PODERES_E_EFEITOS (16/11/2026; Testes-loboancestral; place salvo v19; aguardando avaliação)
+- **Fonte:** `Documents\RPG_Roblox\REFERENCIAS_PODERES_E_EFEITOS.md` v6.2 (19:43, com §0d escala do mundo), §2 Lobo Ancestral. As cópias da raiz do repositório ainda são a v5.2.
+  - O §2 é igual nas duas versões.
+  - A §0d dá ao lobo: ombro de 5,5–7, corrida de 21,4 [EXISTE] e alcance básico ≥ ombro (Mordida 7 / Garra 6 atendem).
+- **Mudanças (todas [PROPOSTA]):** em `studio/kit/ConfigKitLobo.luau`, `LoboKit_Servidor.luau` e `LoboKit_Cliente.luau`; os originais estão em `ServerStorage.Backup_KitLobo_v6_2026-11-16`.
+  - Elementos: Natureza e Ar.
+  - Teto de bônus de velocidade 0,35 (noite + Uivo = 32%). Esquiva total limitada a 35% (base 5% + bônus até 30%).
+  - **Uivo:** +20% de velocidade, +25% de esquiva, 8 s, recarga 20, energia 20.
+  - **Salto Predatório:** alcance 8–50. Funciona sem alvo, indo ao ponto do mouse: o servidor limita a distância, não causa dano e custa 12 de energia.
+    - Planeio de 0,6 s no ápice: o clipe congela no ápice.
+    - Encadeável: em até 2 s após pousar, o 2º salto não tem recarga e custa metade da energia, uma vez por cadeia.
+    - Dano de 1,2× com alvo.
+  - **Instinto de Caça:**
+    - raio 80;
+    - marca da presa por 8 s (o alvo do Salto ou quem o lobo acerta), com +10% de dano só nela;
+    - contorno verde e seta, visíveis só para o dono;
+    - pegadas luminosas que somem em 8 s.
+  - **Visual:** sem folhas ou partículas soltas. Fora do corpo, só faixas de vento em espiral: 8 no Uivo (fade no último 1,5 s), 4 no Salto e na Investida, e uma rajada na pista de ninho.
+  - O arquivo local do cliente tinha a string do HUD quebrada em várias linhas e não compilaria; foi corrigido. O Studio usava a versão do instalador, que estava correta.
+- **Testado em Play (servidor pelo gancho de teste + cliente; sem erros no console):**
+  - **Uivo:**
+    - durante o efeito: velocidade 1,20× e esquiva 0,30; repetir durante a animação é recusado;
+    - depois de 8,8 s: 1,00× e 0,05;
+    - noite + Uivo: 1,32×, esquiva 0,35 (teto) e dano 1,12×.
+  - **Salto sem alvo:**
+    - ponto a 80 studs: pousou a 50, custo 12, voo de 1,05 s;
+    - encadeado: custo 6, sem recarga;
+    - 3º salto e salto após a janela: recusados ("recarga");
+    - recusados também: texto, nil, outro jogador, alvo a 70/80 (fora de alcance), alvo atrás da parede e alvo atrás de outro (sem linha de visão).
+  - **Salto com alvo e marca da presa:**
+    - presa marcada na decolagem; dano de 13,2 (10 × 1,2 × 1,10), custo 20;
+    - mordida na presa marcada: 11,0;
+    - após 8 s sem acerto, a marca some e a mordida volta a 10,0.
+  - **Cliente:** 8 faixas de vento no Uivo e 4 no Salto, 0 emissores de partículas, contorno e seta na presa, HUD com o bônus. Captura em `studio/review/kit_v62_uivo_vento.jpg`.
+- **Pendente:**
+  - [PENDENTE] Linhas verde-musgo contínuas, runas e olhos do Uivo (§5.2): precisam da "capa de efeito".
+  - [PENDENTE] Revelar inimigos escondidos na vegetação: não há sistema de esconderijo.
+  - [PENDENTE] Mira pela câmera no celular e alvo travado: hoje é só o mouse.
+  - Sons do lobo inexistentes.
+  - Idades (§0c) não aplicadas: decisão conjunta de todas as criaturas.
+  - Celular e multiplayer não testados.
+
+## 6aq. Brilho do Uivo no corpo (linhas, runas e olhos), §5.1/§5.2 da v6.2 (16/11/2026; Testes-loboancestral; aguardando avaliação) → `habilidades/efeito_uivo/`
+- **Documentos:** sem versão nova; a v6.2 (`Documents\RPG_Roblox`, 19:43) continua a última.
+- **Como foi feito:** máscara emissiva na própria SurfaceAppearance do lobo; o efeito fica no pelo e acompanha a pele animada, sem malha nova.
+  - `gerar_mascara_uivo.py` rasteriza o UV da malha LOW (1024², UV espelhado e reaproveitado).
+  - Linhas: 5 em volta do tronco/pescoço/cauda e 2 descendo por cada pata (metade da força); espessura de 0,9% da altura; mais fortes nas costas e nos ombros.
+  - Rosto: zerado em qualquer texel usado pela frente da cabeça.
+  - Runas (haste + ramos + anel): ombro, flanco e coxa.
+  - Olhos: marcados por triângulo.
+  - Conferência no Blender: `review/r1–r5`.
+- **Assets enviados à conta do usuário (com autorização):** listados em `habilidades/efeito_uivo/ASSETS.md`.
+- **Limites medidos no Studio:**
+  1. EditableImage no jogo exige "Allow Mesh / Image APIs" (segurança da experiência; não alterado).
+  2. Uma EditableImage de 1024² fez a SurfaceAppearance parar de renderizar no Edit (restaurada na hora).
+  3. Um LocalScript **não pode** trocar EmissiveMaskContent, só EmissiveStrength/Tint.
+  - **Solução adotada:** máscara do pico fixa no lobo (salva no place), tinta verde-musgo e força 0 fora do Uivo. O cliente anima só a força: entrada de 0,3 s, respiração de 2,2 s, reforço no pico e saída no último 1,5 s.
+- **Testado em Play:**
+  - força medida a cada 0,9 s: 0 → 2,5 / 2,2 / 1,8 / 2,1 / 1,5 / 2,2 / 1,7 / 1,7 / 0,5 → 0 (volta a 0 no fim);
+  - captura `studio/review/kit_v62_uivo_brilho.jpg`: linhas na juba e nas patas, runa da coxa acesa, vento circulando; fora do Uivo o lobo fica normal.
+- **Place salvo.** Backups em `ServerStorage.Backup_KitLobo_v6_2026-11-16` (SA_Emissivo_antes, LoboKit_Cliente_antes_brilho).
+- **Pendente:**
+  - [PENDENTE] pulso de luz percorrendo o corpo (exigiria trocar a máscara em tempo real: só com EditableImage liberada ou outra técnica);
+  - runas "apagadas" fora do pico: com a máscara fixa, acendem junto com as linhas;
+  - contorno verde nos ombros e no pescoço;
+  - sulco escuro ao lado das linhas;
+  - tom por padrão de pelo;
+  - celular não testado.
+
+## 6ar. Brilho r2 + kit completo do Lobo Ancestral pelo documento de poderes (16/11/2026; Testes-loboancestral; aguardando avaliação)
+- **Pedido do usuário:** "adicione linhas verdes, e quero que seus olhos brilhem verdes. As linhas devem estar no corpo"; depois, "faça todos os poderes do lobo ancestral, seguindo o documento de poderes". O §2 da v5.2 (raiz) é igual ao da v6.2.
+- **Brilho r2:**
+  - Linhas: 9 em volta do tronco, pescoço e cauda, e 4 em cada pata (força 0,7); espessura de 1,3% da altura (teto do §5.1).
+  - Olhos com raio maior; tinta verde mais saturada (60, 210, 70), porque a íris original é amarela e o verde-musgo deixava os olhos amarelados.
+  - Força 4 no cliente; máscara r2 `rbxassetid://134314902144047`.
+  - **Play:** força 0 → 5,3 (pico) / 3,8 / 3,2 / 3,8 / 2,8 / 4,0 / 3,0 / 3,1 / 0,9 → 0. Captura `studio/review/kit_v62_uivo_brilho_r2.jpg`: linhas verdes no corpo, juba, patas e cauda, e olhos verdes durante o Uivo; lobo normal antes e depois.
+- **Instinto de Caça, "revela inimigos escondidos em vegetação":**
+  - Vegetação = parte com atributo `Vegetacao`. Ela não bloqueia a visão do Instinto; paredes e rochas continuam bloqueando.
+  - Revelado = inimigo dentro da vegetação (raio de 1 stud) ou com atributo `Escondido`, a até 80 studs e visível por esse critério.
+  - Só o dono vê: contorno verde AlwaysOnTop, renovado a cada 1 s.
+  - **Testado em Play com arbustos temporários (removidos):**
+    - sem arbusto: 0 revelados;
+    - arbusto no Alvo_Perto: 1 (só ele tem contorno no cliente);
+    - arbusto na frente do Alvo_Frente: ele continua não revelado, porque não está dentro do arbusto;
+    - `Escondido` atrás da parede: não revelado, porque a parede bloqueia.
+- **Mira (§1):** alvo travado → mouse → câmera no Salto e na Investida.
+  - T trava o alvo válido mais próximo num cone de 60° da câmera, até 40 studs (contorno branco); T de novo destrava.
+  - Sem mouse (celular/controle): ponto a 30 studs na direção da câmera.
+  - O servidor revalida tudo.
+  - **A tecla não foi testada** (sem entrada simulada); só a compilação e o caminho do servidor.
+- **Kit completo do §2:** Salto, Uivo, Investida, Instinto e Caçador Noturno, todos implementados ([PROPOSTA], números do documento).
+- **Pendente:**
+  - [PENDENTE] pulso de luz percorrendo o corpo; o script do jogador não pode trocar a máscara;
+  - contorno verde nos ombros e no pescoço; pegadas "com folhas";
+  - sons;
+  - idades (§0c);
+  - celular e multiplayer;
+  - testar a tecla T à mão.
+- **Place salvo.** O original do servidor está em `ServerStorage.Backup_KitLobo_v6_2026-11-16.LoboKit_Servidor_antes_instinto`.
+
+## 6as. Vídeo do kit v6.2 em Play + correção do Revelar (17/11/2026; Testes-loboancestral; place salvo v24; vídeo aguardando avaliação) → `studio/review/Lobo_Studio_Kit_v62.mp4`
+- **Vídeo (33 s, tempo real, capturado por PrintWindow a ~18 qps e reamostrado a 30 qps no Blender):** poderes disparados pelo gancho `ServerStorage.LoboKitTeste` (mesmo caminho do remoto), câmera e rótulos só no Play.
+  1. Uivo Ancestral (linhas e olhos verdes + vento); 2. Salto com alvo (Alvo_Frente, 22 studs, 13,2 de dano com marca); 3. Salto sem alvo 35 studs (custo 12) + encadeado 40 studs (custo 6); 4. Investida (parou no primeiro alvo, 12,0); 5. Instinto revelando inimigo dentro de arbusto temporário (removido).
+- **Bug corrigido no cliente (r2 do Revelar):** o contorno durava 1,3 s e a renovação do servidor (a cada 1 s) era ignorada enquanto ele existia → piscava 1,3 s ligado / 0,7 s desligado. Agora renova o prazo (atributo `Ate`). Studio = local (14950 bytes, hash 671611028); backup do anterior em `ServerStorage.Backup_KitLobo_v6_2026-11-16.LoboKit_Cliente_antes_revelar_r2`.
+- **Detalhe de tempo:** o 2º salto só é aceito ~1,95 s após o 1º (estado volta a Livre em golpe + planeio + 0,49 s); antes disso a resposta é "ocupado".
+- **Pendente:** tecla T à mão, Caçador Noturno não aparece no vídeo, sons, celular e multiplayer.
+
+## 6at. Efeitos r3 + percepção da IA + guardião de teste + bateria do Salto (17/11/2026; Testes-loboancestral 73543092389791; place salvo v29; aguardando avaliação) → `studio/kit/`, `studio/review/`
+- **Fontes lidas:** CLAUDE.md, DOCS/ORGANIZACAO-CHATS.md, esta ficha (§6am, §6ap–6as), `studio/kit/`, `Documents/RPG_Roblox/REFERENCIAS_PODERES_E_EFEITOS.md` v6.2 (§2, §5.1, §5.2, §5.6, §5.10) e `REFERENCIAS/floresta-ancestral/lobo-ancestral/lobo-ancestral-referencia.png`.
+- **Conflitos registrados, nada mudado:**
+  - A v6.2 classifica o lobo como Natureza+Ar; a atualização oficial de 30/10 pede elemento único. `ConfigKitLobo.Elementos` continua {"Natureza", "Ar"} até decisão do usuário.
+  - A §5.6 pede pegadas "com folhas"; o pedido de 17/11 proíbe folhas e partículas soltas. Valeu o pedido mais novo: pegadas sem folhas.
+  - A referência mostra olhos âmbar; o usuário pediu olhos verdes em 16/11. Ficaram verdes.
+- **M0 (só leitura):**
+  - PlaceId e instância conferidos; placeVersion do Edit reporta 3, mas o save anterior foi v24.
+  - Scripts instalados = locais, com duas linhas triviais diferentes no servidor.
+  - Backups preservados.
+  - Sons: 0 instâncias Sound no place → **sons pendentes**.
+  - Em Play, um lobo sem dono e a regra antiga do laço (`if L.dono`) percebiam **0** alvos; com a regra nova, **3**. Teste A/B pela flag `percepcaoSemDono`.
+- **Lacunas do v6.2 (ANTES):**
+  - Uivo: sem preparação (o visual só começava no bônus, 0,6 s depois do clipe); pico por tempo fixo; faixas de vento de 0,12 stud, quase invisíveis.
+  - Salto e Investida: só 4 faixas em órbita, sem brilho no corpo, sem sinal de pouso, contato ou obstáculo; o encadeado era igual ao normal.
+  - Instinto: pegadas soltas sem direção; o contorno de revelado era AlwaysOnTop, sem checar parede entre a câmera e o alvo.
+- **Servidor (`LoboKit_Servidor.luau`, todos [PROPOSTA]):**
+  - **Percepção para todo lobo vivo:** raio 80, parede bloqueia e vegetação não. Os indicadores (pegadas, revelado, marca, pista de ninho) continuam só para o dono, por FireClient.
+  - **Logs por categoria:** [PERCEPCAO], [IA], [HABILIDADE] e [INDICADOR].
+  - **Velocidade de cada alvo:** medida no servidor, ignorando teletransporte de mais de 2 studs por quadro.
+  - **Salto:**
+    - pouso no chão real, sob as patas de trás (0,5) e da frente (5,3);
+    - inclina com o declive até cerca de 26°;
+    - recua da borda quando não há apoio firme; desnível máximo 8;
+    - antecipa um alvo em movimento em até 10 studs, sem passar de 50;
+    - obstáculo no voo faz o lobo cair até o chão (0,12–0,45 s), sem teleporte.
+  - **Eventos de fase:** UivoInicio/UivoFim, SaltoPouso, InvestidaFim (alvo/obstáculo/nada).
+  - **Guardião de TESTE (`IA_Guardiao` no Config):**
+    - sem dono e sem patrulha; age só quando ameaçado: inimigo percebido a ≤ 22, chegando a ≥ 3 studs/s até 45, ou que o atacou;
+    - escolhe Uivo → Mordida (≤ 8) → Investida (≤ 17) → Salto (18–50), com energia, recarga e alcance normais;
+    - volta a calmo após 5 s sem ameaça e retorna andando ao posto;
+    - não integrado ao jogo principal.
+  - **Gancho de teste:** `recargas` agora zera a janela do encadeado (antes o salto seguinte saía como encadeado por engano). Comandos novos: flag, clonarIA, clonarSemDono, percebidos, ia, atacar, log, chao.
+- **Cliente (`LoboKit_Cliente.luau`, efeitos r3; sem novos assets):**
+  - **Mixer de brilho por camadas:** força e tinta da máscara r2, num laço único.
+  - **Luz verde curta nos ossos** Pescoco1 e EscapulaE/D, acesa só nos picos (ombros e pescoço; sem halo).
+  - **Fora do corpo só vento:** Trails de 0,2–0,3 stud.
+  - **Uivo:** inspiração (linhas sobem com o ar, vento se fecha) → nota (pico 6, luz nos ombros, vento expande e acelera) → bônus respirando (cerca de 3,7) → término (último pulso e apaga em 1,5 s, vento sobe).
+  - **Salto:** impulso (lampejo + ar puxado nas patas) → voo/planeio (brilho firme + vento rente que fica para trás) → pouso (lampejo + anel de ar no chão). Encadeado = tinta verde-água, duplo lampejo e hélice de vento; dano igual.
+  - **Investida:** carga → brilho que acompanha a curva de velocidade + 4 faixas rentes. Contato = lampejo e ar empurrado à frente; obstáculo = linhas falham 2 vezes e ar desviado na parede.
+  - **Instinto:**
+    - marca com 3 pulsos e seta ▼ maior, balançando, com fade (Occluded, sem AlwaysOnTop);
+    - pegadas em pares orientadas pelo movimento, a mais nova mais forte;
+    - revelado e marca escondidos se houver parede entre a câmera e o alvo (vegetação não conta).
+  - **Orçamento:** nada a mais de 150 studs; metade das faixas no celular (não testado).
+- **Testes em Play (PC):**
+  - **Salto:** 34 casos em `studio/review/testes_salto_r3.csv`, todos pelo gancho, que chama o mesmo `K.pedido` do remoto.
+    - Com alvo parado a 10/25/35/45/50: acerto 13,2, custo 20, voo de 1,05 s, ápice 1,3–8,5.
+    - Sem alvo 10–50: pousa no ponto; pedido de 80 limitado a 50; custo 12.
+    - Com alvo a 55 ou 70: recusado.
+    - Alvo em movimento: lateral 8/s, afastando 6/s e aproximando 6/s acertam (antecipação de 8,7–10); lateral 16/s erra por 14,4 (limite da antecipação).
+    - Trajeto cruzando o muro: interrompido e cai. Alvo atrás do muro: recusado (sem linha de visão). Ponto dentro do muro: recua e pousa antes.
+    - Plataforma +4: acerta. Rampa: inclina 14°, patas a 0,35 do chão. Borda de 12: recusada sem gastar energia. Queda de 4: ok.
+    - Encadeado perto (+10) e longe (+50): custo 6; com alvo: custo 10, mesmo dano. 3º salto e salto fora da janela: recusados por recarga.
+    - **Sincronismo:** clipe no pouso com mediana de 0,858 s (marcador 0,86).
+  - **Remoto real do cliente** (FireServer, sem tecla física): Salto, Uivo e Investida aceitos; pedido em menos de 0,1 s ignorado; recarga e modelo inválido recusados.
+  - **IA (gancho só para posicionar):**
+    - percebeu o invasor a 44, saltou antecipando 8,8 e acertou 13,2; depois uivou, saltou de novo após a recarga e mordeu 11,0;
+    - invasor parado atrás da parede a 12,7: não percebido, nenhuma reação; ao contornar, percebeu e uivou.
+  - **Custo com 6 lobos no Uivo:** cerca de 0,2 ms/quadro de script do cliente; 48 Trails; 18 PointLights só no pico; 0 partículas.
+    - FPS não medido de forma válida (Studio fora de foco fica em 15; 3 outros Studios em Play no PC).
+- **Evidências (`studio/review/`):**
+  - `Lobo_Studio_Kit_r3_antes_depois.mp4`: dia e noite lado a lado, lento 0,5x e as 2 cenas da IA. Captura em tempo real a 11–17,5 qps, então o lento repete quadros.
+  - `kit_r3_antes_depois_dia.jpg`, `kit_r3_antes_depois_noite.jpg`, `kit_r3_6lobos_antes_depois.jpg`, `kit_r3_referencia_x_studio.jpg`, `testes_salto_r3.csv`.
+- **Pendências e limites:**
+  - **Sem teste:** sons (não há arquivos); celular e multiplayer; tecla física T/Z/X/C (não usei o teclado do usuário).
+  - **Limites técnicos:**
+    - o pulso de luz percorrendo o corpo e o destaque só das runas exigem trocar a máscara (precisaria de novo asset, só com autorização);
+    - o giro da IA no lugar desliza as patas (sem clipe de virar parado ligado à IA);
+    - a câmera do trecho do Instinto esconde o lobo atrás da parede (antes e depois).
+  - **Backups:** `ServerStorage.Backup_KitLobo_efeitos_r3_2026-11-17` (versões instaladas antes do r3).
+
+## 6au. Aura verde com ventania pela referência do usuário (18/11/2026; Testes-loboancestral; place salvo v32; aguardando avaliação) → `studio/review/Lobo_Studio_Kit_aura_r4.mp4`, `studio/review/kit_aura_r4_referencia_x_studio.jpg`
+- **Pedido:** "siga a referência, seus pelos continuam da mesma forma, meio esverdeados, mas quero uma aura com ventania desta forma" (3 quadros: uivo, salto, corrida, com rajadas verdes em volta do corpo).
+- **Mudança (só `LoboKit_Cliente.luau`; servidor intacto; nenhum asset novo):**
+  - **Vento verde (150, 235, 125)**, cada rajada com 2 camadas:
+    - halo largo e macio (textura `rbxasset://textures/particles/smoke_main.dds`, do próprio Roblox; 3x mais largo);
+    - núcleo claro e fino (205, 255, 185).
+  - **Uivo:** além da órbita, rajadas que correm da cabeça até a cauda a cada 0,35 s durante o bônus.
+  - **Aura:** Highlight verde **só no contorno** (Occluded, tinta de 5% no máximo), acompanhando a força de cada fase.
+    - Na 1ª tentativa a tinta de 20% pintou o lobo inteiro de verde: reprovada por mim antes de entregar.
+- **Instalado e conferido por checksum:** cliente 29530 bytes. Backup em `ServerStorage.Backup_KitLobo_efeitos_r3_2026-11-17.LoboKit_Cliente_r3_antes_aura`.
+- **Testado em Play (PC, dia):** Uivo, Salto curto/longo/encadeado e Investida, sem erro. Pelo continua como era; contorno verde e rajadas verdes visíveis.
+- **Diferença que ainda resta para a referência:** lá as rajadas são mais numerosas, largas e macias e envolvem o corpo também no salto e na corrida; aqui, no salto e na investida, ainda ficam em poucas faixas.
+- **Sem teste:** noite, várias cópias e celular. Os números continuam [PROPOSTA].
+
+## 6av. TESTE: giros de vento espontâneos (18/11/2026; Testes-loboancestral; place salvo v33; aguardando avaliação) → `studio/review/Lobo_Studio_Vento_espontaneo_teste.mp4`, `studio/review/vento_r4_x_espontaneo.jpg`
+- **Pedido:** "giros do vento mais espontâneos em vez de seguidos, vamos fazer como teste".
+- **Mudança (só `LoboKit_Cliente.luau`):** chave `VENTO_ESPONTANEO = true`; `false` volta ao vento do r4.
+  - Arcos curtos, cada um com centro ao longo do corpo, raio, inclinação, sentido, volta (140–320°), alongamento, subida, duração (0,55–1,15 s) e intervalo (0,1–0,45 s) sorteados.
+  - Aparecem e somem suavemente.
+  - **Uivo:** substituem a órbita e as rajadas em sequência; ficam mais densos na nota do uivo e somem no fim do bônus.
+  - **Salto normal:** substituem os rastros retos. O encadeado mantém a hélice (sinal próprio).
+  - **Investida:** substituem as faixas rentes; acompanham a velocidade.
+  - No celular, metade da densidade (não testado).
+- **Studio:** instalado e conferido por checksum (31725 bytes). Backup do r4 em `ServerStorage.Backup_KitLobo_efeitos_r3_2026-11-17.LoboKit_Cliente_aura_r4`.
+- **Play (PC, dia):** Uivo, Salto curto/longo/encadeado e Investida, sem erro. Os giros saem soltos e irregulares, mas ficam mais esparsos que no r4. Um arco muito inclinado pode aparecer como um traço reto.
+- **Sem teste:** noite, várias cópias e celular.
+- **r2 (18/11, usuário escolheu "Espontâneo, mais denso"; place salvo v34):**
+  - Cerca de 3x mais giros: intervalo de 0,06–0,26 s; densidade Uivo 1,6 (3,0 na nota), Salto 3,2, Investida 3,6.
+  - Inclinação reduzida para ±18°/±12°, porque arcos de lado viravam traços retos.
+  - **Instalado:** conferido por checksum (31826 bytes). Backup do r1 em `ServerStorage.Backup_KitLobo_efeitos_r3_2026-11-17.LoboKit_Cliente_espontaneo_r1`.
+  - **Play (dia):** Uivo e Salto bem mais densos e sem traço reto; Investida (0,74 s) com pouca diferença. Custo: no máximo 23 faixas e luzes ativas, cerca de 0,02 ms por quadro.
+  - **Evidências:** `studio/review/Lobo_Studio_Vento_espontaneo_r2.mp4`, `vento_espontaneo_r1_x_r2.jpg`.
+  - **Sem teste:** noite, várias cópias e celular.
+
+## 6aw. Auditoria de compatibilidade com o mundo + ensaios controlados (18/11/2026; Testes-loboancestral; nada foi alterado no place; aguardando avaliação) → `DOCS/criaturas/lobo-ancestral-compatibilidade.md`
+- **Leituras:** auditoria somente leitura das outras criaturas (o que existe de fato), dos sistemas de combate de `src/`, da v6.2 e dos .docx oficiais de 30/10.
+- **Conflito registrado sem alterar:** elemento único oficial × Natureza+Ar na v6.2 (o elemento do Lobo está PENDENTE no oficial).
+- **Nenhuma criatura real no place:** ensaios em Play com alvos temporários ágil, tank e colossal, criados e removidos só no Play. Scripts do Lobo inalterados (checksum).
+- **Principais falhas medidas:**
+  - alcance da Mordida/Garra, raio de acerto do Salto e Instinto medidos ao **centro** do alvo: Mordida e Garra 0 no colossal, Garra 0 no tank; Salto pousa dentro do corpo (7 studs no colossal); colossal com a superfície a 70 fica fora do Instinto;
+  - kit isolado do `N.ferir`, de PvP e zonas seguras, da Vida@ dos dragões/guardiões e das IAs do jogo.
+- **Funcionaram:** Investida nos três portes (para na superfície), parede (Salto recusado, Investida para), Uivo, Caçador Noturno, marca da presa, cancelamentos e a IA guardiã (reage aos três portes; atrás da parede, nenhuma reação).
+- **Balanceamento (não é bug):** Lobo cai em 23 golpes do tank e 10 do colossal de ensaio; cerca de 19 min para derrotar um colossal de 6000.
+- **Evidências:** `studio/review/Lobo_Compatibilidade_ensaios.mp4`, `compat_ensaios_prancha.jpg`, `compat_lobo_referencia_x_studio.jpg`.
+- **Menor próximo passo:** alcance e contato até a superfície, só no kit do Lobo, e repetir a bateria.
+- **r5 feito (18/11, place v35):** alcance, pouso do Salto, Instinto e IA medidos até a superfície; detalhes no §8 de `lobo-ancestral-compatibilidade.md`.
 
 ## 7. Próximos passos sugeridos (atualizado em 10/11/2026; aguardam aprovação)
 - **Estado real:** a base é o rig18/clipes26/export26 (58 ossos, pálpebras), com dormir v26, montaria M1–M4 e GLB da sela aprovados no Blender. A antiga V5 e o modelo Motor6D de 26/10 estão superados.

@@ -1,0 +1,22 @@
+{
+ "N": 1024,
+ "texels": 22757,
+ "bytes": 116004,
+ "base64": 154672,
+ "largura_linha_studs": 0.11037,
+ "runas": [
+  "E_ombro",
+  "E_flanco",
+  "E_coxa",
+  "D_ombro",
+  "D_flanco",
+  "D_coxa"
+ ],
+ "max": {
+  "L": 1.0,
+  "R": 1.0,
+  "E": 1.0
+ },
+ "cobertura_L": 0.11427054248959385,
+ "texels_olho": 1000
+}

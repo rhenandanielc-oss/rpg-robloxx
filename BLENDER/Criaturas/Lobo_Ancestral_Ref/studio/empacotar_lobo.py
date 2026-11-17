@@ -35,6 +35,9 @@ for pasta, lote, nomes in [("comportamento/clipes_l1", "vida L1", ["Beber", "Com
                            ("habilidades/clipes_kit30", "kit v30 (Investida sobre a Corrida v30)", ["Hab_Investida"]),
                            ("montaria/clipes_m2_v31", "montaria M2 r3 no rig de 60 ossos", ["Montar_E", "Montar_D", "Desmontar_E", "Desmontar_D"])]:
     for n in nomes: FONTES[n] = (pasta, lote)
+# 16/11 (aprovado pelo usuario): virar andando + VirarE/D r2 (patas giram junto) + pelo do rosnado/latido sem dividir
+for n in ["AndarCurvaE", "AndarCurvaD", "VirarE", "VirarD"]: FONTES[n] = ("marcha/clipes_curvas32", "curvas v32")
+for n in ["RosnadoAmeaca", "LatidoAviso"]: FONTES[n] = ("comportamento/clipes_l4_r2", "vida L4 r2 (pelo)")
 if __name__ == "__main__":
     os.makedirs(os.path.join(AQUI, "dados"), exist_ok=True)
     inv = {}; arvore = {"$className": "Folder"}

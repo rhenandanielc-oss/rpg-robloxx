@@ -104,6 +104,8 @@ def aplicar(p):
     for k, (bola, incl, dedo) in p["pes"].items():                  # dedos: orientacao de repouso (deitados) + curvatura
         pb = PB[DEDO[k]]; base = PB[k].tail
         Rd = Matrix.Rotation(rad(dedo), 3, "X") @ BD[DEDO[k]].matrix_local.to_3x3()
+        if p.get("yaw_dedos") and p.get("yaw_pe"):                      # 16/11 curvas v32: os dedos giram com a pata (so quem pede)
+            Rd = Matrix.Rotation(rad(p["yaw_pe"].get(k, 0.0)), 3, "Z") @ Matrix.Rotation(rad(dedo), 3, "X") @ BD[DEDO[k]].matrix_local.to_3x3()
         pb.matrix = Matrix.Translation(base) @ Rd.to_4x4()
     bpy.context.view_layer.update()
     carpo_meio()
@@ -960,6 +962,8 @@ elif os.environ.get("LOBO_MARCHA29"):                   # marcha v29 (10/11): SO
     exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "marcha", "marcha_v29.py"), encoding="utf-8").read(), globals())
 if os.environ.get("LOBO_KIT") and os.environ.get("LOBO_MARCHA30"):   # 15/11: Hab_Investida sobre a Corrida v30 (habilidades/clipes_kit_v30.py)
     exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "habilidades", "clipes_kit_v30.py"), encoding="utf-8").read(), globals())
+if os.environ.get("LOBO_CURVAS") and os.environ.get("LOBO_MARCHA30"):   # 16/11: AndarCurvaE/D + VirarE/D r2 (marcha/curvas_v32.py)
+    exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "marcha", "curvas_v32.py"), encoding="utf-8").read(), globals())
 if os.environ.get("LOBO_VIDA") == "3":                # lote 3 (11/11): alerta e caca - usa a marcha v30 (exige LOBO_MARCHA30=1)
     exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "comportamento", "clipes_vida_l3.py"), encoding="utf-8").read(), globals())
 if os.environ.get("LOBO_VIDA") == "4":                # lote 4 (12/11): vocal e social (comportamento/clipes_vida_l4.py)

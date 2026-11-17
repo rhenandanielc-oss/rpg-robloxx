@@ -17,8 +17,10 @@ for pb in arm.pose.bones:
     for c in pb.constraints: c.mute = True
 CLIPES = ("Repouso", "Observar", "Andar", "Trote", "Corrida", "Partida", "Freada", "VirarE", "VirarD", "Salto",
           "Uivo", "Rosnar", "Mordida", "Garra", "Impacto")
+for c_ in CLIPES:                                       # troca pelas acoes do arquivo indicado (o .blend da sela ja traz as antigas)
+    if "Lobo_" + c_ in bpy.data.actions: bpy.data.actions.remove(bpy.data.actions["Lobo_" + c_])
 with bpy.data.libraries.load(os.path.abspath(A[0])) as (src, dst):
-    dst.actions = [n for n in src.actions if n in ["Lobo_" + c for c in CLIPES] and n not in bpy.data.actions]
+    dst.actions = [n for n in src.actions if n in ["Lobo_" + c for c in CLIPES]]
 ra = bpy.data.objects["TESTE_Manequim_R15aprox_Rig"]; ra.animation_data.action = bpy.data.actions["DEMO_Cav_Sentado"]
 arm.animation_data.action = None
 for pb in arm.pose.bones: pb.rotation_quaternion = (1, 0, 0, 0); pb.location = (0, 0, 0)

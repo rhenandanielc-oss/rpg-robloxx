@@ -1,0 +1,13 @@
+# Assets do efeito do Uivo (enviados à conta Roblox do usuário em 16/11/2026, com autorização)
+- `rbxassetid://122875207495130` — `mascara_uivo_dados.png`: dados (R = linhas, G = runas/olhos, B = cabeça→cauda). Hoje não é usado no jogo.
+- `rbxassetid://127612237000270` — `quadros/uivo_q5.png`: máscara do PICO (linhas 0,8, runas 1,0, olhos 1,0). **Em uso**: EmissiveMaskContent fixa da SurfaceAppearance do lobo (Testes-loboancestral), EmissiveStrength 0 fora do Uivo.
+- Pulso (não usados: o LocalScript não pode trocar a máscara):
+  - `rbxassetid://117997912255086` (q0)
+  - `rbxassetid://109264682630449` (q1)
+  - `rbxassetid://83783646789083` (q2)
+  - `rbxassetid://105802175194180` (q3)
+  - `rbxassetid://79711797918646` (q4)
+- **r2 (16/11, pedido do usuário: mais linhas no corpo e olhos verdes):**
+  - `rbxassetid://134314902144047` — `quadros/uivo_fixa_r2.png`: 9 linhas no tronco, 4 em cada pata, espessura 1,3% da altura; linhas 0,7, runas e olhos 1,0.
+  - **Em uso** com EmissiveTint 60,210,70 e força 0 fora do Uivo (o cliente usa 4).
+  - Os quadros q0–q5 locais foram regenerados com a máscara r2; os assets q0–q5 enviados antes são da r1.

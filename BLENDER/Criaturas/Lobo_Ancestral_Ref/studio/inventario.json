@@ -103,8 +103,8 @@
   "md5_json": "c194c0fd425058bd9656fa1ef61ebc85"
  },
  "VirarE": {
-  "fonte": "clipes30/LoboAncestral_VirarE.json",
-  "lote": "base v30/v31",
+  "fonte": "marcha/clipes_curvas32/LoboAncestral_VirarE.json",
+  "lote": "curvas v32",
   "quadros": 73,
   "fps": 30,
   "duracao": 2.4,
@@ -116,12 +116,12 @@
    }
   ],
   "velocidade": 0.0,
-  "bytes": 14377,
-  "md5_json": "408b1ab916a5e9cf10779cf74d6fbdd2"
+  "bytes": 14246,
+  "md5_json": "b180dab88eaa946d74bbd46100014a36"
  },
  "VirarD": {
-  "fonte": "clipes30/LoboAncestral_VirarD.json",
-  "lote": "base v30/v31",
+  "fonte": "marcha/clipes_curvas32/LoboAncestral_VirarD.json",
+  "lote": "curvas v32",
   "quadros": 73,
   "fps": 30,
   "duracao": 2.4,
@@ -133,8 +133,8 @@
    }
   ],
   "velocidade": 0.0,
-  "bytes": 14384,
-  "md5_json": "862424a5b7a432ded2b6f43661fc171e"
+  "bytes": 14253,
+  "md5_json": "c98c827dacce5f2400fb1ff31b355200"
  },
  "Sentar": {
   "fonte": "clipes30/LoboAncestral_Sentar.json",
@@ -793,8 +793,8 @@
   "md5_json": "91cb301a98109bed50fc6e6a24af8509"
  },
  "LatidoAviso": {
-  "fonte": "comportamento/clipes_l4/LoboAncestral_LatidoAviso.json",
-  "lote": "vida L4",
+  "fonte": "comportamento/clipes_l4_r2/LoboAncestral_LatidoAviso.json",
+  "lote": "vida L4 r2 (pelo)",
   "quadros": 73,
   "fps": 30,
   "duracao": 2.4,
@@ -810,8 +810,8 @@
    }
   ],
   "velocidade": 0.0,
-  "bytes": 10477,
-  "md5_json": "03a557c2757b93ac6ed41df98517c3dd"
+  "bytes": 10089,
+  "md5_json": "4617c6f7ee5e2544abc3c9aed80bf573"
  },
  "Ganido": {
   "fonte": "comportamento/clipes_l4/LoboAncestral_Ganido.json",
@@ -835,8 +835,8 @@
   "md5_json": "0b95fcf118177e6ba1e1b521f72d330c"
  },
  "RosnadoAmeaca": {
-  "fonte": "comportamento/clipes_l4/LoboAncestral_RosnadoAmeaca.json",
-  "lote": "vida L4",
+  "fonte": "comportamento/clipes_l4_r2/LoboAncestral_RosnadoAmeaca.json",
+  "lote": "vida L4 r2 (pelo)",
   "quadros": 103,
   "fps": 30,
   "duracao": 3.4,
@@ -856,8 +856,8 @@
    }
   ],
   "velocidade": 0.0,
-  "bytes": 16991,
-  "md5_json": "9c03f8753aa7f8aaf3693e1b5f66ab98"
+  "bytes": 15819,
+  "md5_json": "37d77d7fed84c38d11e6a760d84dd531"
  },
  "Saudacao": {
   "fonte": "comportamento/clipes_l4/LoboAncestral_Saudacao.json",
@@ -1078,5 +1078,29 @@
   "velocidade": 0.0,
   "bytes": 11243,
   "md5_json": "203ca4e9544f9ee0bd95b06c5403c4aa"
+ },
+ "AndarCurvaE": {
+  "fonte": "marcha/clipes_curvas32/LoboAncestral_AndarCurvaE.json",
+  "lote": "curvas v32",
+  "quadros": 36,
+  "fps": 30,
+  "duracao": 1.2,
+  "loop": true,
+  "marcadores": [],
+  "velocidade": 3.024,
+  "bytes": 10007,
+  "md5_json": "363c2ad848b3b2ce100cef20e11e8fc3"
+ },
+ "AndarCurvaD": {
+  "fonte": "marcha/clipes_curvas32/LoboAncestral_AndarCurvaD.json",
+  "lote": "curvas v32",
+  "quadros": 36,
+  "fps": 30,
+  "duracao": 1.2,
+  "loop": true,
+  "marcadores": [],
+  "velocidade": 3.024,
+  "bytes": 10020,
+  "md5_json": "bdc3aaecfbd6ddf32580cdf4a0d7b72d"
  }
 }

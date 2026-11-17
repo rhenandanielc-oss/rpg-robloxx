@@ -157,6 +157,12 @@
    "Desmontar_D": {
     "$path": "dados/Desmontar_D.txt"
    },
+   "AndarCurvaE": {
+    "$path": "dados/AndarCurvaE.txt"
+   },
+   "AndarCurvaD": {
+    "$path": "dados/AndarCurvaD.txt"
+   },
    "Perfil_Hab_Investida": {
     "$path": "dados/Perfil_Hab_Investida.txt"
    }
