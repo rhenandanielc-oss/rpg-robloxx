@@ -1,0 +1,8 @@
+pose;z_min;esticamento_p99;pior_aresta;arestas>3x(malha,qtd,centro_repouso)
+repouso;-0.002;1.000;(1.0, 'Cerbero_Corpo', (np.float64(-0.3), np.float64(-5.4), np.float64(17.2)));[]
+bocas_abertas;-0.000;1.083;(2.22, 'Cerbero_Cabecas', (np.float64(-0.4), np.float64(-11.8), np.float64(16.2)));[]
+cabecas_alvos_diferentes;-0.000;1.315;(2.06, 'Cerbero_Cabecas', (np.float64(-3.0), np.float64(-9.0), np.float64(16.0)));[]
+cabecas_juntas_frente;-0.000;1.185;(1.66, 'Cerbero_Corpo', (np.float64(1.2), np.float64(-4.0), np.float64(15.1)));[]
+passada_longa;-0.000;1.158;(2.33, 'Cerbero_Corpo', (np.float64(-3.2), np.float64(-3.2), np.float64(7.7)));[]
+agachar_ataque;-0.000;1.137;(2.49, 'Cerbero_Corpo', (np.float64(2.3), np.float64(-5.8), np.float64(6.9)));[]
+torcao_tronco;0.000;1.085;(1.51, 'Cerbero_Corpo', (np.float64(0.6), np.float64(5.8), np.float64(9.8)));[]

@@ -1,0 +1,10 @@
+Cerbero_Andar;quadros=36;ossos=38;faltam=[];dif_json_x_acao=0.00042;ponta_pata_min_z=0.571;salto_loop_ultimo_primeiro=0.435;eventos=None
+Cerbero_Corrida;quadros=16;ossos=38;faltam=[];dif_json_x_acao=0.00039;ponta_pata_min_z=0.571;salto_loop_ultimo_primeiro=0.783;eventos=None
+Cerbero_Freada;quadros=46;ossos=38;faltam=[];dif_json_x_acao=0.00044;ponta_pata_min_z=0.571;salto_loop_ultimo_primeiro=None;eventos={'inicio_na_corrida': 0.0, 'parada': 0.95, 'fim_em_repouso': 1.5}
+Cerbero_Mordida;quadros=34;ossos=38;faltam=[];dif_json_x_acao=0.00026;ponta_pata_min_z=0.571;salto_loop_ultimo_primeiro=None;eventos={'antecipacao': 0.0, 'bote': 0.3, 'contato': 0.42, 'recuperacao': 0.55, 'fim': 1.1}
+Cerbero_Partida;quadros=60;ossos=38;faltam=[];dif_json_x_acao=0.00043;ponta_pata_min_z=0.571;salto_loop_ultimo_primeiro=None;eventos={'agachar': 0.0, 'primeira_passada': 0.367, 'encaixa_corrida': 1.967}
+Cerbero_Repouso;quadros=180;ossos=38;faltam=[];dif_json_x_acao=0.00028;ponta_pata_min_z=0.571;salto_loop_ultimo_primeiro=0.009;eventos=None
+Cerbero_Salto;quadros=46;ossos=38;faltam=[];dif_json_x_acao=0.00039;ponta_pata_min_z=0.571;salto_loop_ultimo_primeiro=None;eventos={'agachar': 0.0, 'decolagem': 0.42, 'apice': 0.7, 'pouso': 0.98, 'recuperacao': 1.1, 'fim': 1.5}
+Cerbero_Trote;quadros=18;ossos=38;faltam=[];dif_json_x_acao=0.00050;ponta_pata_min_z=0.571;salto_loop_ultimo_primeiro=0.575;eventos=None
+Cerbero_VirarD;quadros=36;ossos=38;faltam=[];dif_json_x_acao=0.00035;ponta_pata_min_z=0.571;salto_loop_ultimo_primeiro=0.314;eventos=None
+Cerbero_VirarE;quadros=36;ossos=38;faltam=[];dif_json_x_acao=0.00033;ponta_pata_min_z=0.571;salto_loop_ultimo_primeiro=0.276;eventos=None

@@ -1,0 +1,53 @@
+{
+ "Repouso": {
+  "duracao_s": 6.0,
+  "loop": true,
+  "quadros": 180,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pata_max_studs_s": 0.0,
+  "pata_min_z": -0.002,
+  "malha_min_z_fora_das_patas": 2.219
+ },
+ "Andar": {
+  "duracao_s": 1.2,
+  "loop": true,
+  "quadros": 36,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 4.84,
+  "erro_ik_max": 0.0003,
+  "desliza_pata_max_studs_s": 0.0,
+  "pata_min_z": -0.002,
+  "malha_min_z_fora_das_patas": 1.989
+ },
+ "Corrida": {
+  "duracao_s": 0.5333,
+  "loop": true,
+  "quadros": 16,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 22.3,
+  "erro_ik_max": 0.0009,
+  "desliza_pata_max_studs_s": 0.008,
+  "pata_min_z": -0.002,
+  "malha_min_z_fora_das_patas": 1.766
+ },
+ "Mordida": {
+  "duracao_s": 1.1,
+  "loop": false,
+  "quadros": 34,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pata_max_studs_s": 0.0,
+  "pata_min_z": -0.002,
+  "malha_min_z_fora_das_patas": 2.199,
+  "eventos_s": {
+   "antecipacao": 0.0,
+   "bote": 0.3,
+   "contato": 0.42,
+   "recuperacao": 0.55,
+   "fim": 1.1
+  }
+ }
+}

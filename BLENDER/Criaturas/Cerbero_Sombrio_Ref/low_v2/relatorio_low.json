@@ -1,0 +1,32 @@
+{
+ "regioes": {
+  "cabecas": 10229,
+  "patas": 1698,
+  "corpo": 6073
+ },
+ "pesos": [
+  0.85,
+  0.92
+ ],
+ "alvo": 18000,
+ "voxel": 0.005,
+ "textura": 1024,
+ "malhas": {
+  "Cerbero_Cabecas": {
+   "tris": 10229,
+   "material": "M_Cerbero_Cabecas"
+  },
+  "Cerbero_Corpo": {
+   "tris": 7771,
+   "material": "M_Cerbero_Corpo"
+  }
+ },
+ "tris_total": 18000,
+ "bruto_tris": 1381216,
+ "medidas": {
+  "comprimento": 1.9031195640563965,
+  "largura": 1.0267254114151,
+  "altura": 1.5434728860855103,
+  "pata_min_z": -0.00012332912592682987
+ }
+}
