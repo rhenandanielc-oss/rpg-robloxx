@@ -141,7 +141,7 @@ local function soltar(motivo)
 	for _, pl in ipairs(est.avisados or {}) do AVISO:FireClient(pl, "esconder") end; est.avisados = nil   -- some o botao Soltar aliado
 	if a and a.Parent then
 		local p = centro(a)
-		if p then a:PivotTo(CFrame.new(Vector3.new(p.X, 2.5, p.Z))) end
+		if p and not est.ponto then a:PivotTo(CFrame.new(Vector3.new(p.X, 2.5, p.Z))) end   -- ponto de mordida: ja esta no chao, fica onde esta
 		a:SetAttribute("Agarrado", false)
 		log("alvo %s solto (%s)", a.Name, motivo)
 		if ehPvP(a) then
@@ -171,6 +171,7 @@ function M.cancelar(motivo)
 	log("FIM %s: %s", est.poder, motivo)
 	est.gen += 1; limparCons(); soltar(motivo)
 	est.pvp = nil; est.limite = nil; est.cavaleiro = nil  -- PvP: fim da pegada
+	est.ponto = nil; est.yFix = nil
 	T.parar()
 	local dy = (modelo:GetPivot().Position - BASE.Position).Magnitude
 	moverPivo(BASE, dy > 0.05 and 0.4 or 0)               -- volta a altura normal sem salto
@@ -199,11 +200,27 @@ local function iniciar(poder, manterPivo)
 	return est.gen
 end
 local function vigiaAlvo(g)
-	table.insert(est.cons, RS.Heartbeat:Connect(function()
+	table.insert(est.cons, RS.Heartbeat:Connect(function(dt)
 		if est.gen ~= g or not est.alvo then return end
 		if not alvoValido(est.alvo) then M.cancelar("alvo_removido_ou_derrotado"); return end
-		-- o alvo acompanha a mandibula no encaixe medido no contato (gira junto no Giro)
-		est.alvo:PivotTo(osso("Mandibula").TransformedWorldCFrame * est.rel)
+		local mand = osso("Mandibula").TransformedWorldCFrame
+		if not est.ponto then
+			-- alvo pequeno: acompanha a mandibula no encaixe medido no contato (gira junto no Giro)
+			est.alvo:PivotTo(mand * est.rel); return
+		end
+		-- 19/11 PONTO DE MORDIDA (alvo grande): so o ponto mordido segue os dentes; o corpo fica em pe, na altura do contato,
+		-- e vira aos poucos para ficar ATRAS da mordida (arrastado), em vez de girar inteiro com a mandibula
+		local ponta = mand * Vector3.new(0, CFG.Agarrao.ponta, 0)
+		local cf = est.alvo:GetPivot(); local _, ry = cf:ToOrientation(); local rot = CFrame.Angles(0, ry, 0)
+		local loc = -est.ponto * Vector3.new(1, 0, 1)                -- do ponto mordido ao centro do corpo (local)
+		local atras = (cf.Position - ponta) * Vector3.new(1, 0, 1)
+		if loc.Magnitude > 0.5 and atras.Magnitude > 0.5 then
+			local w, t = rot:VectorToWorldSpace(loc).Unit, atras.Unit
+			local d = math.atan2(w:Cross(t).Y, w:Dot(t)); local passo = CFG.Agarrao.giro_corpo * dt
+			rot = CFrame.Angles(0, math.clamp(d, -passo, passo), 0) * rot
+		end
+		local pos = ponta - rot:VectorToWorldSpace(est.ponto)
+		est.alvo:PivotTo(CFrame.new(pos.X, est.yFix, pos.Z) * rot)
 	end))
 end
 
@@ -309,6 +326,20 @@ function M.agarrao(alvo, cena, opcoes)
 			est.alvo = alvo; alvo:SetAttribute("Agarrado", true)
 			if est.pvp then avisarAliados(alvo) end                -- 19/11: aparece "Soltar aliado" para os aliados
 			est.rel = osso("Mandibula").TransformedWorldCFrame:Inverse() * alvo:GetPivot()
+			do                                                      -- 19/11: alvo grande = PONTO DE MORDIDA (osso mais perto dos dentes)
+				local cfA = alvo:GetPivot(); local tam = alvo:GetExtentsSize()
+				est.ponto = nil
+				if math.max(tam.X, tam.Y, tam.Z) > CFG.Agarrao.rigido_max then
+					local melhor, dm, nome = nil, math.huge, "caixa"
+					for _, b in ipairs(alvo:GetDescendants()) do
+						if b:IsA("Bone") then local dd = (b.TransformedWorldCFrame.Position - ponta).Magnitude; if dd < dm then melhor, dm, nome = b.TransformedWorldCFrame.Position, dd, b.Name end end
+					end
+					local lp = cfA:PointToObjectSpace(melhor or ponta)
+					if not melhor then local h = tam / 2; lp = Vector3.new(math.clamp(lp.X, -h.X, h.X), math.clamp(lp.Y, -h.Y, h.Y), math.clamp(lp.Z, -h.Z, h.Z)) end
+					est.ponto = Vector3.new(lp.X, 0, lp.Z); est.yFix = cfA.Y
+					log("PONTO DE MORDIDA: %s (%.1f dos dentes); o corpo (%.0f studs) fica em pe e e arrastado", nome, dm == math.huge and 0 or dm, math.max(tam.X, tam.Z))
+				end
+			end
 			local h = alvo:FindFirstChildOfClass("Humanoid"); h:TakeDamage(CFG.Agarrao.dano_contato)
 			log("CONTATO: agarrou %s (distancia %.2f <= %.2f)", alvo.Name, d, CFG.Agarrao.alcance)
 			resultado = "acerto"; vigiaAlvo(g)
@@ -363,6 +394,7 @@ local function anelAgua(pos, cor)
 	game:GetService("Debris"):AddItem(p, 0.9)
 end
 function M.giro()
+	if not CFG.Giro.ativo then log("Rolar da Morte: removido do kit (usuario 19/11)"); return "removido" end
 	local preso = est.poder == "Agarrao" and est.fase == "segurando" and est.alvo or nil
 	if est.poder and not preso then return "ocupado" end
 	local alvoAntes = preso
@@ -734,6 +766,60 @@ AVISO.OnServerEvent:Connect(function(pl, acao)
 	est.indo = est.indo or {}; if est.indo[pl] then return end
 	est.indo[pl] = true
 	task.spawn(function() irBater(pl, vit); est.indo[pl] = nil end)
+end)
+
+-- ================================================================ Sentido de Vibracao (passiva, usuario 19/11) [PROPOSTA]
+-- Na agua (raio 40) ou em terra a ate 10 studs da agua (raio 20), o crocodilo percebe criaturas que SE MOVEM por perto,
+-- mesmo sem ve-las (sem cone de visao). So informacao: nao causa dano nem muda os poderes. Parado nao vibra. O terreno
+-- solido entre os dois bloqueia (agua nao). O SERVIDOR decide quem foi percebido e manda so ao dono (atributo DonoUserId
+-- do crocodilo) as posicoes, para o cliente desenhar uma ondulacao discreta. M.vibracao = ultima leitura (teste/log).
+local VIB = RepS:FindFirstChild("Crocodilo_Vibracao") or Instance.new("RemoteEvent"); VIB.Name = "Crocodilo_Vibracao"; VIB.Parent = RepS
+M.vibracao = {meio = "fora", n = 0, nomes = {}}
+local ultimaPos = {}
+local function ondeEsta()                                    -- "agua", "margem" ou "fora" (servidor mede a agua real)
+	local p = modelo:GetPivot().Position
+	local sup, fundo = medirAgua(p)
+	if sup and sup - fundo > 1 then return "agua", sup end
+	local V = CFG.Vibracao
+	for i = 0, 7 do
+		local a = i * math.pi / 4; local s2, f2 = medirAgua(p + Vector3.new(math.cos(a), 0, math.sin(a)) * V.margem)
+		if s2 and s2 - f2 > 0.5 then return "margem", s2 end
+	end
+	return "fora", nil
+end
+local rpTerreno = RaycastParams.new(); rpTerreno.FilterType = Enum.RaycastFilterType.Include; rpTerreno.IgnoreWater = true
+rpTerreno.FilterDescendantsInstances = {workspace.Terrain}
+task.spawn(function()
+	while modelo.Parent do
+		local V = CFG.Vibracao; task.wait(V.intervalo)
+		local meio = ondeEsta(); local raio = meio == "agua" and V.raio_agua or (meio == "margem" and V.raio_margem or 0)
+		local cab = (osso("Cabeca") and osso("Cabeca").TransformedWorldCFrame.Position) or modelo:GetPivot().Position
+		local achados, nomes = {}, {}
+		local cands = {}
+		for _, a in ipairs(workspace.Teste_Crocodilo.Arena:GetChildren()) do if a:IsA("Model") then table.insert(cands, a) end end
+		for _, pl in ipairs(game.Players:GetPlayers()) do if pl.Character then table.insert(cands, pl.Character) end end
+		local vistos = {}
+		for _, m in ipairs(cands) do
+			local h = m:FindFirstChildOfClass("Humanoid"); local c = centro(m)
+			if h and h.Health > 0 and c and m ~= modelo then
+				vistos[m] = true
+				local antes = ultimaPos[m]; ultimaPos[m] = c
+				local vel = antes and ((c - antes) * Vector3.new(1, 0, 1)).Magnitude / V.intervalo or 0
+				local d = (c - cab).Magnitude
+				if raio > 0 and d <= raio and vel >= V.vel_min and vel <= V.vel_max then
+					local r = workspace:Raycast(cab, c - cab, rpTerreno)
+					if not r then table.insert(achados, c); table.insert(nomes, string.format("%s (%.0f studs, %.1f/s)", m.Name, d, vel)) end
+				end
+			end
+		end
+		for m in pairs(ultimaPos) do if not vistos[m] then ultimaPos[m] = nil end end
+		local mudou = #nomes ~= M.vibracao.n or meio ~= M.vibracao.meio
+		M.vibracao = {meio = meio, n = #nomes, nomes = nomes, raio = raio}
+		modelo:SetAttribute("Vibracao", #nomes)
+		if mudou and #nomes > 0 then log("VIBRACAO (%s, raio %d): %s", meio, raio, table.concat(nomes, "; ")) end
+		local dono = game.Players:GetPlayerByUserId(modelo:GetAttribute("DonoUserId") or 0)
+		if dono and #achados > 0 then VIB:FireClient(dono, achados) end
+	end
 end)
 
 function M.estado() return {poder = est.poder, fase = est.fase, alvo = est.alvo and est.alvo.Name or nil, naAgua = est.naAgua} end

@@ -8,6 +8,8 @@ return {
 		ponta = 4.5,                        -- ponta dos dentes = 4,5 a frente do osso Mandibula (+Y do osso)
 		sustentacao = 3.5,                  -- s segurando antes de soltar (usuario 16/11: 3,5 s por enquanto)
 		dano_contato = 10, dano_por_segundo = 4,
+		rigido_max = 6,                     -- 19/11: alvo com mais de 6 studs = PONTO DE MORDIDA (osso mais perto dos dentes), corpo fica em pe e e arrastado
+		giro_corpo = 2.5,                   -- rad/s: o corpo arrastado vira para ficar atras da mordida (sem girar inteiro com a mandibula)
 		profundidade_agua = 0.85,           -- agua: desce da altura de nado para a de espreita (render R2: agua 5,15 x 4,3)
 	},
 	AgarraoPvP = {                          -- 19/11 numeros APROVADOS pelo usuario [A TESTAR]; boneco com PvP=true simula criatura de jogador
@@ -22,7 +24,12 @@ return {
 		soco_alcance = 8, soco_parar = 4.5, soco_intervalo = 0.55, soco_dano = 40,   -- golpe do jogador no crocodilo (dano de TESTE; o real vem do combate do jogador)
 		pulo_lado = 5, pulo_recuo = 1.5,    -- 19/11 usuario "pular mais perto": cai AO LADO da cabeca do crocodilo (5 de lado, 1,5 atras do focinho), ja no alcance para bater
 	},
-	Giro = {voltas = 2, dano_por_volta = 8},
+	Giro = {voltas = 2, dano_por_volta = 8, ativo = false},   -- 19/11 usuario: Rolar da Morte REMOVIDO do kit (codigo guardado; ativo=false recusa)
+	Vibracao = {                            -- 19/11 usuario: passiva Sentido de Vibracao [PROPOSTA de numeros]
+		raio_agua = 40, raio_margem = 20, margem = 10,   -- na agua 40; em terra so a ate 10 studs da agua, raio 20
+		vel_min = 1.5, vel_max = 60,        -- so quem se move (studs/s); parado nao vibra; acima de 60 = teletransporte, ignora
+		intervalo = 0.25,                   -- s entre leituras do servidor
+	},
 	GiroEmboscada = {                       -- P4 16/11 (ref. secao 4: Giro 2,0x a mordida 20, raio 12, derruba 1,5 s, +50% distraido; raso 1,2x)
 		janela = 1.5, mult = 2.0, mult_raso = 1.2, bonus_distraido = 1.5, dano_base = 20,
 		raio = 12, derruba = 1.5, distancia = 22, voo = 0.9, altura = 5, centro_frente = 6,
