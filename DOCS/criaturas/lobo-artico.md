@@ -4124,3 +4124,49 @@ Pendente: aprovação visual → export/reimport (GLB por LOD) → JSON → KFS 
 - **Vídeo:** `review/studio_idades_malha/video_idades_malha.mp4` (~40 s).
 - **Observado:** no Roblox, Filhote e Jovem saem mais escuros que no Blender (sem a curva AgX). Ajustar a tinta se o usuário quiser.
 - **APROVADO pelo usuário (19/11: "Aprovar e commitar")**, junto com §8.73 (velocidade relativa ao tamanho e efeitos na escala).
+
+### 8.76 Pelagem do Filhote/Jovem no Roblox, cabeça do Ancião e números finais do kit (19/11/2026)
+**Pedido:** "Siga com os dois" (clarear Filhote/Jovem no Roblox + pendências do kit).
+
+**Pelagem (sem reimportar):**
+- `tingir_idades_r2.py` → `idades_v1/roblox_r2/`.
+- As texturas foram enviadas ao Roblox e trocadas só nas malhas guardadas em `ServerStorage.LoboArtico_Idades`:
+  - `SurfaceAppearance.ColorMap` de Corpo e Cabeça;
+  - `TextureID` da Pelagem.
+- As ids antigas ficaram nos atributos `ColorMap_r1` e `TextureID_r1`.
+
+| Tentativa | Filhote | Jovem | Resultado |
+|---|---|---|---|
+| r1 | 0,46 | 0,70 | escuro demais no Roblox |
+| r2a | 0,64 | 0,85 | não avaliável |
+| r2b | 0,55 0,50 0,46 | 0,78 | em uso |
+
+- Na r2a, a imagem branca não era a cor: era a textura ainda não processada pelo Roblox ("Asset content representation is being generated").
+
+**Cabeça mais baixa do Ancião — `Idade_Servidor` r3:**
+- O repouso do `Pescoco1` gira 8° para baixo só nessa idade. Os clipes (Bone.Transform) continuam por cima.
+- Sinal medido em Play: a cabeça fica 6,29 acima do pivô, contra 6,72 sem o giro (−0,43 stud). Com o sinal +1 subia para 6,94.
+
+**Números finais do kit — APROVADOS pelo usuário em 19/11 ("Aprovar e commitar"; continuam [A TESTAR] em jogo).** Os do documento (§3 de `REFERENCIAS_PODERES_E_EFEITOS.md`) continuam valendo. Abaixo, só os que nasceram no ensaio e ainda não estão no documento:
+
+| Poder | Campo | Valor no ensaio | Por que / origem |
+|---|---|---|---|
+| Cometa | alcance | 60 | pedido do usuário 17/11 ("longo alcance, segue o alvo"); o documento diz 35 |
+| Cometa | giro (curva no voo) | 240°/s | para seguir alvo em movimento (documento: 120) |
+| Cometa | velocidade de voo | 40 studs/s | 60 studs em ~1,5 s |
+| Cometa | altura do arco | até 10 (32% da distância) | pedido 17/11 "pular mais alto" |
+| Cometa | alcance mínimo | 8 | evita arco degenerado colado no alvo |
+| Mira | distância de travar alvo | 65 | um pouco além do alcance do Cometa |
+| Avalanche | velocidade | 24 studs/s | um pouco acima da Corrida (20,4): 30 studs em 1,25 s |
+| Avalanche | onda | cone de 10 studs, meio-ângulo 35° | — |
+| Avalanche | lentidão | 30% por **2 s** | o documento não dá a duração |
+| Avalanche | trilha | raio 2,5, 3 s | — |
+| Básico | mordidas | intervalo 0,5 s, alcance 3,5 (+focinho), cone 75°, recomeça a sequência após 1,2 s | — |
+| PvP | jogadores como alvo | desligado | [A CONFIRMAR] em todos os poderes |
+
+**Play final (r2b + r3):**
+- Filhote em cinza médio, mais claro que a r1; gradiente cinza → branco até o Adulto.
+- O Jovem saiu quase branco. A textura dele ainda constava como "sendo gerada" pelo Roblox nesse Play, então a cor final do Jovem não foi confirmada.
+- Ancião com a cabeça mais baixa.
+- Evidência: `review/studio_idades_r2/fila_r2b.jpg`. Sem vídeo, para não pesar o PC.
+- **Pelagem r2b, cabeça do Ancião e números do kit APROVADOS pelo usuário (19/11).** A cor do Jovem ainda deve ser conferida no próximo Play.

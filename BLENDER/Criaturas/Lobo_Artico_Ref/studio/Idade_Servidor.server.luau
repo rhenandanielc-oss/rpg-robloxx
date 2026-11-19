@@ -1,3 +1,4 @@
+-- r3 19/11: pescoco do Anciao mais baixo (copia da r2b: Idade_Servidor_r2b.server.luau).
 -- r2 19/11: malha propria por idade (copia da r1: Idade_Servidor_r1.server.luau).
 -- Idade_Servidor (Script, Workspace.Teste_LoboArtico) - ESTAGIOS DE IDADE do Lobo Artico (ensaio, 18/11/2026).
 -- Usuario 18/11: "Prossiga com todos os passos de uma vez e depois eu avalio."
@@ -34,6 +35,11 @@ local HS = game:GetService("HttpService")
 local estoque = game:GetService("ServerStorage"):FindFirstChild("LoboArtico_Idades")
 local PAPEIS = {"LOW_Cabeca", "LOW_Corpo", "LOW_Pelagem", "LOW_Marca", "LOW_Cristais"}
 local malhaAtual = "Adulto"
+-- r3 (19/11, "Siga com os dois"): cabeca mais baixa do Anciao como CAMADA NO JOGO. O repouso do Pescoco1 gira alguns graus
+-- para baixo so nessa idade (Bone.CFrame); os clipes (Bone.Transform) continuam por cima, entao andar, uivar, deitar etc.
+-- seguem iguais, so com o pescoco um pouco mais baixo. Sinal medido em Play (altura da Cabeca) - atributo para conferir.
+local AJUSTE = {Anciao = {Pescoco1 = 8}}                 -- graus para baixo [PROPOSTA]
+local function sinalPescoco() return pasta:GetAttribute("Idade_SinalPescoco") or -1 end
 local function trocarMalha(nome)
 	if not estoque then return "sem estoque" end
 	local src = estoque:FindFirstChild(nome)
@@ -56,8 +62,12 @@ local function trocarMalha(nome)
 			c.Parent = lobo
 		end
 	end
+	local aj = AJUSTE[nome] or {}
 	for _, b in ipairs(rp:GetDescendants()) do
-		if b:IsA("Bone") and tb[b.Name] then b.CFrame = CFrame.new(table.unpack(tb[b.Name])) end
+		if b:IsA("Bone") and tb[b.Name] then
+			b.CFrame = CFrame.new(table.unpack(tb[b.Name]))
+			if aj[b.Name] then b.CFrame = b.CFrame * CFrame.Angles(math.rad(aj[b.Name] * sinalPescoco()), 0, 0) end
+		end
 	end
 	malhaAtual = src.Name
 	lobo:SetAttribute("MalhaIdade", malhaAtual)
@@ -92,4 +102,4 @@ end
 lobo:GetAttributeChangedSignal("Idade"):Connect(aplicar)
 if not lobo:GetAttribute("Idade") then lobo:SetAttribute("Idade", "Adulto") else aplicar() end
 task.defer(aplicar)
-pasta:SetAttribute("Idade_Versao", "r2b 19/11 (malha propria por idade; Motor6D religado) | r1 18/11 (5 idades por escala do modelo Adulto; numeros ESTATISTICAS_POR_IDADE v5.2 [A TESTAR])")
+pasta:SetAttribute("Idade_Versao", "r3 19/11 (cabeca do Anciao 8 graus mais baixa) | r2b 19/11 (malha propria por idade; Motor6D religado) | r1 18/11 (5 idades por escala do modelo Adulto; numeros ESTATISTICAS_POR_IDADE v5.2 [A TESTAR])")
