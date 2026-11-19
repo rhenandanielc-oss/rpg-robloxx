@@ -14,8 +14,11 @@ local BASE = PIVO0                     -- P4: posicao/altura de repouso atual (M
 local RepS = game:GetService("ReplicatedStorage")
 local FX = RepS:FindFirstChild("Crocodilo_FX") or Instance.new("RemoteEvent")      -- efeitos SO visuais no cliente
 FX.Name = "Crocodilo_FX"; FX.Parent = RepS
+local AVISO = RepS:FindFirstChild("Crocodilo_SoltarAliado") or Instance.new("RemoteEvent")   -- 19/11: opcao "Soltar aliado" (cliente mostra o botao)
+AVISO.Name = "Crocodilo_SoltarAliado"; AVISO.Parent = RepS
 local function fx(tipo, ...) FX:FireAllClients(tipo, ...) end
 local est = {poder = nil, alvo = nil, cons = {}, gen = 0, t0 = 0}
+local avisarAliados                                          -- (definida na secao Soltar aliado)
 
 local function log(...)
 	local s = string.format("%.2f ", os.clock() - est.t0) .. string.format(...)
@@ -99,6 +102,33 @@ local function agora() return workspace:GetServerTimeNow() end
 local function ehPvP(a) return a ~= nil and a:GetAttribute("PvP") == true end
 local function forcaIdade() return CFG.AgarraoPvP.forca_idade[modelo:GetAttribute("Idade") or "Adulto"] or 1 end
 local function fatorControle(a) local t = a:GetAttribute("ControleReduzidoAte"); return (t and agora() < t) and CFG.AgarraoPvP.reduz or 1 end
+-- Vitima montada (usuario 19/11): antes da mordida o CAVALEIRO PULA rapidamente e nao e agarrado; depois conta como aliado.
+-- Convencao de teste: ObjectValue "Cavaleiro" dentro da montaria aponta o cavaleiro. Destino (usuario 19/11, "pular mais perto"):
+-- AO LADO da cabeca do crocodilo, do lado em que o cavaleiro esta, para ja cair no alcance de bater (aliado).
+local function pularCavaleiro(g, montaria, cav)
+	local P = CFG.AgarraoPvP
+	task.delay(P.pulo_atraso, function()
+		if est.gen ~= g or not cav.Parent then return end
+		local ov = montaria:FindFirstChild("Cavaleiro"); if ov then ov:Destroy() end
+		est.cavaleiro = cav                                   -- o cavaleiro que pulou e aliado da montaria
+		for _, w in ipairs(cav:GetDescendants()) do if w:IsA("WeldConstraint") and w.Name == "SelaTeste" then w:Destroy() end end
+		cav:SetAttribute("Montado", false)
+		local ini = cav:GetPivot(); local cf = modelo:GetPivot()
+		local cab = osso("Cabeca"); local hp = cab and cab.TransformedWorldCFrame.Position or (cf.Position + cf.LookVector * C_.cabeca)
+		local lado = cf.RightVector * (((ini.Position - cf.Position):Dot(cf.RightVector) >= 0) and 1 or -1)
+		local fimXZ = hp + lado * P.pulo_lado - cf.LookVector * P.pulo_recuo
+		local _, fundo = medirAgua(fimXZ); local fim = Vector3.new(fimXZ.X, math.max(fundo, -1000) + 2.5, fimXZ.Z)
+		log("MONTADA: cavaleiro %s pula da %s antes da mordida, para o lado da cabeca do crocodilo (%.1f de lado)", cav.Name, montaria.Name, P.pulo_lado)
+		local t = 0
+		while t < P.pulo_dur do
+			local dt = RS.Heartbeat:Wait(); if not cav.Parent then return end; t = math.min(P.pulo_dur, t + dt); local u = t / P.pulo_dur
+			cav:PivotTo(CFrame.new(ini.Position:Lerp(fim, u) + Vector3.new(0, 4 * P.pulo_altura * u * (1 - u), 0)) * ini.Rotation)
+		end
+		cav:SetAttribute("Pulou", true)
+		local hum, raiz = cav:FindFirstChildOfClass("Humanoid"), cav:FindFirstChild("HumanoidRootPart")   -- jogador: volta a andar
+		if hum then hum.Sit = false end; if raiz and raiz.Anchored then raiz.Anchored = false end
+	end)
+end
 local function marcarSoltoPvP(a)
 	local P = CFG.AgarraoPvP
 	a:SetAttribute("ImuneAgarraoAte", agora() + P.imune); a:SetAttribute("ControleReduzidoAte", agora() + P.reduz_janela)
@@ -108,6 +138,7 @@ end
 -- solta o alvo (sempre seguro de chamar): volta ao chao no ponto atual, marca liberado
 local function soltar(motivo)
 	local a = est.alvo; est.alvo = nil
+	for _, pl in ipairs(est.avisados or {}) do AVISO:FireClient(pl, "esconder") end; est.avisados = nil   -- some o botao Soltar aliado
 	if a and a.Parent then
 		local p = centro(a)
 		if p then a:PivotTo(CFrame.new(Vector3.new(p.X, 2.5, p.Z))) end
@@ -139,7 +170,7 @@ function M.cancelar(motivo)
 	if not est.poder then return "nada ativo" end
 	log("FIM %s: %s", est.poder, motivo)
 	est.gen += 1; limparCons(); soltar(motivo)
-	est.pvp = nil; est.limite = nil                       -- PvP: fim da pegada
+	est.pvp = nil; est.limite = nil; est.cavaleiro = nil  -- PvP: fim da pegada
 	T.parar()
 	local dy = (modelo:GetPivot().Position - BASE.Position).Magnitude
 	moverPivo(BASE, dy > 0.05 and 0.4 or 0)               -- volta a altura normal sem salto
@@ -207,6 +238,8 @@ function M.agarrao(alvo, cena, opcoes)
 	local g = iniciar("Agarrao", opcoes.emboscada); if not g then return "ocupado" end
 	if not alvoValido(alvo) then M.cancelar("alvo_invalido"); return "alvo_invalido" end
 	seguirOlhar(g, function() return olharAlvo(est.alvo or alvo)() end)   -- O2: olha o alvo do bote e, depois, o preso
+	local ov = ehPvP(alvo) and alvo:FindFirstChild("Cavaleiro")
+	if ov and ov:IsA("ObjectValue") and ov.Value and ov.Value.Parent then pularCavaleiro(g, alvo, ov.Value) end   -- 19/11: montada
 	local clipe
 	if cena == "agua" and opcoes.emboscada then
 		-- P4b: vem SUBMERSO da Submersao: sobe rapido ate a espreita e continua avancando (impulso que se apaga no bote)
@@ -274,6 +307,7 @@ function M.agarrao(alvo, cena, opcoes)
 				end))
 			else est.pvp = nil; est.limite = nil end
 			est.alvo = alvo; alvo:SetAttribute("Agarrado", true)
+			if est.pvp then avisarAliados(alvo) end                -- 19/11: aparece "Soltar aliado" para os aliados
 			est.rel = osso("Mandibula").TransformedWorldCFrame:Inverse() * alvo:GetPivot()
 			local h = alvo:FindFirstChildOfClass("Humanoid"); h:TakeDamage(CFG.Agarrao.dano_contato)
 			log("CONTATO: agarrou %s (distancia %.2f <= %.2f)", alvo.Name, d, CFG.Agarrao.alcance)
@@ -607,12 +641,12 @@ function M.receberGolpe(dano, ponto, passiva, opcoes)
 			est.danoPegada += final
 			local limiar = P.soltar_pct * E.vida
 			if opcoes.pesado or est.danoPegada >= limiar then
-				log("PvP: ALIADO SOLTOU a presa (%s; dano somado %.0f de %.0f) -> boca aberta %.1f s", opcoes.pesado and "golpe pesado" or "dano", est.danoPegada, limiar, P.boca_aberta)
+				log("PvP: ALIADO%s SOLTOU a presa (%s; dano somado %.0f de %.0f) -> boca aberta %.1f s", opcoes.de and (" " .. opcoes.de) or "", opcoes.pesado and "golpe pesado" or "dano", est.danoPegada, limiar, P.boca_aberta)
 				est.bocaAbertaAte = os.clock() + P.boca_aberta
 				M.cancelar("aliado_soltou")
 				fx("escamas_pulso", ponto)
 			else
-				log("PvP: aliado golpeou (dano somado %.0f de %.0f)", est.danoPegada, limiar)
+				log("PvP: aliado%s golpeou (dano somado %.0f de %.0f)", opcoes.de and (" " .. opcoes.de) or "", est.danoPegada, limiar)
 			end
 		end
 	end
@@ -627,6 +661,80 @@ function M.receberGolpe(dano, ponto, passiva, opcoes)
 	print("[PoderesTeste] " .. M.log[#M.log])
 	return final, recuo
 end
+
+-- ================================================================ Soltar aliado (usuario 19/11) [PROPOSTA]
+-- Quando o crocodilo agarra a criatura de um jogador (PvP), os aliados dela (o cavaleiro que pulou e quem estiver no
+-- atributo "Aliados" da criatura, lista de UserIds) a ate `aviso_raio` recebem a opcao "Soltar aliado" (botao + tecla E).
+-- Ao escolher, o SERVIDOR valida (e aliado, a pegada continua) e leva o personagem ate a cabeca do crocodilo andando de
+-- verdade (Humanoid:MoveTo); perto, ele vira para a cabeca e golpeia; cada golpe so conta se estiver a ate `soco_alcance`
+-- da cabeca no instante do impacto. Os golpes somam como os de qualquer aliado (8% da vida solta). Para quando a criatura
+-- e solta, a pegada termina, o jogador morre ou passam `ir_max` s.
+local ACP = game:GetService("AnimationClipProvider")
+local function animSoco()                                   -- golpe R15 de TESTE (KFS registrado so no Studio)
+	if est.animSoco then return est.animSoco end
+	local kfs = Instance.new("KeyframeSequence"); kfs.Loop = false; kfs.Priority = Enum.AnimationPriority.Action
+	for _, q in ipairs({{0, 0, 0, 0}, {0.14, -35, 75, -12}, {0.24, 100, 5, 20}, {0.36, 90, 10, 15}, {0.55, 0, 0, 0}}) do
+		local kf = Instance.new("Keyframe"); kf.Time = q[1]
+		local hrp = Instance.new("Pose"); hrp.Name = "HumanoidRootPart"; hrp.Weight = 0; hrp.Parent = kf
+		local lt = Instance.new("Pose"); lt.Name = "LowerTorso"; lt.Weight = 0; lt.Parent = hrp
+		local ut = Instance.new("Pose"); ut.Name = "UpperTorso"; ut.CFrame = CFrame.Angles(0, math.rad(q[4]), 0); ut.Parent = lt
+		local ua = Instance.new("Pose"); ua.Name = "RightUpperArm"; ua.CFrame = CFrame.Angles(math.rad(q[2]), 0, 0); ua.Parent = ut
+		local la = Instance.new("Pose"); la.Name = "RightLowerArm"; la.CFrame = CFrame.Angles(math.rad(q[3]), 0, 0); la.Parent = ua
+		kf.Parent = kfs
+	end
+	est.animSoco = Instance.new("Animation"); est.animSoco.AnimationId = ACP:RegisterAnimationClip(kfs)
+	return est.animSoco
+end
+avisarAliados = function(vit)                              -- chamada no contato do agarrao PvP
+	local P = CFG.AgarraoPvP; est.avisados = {}
+	local ids = "," .. tostring(vit:GetAttribute("Aliados") or "") .. ","
+	for _, pl in ipairs(game.Players:GetPlayers()) do
+		local ch = pl.Character; local hrp = ch and ch:FindFirstChild("HumanoidRootPart")
+		local aliado = (est.cavaleiro ~= nil and ch == est.cavaleiro) or ids:find("," .. pl.UserId .. ",", 1, true) ~= nil
+		if hrp and aliado and (hrp.Position - (centro(vit) or hrp.Position)).Magnitude <= P.aviso_raio then
+			table.insert(est.avisados, pl); AVISO:FireClient(pl, "mostrar", vit.Name)
+			log("SOLTAR ALIADO: opcao mostrada a %s", pl.Name)
+		end
+	end
+end
+local function irBater(pl, vit)
+	local P = CFG.AgarraoPvP
+	local ch = pl.Character; local h = ch and ch:FindFirstChildOfClass("Humanoid"); local hrp = ch and ch:FindFirstChild("HumanoidRootPart")
+	if not (h and hrp) then return end
+	if hrp.Anchored then hrp.Anchored = false end; h.Sit = false
+	local cab = osso("Cabeca"); local tr = h:FindFirstChildOfClass("Animator"):LoadAnimation(animSoco())
+	log("SOLTAR ALIADO: %s vai ate a cabeca do crocodilo (%.1f studs)", pl.Name, (hrp.Position - cab.TransformedWorldCFrame.Position).Magnitude)
+	local t0, prox = os.clock(), 0
+	while est.alvo == vit and h.Health > 0 and os.clock() - t0 < P.ir_max do
+		local hp = cab.TransformedWorldCFrame.Position; local plano = Vector3.new(hp.X, hrp.Position.Y, hp.Z)
+		if (hrp.Position - hp).Magnitude > P.soco_alcance - 1.5 then
+			local lado = hrp.Position - plano; lado = lado.Magnitude > 0.1 and lado.Unit or modelo:GetPivot().RightVector
+			h:MoveTo(plano + lado * P.soco_parar)
+		elseif os.clock() >= prox then
+			prox = os.clock() + P.soco_intervalo
+			h:MoveTo(hrp.Position); hrp.CFrame = CFrame.lookAt(hrp.Position, plano)
+			tr:Play(0.05, 1, 1.1)
+			task.delay(0.22, function()                         -- impacto: o servidor confere o alcance agora
+				if est.alvo ~= vit then return end
+				local p2 = cab.TransformedWorldCFrame.Position; local d = (hrp.Position - p2).Magnitude
+				if d <= P.soco_alcance then log("SOLTAR ALIADO: golpe de %s ACERTOU a %.1f studs", pl.Name, d); M.receberGolpe(P.soco_dano, p2, true, {de = pl.Name})
+				else log("SOLTAR ALIADO: golpe de %s fora do alcance (%.1f > %.1f)", pl.Name, d, P.soco_alcance) end
+			end)
+		end
+		task.wait(0.1)
+	end
+	h:MoveTo(hrp.Position)
+	log("SOLTAR ALIADO: %s terminou (%s)", pl.Name, est.alvo == vit and "tempo/queda" or "aliado solto ou pegada acabou")
+end
+AVISO.OnServerEvent:Connect(function(pl, acao)
+	if acao ~= "ir" then return end
+	local vit = est.alvo; local ok = false
+	for _, p in ipairs(est.avisados or {}) do if p == pl then ok = true end end
+	if not (vit and est.pvp and ok) then log("SOLTAR ALIADO recusado para %s (sem pegada PvP ativa ou nao e aliado)", pl.Name); return end
+	est.indo = est.indo or {}; if est.indo[pl] then return end
+	est.indo[pl] = true
+	task.spawn(function() irBater(pl, vit); est.indo[pl] = nil end)
+end)
 
 function M.estado() return {poder = est.poder, fase = est.fase, alvo = est.alvo and est.alvo.Name or nil, naAgua = est.naAgua} end
 return M

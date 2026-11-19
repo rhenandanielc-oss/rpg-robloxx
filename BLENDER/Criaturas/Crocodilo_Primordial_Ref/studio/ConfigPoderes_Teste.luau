@@ -17,6 +17,10 @@ return {
 		golpe_vitima = 0.3, golpe_vitima_max = 1.0,    -- cada golpe da vitima na cabeca tira 0,3 s (max 1,0)
 		imune = 8, reduz_janela = 4, reduz = 0.5,      -- solta: 8 s imune a agarrao; controle nos 4 s seguintes dura 50%
 		forca_idade = {Filhote = 0.3, Jovem = 0.55, ["Pre-adulto"] = 0.8, Adulto = 1.0, Anciao = 1.1},   -- atributo Idade do croc
+		pulo_atraso = 0.10, pulo_dur = 0.30, pulo_altura = 3,   -- vitima montada: o cavaleiro pula antes da mordida (usuario 19/11) [PROPOSTA de tempo]
+		aviso_raio = 60, ir_max = 6,        -- 19/11 usuario: opcao "Soltar aliado" para aliados a ate 60 studs; a acao dura no maximo 6 s [PROPOSTA]
+		soco_alcance = 8, soco_parar = 4.5, soco_intervalo = 0.55, soco_dano = 40,   -- golpe do jogador no crocodilo (dano de TESTE; o real vem do combate do jogador)
+		pulo_lado = 5, pulo_recuo = 1.5,    -- 19/11 usuario "pular mais perto": cai AO LADO da cabeca do crocodilo (5 de lado, 1,5 atras do focinho), ja no alcance para bater
 	},
 	Giro = {voltas = 2, dano_por_volta = 8},
 	GiroEmboscada = {                       -- P4 16/11 (ref. secao 4: Giro 2,0x a mordida 20, raio 12, derruba 1,5 s, +50% distraido; raso 1,2x)
