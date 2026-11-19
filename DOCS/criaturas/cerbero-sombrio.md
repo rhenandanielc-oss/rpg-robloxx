@@ -135,9 +135,46 @@ Nada em `src/`.
     - Ataques básicos em CAMADA para atacar em movimento (pedido do usuário): Mordida C/E/D e Garra E/D.
     - Poderes da v6.2: Chamas Tríplices (3 disparos marcados), Fúria (Rugido, loop e saída) e Investida Sombria (encaixa na Corrida).
     - Elemento único e kit oficial seguem pendentes.
+  - **Aura permanente de FOGO A3 APROVADA (18/11).**
+    - Está em `aura/CR_Cerbero_Fogo_A3.blend`.
+    - Fogo na pelagem da juba à cauda, mais 49 chamas viradas para a câmera; segue a referência do usuário, que substitui as linhas discretas da v6.2 §5.9h.
+    - Estimativa de partículas: PC ~235 (acima da meta de ~150) e celular ~70. Ainda a medir no Roblox.
 
 ## 8. Próximos passos sugeridos (aguardando aprovação)
 1. Revisão visual do V5 (render em vistas) contra o painel 04: cabeças de predador distintas do lobo, placas corrompidas, boca aberta com dentes.
 2. Refazer os 4 clipes reprovados e ajustar os 18 "pequenos ajustes"; criar Investida Sombria e Fúria das Três Cabeças no padrão de movimento das criaturas.
 3. Importar no Studio (com o Studio livre e backup confirmado), validar escala 12–16, pelo, rig e FPS.
 4. Só depois das decisões de elemento/kit: VFX das fissuras, sons (rugido de 3 vozes) e IA de caçada com foco prioritário + reações laterais curtas, autoridade no servidor.
+
+### Decisão do usuário (18/11): Bola Infernal substitui as Chamas Tríplices
+- **Nova ideia:** as três cabeças formam juntas uma bola de fogo gigante que segue o alvo, "brilhante e real". Ela substitui o poder de projéteis (Chamas Tríplices).
+- **Nome "Bola Infernal":** PROVISÓRIO.
+- **Números:** dano, recarga, velocidade, curva, alcance e raio de acerto continuam [A TESTAR].
+- **Prévia de Blender:** clipe `BolaInfernal` em `BLENDER/Criaturas/Cerbero_Sombrio_Ref/rig/clipes_L3r5`; efeitos em `aura/fx_bola_infernal/`.
+- **Studio:** pendente; a perseguição real do alvo será validada lá.
+- **18/11, r2 (pedido do usuário: maior, mais brilhante, três cabeças rugindo formam uma bola gigante):** clipe `BolaInfernalR2` (rig/clipes_L3r6) + `aura/fx_bola_infernal_r2.py`. Aguarda revisão.
+- **19/11, r3 (pedido: maior, redonda e brilhante com aspecto de fogo):** esfera de raio 10 sem cauda, `aura/fx_bola_infernal_r3.py`. Aguarda revisão.
+- **19/11:** r3 ACEITA pelo usuário, "porém mais rápido" → r3b (voo 30 studs/s, curva 130°/s), `aura/fx_bola_infernal_r3b.py`.
+- **19/11:** velocidade da r3b APROVADA pelo usuário (30 studs/s, curva 130°/s, ainda a testar no Roblox). Visual oficial da Bola Infernal = r3/r3b.
+
+### [PROPOSTA] 19/11 — nome e números da bola de fogo (aguarda decisão do usuário; NÃO oficial)
+Base de comparação: Chamas Tríplices v6.2 (3 × 0,6× = 1,8× total, queimadura leve 3 s, recarga 8 s, energia 22), Mergulho Abissal (explosão 1,7×, recarga 26 s), Carga de Chifres (1,9×, recarga 10 s).
+- **Nome:** recomendado **Sol Infernal**. Alternativas: Esfera das Três Chamas, Astro Infernal. Evitar "Coração Infernal" (já é do Dragão das Montanhas).
+- **Carga:** 3,35 s até o disparo (clipe aprovado), visível a todos (telegrafada).
+  - Pode andar a 60% da velocidade, sem correr nem saltar (versão em camada).
+  - Atordoado/derrubado durante a carga → a bola se desfaz sem dano e a recarga fica pela metade.
+- **Dano:** 1,8× no alvo atingido + explosão raio 12 studs com 1,0× nos demais (sem acumular no alvo principal) + queimadura leve 3 s.
+- **Voo:** 30 studs/s, curva 130°/s (aprovados no Blender), alcance 50 studs (vida ~1,7 s), raio de acerto 8 studs (visual 10).
+- **Mira:** alvo travado → mouse → câmera; sem alvo segue reto. Alvo morre/some → segue reto e explode no fim do alcance.
+- **Obstáculos:** NÃO atravessa: explode ao tocar terreno ou parede sólida (contra-jogo: se esconder atrás de cobertura).
+- **Uma bola só:** não divide alvos entre as cabeças (diferente das Chamas).
+- **Recarga 14 s, energia 35** (era 8 s / 22: um golpe maior, mais lento e mais fácil de prever).
+- Tudo validado no servidor (dano, acerto, recarga e energia); números [A TESTAR] no Studio, inclusive PvP.
+- **19/11 — DECISÃO DO USUÁRIO: o poder se chama "Sol Infernal"** (substitui o nome provisório "Bola Infernal"). Os números acima continuam [PROPOSTA] até aprovação explícita.
+- **19/11 — NÚMEROS APROVADOS pelo usuário** para o **Sol Infernal**:
+  - **Carga e disparo:** carga de 3,35 s, andando a 60% da velocidade, sem correr nem saltar. Se for interrompida, a bola se desfaz e a recarga cai pela metade.
+  - **Dano:** 1,8× no alvo, mais explosão de raio 12 studs com 1,0× nos demais, e queimadura leve por 3 s.
+  - **Voo:** 30 studs/s, curva de 130°/s, alcance de 50 studs e raio de acerto de 8 studs.
+  - **Mira:** alvo travado, depois mouse, depois câmera. Não atravessa obstáculos. É uma bola só.
+  - **Custo:** recarga de 14 s e 35 de energia.
+  - **Validação:** autoridade no servidor; valores sujeitos a ajuste de balanceamento no teste do Studio, inclusive PvP.

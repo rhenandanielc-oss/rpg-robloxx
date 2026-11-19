@@ -1,0 +1,51 @@
+{
+ "glare_previa": true,
+ "bola": {
+  "raio_visual_studs": 6.5,
+  "vel_studs_s_A_TESTAR": 22.0,
+  "giro_graus_s_A_TESTAR": 110,
+  "vida_s": 3.2,
+  "alcance_studs_A_TESTAR": 50.0,
+  "raio_acerto_previa": 7.4,
+  "testes": [
+   {
+    "teste": "alvo parado a 34 studs (no chao)",
+    "resultado": "acertou",
+    "voo_s": 1.667,
+    "percorrido_studs": 36.67,
+    "disparo_s": 3.35,
+    "fim_voo_s": 5.0
+   },
+   {
+    "teste": "alvo movel lateral 8 studs/s (SIMULACAO)",
+    "resultado": "acertou",
+    "voo_s": 2.1,
+    "percorrido_studs": 46.2,
+    "disparo_s": 3.35,
+    "fim_voo_s": 5.43
+   },
+   {
+    "teste": "alvo lateral 60 graus a 24 studs (SIMULACAO)",
+    "resultado": "acertou",
+    "voo_s": 1.433,
+    "percorrido_studs": 31.53,
+    "disparo_s": 3.35,
+    "fim_voo_s": 4.77
+   }
+  ],
+  "custo_estimado": {
+   "PC": {
+    "bola": "1 Billboard nucleo + 3 Billboards de massa + 1 PointLight",
+    "voo": "linguas 30/s x 0,37 s (~11) + fumaca 15/s x 0,8 s (~12)",
+    "explosao": "6 massa + 12 linguas no chao + 10 fumaca (rajada, ~1,5 s) + clarao da luz + Decal da marca",
+    "pico": "~45 particulas + 4 Billboards + 1 luz"
+   },
+   "celular": {
+    "proposta": "2 camadas de massa, linguas 15/s, fumaca 6/s, explosao 6+3, sem sombra da luz",
+    "pico": "~20 particulas + 3 Billboards + 1 luz sem sombra"
+   },
+   "comparacao": "substitui 3 projeteis da r4b (~45 particulas no pico): custo parecido, uma fonte de luz a mais",
+   "nota": "ESTIMATIVA a partir da previa; medir no Roblox (PC e celular, varias criaturas)"
+  }
+ }
+}

@@ -1,0 +1,30 @@
+{
+ "rugido_C": {
+  "inicio_s": 0.26,
+  "boca_max_s": 0.52,
+  "fim_s": 1.28,
+  "f0_hz": 68.0
+ },
+ "rugido_E": {
+  "inicio_s": 0.96,
+  "boca_max_s": 1.22,
+  "fim_s": 1.98,
+  "f0_hz": 82.0
+ },
+ "rugido_D": {
+  "inicio_s": 1.66,
+  "boca_max_s": 1.92,
+  "fim_s": 2.68,
+  "f0_hz": 58.0
+ },
+ "mordidas_loop_s": [
+  3.2,
+  3.85,
+  4.45,
+  5.2,
+  5.85,
+  6.45
+ ],
+ "duracao_s": 8.2,
+ "nota": "som PROVISORIO sintetizado (placeholder), nao oficial"
+}

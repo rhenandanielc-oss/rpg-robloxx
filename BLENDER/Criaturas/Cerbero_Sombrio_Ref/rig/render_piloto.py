@@ -30,7 +30,8 @@ for i in range(-20, 21):
         g.location = ((i * 2 * k_, 0, 0.003) if eixo == 0 else (0, i * 2 * k_, 0.003)); g.data.materials.append(mc); g.color = (0.2, 0.2, 0.2, 1)
 sc.render.engine = "BLENDER_EEVEE"; sc.eevee.taa_render_samples = 12; sc.view_settings.view_transform = "AgX"
 cd = bpy.data.cameras.new("C"); cam = bpy.data.objects.new("C", cd); sc.collection.objects.link(cam); sc.camera = cam
-VISTAS = {"frente": ((0, -46, 12), (0, 0, 10), 50), "cabf": ((0, -34, 18), (0, -8, 14.5), 55), "cima": ((0, 0.01, 60), (0, 0, 0), 40), "lado": ((-46, 0, 9), (0, 0, 8.5), 50), "34": ((-32, -34, 20), (0, -1, 8.5), 50), "cab": ((-10, -30, 20), (0, -9, 14.5), 60)}
+VISTAS = {"frente": ((0, -46, 12), (0, 0, 10), 50), "cabf": ((0, -34, 18), (0, -8, 14.5), 55), "cima": ((0, 0.01, 60), (0, 0, 0), 40), "lado": ((-46, 0, 9), (0, 0, 8.5), 50), "34": ((-32, -34, 20), (0, -1, 8.5), 50), "cab": ((-10, -30, 20), (0, -9, 14.5), 60),
+          "perfilcab": ((-52, -13, 15), (0, -13, 12.5), 45)}   # r4: perfil das cabecas
 def vista(n):
     pos, alvo, lente = VISTAS[n]; pos, alvo = V(pos) * k_, V(alvo) * k_
     cam.location = pos; cam.rotation_euler = (alvo - pos).to_track_quat("-Z", "Y").to_euler(); cd.lens = lente
@@ -51,18 +52,22 @@ QUADROS_CONTATO = {"Andar": ("lado", [0, 6, 12, 18, 24, 30]), "Corrida": ("lado"
                    # lote 3 (18/11): quadros dos EVENTOS
                    "ChamasTriplices": ("cabf", [0, 13, 21, 28, 48]), "FuriaRugido": ("cabf", [0, 8, 15, 23, 48]), "FuriaLoop": ("cabf", [0, 9, 28, 46]),
                    "Investida": ("lado", [0, 6, 9, 13, 18, 24, 33, 41]), "MordidaC": ("cabf", [0, 6, 9, 24]), "MordidaE": ("cabf", [6, 9]),
-                   "MordidaD": ("cabf", [6, 9]), "GarraE": ("34", [0, 5, 10, 22]), "GarraD": ("34", [5, 10])}
+                   "MordidaD": ("cabf", [6, 9]), "GarraE": ("34", [0, 5, 10, 22]), "GarraD": ("34", [5, 10]),
+                   # r4 (18/11): Rugido Infernal separado (inicio, boca maxima de C/E/D, fim) de frente e de perfil
+                   "FuriaRugidoR4": ("cabf", [0, 8, 16, 37, 58, 87]), "FuriaRugidoR4@perfilcab": ("perfilcab", [0, 8, 16, 37, 58, 87]),
+                   "BolaInfernal": ("cabf", [0, 11, 36, 39, 47, 66])}
 LOBO_MAP = {"Deitar": "Deitar", "Descanso": "Descanso", "Levantar": "LevantarDeitado", "Trote": "Trote", "Partida": "Arrancada", "Freada": "Frenagem", "Andar": "Andar", "Corrida": "Corrida"}
 CLIPES_SEL = next((a.split("=")[1].split(",") for a in ARGS if a.startswith("clipes=")), None)
 sc.render.resolution_x, sc.render.resolution_y = (560, 400)
 for nome, (vn, qs) in (QUADROS_CONTATO.items() if CONTATO else []):
-    if CLIPES_SEL and nome not in CLIPES_SEL: continue
+    if CLIPES_SEL and nome.split("@")[0] not in CLIPES_SEL: continue
     if LOBO and nome not in LOBO_MAP: continue
+    nome_v = nome; nome = nome.split("@")[0]
     a = acao(LOBO_MAP[nome] if LOBO else nome)
     if a is None: print("SEM_ACAO", nome); continue
     f0 = int(a.frame_range[0]); vista(vn)
     for q in qs:
-        sc.frame_set(f0 + q); sc.render.filepath = os.path.join(OUT, "%s_%s_q%02d.png" % ("lobo" if LOBO else "cerbero", nome, q))
+        sc.frame_set(f0 + q); sc.render.filepath = os.path.join(OUT, "%s_%s_%s_q%02d.png" % ("lobo" if LOBO else "cerbero", nome, vn, q)) if "@" in nome_v or nome.endswith("R4") else os.path.join(OUT, "%s_%s_q%02d.png" % ("lobo" if LOBO else "cerbero", nome, q))
         bpy.ops.render.render(write_still=True)
 print("CONTATO_OK", flush=True)
 if VIDEO:
@@ -76,7 +81,9 @@ if VIDEO:
                            ("Descanso", ["34"], 1), ("Levantar", ["lado", "34"], 1),
                            ("Prev_MordidaC_Andar", ["lado", "34"], 1), ("Prev_MordidaE_Corrida", ["lado"], 1), ("Prev_GarraE_Andar", ["lado", "34"], 1),
                            ("Prev_GarraD_Trote", ["34"], 1), ("Prev_Chamas_Repouso", ["cabf", "34"], 1), ("Prev_Chamas_Andar", ["34"], 1),
-                           ("Investida", ["lado", "34"], 1), ("Prev_Furia_Andar", ["frente", "34"], 1)):
+                           ("Investida", ["lado", "34"], 1), ("Prev_Furia_Andar", ["frente", "34"], 1),
+                           ("FuriaRugidoR4", ["cabf", "perfilcab"], 1), ("Prev_FuriaR4", ["cabf", "perfilcab"], 1),
+                           ("Prev_Bola_Repouso", ["cabf", "34"], 1), ("Prev_Bola_Andar", ["lado", "34"], 1)):
         if CLIPES_SEL and nome not in CLIPES_SEL: continue
         a = acao(nome); f0, f1 = int(a.frame_range[0]), int(a.frame_range[1]); n = f1 - f0 + 1
         if a.get("loop"):                                     # loop: chave extra em f1+1 = quadro f0, e a faixa NLA repete

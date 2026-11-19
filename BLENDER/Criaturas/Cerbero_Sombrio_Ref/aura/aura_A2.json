@@ -1,0 +1,422 @@
+{
+ "faixas_de_fogo": 15,
+ "chamas": [
+  {
+   "nome": "Chama_00",
+   "osso": "PescocoC1",
+   "base": [
+    -0.514,
+    -6.785,
+    17.596
+   ],
+   "altura": 4.771682051471737,
+   "largura": 2.457949029334034
+  },
+  {
+   "nome": "Chama_01",
+   "osso": "PescocoC1",
+   "base": [
+    -1.221,
+    -6.778,
+    17.696
+   ],
+   "altura": 2.0374956584419848,
+   "largura": 1.8601874101974316
+  },
+  {
+   "nome": "Chama_02",
+   "osso": "PescocoC1",
+   "base": [
+    -0.419,
+    -7.351,
+    17.857
+   ],
+   "altura": 3.8228435300693624,
+   "largura": 2.578591171685612
+  },
+  {
+   "nome": "Chama_03",
+   "osso": "PescocoC1",
+   "base": [
+    -0.296,
+    -7.455,
+    17.957
+   ],
+   "altura": 2.9762551055929203,
+   "largura": 1.627949608370654
+  },
+  {
+   "nome": "Chama_04",
+   "osso": "PescocoC2",
+   "base": [
+    -0.63,
+    -9.025,
+    18.083
+   ],
+   "altura": 4.155267283383482,
+   "largura": 3.0529010872960254
+  },
+  {
+   "nome": "Chama_05",
+   "osso": "PescocoC2",
+   "base": [
+    -0.407,
+    -9.153,
+    18.183
+   ],
+   "altura": 2.547744465709558,
+   "largura": 1.637673384983994
+  },
+  {
+   "nome": "Chama_06",
+   "osso": "PescocoC2",
+   "base": [
+    -0.187,
+    -9.884,
+    17.748
+   ],
+   "altura": 4.165464906678225,
+   "largura": 2.868449490806111
+  },
+  {
+   "nome": "Chama_07",
+   "osso": "PescocoC2",
+   "base": [
+    0.284,
+    -9.685,
+    17.848
+   ],
+   "altura": 2.244096510722153,
+   "largura": 1.9446542261552027
+  },
+  {
+   "nome": "Chama_08",
+   "osso": "PescocoE1",
+   "base": [
+    -2.443,
+    -6.684,
+    15.395
+   ],
+   "altura": 5.364314725486648,
+   "largura": 2.4944526226039696
+  },
+  {
+   "nome": "Chama_09",
+   "osso": "PescocoE1",
+   "base": [
+    -3.0,
+    -6.695,
+    15.495
+   ],
+   "altura": 2.0392072570474378,
+   "largura": 2.0009295139206373
+  },
+  {
+   "nome": "Chama_10",
+   "osso": "PescocoE1",
+   "base": [
+    -3.106,
+    -7.571,
+    15.824
+   ],
+   "altura": 4.851531659292587,
+   "largura": 2.875495901684015
+  },
+  {
+   "nome": "Chama_11",
+   "osso": "PescocoE1",
+   "base": [
+    -2.563,
+    -7.127,
+    15.924
+   ],
+   "altura": 2.4740983374196444,
+   "largura": 1.9984913232848047
+  },
+  {
+   "nome": "Chama_12",
+   "osso": "PescocoE2",
+   "base": [
+    -4.069,
+    -7.936,
+    16.174
+   ],
+   "altura": 5.079464615897487,
+   "largura": 2.6276764256753196
+  },
+  {
+   "nome": "Chama_13",
+   "osso": "PescocoE2",
+   "base": [
+    -4.833,
+    -7.975,
+    16.274
+   ],
+   "altura": 2.1680483789065446,
+   "largura": 1.6702574766890392
+  },
+  {
+   "nome": "Chama_14",
+   "osso": "PescocoE2",
+   "base": [
+    -5.263,
+    -9.441,
+    15.636
+   ],
+   "altura": 4.303709465639809,
+   "largura": 3.0971375793010396
+  },
+  {
+   "nome": "Chama_15",
+   "osso": "PescocoE2",
+   "base": [
+    -5.184,
+    -9.058,
+    15.736
+   ],
+   "altura": 2.819279837835741,
+   "largura": 2.1183906818191094
+  },
+  {
+   "nome": "Chama_16",
+   "osso": "PescocoD1",
+   "base": [
+    1.741,
+    -6.054,
+    15.464
+   ],
+   "altura": 5.3239161671351845,
+   "largura": 2.5207367246328873
+  },
+  {
+   "nome": "Chama_17",
+   "osso": "PescocoD1",
+   "base": [
+    1.314,
+    -6.069,
+    15.564
+   ],
+   "altura": 2.5891235037322557,
+   "largura": 1.757647971579123
+  },
+  {
+   "nome": "Chama_18",
+   "osso": "PescocoD1",
+   "base": [
+    2.723,
+    -6.963,
+    16.078
+   ],
+   "altura": 5.315576265945172,
+   "largura": 2.9523949257087825
+  },
+  {
+   "nome": "Chama_19",
+   "osso": "PescocoD1",
+   "base": [
+    3.005,
+    -7.409,
+    16.178
+   ],
+   "altura": 2.899533010057952,
+   "largura": 2.067981694423644
+  },
+  {
+   "nome": "Chama_20",
+   "osso": "PescocoD2",
+   "base": [
+    3.715,
+    -7.751,
+    15.968
+   ],
+   "altura": 3.786366768678584,
+   "largura": 2.907431652548567
+  },
+  {
+   "nome": "Chama_21",
+   "osso": "PescocoD2",
+   "base": [
+    3.249,
+    -8.088,
+    16.068
+   ],
+   "altura": 2.3400536522323434,
+   "largura": 1.6315453623341603
+  },
+  {
+   "nome": "Chama_22",
+   "osso": "PescocoD2",
+   "base": [
+    4.456,
+    -8.433,
+    15.658
+   ],
+   "altura": 3.6459015959990624,
+   "largura": 3.099465901899056
+  },
+  {
+   "nome": "Chama_23",
+   "osso": "PescocoD2",
+   "base": [
+    4.059,
+    -8.586,
+    15.758
+   ],
+   "altura": 2.3641634395282827,
+   "largura": 1.673705338457317
+  },
+  {
+   "nome": "Chama_24",
+   "osso": "Coluna2",
+   "base": [
+    -2.171,
+    -6.487,
+    16.11
+   ],
+   "altura": 2.4659894591599336,
+   "largura": 1.3935338625665077
+  },
+  {
+   "nome": "Chama_25",
+   "osso": "Coluna2",
+   "base": [
+    1.028,
+    -6.487,
+    16.117
+   ],
+   "altura": 2.3426358382430017,
+   "largura": 1.305902756686872
+  },
+  {
+   "nome": "Chama_26",
+   "osso": "Coluna2",
+   "base": [
+    -2.171,
+    -4.005,
+    14.407
+   ],
+   "altura": 2.023095721045248,
+   "largura": 1.580394229149881
+  },
+  {
+   "nome": "Chama_27",
+   "osso": "Coluna2",
+   "base": [
+    1.028,
+    -4.005,
+    14.395
+   ],
+   "altura": 2.5431724258821142,
+   "largura": 1.2108169965688673
+  },
+  {
+   "nome": "Chama_28",
+   "osso": "Coluna2",
+   "base": [
+    -2.171,
+    -1.523,
+    13.384
+   ],
+   "altura": 2.863325030289669,
+   "largura": 1.4784787143631208
+  },
+  {
+   "nome": "Chama_29",
+   "osso": "Coluna2",
+   "base": [
+    1.028,
+    -1.523,
+    13.382
+   ],
+   "altura": 2.167042034534336,
+   "largura": 1.5087751633608126
+  },
+  {
+   "nome": "Chama_30",
+   "osso": "Coluna1",
+   "base": [
+    -2.171,
+    0.96,
+    12.114
+   ],
+   "altura": 2.3296649950477626,
+   "largura": 1.289216669241274
+  },
+  {
+   "nome": "Chama_31",
+   "osso": "Coluna1",
+   "base": [
+    1.028,
+    0.96,
+    12.064
+   ],
+   "altura": 2.8526287987466605,
+   "largura": 1.522431433914267
+  },
+  {
+   "nome": "Chama_32",
+   "osso": "Coluna1",
+   "base": [
+    -2.171,
+    3.442,
+    12.076
+   ],
+   "altura": 2.226739490031585,
+   "largura": 1.4070554896974024
+  },
+  {
+   "nome": "Chama_33",
+   "osso": "Coluna1",
+   "base": [
+    1.028,
+    3.442,
+    12.061
+   ],
+   "altura": 2.0279370754220647,
+   "largura": 1.311767415619612
+  },
+  {
+   "nome": "Chama_34",
+   "osso": "Cauda1",
+   "base": [
+    -0.628,
+    9.138,
+    8.936
+   ],
+   "altura": 3.3565150763413376,
+   "largura": 1.3788910711066893
+  },
+  {
+   "nome": "Chama_35",
+   "osso": "Cauda2",
+   "base": [
+    -0.643,
+    10.337,
+    8.934
+   ],
+   "altura": 3.3370212012762424,
+   "largura": 1.5952152232811443
+  },
+  {
+   "nome": "Chama_36",
+   "osso": "Cauda3",
+   "base": [
+    -0.594,
+    11.579,
+    9.322
+   ],
+   "altura": 3.355000631321333,
+   "largura": 1.3458543541447465
+  }
+ ],
+ "cores": {
+  "escuro": "#3a0600",
+  "vermelho": "#c41e00",
+  "laranja": "#ff6a00",
+  "amarelo": "#ffd23a"
+ },
+ "roblox_sugerido": {
+  "pele": "EmissiveMask = T_Cerbero_*_FogoMascara + cintilacao do EmissiveStrength",
+  "chamas": "ParticleEmitter de fogo (flipbook) num Attachment por chama, no osso indicado, 37 no total [A TESTAR; celular: metade]"
+ }
+}

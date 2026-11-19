@@ -348,3 +348,365 @@ As versões antigas (`Blockouts/Cerbero_Sombrio/*`, V2 e V5) continuam intactas.
 - Vigília das Três Cabeças e Pelagem Infernal: etapa das passivas.
 - Studio: importar as camadas e conferir prioridade e peso 0 dos pais.
 - Desempenho com várias criaturas (PC e celular) ainda não medido: 38 ossos, 21 mil tris, 26 clipes.
+
+## Versionamento (18/11)
+- Commit local `d8cb10a`: 83 arquivos, 5,7 MB (scripts, JSON dos clipes, manifestos, docs). `.blend`, `.glb`, `.fbx` e imagens ficam fora pelo `.gitignore`.
+- **Push adiado pelo usuário.** O `main` local também tem 3 commits dos lobos, de outros chats; não enviar sem novo OK.
+
+## Aura permanente A1 — prévia do visual (18/11) — aguarda aprovação
+
+- Referência: REFERENCIAS_PODERES v6.2 §5.1 e §5.9h. Valores [A TESTAR].
+- **Script:** `aura/aura_cerbero.py` (sobre `rig/clipes_L3/CR_Cerbero_Anim.blend`); prévia com `aura/render_aura.py`. Saída: `aura/CR_Cerbero_Aura_A1.blend` e `aura/previa_A1/`.
+- **Método do Lobo Ártico r7/r8:**
+  - as linhas são desenhadas como fitas na pose de repouso e **assadas na UV da pele**;
+  - são duas imagens por malha (1024): `T_Cerbero_{Corpo,Cabecas}_AuraMascara` (onde há linha) e `_AuraDados` (R = posição ao longo da linha, G = cabeça/fase, B = cor);
+  - na r1 as fitas soltas quebravam e sumiam no pelo; por isso foram trocadas.
+- **Linhas:**
+  - finas (0,8% da altura, ~0,16 stud), 16 trechos;
+  - roxo-sombra `#8a2be2` no dorso, nas pernas traseiras, na cauda e nos lados dos pescoços;
+  - vermelho-brasa `#ff4a1c` no flanco, nas pernas dianteiras e no alto dos pescoços;
+  - **rosto limpo:** as linhas das cabeças param 1,3 stud atrás do osso Cabeca, na nuca (r3 e r4 corrigiram linhas que iam para a testa e os olhos).
+- **Pulso:** lento, 1,8 s, da cabeça para a cauda. Cada cabeça tem a própria fase: corpo 0, C 0,31, E 0,62, D 0,93.
+- **Olhos:** brasa discreta (vermelho da textura).
+- **Pelagem Infernal:** borda muito fraca, quase imperceptível. Na r1 era forte demais e deixava o corpo laranja.
+- **Revisão:** `aura/previa_A1/prancha_aura_A1.png` (3/4 e cabeças em 4 momentos do pulso) e vídeos `Aura_Repouso_cab.mp4`, `Aura_Andar_34.mp4`, `Aura_Andar_lado.mp4`, em luz noturna das Terras Corrompidas.
+- **Pendências:**
+  - os pescoços ficam com pouca linha, porque a juba esconde;
+  - **no Roblox:** a fase própria de cada cabeça exige separar `Cerbero_Cabecas` em 3 MeshParts (EmissiveStrength por peça) ou aceitar um pulso único nas três cabeças. **Decisão a combinar.**
+  - efeitos dos poderes sobre a aura (Chamas, Investida, Fúria e Vigília) ficam para a próxima etapa, já com os eventos marcados nos clipes.
+
+## Aura de FOGO A2 (18/11) — pedido do usuário: "algo como fogo, como na referência" — aguarda direção
+
+- **Referência do usuário:** `aura/ref/referencia_fogo_usuario_18-11.webp`, com chamas laranja e amarelas subindo da juba, dos pescoços, do dorso e da cauda, labaredas no pelo e olhos e bocas incandescentes.
+  - Imagem com marca d'água do pngtree: só referência visual, **não** é arquivo do jogo.
+  - **Diverge da v6.2 §5.1/§5.9h** (linhas discretas roxo/brasa; fora do corpo, só vento). Vale a direção do usuário. A A1 de linhas continua em `aura/CR_Cerbero_Aura_A1.blend`.
+- **Script:** `aura/fogo_cerbero.py`; prévia com `aura/render_aura.py` (agora em vista Standard). Saída: `aura/CR_Cerbero_Fogo_A2.blend`, `aura/aura_A2.json`, `aura/previa_A2/`.
+- **Pele:**
+  - regiões de fogo (juba, peito, dorso, cauda e traseira das pernas) assadas na UV como máscara suave: `T_Cerbero_{Corpo,Cabecas}_FogoMascara`;
+  - o shader acende os **fios do pelo** (luminância da textura) com cintilação subindo;
+  - olhos incandescentes; gengiva e língua em brasa.
+- **Chamas por cima:** 37 línguas de fogo (dois planos cruzados) presas aos ossos dos pescoços, das colunas e da cauda. São a prévia dos ParticleEmitters do Roblox; posições e ossos estão no `aura_A2.json`.
+- **Rodadas:**
+  - **r1:** cores lavadas e pele em manchas chapadas;
+  - **r2:** fios do pelo, cores saturadas e chamas curvas;
+  - **r3:** base das chamas suavizada e afundada na juba.
+- **Revisão:** `aura/previa_A2/prancha_fogo_A2.png` (referência × 3/4 × cabeças) e vídeos `Aura_Andar_34.mp4`, `Aura_Andar_lado.mp4`, `Aura_Repouso_cab.mp4`.
+- **Diferença para a referência:** lá o fogo cobre quase o corpo todo (juba inteira, peito, flancos, pernas e cauda em chamas, com tufos ondulados soltos). Aqui ele fica concentrado na juba, no dorso e na cauda.
+  - Cobrir como a referência custa mais partículas, o que importa no celular (§5.10: ~150 partículas por efeito).
+  - **Decisão do usuário:** manter ou aumentar a cobertura.
+
+## Aura de FOGO A3 (18/11) — pedido "corrigir a aura de fogo A2" — **APROVADA pelo usuário ("Aprovo a A3"); é a aura permanente oficial do visual**
+
+- **Base:** cópia de `aura/CR_Cerbero_Fogo_A2.blend` (A2 e A1 intactas), com as chamas da A2 retiradas.
+- **Script:** `aura/fogo_A3.py`. Saída: `aura/CR_Cerbero_Fogo_A3.blend`, `aura/aura_A3.json`, `aura/previa_A3/`.
+- **Pele (a cobertura vem primeiro do material):**
+  - atributo de vértice `fogo` pelas regiões do rig: juba e nuca das 3 cabeças, parando atrás dos olhos; peito, ombros, dorso, flancos (barriga mais escura pela normal) e cauda; filetes só na face EXTERNA das pernas;
+  - o shader acende línguas finas e altas no pelo, cintilando e subindo;
+  - rampa: brasa na base → vermelho → laranja → amarelo-claro só no mais quente;
+  - placas mais claras são atenuadas (r2), e os olhos ficam em brasa;
+  - boca acesa por dentro (gengiva e língua, vindas da A2); os dentes continuam visíveis.
+- **Chamas por cima:** só onde a silhueta pede. São 49 línguas ÚNICAS que giram no próprio eixo para olhar a câmera, como o ParticleEmitter do Roblox (sem o aspecto de planos cruzados):
+  - juba 33, dorso 10 (nas bordas: a sela vai por cima), ombros 2, ponta da cauda 4;
+  - pontas curvas e irregulares, cada uma com ritmo e altura próprios e raiz suave no pelo;
+  - em Repouso sobem e ondulam; ao andar, inclinam para trás (rotação `rot_andar` em cada chama).
+- **Rodadas:**
+  - **r1:** pele em manchas de lava, placas acesas e chamas pequenas;
+  - **r2:** línguas finas e altas, placas atenuadas e chamas maiores (ficaram com cara de vela);
+  - **r3:** borda macia, pontas mais curvas e amarelo só no ponto mais quente.
+- **Revisão:**
+  - `aura/previa_A3/prancha_ref_A2_A3.png`: referência | A2 | A3, mesma câmera e mesma luz para A2 e A3, em 3/4 e nas cabeças;
+  - vídeos `Aura_Repouso_34.mp4`, `Aura_Repouso_lado.mp4`, `Aura_Andar_34.mp4`, `Aura_Andar_lado.mp4`;
+  - quadros `aura_{34,cab,lado}_q*.png`.
+- **Estimativa para o Roblox** (de prévia, [A TESTAR]; **não é medição**):
+
+| Plataforma | Emissores | Taxa por emissor | Vida | Partículas vivas |
+|---|---|---|---|---|
+| PC | 49 | 6/s | 0,8 s | ~235 |
+| Celular (metade) | 25 | 4/s | 0,7 s | ~70 |
+
+  - No PC, passa da meta da §5.10 (~150 por efeito). Opções: taxa 4/s (~157) ou ~32 emissores.
+  - Desempenho real só medindo no Roblox.
+- **Pendências:**
+  - a placa do ombro ainda recebe parte do fogo;
+  - as chamas do dorso são menores que na referência (por causa da sela);
+  - quando os poderes ativarem (§5.9h), a aura de repouso precisa baixar de intensidade para eles continuarem legíveis.
+
+## Efeitos dos PODERES sobre a aura A3 (18/11) — prévia no Blender — aguarda aprovação
+
+- **Script:** `aura/fx_poderes.py`. Base: cópia de `aura/CR_Cerbero_Fogo_A3.blend` (A3 intacta). Saída: `aura/fx_poderes/` (`CR_Cerbero_FX_Poderes.blend`, `fx_poderes.json`, vídeos e quadros).
+- **Sincronia:** pelos eventos dos clipes aceitos (`rig/clipes_L3/manifesto_clipes.json`).
+- **Paleta:** a de fogo aprovada. O roxo da v6.2 §5.9h não entra, pela direção do usuário.
+- **Valores:** [A TESTAR].
+- **Controles novos:**
+  - **Pele:** intensidade geral, reforço por cabeça (atributo `cab_id`), onda ao longo do corpo (atributo `u_corpo`), "esticar" para trás e olhos.
+  - **Boca:** brilho por cabeça (atributo `cabeca`).
+  - **Chamas:** brilho e tamanho por objeto.
+  - **Objetos novos:** projéteis de fogo virados para a câmera, faixa de sombra com brasas no chão e 3 faixas de vento quente presas a Coluna2.
+
+| Poder | Prévia (clipe) | O que acontece |
+|---|---|---|
+| **Chamas Tríplices** | Prev_Chamas_Repouso (2,4 s) | Cada cabeça acende antes do disparo (E 0,65 · C 0,90 · D 1,15 s); o fogo do pescoço dela reforça no disparo; a boca brilha (dentes visíveis); o projétil nasce 2,2 studs à frente da boca (`ponto_boca`) e anda 30 studs em 0,6 s |
+| **Investida Sombria** | Investida → Corrida ×6 (4,6 s) | Impulso 0,30–0,80: as línguas da pele correm e esticam para trás, as chamas deitam para trás e alongam, o fogo fica mais forte e os olhos em brasa clara. Boost até 4,3 s com fogo forte. Faixa de sombra com brasas no chão (67 studs = 3 s a 22,3 studs/s), sumindo até 7,3 s. Vento quente rente ao corpo |
+| **Fúria / Rugido Infernal** | Prev_Furia_Andar (4,8 s) | Cada cabeça explode em fogo no seu rugido (C 0,15 · E 0,40 · D 0,65 s); 3 ondas de fogo correm da cabeça à cauda; olhos em brasa clara; vento quente girando no tronco; fade de 3,3 a 4,8 s (último 1,5 s), voltando à aura de repouso |
+
+- **Rodadas:**
+  - **r1:** cabeças e peito estouravam em branco; o projétil nascia dentro da boca e aparecia furado;
+  - **r2:** brilho limitado (×1,45), picos menores e o projétil nasce à frente da boca.
+- **Revisão:**
+  - `aura/fx_poderes/prancha_chamas.png`: repouso, E, C, D e volta, de frente e em 3/4;
+  - `prancha_investida.png`: repouso, compressão, impulso, boost e fim, de lado e em 3/4;
+  - `prancha_furia.png`: repouso, rugido C/E/D, fúria e fade;
+  - vídeos `FX_*`.
+- **Pendências:**
+  - inimigos afetados pela Fúria (linhas cinza e apagadas): não há inimigo na prévia, fica para a integração;
+  - Vigília (pupilas por 1 s) ainda não foi feita;
+  - os projéteis andam em linha reta (a perseguição do alvo é do jogo);
+  - no Roblox: projéteis e faixa viram partículas, Beam ou Decal; o vento vira Beams; desempenho a medir.
+
+## Revisão r3 das três habilidades (18/11) — pedido "revisão das três habilidades no Blender" — aguarda aceite
+
+- **Base de comparação:** a r2 (`aura/fx_poderes/`). A A3, os clipes aceitos (`rig/clipes_L3`, 26 clipes, intactos) e a r2 foram preservados.
+- **Scripts:**
+  - `aura/fx_poderes_r3.py` (cópia de revisão do `fx_poderes.py`), sobre `aura/CR_Cerbero_Fogo_A3.blend`. Saída em `aura/fx_poderes_r3/`.
+  - Clipe novo `InvestidaR3` em `rig/anim_cerbero.py`, gerado em `rig/clipes_L3r/` (27 clipes; os 26 aceitos saem com diferença 0).
+
+### Chamas Tríplices r3
+- **Projétil novo:**
+  - núcleo quente (laranja-amarelo, sem estourar);
+  - corpo de chama girando (ruído em coordenadas giradas pelo tempo);
+  - cauda curta presa à trajetória, que gira no próprio eixo para a câmera e dissipa;
+  - impacto breve: anel que abre em 0,27 s.
+- Nasce 2,2 studs à frente da boca de cada cabeça. Cadência de 0,25 s mantida. Velocidade de prévia: 40 studs/s [A TESTAR].
+- **Alvos de prévia** (o projétil acerta a superfície do poste, raio de acerto 1,6):
+
+| Tentativa | Cabeça | Alvo | Distância medida (lançamento → impacto) | Voo | Resultado |
+|---|---|---|---|---|---|
+| 1 | E | 10 studs | 9,33 | 0,23 s | acertou |
+| 2 | C | 20 studs | 18,67 | 0,47 s | acertou |
+| 3 | D | 30 studs (limite) | 29,33 | 0,73 s | acertou |
+
+- **Curva — SIMULAÇÃO DE BLENDER** (v6.2: giro máximo de 180°/s, vida 2 s, até 30 studs). A trajetória teleguiada funcional fica para o Studio.
+
+| Tentativa | Cabeça | Alvo | Resultado |
+|---|---|---|---|
+| 4 | C | móvel, atravessando a frente a 10 studs/s | **acertou** (0,47 s, 18,7 studs percorridos) |
+| 5 | E | lateral a 75°, a 13 studs | **não alcança:** dissipou no limite de 30 studs |
+| 6 | D | sem alvo | segue reto e dissipa a 30,7 studs (comportamento documentado) |
+
+  - Na tentativa 5, com 180°/s a 40 studs/s, o raio de curva é de ~12,7 studs: um alvo a 75° e 13 studs fica dentro dessa curva. É um diagnóstico para calibrar giro e velocidade no Studio.
+- **Revisão:**
+  - `antes_depois_chamas.png`: referência | r2 | r3 de frente, e a câmera aberta com os 3 alvos;
+  - `curva_simulacao.png`;
+  - vídeos `FX_Chamas_r3_aberta.mp4`, `FX_Chamas_r3_cab.mp4`, `FX_Chamas_curva_SIMULACAO_aberta.mp4`.
+
+### Fúria das Três Cabeças r3 (laranja → violeta)
+- No rugido de cada cabeça (C 0,15 · E 0,40 · D 0,65 s), o fogo daquela cabeça e as chamas dela passam para violeta: `#1e0033` → `#6a1bd6` → `#a65cff` → núcleo `#e7d2ff`.
+- O violeta corre pelo corpo atrás de uma frente que cada rugido empurra (36% → 70% → 106% do comprimento). As chamas do dorso e da cauda mudam quando a frente passa por elas.
+- Na fúria sustentada as chamas ficam violeta e legíveis; as mordidas desencontradas e os focinhos continuam visíveis.
+- No último 1,5 s (3,3 → 4,8 s), tudo volta gradualmente ao laranja.
+- O violeta caracteriza o estado visual; a **decisão de elemento continua em aberto**.
+- **Revisão:**
+  - `antes_depois_furia.png`: referência | r2 (rugido, fúria, fade) | r3 (normal, ativação C, ativação D, sustentada, 3/4 sustentada, retorno, fim), na mesma luz;
+  - vídeos `FX_Furia_r3_cab.mp4`, `FX_Furia_r3_34.mp4`.
+
+### Investida Sombria r3 (clipe `InvestidaR3`, 1,467 s, 45 quadros)
+- Patas fincando: dedos agarram o chão em 0,18 s.
+- Peito comprimindo fundo entre as dianteiras (corpo −1,05).
+- Cabeças baixando com atraso (C 0 · E 0,05 · D 0,09 s).
+- Extensão marcada no impulso (0,40 → 0,90 s), pela garupa, com cabeças e cauda em linha.
+- Recuperação da passada até o quadro 0 da Corrida.
+- O deslocamento continua sendo do jogo (clipe NO LUGAR).
+- **QA:** IK 0,0009; escorregão 0,30 stud/s (a aceita tinha 0,25); patas z ≥ −0,002; fim = Corrida q0 (< 0,01°); JSON reimportado e conferido.
+- **Problemas encontrados e corrigidos:**
+  - **r1:** a extensão pela coluna erguia a frente: IK 1,58 e escorregão de 11,7 stud/s;
+  - **r1:** dedos fincados a 14° enterravam 0,26 no chão;
+  - **r2:** escápulas e recuo do corpo ainda deixavam IK 1,03; a extensão passou para a garupa;
+  - **r3:** com o impulso em 0,38 s a duração não fechava em quadro inteiro e havia um salto de 7° no encaixe (passou para 0,40 s);
+  - **r3:** a mandíbula substituía a boca do galope e quebrava o encaixe; agora soma.
+  - Interseções entre cabeças: nenhuma (folga mínima de 3,54).
+- **Prévias:**
+  - **saindo parado:** Repouso 0,5 s → InvestidaR3 → Corrida;
+  - **saindo em movimento:** Trote → InvestidaR3 com mistura de 5 quadros → Corrida, com **mudança de direção simulada** de 35° entre 3,0 e 3,8 s. A faixa no chão e o vento giram junto.
+  - **fogo:** acompanha a aceleração (as línguas esticam, as chamas deitam), faixa de sombra por 3 s e vento rente.
+- **Revisão:**
+  - `antes_depois_investida.png`: r2 | r3 parado (compressão, patas fincadas, extensão, passagem à corrida, encaixe) | r3 em movimento (trote, compressão, extensão, virada, fim do boost);
+  - vídeos `FX_Investida_r3_parado_{lado,34}.mp4` e `FX_Investida_r3_movimento_{lado,34}.mp4`.
+
+### Custo estimado dos VFX (prévia; NÃO é medição — medir no Roblox com várias criaturas)
+
+| Efeito | No Roblox (proposta) | PC | Celular |
+|---|---|---|---|
+| Aura A3 (base) | máscara de emissão + ~49 emissores | ~235 partículas (acima da meta de 150: reduzir taxa ou emissores) | ~70 |
+| Chamas Tríplices | 3 projéteis (ParticleEmitter + Trail curto) + 3 impactos (rajada de ~10) | ~3×20 + 30 por disparo, por 0,8 s | metade |
+| Investida | faixa (Decal ou Beam com brasas, ~30 partículas) + 3 Beams de vento; aura reforçada | ~30 + aura | 15 + aura reduzida |
+| Fúria | troca de cor (tint ou mistura de textura, sem partículas extras) + 3 Beams de vento | aura ×1,0–1,2 | igual à base |
+
+- **Ainda exige teste:**
+  - várias criaturas ao mesmo tempo (18 jogadores + companheiros);
+  - custo do tint violeta no SurfaceAppearance;
+  - Trails nos projéteis;
+  - colisão e alcance real;
+  - mira teleguiada;
+  - inimigos afetados pela Fúria (linhas cinza);
+  - Vigília.
+
+## r4 — Rugido Infernal e projéteis (18/11, pedido "r4 do Rugido Infernal e dos projéteis") — AGUARDA REVISÃO
+
+Etapa de Blender. Desempenho e trajetória funcional continuam pendentes no Roblox. A A3, a InvestidaR3, os clipes aceitos e os arquivos compartilhados ficaram intactos; os 27 clipes da `clipes_L3r` saem idênticos (diferença 0) em `rig/clipes_L3r4`.
+
+### Fúria — Rugido separado das mordidas
+- **Diagnóstico r3:** no `Prev_Furia_Andar` o loop de mordidas entrava em 1,6 s, depois do rugido, como planejado. Mas os três rugidos se sobrepunham (C 0,15 / E 0,40 / D 0,65 s, janelas de 0,75 s), a cabeça D ainda rugia enquanto o corpo já misturava para a postura de fúria (a partir de 1,05 s), a mandíbula chegava a 505°/s e o pescoço a 169°/s, lendo como bote e não como rugido.
+- **Clipes novos** (o `FuriaRugido` aceito fica intacto):
+  - `FuriaRugidoR4`: corpo inteiro, 2,9 s, 88 quadros. Apoios firmes (patas paradas), peito expandindo com inspiração em cada rugido, peso para trás e cauda erguida. Cada cabeça, uma por vez (C 0,10 → E 0,80 → D 1,50 s), ergue pescoço e focinho, abre a mandíbula a 56° com sustentação e fecha com controle. As laterais viram 12–14° para a frente para a boca ficar legível.
+  - `FuriaRugidoR4Camada`: as mesmas cabeças em camada, para usar andando [PROPOSTA].
+  - `Prev_FuriaR4`: Rugido → FuriaLoop (2 voltas, entra em 2,9 s) → FuriaSaida.
+- **Eventos (s):**
+  - C: rugido 0,26 / boca máxima 0,52 / fecha 0,90 / fechada 1,18;
+  - E: rugido 0,96 / boca máxima 1,22 / fecha 1,60 / fechada 1,88;
+  - D: rugido 1,66 / boca máxima 1,92 / fecha 2,30 / fechada 2,58;
+  - entra na fúria em 2,90.
+- **Conferência:**
+  - IK 0, escorregão 0, patas a −0,002, folga entre cabeças 2,69;
+  - emenda fim → FuriaLoop q0 e corpo → Repouso q0 = 0,0°; início → Repouso q0 = 0,34° (respiração das cabeças, coberta por mistura curta);
+  - mandíbula 263–320°/s e pescoço 71–93°/s (r3: 505 e 169).
+- **Corrigido no caminho:** antecipação e pulso do peito começavam antes de t=0 (4,6° no início); a abertura de 46° e o focinho a 13° liam pouco de frente (passaram a 56° e 18°); a câmera de perfil cortava as cabeças.
+- **Som PROVISÓRIO** (sintetizado, não oficial), em `aura/som_rugido_r4.py` → `aura/fx_poderes_r4/som/`: três rugidos (C 68 Hz, E 82 Hz, D 58 Hz) com sopro de fogo, presos aos eventos `rugido_K`, e estalos nas 6 mordidas do loop.
+- **Violeta:** cada cabeça passa de laranja a violeta entre `rugido_K` e `boca_max_K` (junto com o som); a onda corre pelo corpo durante a sustentação; volta gradual ao laranja no último 1,5 s (6,2 → 7,7). A boca acende em cada mordida do loop.
+- **Vídeos:**
+  - sem VFX: `rig/clipes_L3r4/render_r4/Cerbero_{FuriaRugidoR4,Prev_FuriaR4}_{cabf,perfilcab}.mp4` + `folha_rugido_r4.png`;
+  - com VFX: `aura/fx_poderes_r4/FX_Furia_r4_{cab,perfilcab}.mp4`;
+  - com VFX e som: `..._SOM.mp4` (áudio AAC confirmado).
+
+### Chamas Tríplices — projétil com volume
+- **Projétil r4** (o r3 continua no arquivo para comparação):
+  - **Língua:** chama alongada no sentido do voo, de bordas rasgadas, que some quando fica de quina.
+  - **Bola:** massa irregular por ruído de posição. A primeira versão, por ruído radial, lia como estrela.
+  - **Camadas:** duas massas atrás da frente, para dar volume de frente.
+  - **Núcleo:** pequeno e quente.
+  - **Cauda:** 10 sopros que ficam na trajetória, sobem e envelhecem laranja → vermelho em 0,27 s, por isso seguem a curva.
+- **Acúmulo e saída:** acúmulo na boca nos 9 quadros antes do disparo, seguindo a cabeça. A saída fica 1,3 stud à frente dos lábios, e a língua só se estende para trás conforme o projétil se afasta, sem atravessar o focinho.
+- **Impacto:** 7 línguas verticais na superfície do alvo mais um estouro irregular, ~0,33 s, sem anel. **Dissipação** no limite: encolhe e avermelha em 6 quadros.
+- **Testes** a 40 studs/s [A TESTAR], tempos de disparo da r3:
+  - E @10 → acertou (9,33);
+  - C @20 → acertou (20,0);
+  - D @30 → acertou (29,33);
+  - curva **SIMULAÇÃO DE BLENDER**: alvo móvel acertou (18,67 studs); lateral 75° a 13 studs não alcançou e dissipou a 30,67 (raio de curva ~12,7 studs); sem alvo, dissipou a 30,67.
+- **Comparação** r3 × r4 (frente, perfil, 3/4; mesmo voo de 0,3 s, câmera a 9 studs, 50 mm, mesma luz): `antes_depois_chamas_r4.png`, `Comparacao_*.png`.
+- **Vídeos:** `FX_Chamas_r4_{aberta,jogo,distante}.mp4` e `FX_Chamas_r4_curva_SIMULACAO_{aberta,jogo}.mp4`.
+
+### Custo estimado (prévia, NÃO é medição)
+
+| Efeito | PC | Celular |
+|---|---|---|
+| Chamas r4, pico de 3 projéteis | ~3 Trails + ~6 billboards + ~45 partículas (cauda 30/s, acúmulo, impactos) + PointLight curta | ~3 Trails + ~6 billboards + ~22 partículas (cauda 15/s, impacto com 4 línguas, sem luz) |
+| Chamas r3 (referência) | ~12 partículas no pico | metade |
+| Fúria r4 | troca de cor + 3 Beams de vento; som de 3 rugidos (~1 s cada) | igual |
+
+### Pendências
+- **Câmera de jogo:** de trás, o corpo esconde o disparo nos primeiros quadros; ver no Roblox com a câmera real.
+- **Retorno ao laranja:** a mistura passa por um tom rosado.
+- **Som:** é provisório.
+- **Elemento único:** decisão em aberto.
+- **Rugido em corpo inteiro (parado):** [PROPOSTA], a decidir (variante em camada disponível).
+
+### r4b (18/11) — pedido do usuário: "Projeteis maiores, e esse som no rugido nao"
+- **Som do rugido REPROVADO:**
+  - os vídeos `FX_Furia_r4_*_SOM.mp4` e os `.wav` foram apagados;
+  - `aura/som_rugido_r4.py` ficou marcado como reprovado;
+  - a Fúria segue nos vídeos sem trilha (`FX_Furia_r4_{cab,perfilcab}.mp4`);
+  - o som definitivo continua pendente.
+- **Projétil maior:**
+  - `aura/fx_poderes_r4b.py` (cópia da r4; a r4 fica intacta) aplica `ESC_PROJ = 1,7` [A TESTAR] em língua, massa, camadas, núcleo, sopros, acúmulo e impacto;
+  - a saída passa para 2,2 studs à frente dos lábios, sem atravessar o focinho;
+  - só o visual mudou: o raio de acerto, a velocidade e os tempos são os mesmos.
+- **Testes iguais à r4:** 10, 20 e 30 studs acertaram; alvo móvel acertou; lateral 75° e sem alvo dissipam a 30,67 studs.
+- **Saída:** `aura/fx_poderes_r4b/`, com prancha `antes_depois_chamas_r4b.png` e vídeos `FX_Chamas_r4_{aberta,jogo,distante}.mp4` e `FX_Chamas_r4_curva_SIMULACAO_{aberta,jogo}.mp4`.
+- **Custo:** o número de partículas não muda, mas a área na tela cresce cerca de 2,9× (overdraw). No celular, medir no Roblox e, se pesar, reduzir a cauda para 15/s.
+
+## Bola Infernal (18/11) — poder novo do usuário, SUBSTITUI as Chamas Tríplices — AGUARDA REVISÃO
+- **Decisão do usuário (18/11):** "eles formam uma bola de fogo gigante que segue o alvo, procure fazer brilhante e real", "para substituir esse poder de projeteis". Nome **PROVISÓRIO**. Os arquivos das Chamas (r3, r4, r4b e o clipe `ChamasTriplices`) ficam guardados, sem uso previsto.
+- **Clipe `BolaInfernal`:**
+  - camada das cabeças, 2,2 s, 67 quadros; serve andando e correndo;
+  - as três cabeças convergem (laterais 22–24°), abrem as bocas e sustentam a carga com esforço; dão um bote juntas no lançamento e recuam;
+  - eventos: converge 0,0; carga_inicio 0,35; carga_max 1,20; disparo 1,30; recuperação 1,55; fim 2,2;
+  - gerado em `rig/clipes_L3r5`; os 29 clipes anteriores saem idênticos;
+  - prévias `Prev_Bola_Repouso` e `Prev_Bola_Andar`, ambas sem erro de IK nem escorregão; folga entre cabeças 2,93.
+- **VFX:** `aura/fx_bola_infernal.py` sobre a A3, saída em `aura/fx_bola_infernal/`. Tudo em camadas reproduzíveis no Roblox:
+  - **Carga:** um jato de fogo por boca alimenta a bola, que cresce à frente das três bocas sem tocar nos focinhos. Bocas, pele das cabeças e olhos acendem, e a luz laranja cresce.
+  - **Bola:** raio visual de 3,4 studs, diâmetro ~6,8. Núcleo quente, massa em 3 camadas girando com gradiente de temperatura e cauda contínua de cometa.
+  - **Voo:** línguas que se soltam da superfície, fumaça escura atrás e luz pontual laranja que ilumina a criatura e o chão.
+  - **Impacto:** clarão, massa que abre, fogo no chão em anel, coluna de fumaça e marca de brasa que apaga em ~2 s.
+  - Glare no compositor só na prévia; no Roblox, Bloom do Lighting.
+- **Voo teleguiado — SIMULAÇÃO DE BLENDER.** Velocidade 26 studs/s, curva 150°/s, vida 2,5 s e alcance 40, tudo [A TESTAR]:
+  - alvo parado a 28 studs: acertou (0,87 s de voo);
+  - alvo móvel a 8 studs/s: acertou (0,80 s);
+  - alvo lateral a 60°, 18 studs: acertou (0,67 s).
+  - A perseguição real fica para o Studio.
+- **Custo estimado (prévia, não é medição):**
+  - **PC:** pico de ~45 partículas, 4 Billboards e 1 PointLight; explosão em rajada com Decal da marca.
+  - **Celular:** ~20 partículas, 3 Billboards e luz sem sombra.
+  - **Comparação:** custo parecido com os 3 projéteis da r4b, com uma luz a mais.
+- **Vídeos:**
+  - `FX_Bola_parado_{aberta,bola34,jogo,distante}.mp4`;
+  - `FX_Bola_movel_SIMULACAO_{aberta,jogo}.mp4`;
+  - `FX_Bola_lateral_SIMULACAO_aberta.mp4`;
+  - sem VFX: `rig/clipes_L3r5/render_bola/Cerbero_Prev_Bola_{Repouso,Andar}_*.mp4`.
+- **Prancha:** `prancha_bola_infernal.png`.
+- **Pendências:**
+  - nome definitivo;
+  - números (dano, recarga, raio de acerto, velocidade);
+  - se a bola atravessa obstáculos;
+  - som;
+  - câmera de jogo de trás (o corpo esconde a carga);
+  - teste no Roblox.
+
+## Bola Infernal r2 (18/11) — "mais brilhante, maior, as três cabeças rugindo formam uma bola gigante" — AGUARDA REVISÃO
+- **Clipe `BolaInfernalR2`** (corpo inteiro, 4,3 s) + `BolaInfernalR2Camada` (só cabeças, para usar andando [PROPOSTA]) em `rig/clipes_L3r6/` (34 clipes; os 30 da L3r5 saem idênticos).
+  - Eventos: ergue 0,0 · rugido 0,40 · carga 0,50 → 3,00 · preparo 3,00 · disparo 3,35 · recuperação 3,55.
+  - Cabeças sobem e olham para a bola, bocas abertas a 58° rugindo com vibração, preparo, arremesso juntas para baixo/frente, boca fecha com controle.
+  - QA: deslize 0, pata mín. −0,002, IK 0,036 (corpo inteiro; o tronco inclina no arremesso), folga entre cabeças 2,21 (menor que nos outros clipes, sem tocar).
+- **Efeitos** `aura/fx_bola_infernal_r2.py` → `aura/fx_bola_infernal_r2/` (r1 intacta):
+  - bola com raio 6,5 e massa 35% maior, formando ACIMA e à frente das cabeças;
+  - crescimento rápido no começo, halo de brilho, PointLight ~6× mais forte, glare mais forte;
+  - 48 riscos de energia convergindo em espiral; fluxo de fogo contínuo de cada boca até a bola;
+  - explosão proporcional, sem anel escuro (a bola incha no ponto); fumaça do rastro mais atrás.
+- **Voo SIMULADO** a 22 studs/s, curva 110°/s, vida 3,2 s, alcance 50 [A TESTAR]:
+  - parado a 34 studs no chão: acertou em 1,67 s;
+  - móvel a 8 studs/s: acertou em 2,10 s;
+  - lateral a 60°, 24 studs: acertou em 1,43 s.
+- A câmera de jogo (atrás) agora vê a carga, porque a bola fica acima das cabeças.
+- **Custo estimado**, a medir no Roblox:
+  - PC: ~70 partículas no pico (riscos 48 em ciclo + fluxo 30) + 5 Billboards + 1 luz;
+  - celular: ~30 partículas, sem halo e luz sem sombra.
+- **Pendências:**
+  - de trás, no voo, a fumaça ainda escurece um pouco a bola;
+  - nome, números, som e decisão entre corpo inteiro ou camada;
+  - Studio.
+
+## Bola Infernal r3 (19/11) — "maior, redondo e brilhante, com aspectos de fogo" — AGUARDA REVISÃO
+- `aura/fx_bola_infernal_r3.py` → `aura/fx_bola_infernal_r3/` (r1/r2 intactas); clipe igual ao da r2 (`BolaInfernalR2`, rig/clipes_L3r6).
+- **Esfera de verdade** de raio 10 (diâmetro ~20 studs):
+  - superfície de fogo com ruído 4D em movimento, centro branco-amarelo e borda laranja-vermelha;
+  - labaredas curtas na borda (3 Billboards), halo e PointLight 140 k (clarão 380 k);
+  - SEM cauda de cometa: a bola fica redonda o tempo todo.
+- **Voo SIMULADO** mais lento e pesado: 16 studs/s, curva 80°/s, vida 4,5 s, alcance 60 [A TESTAR].
+  - parado a 45 studs: acertou em 2,80 s;
+  - móvel a 8 studs/s: acertou em 3,73 s;
+  - lateral a 60°, 32 studs: acertou em 2,33 s.
+- **Roblox (proposta):** esfera = Part bola Neon/emissiva com textura de fogo + 3 Billboards de labareda + halo + PointLight; o resto igual à r2.
+- **Render em PC compartilhado:** o EEVEE disputa a GPU com o Roblox Studio (~10 s/quadro e tela travando).
+  - Modo `leve` no script: só os vídeos pedidos, 2 threads, prioridade Ociosa, 8 amostras, 480×338 e pausa de 0,6 s por quadro.
+  - Resultado: 2 vídeos em ~7 min sem travar.
+
+### r3 ACEITA pelo usuário (19/11) "porém mais rápido" → r3b — VELOCIDADE APROVADA 19/11
+- `aura/fx_bola_infernal_r3b.py` → `aura/fx_bola_infernal_r3b/`. Visual = r3; voo 30 studs/s, curva 130°/s, vida 2,6 s, alcance 70 [A TESTAR].
+- **Simulação:**
+  - parado a 45 studs: acertou em 1,50 s (era 2,80);
+  - móvel a 8 studs/s: acertou em 1,60 s (era 3,73);
+  - lateral a 60°, 32 studs: acertou em 1,27 s (era 2,33).
+- Carga (3,35 s até o disparo) sem mudança. Vídeos no modo leve.
+
+### Nome oficial (19/11): **Sol Infernal**
+- Decisão do usuário; "Bola Infernal" era provisório.
+- Os arquivos e clipes mantêm os nomes técnicos `BolaInfernal*` / `fx_bola_infernal*` (renomear só na integração ao Studio, se for o caso).
+- Números APROVADOS 19/11 (ver `DOCS/criaturas/cerbero-sombrio.md`): 1,8× + explosão 12 studs 1,0×, queimadura 3 s, 30 studs/s, curva 130°/s, alcance 50, acerto 8, recarga 14 s, energia 35.

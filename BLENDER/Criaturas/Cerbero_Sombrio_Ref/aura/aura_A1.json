@@ -1,0 +1,16 @@
+{
+ "linhas": 16,
+ "tris": 968,
+ "largura": 0.157,
+ "pulso_s": 1.8,
+ "fases": {
+  "corpo": 0,
+  "C": 0.31,
+  "E": 0.62,
+  "D": 0.93
+ },
+ "cores": {
+  "roxo": "#8a2be2",
+  "brasa": "#ff4a1c"
+ }
+}

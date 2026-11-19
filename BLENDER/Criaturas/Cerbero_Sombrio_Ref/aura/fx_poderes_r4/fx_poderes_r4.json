@@ -1,0 +1,126 @@
+{
+ "chamas": {
+  "velocidade_studs_s_A_TESTAR": 40.0,
+  "tentativas": [
+   {
+    "cabeca": "E",
+    "alvo_planejado_studs": 10.0,
+    "medido_saida_ao_impacto_studs": 9.33,
+    "resultado": "acertou",
+    "voo_s": 0.233,
+    "impacto_s_no_previo": 0.9
+   },
+   {
+    "cabeca": "C",
+    "alvo_planejado_studs": 20.0,
+    "medido_saida_ao_impacto_studs": 20.0,
+    "resultado": "acertou",
+    "voo_s": 0.5,
+    "impacto_s_no_previo": 1.4
+   },
+   {
+    "cabeca": "D",
+    "alvo_planejado_studs": 30.0,
+    "medido_saida_ao_impacto_studs": 29.33,
+    "resultado": "acertou",
+    "voo_s": 0.733,
+    "impacto_s_no_previo": 1.87
+   }
+  ],
+  "cadencia_s": 0.25,
+  "custo_estimado": {
+   "por_projetil_pico": {
+    "Beam_ou_Trail_lingua": 1,
+    "billboards_nucleo_bola": 2,
+    "particulas_cauda": "~8 (30/s x 0,27 s)",
+    "particulas_acumulo": 3,
+    "particulas_impacto": "8 (7 linguas + estouro, 0,33 s)"
+   },
+   "PC": {
+    "pico_3_projeteis": "~3 Trails + ~6 billboards + ~45 particulas (cauda+acumulo+impactos sobrepostos)",
+    "luz": "1 PointLight curta por projetil"
+   },
+   "celular": {
+    "proposta": "cauda 15/s (~4), impacto 4 linguas, sem PointLight",
+    "pico_3_projeteis": "~3 Trails + ~6 billboards + ~22 particulas"
+   },
+   "comparacao_r3": "r3: 2 billboards + 1 cauda + anel por projetil (~12 particulas no pico de 3 projeteis)",
+   "nota": "ESTIMATIVA a partir da previa; desempenho real so medido no Roblox (PC e celular)"
+  }
+ },
+ "curva_SIMULACAO_BLENDER": {
+  "giro_max_graus_s": 180,
+  "vida_s": 2.0,
+  "alcance_studs": 30,
+  "velocidade_studs_s_A_TESTAR": 40.0,
+  "tentativas": [
+   {
+    "cabeca": "C",
+    "alvo": "movel lateral 10 studs/s",
+    "resultado": "acertou",
+    "voo_s": 0.467,
+    "percorrido_studs": 18.67
+   },
+   {
+    "cabeca": "E",
+    "alvo": "lateral 75 graus a 13 studs",
+    "resultado": "dissipou no limite",
+    "voo_s": 0.767,
+    "percorrido_studs": 30.67
+   },
+   {
+    "cabeca": "D",
+    "alvo": "nenhum (segue reto)",
+    "resultado": "dissipou no limite",
+    "voo_s": 0.767,
+    "percorrido_studs": 30.67
+   }
+  ],
+  "nota": "trajetoria teleguiada funcional fica para o Studio"
+ },
+ "comparacao": {
+  "quadro": 37,
+  "voo_s": 0.3,
+  "distancia_boca_studs": 12.0,
+  "camera_dist_studs": 9.0,
+  "lente_mm": 50
+ },
+ "furia": {
+  "rugido_s": {
+   "C": [
+    0.26,
+    0.52,
+    0.9,
+    1.18
+   ],
+   "E": [
+    0.96,
+    1.22,
+    1.6,
+    1.88
+   ],
+   "D": [
+    1.66,
+    1.92,
+    2.3,
+    2.58
+   ]
+  },
+  "loop_entra_s": 2.9,
+  "mordidas_s": [
+   3.2,
+   3.85,
+   4.45,
+   5.2,
+   5.85,
+   6.45
+  ],
+  "saida_s": 6.9,
+  "retorno_violeta_s": [
+   6.2,
+   7.7
+  ],
+  "som": "PROVISORIO sintetizado (fx_poderes_r4/som)",
+  "inimigos_afetados": "sem inimigo na previa (integracao)"
+ }
+}

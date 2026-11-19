@@ -1,0 +1,38 @@
+{
+ "chamas": {
+  "disparos_s_no_previo": {
+   "E": 0.65,
+   "C": 0.9,
+   "D": 1.15
+  },
+  "projetil_alcance": 30,
+  "projetil_duracao_s": 0.6
+ },
+ "investida": {
+  "impulso_s": [
+   0.3,
+   0.8
+  ],
+  "boost_s": [
+   0.3,
+   4.3
+  ],
+  "faixa_some_s": 7.3,
+  "faixa_comprimento_studs": 67,
+  "previa_s": 4.6
+ },
+ "furia": {
+  "rugidos_s": {
+   "C": 0.15,
+   "E": 0.4,
+   "D": 0.65
+  },
+  "ondas": 3,
+  "fade_s": [
+   3.3,
+   4.8
+  ],
+  "previa_s": 4.8,
+  "inimigos_afetados": "linhas cinza/apagadas: nao ha inimigo na previa (fica para a integracao)"
+ }
+}

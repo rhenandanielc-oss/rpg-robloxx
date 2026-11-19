@@ -535,7 +535,158 @@ DUR_O = {**{"Mordida" + kk: 0.8 for kk in CABS}, **{"Garra" + sd: 0.75 for sd in
 for nm_, msk in CAMADA.items():
     CLIPES[nm_] = (so_camada(O_FN[nm_], msk), DUR_O[nm_], nm_ == "FuriaLoop", 0.0)
 CLIPES["Investida"] = (c_investida, DUR_INV, False, 0.0)
+# Investida r3 (18/11, pedido "revisao das tres habilidades"): MAIS ACAO, versao NOVA (a Investida aceita fica intacta).
+# Patas fincando (dedos agarram o chao), peito comprimindo fundo entre as dianteiras, cabecas baixando com atraso, extensao
+# marcada no impulso (coluna estica, garupa empurra, cabecas e cauda em linha) e recuperacao da passada ao entrar no galope.
+# NO LUGAR: o deslocamento do jogo continua separado do clipe.
+T0_R3 = 0.40; DUR_R3 = T0_R3 + 2 * T_GAL                    # 44 quadros exatos: o fim cai na fase da Corrida (0,38 dava 7 graus de salto)
+def k_inv3(t): return suave((t - T0_R3) / 0.20)
+PERF_R3 = Perfil(lambda t: V_GAL * k_inv3(t)); PERF_R3_G = PerfDesloc(PERF_R3, T0_R3)
+EV_INVESTIDA_R3 = {"compressao": 0.0, "patas_fincadas": 0.18, "impulso": T0_R3, "extensao_max": round(T0_R3 + 0.18, 3),
+                   "fim_impulso": round(T0_R3 + 0.5, 3), "passa_corrida": round(T0_R3 + 0.5, 3), "encaixa_corrida": round(DUR_R3, 3)}
+def c_investida_r3(t):
+    r = {}; pes = {}; ext_ = {"rot_pe": {}, "apoio": {}, "v": V_GAL * k_inv3(t)}; k = k_inv3(t); tt = t - T0_R3
+    comp = suave(t / 0.30) * (1 - suave((t - (T0_R3 - 0.04)) / 0.09))        # compressao funda
+    estica = janela(t, T0_R3 - 0.04, T0_R3 + 0.50, 0.10, 0.30)                  # extensao do impulso
+    finca = janela(t, 0.08, T0_R3 + 0.02, 0.10, 0.06)                           # dedos agarram o chao
+    for k_, fase in FASE_GALOPE.items():
+        pes[k_], uu = passo_var(tt, fase, T_GAL, AP_GAL, ALT_GAL * k, lambda x: L_GAL * k_inv3(x + T0_R3), PERF_R3_G)
+        rot_sola(ext_, k_, uu if k > 0.02 else 0.0, 32); ext_["apoio"][k_] = uu == 0
+    corpo_galope(r, tt / T_GAL, k)
+    r["Pelve"] = r["Pelve"] + [(X, R(11) * comp - R(6) * estica)]          # r2: extensao mais contida (alcance)
+    r["Coluna1"] = r["Coluna1"] + [(X, -R(3) * comp + R(2) * estica)]    # r3: extensao pela garupa (girar a coluna erguia a frente)
+    r["Coluna2"] = r["Coluna2"] + [(X, -R(2) * comp + R(1) * estica)]
+    r["Coluna3"] = r["Coluna3"] + [(X, -R(7) * comp + R(2) * estica)]      # peito afunda entre as dianteiras (r2: sobe pouco na extensao)
+    for sd in "ED":
+                r["Dedos" + sd] = [(X, -R(6) * finca)]; r["DedosPe" + sd] = [(X, -R(5) * finca)]       # r2: flexao leve (14 graus enterrava)
+    for kk, at in (("C", 0.0), ("E", 0.05), ("D", 0.09)):                      # cabecas baixam com atraso entre si
+        cmp_k = suave((t - at) / 0.30) * (1 - suave((t - (T0_R3 - 0.04 + at)) / 0.09))
+        est_k = janela(t - at, T0_R3 - 0.04, T0_R3 + 0.50, 0.10, 0.30)
+        r["Pescoco%s1" % kk] = r["Pescoco%s1" % kk] + [(S[kk], -R(13) * cmp_k - R(15) * est_k)]
+        r["Pescoco%s2" % kk] = r.get("Pescoco%s2" % kk, []) + [(S[kk], -R(4) * est_k)]
+        r["Cabeca" + kk] = r["Cabeca" + kk] + [(S[kk], R(6) * cmp_k + R(10) * est_k)]
+        r["Mandibula" + kk] = r.get("Mandibula" + kk, []) + [(S[kk], -R(10) * est_k)]     # soma a boca do galope (substituir quebrava o encaixe)
+    r["Cauda1"] = r["Cauda1"] + [(X, -R(8) * comp + R(14) * estica)]; r["Cauda2"] = r["Cauda2"] + [(X, R(6) * estica)]
+    z = BASE_Z + (Z_GAL - BASE_Z) * k + 0.30 * k * math.sin(2 * math.pi * (tt / T_GAL - 0.05)) - 1.05 * comp - 0.25 * estica
+    return r, V((0, 0.25 * comp - 0.10 * estica, z)), pes, ext_
+CLIPES["InvestidaR3"] = (c_investida_r3, DUR_R3, False, 0.0)
+# Rugido Infernal r4 (18/11, pedido "r4 do Rugido Infernal"): ATIVACAO separada das mordidas (o FuriaRugido aceito fica intacto).
+# Cada cabeca, uma por vez (C -> E -> D, sem sobrepor as aberturas): pescoco e focinho ERGUEM (sem bote para a frente), a
+# mandibula ABRE devagar, SUSTENTA aberta e FECHA com controle; depois a cabeca baixa para a postura de furia (quadro 0 do
+# FuriaLoop). Corpo inteiro: apoios firmes (patas paradas), peito expande (inspira antes de cada rugido), peso um pouco para
+# tras, cauda erguida; o corpo termina no Repouso q0. As mordidas desencontradas so comecam no FuriaLoop, depois do fim.
+RUG4_INI = {"C": 0.10, "E": 0.80, "D": 1.50}                 # inicio de cada cabeca (s) [A TESTAR]
+RUG4_ERGUE, RUG4_ABRE0, RUG4_ABRE1, RUG4_FECHA0, RUG4_FECHA1, RUG4_ASSENTA = 0.32, 0.16, 0.42, 0.80, 1.08, 1.30
+DUR_RUG4 = round(RUG4_INI["D"] + RUG4_ASSENTA + 0.10, 4)     # 2,90 s = 87 quadros
+EV_RUGIDO_R4 = {"inspira": 0.0}
+for kk in CABS:
+    s0 = RUG4_INI[kk]
+    EV_RUGIDO_R4.update({"ergue_" + kk: s0, "rugido_" + kk: round(s0 + RUG4_ABRE0, 3), "boca_max_" + kk: round(s0 + RUG4_ABRE1, 3),
+                         "fecha_" + kk: round(s0 + RUG4_FECHA0, 3), "fechada_" + kk: round(s0 + RUG4_FECHA1, 3)})
+EV_RUGIDO_R4["entra_furia"] = DUR_RUG4
+def o_rugido_r4(t):
+    base = furia_pose(0.0); r = {}
+    for kk in CABS:
+        u = t - RUG4_INI[kk]
+        antecip = janela(u, -0.35, 0.05, 0.25, 0.10) * suave(t / 0.20)            # recolhe de leve (inspira); parte do Repouso q0
+        ergue = suave(u / RUG4_ERGUE) * (1 - suave((u - RUG4_FECHA0) / (RUG4_ASSENTA - RUG4_FECHA0)))
+        abre = suave((u - RUG4_ABRE0) / (RUG4_ABRE1 - RUG4_ABRE0)) * (1 - suave((u - RUG4_FECHA0) / (RUG4_FECHA1 - RUG4_FECHA0)))
+        kf = suave((u - (RUG4_FECHA0 + 0.05)) / (RUG4_ASSENTA - RUG4_FECHA0 - 0.05))   # assenta na postura de furia
+        sust = janela(u, RUG4_ABRE1 - 0.05, RUG4_FECHA0 + 0.05, 0.08, 0.10)
+        vibra = R(1.3) * math.sin(2 * math.pi * 8 * u) * sust                        # vibracao curta do rugido (sem chicote)
+        def mistura(nm, extra):
+            r[nm] = [(e, ang * kf) for e, ang in base[nm]] + extra
+        gira = {"C": 0.0, "E": 12.0, "D": -14.0}[kk]                                  # laterais viram um pouco para a frente (boca legivel)
+        mistura("Pescoco%s1" % kk, [(S[kk], R(20) * ergue + R(3) * antecip), (Z, R(gira) * ergue)])
+        mistura("Pescoco%s2" % kk, [(S[kk], R(9) * ergue)])
+        mistura("Cabeca" + kk, [(S[kk], -R(18) * ergue - R(4) * abre + vibra)])
+        mistura("Mandibula" + kk, [(S[kk], -R(56) * abre)])                       # r4b: abertura mais larga (46 lia pouco)
+    return r, {}
+def c_rugido_r4(t):
+    """corpo inteiro: Repouso q0 + peito expandindo + apoios firmes + cabecas do o_rugido_r4"""
+    r, raiz, pes, ext = c_repouso(0.0)
+    env = janela(t, 0.0, DUR_RUG4, 0.40, 0.55)
+    pulso = sum(janela(t - RUG4_INI[kk], -0.30, RUG4_FECHA1, 0.30, 0.35) for kk in CABS)   # inspira e sustenta em cada rugido
+    pulso = min(pulso, 1.0) * suave(t / 0.30)                                  # parte do Repouso q0
+    r["Coluna3"] = r["Coluna3"] + [(X, R(4) * env + R(3) * pulso)]                 # peito sobe e expande
+    r["Coluna2"] = r["Coluna2"] + [(X, R(1.5) * env + R(1.0) * pulso)]
+    r["Coluna1"] = r["Coluna1"] + [(X, -R(1.0) * env)]
+    r["Pelve"] = [(X, -R(2.0) * env)]                                                # garupa assenta (peso para tras)
+    r["Cauda1"] = r["Cauda1"] + [(X, R(10) * env)]; r["Cauda2"] = r["Cauda2"] + [(X, R(4) * env)]
+    ro, _ = o_rugido_r4(t)
+    r.update(ro)
+    return r, raiz + V((0, 0.22 * env, 0.12 * env + 0.06 * pulso)), {}, {}
+CLIPES["FuriaRugidoR4"] = (c_rugido_r4, DUR_RUG4, False, 0.0)
+CAMADA["FuriaRugidoR4Camada"] = CABECAS3                       # variante em CAMADA (cabecas) para usar andando [PROPOSTA]
+CLIPES["FuriaRugidoR4Camada"] = (so_camada(o_rugido_r4, CABECAS3), DUR_RUG4, False, 0.0)
+# Bola Infernal (18/11, ideia do usuario; SUBSTITUI as Chamas Triplices; nome PROVISORIO): as tres cabecas CONVERGEM para um
+# ponto a frente, abrem as bocas e alimentam UMA bola de fogo gigante (carga), dao um bote juntas no lancamento e recuam.
+# CAMADA das cabecas (usa andando/correndo). A bola segue o alvo no jogo (teleguiada, valores [A TESTAR]).
+DUR_BOLA = 2.2
+EV_BOLA = {"converge": 0.0, "carga_inicio": 0.35, "carga_max": 1.20, "disparo": 1.30, "recuperacao": 1.55, "fim": DUR_BOLA}
+def o_bola(t):
+    r = {}; conv = janela(t, 0.0, DUR_BOLA, 0.35, 0.55)
+    abre = suave((t - 0.30) / 0.35) * (1 - suave((t - 1.32) / 0.28))
+    treme = janela(t, 0.50, 1.30, 0.20, 0.05)
+    bote = suave((t - 1.22) / 0.08) * (1 - suave((t - 1.36) / 0.30)); recuo = janela(t, 1.34, 1.95, 0.08, 0.45)
+    for kk, yaw, at in (("C", 0.0, 0.0), ("E", 22.0, 0.04), ("D", -24.0, 0.08)):
+        vib = R(1.4) * math.sin(2 * math.pi * 7 * (t + at)) * treme              # esforco de sustentar a bola
+        r["Pescoco%s1" % kk] = [(S[kk], -R(4) * conv - R(10) * bote + R(6) * recuo), (Z, R(yaw) * conv)]
+        r["Pescoco%s2" % kk] = [(S[kk], R(2) * conv)]
+        r["Cabeca" + kk] = [(S[kk], -R(2) * conv + R(5) * bote + vib), (Z, R(yaw * 0.35) * conv)]
+        r["Mandibula" + kk] = [(S[kk], -R(6) * conv - R(38) * abre)]
+    return r, {}
+CAMADA["BolaInfernal"] = CABECAS3
+CLIPES["BolaInfernal"] = (so_camada(o_bola, CABECAS3), DUR_BOLA, False, 0.0)
+# Bola Infernal r2 (18/11, pedido "mais brilhante, maior ... as tres cabecas abrem a boca rugindo e forma uma bola gigante"):
+# as tres cabecas ERGUEM e olham para CIMA, abrem a boca RUGINDO e sustentam (carga longa); a bola gigante forma ACIMA e a
+# frente delas; no fim erguem mais um pouco (preparo) e ARREMESSAM juntas para baixo/frente; boca fecha com controle.
+# Corpo inteiro (apoios firmes, peito expandindo) + variante em CAMADA para usar andando [PROPOSTA].
+DUR_BOLA2 = 4.3
+EV_BOLA2 = {"ergue": 0.0, "rugido": 0.40, "carga_inicio": 0.50, "carga_max": 3.00, "preparo": 3.00, "disparo": 3.35,
+            "recuperacao": 3.55, "fim": DUR_BOLA2}
+def o_bola2(t):
+    r = {}
+    for kk, yaw, at in (("C", 0.0, 0.0), ("E", 9.0, 0.06), ("D", -10.0, 0.10)):
+        u = t - at
+        ergue = suave(u / 0.55) * (1 - suave((u - 3.28) / 0.22))                   # sobe e olha para a bola
+        prep = janela(u, 2.95, 3.32, 0.30, 0.06)                                     # erguem mais (preparo)
+        arr = suave((u - 3.26) / 0.10) * (1 - suave((u - 3.42) / 0.75))             # arremesso para baixo/frente
+        abre = suave((u - 0.32) / 0.40) * (1 - suave((u - 3.46) / 0.45))             # abre rugindo, fecha com controle
+        sust = janela(u, 0.70, 3.30, 0.15, 0.10)
+        vib = R(1.8) * math.sin(2 * math.pi * 9 * u) * sust * (0.6 + 0.4 * math.sin(2 * math.pi * 0.7 * u))   # rugido sustentado
+        r["Pescoco%s1" % kk] = [(S[kk], R(32) * ergue + R(6) * prep - R(18) * arr), (Z, R(yaw) * (ergue + arr))]
+        r["Pescoco%s2" % kk] = [(S[kk], R(8) * ergue + R(3) * prep - R(6) * arr)]
+        r["Cabeca" + kk] = [(S[kk], -R(30) * ergue - R(6) * prep + R(16) * arr + vib), (Z, R(yaw * 0.4) * ergue)]
+        r["Mandibula" + kk] = [(S[kk], -R(58) * abre)]
+    return r, {}
+def c_bola2(t):
+    """corpo inteiro: Repouso q0 + peito expandindo (inspira e sustenta) + apoios firmes + arremesso leve do tronco"""
+    r, raiz, pes, ext = c_repouso(0.0)
+    env = janela(t, 0.0, DUR_BOLA2, 0.45, 0.70)
+    arr = suave((t - 3.28) / 0.10) * (1 - suave((t - 3.45) / 0.70))
+    r["Coluna3"] = r["Coluna3"] + [(X, R(5) * env - R(4) * arr)]
+    r["Coluna2"] = r["Coluna2"] + [(X, R(1.5) * env - R(1.5) * arr)]
+    r["Coluna1"] = r["Coluna1"] + [(X, -R(1.0) * env)]
+    r["Pelve"] = [(X, -R(2.5) * env)]
+    r["Cauda1"] = r["Cauda1"] + [(X, R(12) * env)]; r["Cauda2"] = r["Cauda2"] + [(X, R(5) * env)]
+    ro, _ = o_bola2(t)
+    r.update(ro)
+    return r, raiz + V((0, 0.20 * env - 0.25 * arr, 0.14 * env - 0.10 * arr)), {}, {}
+CLIPES["BolaInfernalR2"] = (c_bola2, DUR_BOLA2, False, 0.0)
+CAMADA["BolaInfernalR2Camada"] = CABECAS3
+CLIPES["BolaInfernalR2Camada"] = (so_camada(o_bola2, CABECAS3), DUR_BOLA2, False, 0.0)
+def _base_bola2(t):
+    r, raiz, pes, ext = c_bola2(min(t, DUR_BOLA2)); return r, raiz + V((0, 0, BASE_Z)), pes, ext
+def _base_rug4(t):
+    r, raiz, pes, ext = c_rugido_r4(min(t, DUR_RUG4)); return r, raiz + V((0, 0, BASE_Z)), pes, ext
 PREVIA = {  # nome: (funcao, duracao) -- so para render/QA (acao assada, sem JSON)
+    "Prev_Bola_Repouso": (camada_sobre(o_bola, CABECAS3, c_repouso, 6.0, 0.2, DUR_BOLA, False), 3.0),
+    "Prev_Bola_Andar": (camada_sobre(o_bola, CABECAS3, c_andar, T_AND, 0.2, DUR_BOLA), 3 * T_AND),
+    "Prev_Bola2": (camada_sobre(o_bola2, CABECAS3, _base_bola2, None, 0.0, DUR_BOLA2), DUR_BOLA2 + 0.7),
+    "Prev_Bola2_Andar": (camada_sobre(o_bola2, CABECAS3, c_andar, T_AND, 0.2, DUR_BOLA2), 5 * T_AND),
+    "Prev_FuriaR4": (camada_sobre(o_furia_loop, CABECAS3, _base_rug4, None, DUR_RUG4, 2 * FURIA_T, True,
+                                  [(o_furia_saida, CABECAS3, DUR_RUG4 + 2 * FURIA_T, 0.8)]), DUR_RUG4 + 2 * FURIA_T + 0.8),
     "Prev_MordidaC_Andar": (camada_sobre(O_FN["MordidaC"], CADEIA["C"], c_andar, T_AND, 0.6, 0.8), 2 * T_AND),
     "Prev_MordidaE_Corrida": (camada_sobre(O_FN["MordidaE"], CADEIA["E"], c_corrida, T_GAL, 0.2, 0.8), 3 * T_GAL),
     "Prev_GarraE_Andar": (camada_sobre(O_FN["GarraE"], PERNA_D["E"], c_andar, T_AND, 0.5, 0.75), 2 * T_AND),
@@ -546,21 +697,28 @@ PREVIA = {  # nome: (funcao, duracao) -- so para render/QA (acao assada, sem JSO
                                       [(o_furia_loop, CABECAS3, 1.6, FURIA_T), (o_furia_saida, CABECAS3, 1.6 + FURIA_T, 0.8)]), 4 * T_AND),
 }
 V_PREV = {"Prev_MordidaC_Andar": V_AND, "Prev_MordidaE_Corrida": V_GAL, "Prev_GarraE_Andar": V_AND, "Prev_GarraD_Trote": V_TRO,
-          "Prev_Chamas_Repouso": 0.0, "Prev_Chamas_Andar": V_AND, "Prev_Furia_Andar": V_AND}      # r2: QA de escorregao com o chao da base
+          "Prev_Chamas_Repouso": 0.0, "Prev_Chamas_Andar": V_AND, "Prev_Furia_Andar": V_AND, "Prev_FuriaR4": 0.0, "Prev_Bola_Repouso": 0.0, "Prev_Bola_Andar": V_AND, "Prev_Bola2": 0.0, "Prev_Bola2_Andar": V_AND}      # r2: QA de escorregao com o chao da base
 for nm_, (fn_, du_) in PREVIA.items(): CLIPES[nm_] = (fn_, du_, False, V_PREV[nm_])
 EVENTOS_L3 = {**{"Mordida" + kk: {"contato": 0.30, "fim": 0.8} for kk in CABS}, **{"Garra" + sd: {"contato": 0.32, "fim": 0.75} for sd in "ED"},
               "ChamasTriplices": EV_CHAMAS, "FuriaRugido": EV_RUGIDO, "FuriaLoop": EV_FURIA_LOOP, "FuriaSaida": {"fim": 0.8},
-              "Investida": EV_INVESTIDA, "Prev_Furia_Andar": {"rugido": 0.0, "loop": 1.6, "saida": 3.6}}
+              "Investida": EV_INVESTIDA, "InvestidaR3": EV_INVESTIDA_R3, "Prev_Furia_Andar": {"rugido": 0.0, "loop": 1.6, "saida": 3.6},
+              "FuriaRugidoR4": EV_RUGIDO_R4, "FuriaRugidoR4Camada": EV_RUGIDO_R4,
+              "BolaInfernal": EV_BOLA, "BolaInfernalR2": EV_BOLA2, "BolaInfernalR2Camada": EV_BOLA2, "Prev_FuriaR4": {"rugido": 0.0, "loop": DUR_RUG4, "saida": round(DUR_RUG4 + 2 * FURIA_T, 3)}}
 INFO_EVENTOS = {"ChamasTriplices": {"disparo_E": {"cabeca": "E", "osso_boca": "CabecaE", "mandibula": "MandibulaE"},
                                     "disparo_C": {"cabeca": "C", "osso_boca": "CabecaC", "mandibula": "MandibulaC"},
                                     "disparo_D": {"cabeca": "D", "osso_boca": "CabecaD", "mandibula": "MandibulaD"}},
-                "FuriaLoop": {"contato_" + kk: {"cabeca": kk} for kk in CABS}, "FuriaRugido": {"rugido_" + kk: {"cabeca": kk} for kk in CABS}}
+                "FuriaLoop": {"contato_" + kk: {"cabeca": kk} for kk in CABS}, "FuriaRugido": {"rugido_" + kk: {"cabeca": kk} for kk in CABS},
+                "FuriaRugidoR4": {"rugido_" + kk: {"cabeca": kk, "som": "rugido", "vfx": "violeta"} for kk in CABS},
+                "BolaInfernal": {"carga_inicio": {"bocas": "CED", "osso_boca": ["CabecaC", "CabecaE", "CabecaD"]}, "disparo": {"origem": "bola a frente das tres bocas"}},
+                "BolaInfernalR2": {"carga_inicio": {"bocas": "CED", "osso_boca": ["CabecaC", "CabecaE", "CabecaD"]}, "disparo": {"origem": "bola gigante acima e a frente das tres bocas"}},
+                "BolaInfernalR2Camada": {"carga_inicio": {"bocas": "CED"}, "disparo": {"origem": "bola gigante acima e a frente das tres bocas"}},
+                "FuriaRugidoR4Camada": {"rugido_" + kk: {"cabeca": kk, "som": "rugido", "vfx": "violeta"} for kk in CABS}}
 PONTO_BOCA = {}                                              # ponto da boca no espaco LOCAL do osso Cabeca{K} (para o projetil/VFX)
 for kk in CABS:
     p_ = (BD["Cabeca" + kk].tail_local * 0.6 + BD["Mandibula" + kk].tail_local * 0.4)
     PONTO_BOCA[kk] = [round(c_, 4) for c_ in (BD["Cabeca" + kk].matrix_local.inverted() @ p_)]
 EVENTOS_CLIPE = {"Mordida": EV_MORD, **EVENTOS_LOTE2, **EVENTOS_L3}
-COM_ALTURA_PROPRIA = {"Andar", "Corrida", "Trote", "Partida", "Freada", "VirarE", "VirarD", "Salto", "Deitar", "Descanso", "Levantar", "Investida"} | set(CAMADA) | set(PREVIA)
+COM_ALTURA_PROPRIA = {"Andar", "Corrida", "Trote", "Partida", "Freada", "VirarE", "VirarD", "Salto", "Deitar", "Descanso", "Levantar", "Investida", "InvestidaR3"} | set(CAMADA) | set(PREVIA)
 QUAIS = ARGS[1].split(",") if len(ARGS) > 1 else list(CLIPES)
 
 # ------------------------------------------------------------------ amostragem -> FK -> acao + JSON + QA
@@ -650,7 +808,7 @@ for nome in QUAIS:
     if nome in CAMADA: manifesto[nome].update({"camada": True, "mascara": CAMADA[nome], "prioridade_sugerida": "Action"})
     if nome in PREVIA: manifesto[nome]["previa_so_render"] = True
     if nome in INFO_EVENTOS: manifesto[nome]["eventos_info"] = INFO_EVENTOS[nome]
-    if nome == "ChamasTriplices": manifesto[nome]["ponto_boca_local_Cabeca"] = PONTO_BOCA
+    if nome in ("ChamasTriplices", "BolaInfernal", "BolaInfernalR2", "BolaInfernalR2Camada"): manifesto[nome]["ponto_boca_local_Cabeca"] = PONTO_BOCA
     if nome in EVENTOS_CLIPE: manifesto[nome]["eventos_s"] = EVENTOS_CLIPE[nome]
     print("CLIPE", nome, manifesto[nome], flush=True)
     dado = {"nome": "Cerbero_" + nome, "fps": FPS, "loop": loop, "quadros": nq, "duracao": dur, "velocidade": round(vel, 3), "ossos": {}}
@@ -665,7 +823,7 @@ for nome in QUAIS:
                 b_ = b_.parent
         dado["pais_peso0"] = pais
     if nome in INFO_EVENTOS: dado["eventos_info"] = INFO_EVENTOS[nome]
-    if nome == "ChamasTriplices": dado["ponto_boca_local_Cabeca"] = PONTO_BOCA
+    if nome in ("ChamasTriplices", "BolaInfernal", "BolaInfernalR2", "BolaInfernalR2Camada"): dado["ponto_boca_local_Cabeca"] = PONTO_BOCA
     for pb in PB:
         if nome in CAMADA and pb.name not in CAMADA[nome]: continue
         seq = []

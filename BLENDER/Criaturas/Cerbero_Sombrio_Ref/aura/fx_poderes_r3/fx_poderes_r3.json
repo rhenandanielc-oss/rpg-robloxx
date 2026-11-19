@@ -1,0 +1,100 @@
+{
+ "chamas": {
+  "velocidade_studs_s_A_TESTAR": 40.0,
+  "tentativas": [
+   {
+    "cabeca": "E",
+    "alvo_planejado_studs": 10.0,
+    "medido_lancamento_ao_impacto_studs": 9.33,
+    "resultado": "acertou",
+    "voo_s": 0.233,
+    "impacto_s_no_previo": 0.9
+   },
+   {
+    "cabeca": "C",
+    "alvo_planejado_studs": 20.0,
+    "medido_lancamento_ao_impacto_studs": 18.67,
+    "resultado": "acertou",
+    "voo_s": 0.467,
+    "impacto_s_no_previo": 1.37
+   },
+   {
+    "cabeca": "D",
+    "alvo_planejado_studs": 30.0,
+    "medido_lancamento_ao_impacto_studs": 29.33,
+    "resultado": "acertou",
+    "voo_s": 0.733,
+    "impacto_s_no_previo": 1.87
+   }
+  ],
+  "cadencia_s": 0.25
+ },
+ "curva_SIMULACAO_BLENDER": {
+  "giro_max_graus_s": 180,
+  "vida_s": 2.0,
+  "alcance_studs": 30,
+  "velocidade_studs_s_A_TESTAR": 40.0,
+  "tentativas": [
+   {
+    "cabeca": "C",
+    "alvo": "movel lateral 10 studs/s",
+    "resultado": "acertou",
+    "voo_s": 0.467,
+    "percorrido_studs": 18.67
+   },
+   {
+    "cabeca": "E",
+    "alvo": "lateral 75 graus a 13 studs",
+    "resultado": "dissipou no limite",
+    "voo_s": 0.767,
+    "percorrido_studs": 30.67
+   },
+   {
+    "cabeca": "D",
+    "alvo": "nenhum (segue reto)",
+    "resultado": "dissipou no limite",
+    "voo_s": 0.767,
+    "percorrido_studs": 30.67
+   }
+  ],
+  "nota": "trajetoria teleguiada funcional fica para o Studio"
+ },
+ "investida_parado": {
+  "impulso_s": [
+   0.9,
+   1.4
+  ],
+  "boost_fim_s": 4.9,
+  "faixa_some_s": 7.9,
+  "previa_s": 5.2
+ },
+ "investida_movimento": {
+  "impulso_s": [
+   1.6,
+   2.1
+  ],
+  "boost_fim_s": 5.6,
+  "faixa_some_s": 8.6,
+  "virada_simulada": "35 graus entre 3,0 e 3,8 s",
+  "previa_s": 6.43
+ },
+ "furia": {
+  "violeta": {
+   "cabecas_s": {
+    "C": 0.15,
+    "E": 0.4,
+    "D": 0.65
+   },
+   "frente_corpo": {
+    "C": 0.36,
+    "E": 0.7,
+    "D": 1.06
+   },
+   "retorno_s": [
+    3.3,
+    4.8
+   ]
+  },
+  "inimigos_afetados": "linhas cinza/apagadas: sem inimigo na previa (integracao)"
+ }
+}
