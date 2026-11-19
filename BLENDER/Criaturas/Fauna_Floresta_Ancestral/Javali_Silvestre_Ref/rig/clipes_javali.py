@@ -202,6 +202,8 @@ CLIPES = {"Repouso": (c_repouso, T_REP, True, 0.0, None, 0.0, "laco", "laco"),
 if os.environ.get("JAVALI_LD"): os.environ["JAVALI_LC"] = os.environ["JAVALI_LB"] = "1"   # D usa o Alerta do C e o galope do B
 if os.environ.get("JAVALI_LC"):                    # lote C (vida selvagem): so com a variavel; sem ela os lotes A/B nao mudam
     exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "clipes_javali_lc.py"), encoding="utf-8").read())
+if os.environ.get("JAVALI_LC") and os.environ.get("JAVALI_LF"):   # lote F (17/11): Beber (usa as funcoes do lote C)
+    exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "clipes_javali_lf.py"), encoding="utf-8").read())
 if os.environ.get("JAVALI_LB"):                    # lote B (trote, corrida, transicoes): so com a variavel; sem ela o lote A nao muda
     exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "clipes_javali_lb.py"), encoding="utf-8").read())
 if os.environ.get("JAVALI_LD"):                    # lote D (defesa/derrota, ESTUDO; sem dano/hitbox): so com a variavel

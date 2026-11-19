@@ -129,6 +129,9 @@
     "Arrancada": {
      "$path": "dados/Javali/Arrancada.txt"
     },
+    "Beber": {
+     "$path": "dados/Javali/Beber.txt"
+    },
     "Chifrada": {
      "$path": "dados/Javali/Chifrada.txt"
     },
@@ -203,6 +206,9 @@
     },
     "BaterParaPlanar": {
      "$path": "dados/Coruja/BaterParaPlanar.txt"
+    },
+    "Beber": {
+     "$path": "dados/Coruja/Beber.txt"
     },
     "Comer": {
      "$path": "dados/Coruja/Comer.txt"

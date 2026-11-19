@@ -4,7 +4,9 @@
 -- Blender, manifesto) x escala do modelo, para as patas casarem com o deslocamento.
 local C = {}
 
-C.DEBUG = true                 -- placa de estado sobre cada animal + log em atributos (removivel)
+-- placa de estado sobre cada animal + log em atributos (removivel). 17/11: o piloto do mapa real desliga com o atributo
+-- Debug=false na pasta da IA; a cena de teste continua com DEBUG ligado (sem atributo)
+C.DEBUG = script.Parent:GetAttribute("Debug") ~= false
 C.TAG_ALVO_TESTE = "AlvoFaunaTeste"   -- alvos falsos do roteiro de teste (so com DEBUG)
 
 C.especies = {}
@@ -64,13 +66,59 @@ C.especies.Coruja = {
 	alertaMin = 0.8,
 	calma = 2.0,
 	corpo = { peito = 0.4, raio = 1.4 },
-	voo = { subida = 4.5, descida = 3.0, giro = math.rad(120), raioCorpo = 1.4, folgaChao = 4, chegada = 1.0,
+	-- 17/11: subida/descida 4,5/3,0 nao venciam a altura dos galhos da Lagoa_5 (37 studs) sem rota longa
+	voo = { subida = 7.0, descida = 7.0, giro = math.rad(120), raioCorpo = 1.4, folgaChao = 4, chegada = 1.0,
 		reavaliar = 1.5, tentativas = 3, poleiroLivre = 5,
 		raioGiro = 2.5,               -- sem velocidade nao gira no ar (no poleiro gira so com o clipe VirarNoLugar, que da os passos)
 		curvaClipe = math.rad(15) },  -- planando: curva acima disto usa PlanarCurvaE/D (asas inclinadas)
 	clipes = { repouso = "Repouso", alertaE = "OlharE", alertaD = "OlharD", decolar = "FugaDecolando",
 		bater = "BaterAsas", planar = "Planar", bater2planar = "BaterParaPlanar", pousar = "Pousar",
 		curvaE = "PlanarCurvaE", curvaD = "PlanarCurvaD" },
+}
+
+-- ==================================================================== VIVENCIA (17/11) [PROPOSTA] / numeros [A TESTAR]
+-- Habitats aprovados pelo usuario (17/11): rotinas autonomas de descanso, alimentacao, agua e retorno; a ameaca tem prioridade.
+-- Pontos reais ficam na cena (CenaLagoa). Aqui: tempos, tentativas e a POSICAO DA BOCA/BICO de cada clipe de contato, medida
+-- no Studio (17/11) no pivo do modelo na escala de referencia (escRef = 3): x, altura acima do plano dos cascos, -frente.
+C.escRef = 3
+C.vivencia = {
+	tempoTeste = 1,                 -- divisor das esperas (atributo TempoTeste na pasta da IA sobrepoe; so para teste)
+	tentativasPonto = 2,            -- pontos alternativos tentados quando um esta ocupado/bloqueado
+	esperaReserva = { 4, 8 },       -- espera (s) por um ponto reservado antes de tentar outro
+	tempoMaxIda = 90,               -- desiste de chegar ao ponto depois disto (s) (o cervo anda a ~2 studs/s; desvio dos troncos)
+	precisao = 0.45,                -- erro maximo do pivo no ponto da acao (studs, na escala de referencia)
+	alinhamento = math.rad(14),     -- erro maximo de direcao no ponto
+}
+C.especies.Cervo.boca = { Pastar = Vector3.new(0, 1.58, -2.46), Beber = Vector3.new(0, 0.64, -2.07) }
+C.especies.Cervo.cascos = 1.3       -- meia distancia entre cascos dianteiros e traseiros (alinha o corpo ao terreno)
+C.especies.Cervo.profMax = 1.0      -- nao entra em agua mais funda que isto (studs, escRef)
+C.especies.Cervo.vivencia = {
+	repouso = { 18, 30 },
+	pastar = { 6, 10 },             -- segundos no laco de Pastar (ramoneio no arbusto)
+	beber = { 5, 8 },
+	extrasRepouso = { "CocarCabeca", "Sacudir" },
+	clipes = { pastarEntrar = "PastarEntrar", pastar = "Pastar", pastarSair = "PastarSair",
+		beberEntrar = "BeberEntrar", beber = "Beber", beberSair = "BeberSair" },
+}
+C.especies.Javali.boca = { Fucar = Vector3.new(0, 0.07, -1.11), Farejar = Vector3.new(0, 0.16, -1.34), Beber = Vector3.new(0, 0.31, -1.62) }
+C.especies.Javali.cascos = 1.3
+C.especies.Javali.profMax = 0.9
+C.especies.Javali.vivencia = {
+	repouso = { 14, 24 },
+	fucar = 2,                      -- repeticoes do Fucar (come bolotas, raizes e larvas)
+	beber = 1,                      -- repeticoes do Beber (clipe de 5,2 s)
+	clipes = { farejar = "Farejar", fucar = "Fucar", beber = "Beber" },
+}
+C.especies.Coruja.boca = { Beber = Vector3.new(0, 0.45, -0.55) }
+C.especies.Coruja.profMax = 0.7
+C.especies.Coruja.vivencia = {
+	observar = { 10, 18 },          -- no galho de vigia antes de cacar
+	repouso = { 16, 26 },           -- cochilo no poleiro abrigado
+	aguaCadaCiclos = 3,             -- visita ocasional a agua (atributo ForcarAgua=true antecipa; TempoTeste acelera)
+	presaRespawn = 20,              -- o roedor de TESTE reaparece depois disto (s)
+	clipes = { olharE = "OlharE", olharD = "OlharD", inclinar = "InclinarCabeca", espreitar = "Espreitar", piar = "Piar",
+		mergulho = "MergulhoCaca", comer = "Comer", decolarCalmo = "Decolar", beber = "Beber",
+		adormecer = "Adormecer", dormindo = "Dormindo", despertar = "Despertar", ajeitar = "AjeitarPenas" },
 }
 
 return C

@@ -1,0 +1,39 @@
+{
+ "Beber": {
+  "duracao_s": 5.6,
+  "quadros": 169,
+  "laco": false,
+  "velocidade_u_s_PROPOSTA": 0.0,
+  "giro_graus_s_PROPOSTA": 0.0,
+  "entrada": "Repouso q0",
+  "saida": "Repouso q0",
+  "erro_ik_max": 0.0,
+  "pele_z_min_cm": -0.4,
+  "escorregao_pe_apoiado_max": {
+   "E": 0.0,
+   "D": 0.0
+  },
+  "alvos_limitados": 0,
+  "maior_giro_entre_quadros_graus_osso_quadro": [
+   9.52,
+   "Pescoco",
+   108
+  ],
+  "emenda_entrada_graus_transl": [
+   0.0,
+   0.0
+  ],
+  "emenda_saida_graus_transl": [
+   0.0,
+   0.0
+  ],
+  "emenda_entrada_pior_osso": [
+   0.0,
+   "TufoE"
+  ],
+  "emenda_saida_pior_osso": [
+   0.0,
+   "TufoE"
+  ]
+ }
+}

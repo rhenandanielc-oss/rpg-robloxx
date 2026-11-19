@@ -30,6 +30,12 @@ function K.novo(modelo, especie, opts)
 	for _, p in pairs(opts.poleiros or {}) do table.insert(ign, p.inst) end
 	self.mov = Movimento.novo(modelo, opts.area, {}, self.cfg.corpo)
 	if self.cfg.voo then self.mov.raioVoo = self.cfg.voo.raioGiro end
+	-- 17/11: medidas do corpo foram tomadas na escala de referencia (3); o javali foi para x4,35 (escala realista aprovada)
+	local fe = self.esc / (Config.escRef or 3)
+	self.fe = fe
+	if self.cfg.corpo.raio then self.mov.raio = self.cfg.corpo.raio * fe end
+	if self.mov.raioGiro then self.mov.raioGiro = self.mov.raioGiro * fe end
+	if self.cfg.profMax then self.mov.profMax = self.cfg.profMax * fe end
 	self.poleiros, self.rotas, self.poleiro = opts.poleiros, opts.rotas, opts.poleiro
 	self.casa = opts.casa or modelo:GetPivot()
 	self.tok, self.estado, self.log, self.ativo = 0, "Iniciando", {}, true
@@ -51,6 +57,7 @@ end
 function K:registrar(txt)
 	local e = string.format("%6.2f %s %s", os.clock() - self.t0, self.estado, txt or "")
 	table.insert(self.log, e); if #self.log > 200 then table.remove(self.log, 1) end
+	self.m:SetAttribute("LogIA", table.concat(self.log, "\n", math.max(1, #self.log - 11), #self.log))   -- 17/11: ultimas 12 linhas (teste)
 	if Config.DEBUG then print("[FaunaIA:" .. self.especie .. "] " .. e) end
 end
 
@@ -144,34 +151,42 @@ end
 -- volta para a casa andando (Pathfinding so quando a linha direta esta bloqueada). perigo() interrompe -> "ameaca"
 -- 17/11: curva SEMPRE andando: VirarE/VirarD (clipe de curva aprovado, 25 graus/s) quando a curva pedida e grande, Andar no
 -- reto (correcao lenta). O raio de curva vem da passada (Movimento.passo), entao o animal nunca gira parado.
-function K:retorno(clipeAndar, clipeParado, perigo)
-	self:mudar("Retorno")
+function K:retorno(clipeAndar, clipeParado, perigo, destinoOpc, estadoOpc, raioOpc)
+	self:mudar(estadoOpc or "Retorno")
 	local R, Cv, C = self.cfg.retorno, self.cfg.curva, self.cfg.clipes
-	local destino = self.casa.Position
+	local destino = destinoOpc or self.casa.Position
+	local raioCheg = raioOpc or R.raioChegada
 	local pts, ultimo = nil, -1e9
 	local rg = self.cfg.corpo.raioGiro or 0
 	local clipeAtual = clipeAndar
 	self.anim:base(clipeAndar, 0.3, 1)
 	local parado, preso, esperaAte, manobra = false, 0, 0, 0
+	local bloqueios, relaxaAte, rgBase, pmBase = 0, 0, self.mov.raioGiro, self.mov.profMax
 	local function angPara(v) return v.Magnitude > 0.05 and angulo(self.mov:frente(), v.Unit) or 0 end
 	while self:vivo() do
 		local dt = self:quadro()
-		if perigo and perigo() then return "ameaca" end
+		if relaxaAte > 0 and os.clock() > relaxaAte then relaxaAte = 0; self.mov.raioGiro, self.mov.profMax = rgBase, pmBase end
+		if perigo and perigo() then self.mov.raioGiro, self.mov.profMax = rgBase, pmBase; return "ameaca" end
 		local p = self:pos()
 		local resto = plano(destino - p)
 		-- chegou: dentro do raio, ou tao perto que so alcancaria a casa girando em volta dela
-		if resto.Magnitude <= R.raioChegada or (resto.Magnitude <= 2.2 * rg and math.abs(angPara(resto)) > math.rad(70)) then break end
+		if resto.Magnitude <= raioCheg or (not raioOpc and resto.Magnitude <= 2.2 * rg and math.abs(angPara(resto)) > math.rad(70)) then break end
 		local alvoPt
 		local bloq = self.mov:obstaculo(self.mov:peito(p), resto, math.min(resto.Magnitude, 12), 1.2)
 		if not bloq then pts = nil; alvoPt = destino
 		else
 			if (not pts or #pts == 0) and os.clock() - ultimo >= R.recalcCaminho then
 				ultimo = os.clock(); pts = self.mov:caminho(destino, math.max(2.5, rg * 0.7))   -- caminho largo: cabe a curva
+					or self.mov:caminho(destino, 2.0)                                           -- 17/11: passagem estreita entre troncos
+					or self.mov:caminho(destino, 1.0)   -- 18/11: comeco rente ao colisor de um carvalho (raio 2 dava NoPath por 80 s)
 				self:registrar(pts and ("caminho " .. #pts .. " pts") or "caminho falhou")
 			end
 			if pts and #pts > 0 then
 				local w = plano(pts[1] - p)
-				if w.Magnitude < 2.5 then table.remove(pts, 1) end
+				-- 17/11: da o ponto como passado se ja o ultrapassou na direcao do proximo trecho, ou se so o alcancaria girando
+				-- em volta dele (raio de curva maior que a sobra): antes orbitava e recalculava o caminho sem chegar
+				local passou = pts[2] and plano(p - pts[1]):Dot(plano(pts[2] - pts[1])) > 0
+				if w.Magnitude < 2.5 or passou or (w.Magnitude < 1.6 * rg and math.abs(angPara(w)) > math.rad(75)) then table.remove(pts, 1) end
 				alvoPt = pts[1]
 			end
 		end
@@ -199,12 +214,20 @@ function K:retorno(clipeAndar, clipeParado, perigo)
 				elseif preso > 0.3 then        -- nao anda no lugar: para, recalcula e tenta de novo em 1 s
 					preso = 0; manobra = 0; esperaAte = os.clock() + 1.0; pts = nil; ultimo = -1e9
 					self.anim:base(clipeParado, 0.3, 1); parado = true; clipeAtual = clipeParado; self:registrar("bloqueado: espera e recalcula")
+					-- 17/11: preso de novo (margem funda + barranco): por 5 s fecha a curva e tolera agua um pouco mais funda
+					bloqueios += 1
+					if bloqueios >= 2 and rgBase then
+						relaxaAte = os.clock() + 5; bloqueios = 0
+						self.mov.raioGiro = rgBase * 0.4; if pmBase then self.mov.profMax = pmBase + 1.0 * (self.fe or 1) end
+						self:registrar("desatolando: curva fechada e agua mais funda por 5 s")
+					end
 				end
 			end
 		elseif not alvoPt and not parado then
 			self.anim:base(clipeParado, 0.3, 1); parado = true; clipeAtual = clipeParado     -- sem rota: espera parado (estado seguro)
 		end
 	end
+	self.mov.raioGiro, self.mov.profMax = rgBase, pmBase
 	return "casa"
 end
 
@@ -253,7 +276,7 @@ function Fluxos.Cervo(self)
 	local c, C = self.cfg, self.cfg.clipes
 	while self:vivo() do
 		self:mudar("Repouso"); self.anim:base(C.repouso, 0.3)
-		repeat self:quadro() until not self:vivo() or self.alvo
+		self:esperarComVivencia()
 		if not self:vivo() then break end
 		self:mudar("Alerta", self.alvo.nome .. string.format(" a %.0f", self.dist))
 		self.anim:acao(C.alerta, 0.2)
@@ -351,7 +374,7 @@ function Fluxos.Javali(self)
 	local function dh() return self.alvo and plano(self.alvo.parte.Position - self:pos()).Magnitude or math.huge end
 	while self:vivo() do
 		self:mudar("Repouso"); self.anim:base(C.repouso, 0.3)
-		repeat self:quadro() until not self:vivo() or self.alvo
+		self:esperarComVivencia()
 		if not self:vivo() then break end
 		self:mudar("Alerta", self.alvo.nome .. string.format(" a %.0f", dh()))
 		self:transicao(C.alerta, { proxima = { C.repouso, 1 } })
@@ -416,22 +439,27 @@ function K:poleiroLivre(nome)
 	return true
 end
 
-function K:pontoPouso(destino, ultimo)
+function K:pontoPouso(destino, ultimo, clipePouso)
 	local topo = self.poleiros[destino].topo
 	local dir = plano(topo - ultimo).Unit
 	local S = 0
-	local p = require(script.Parent.Perfis).Coruja[self.cfg.clipes.pousar]
+	local p = require(script.Parent.Perfis).Coruja[clipePouso or self.cfg.clipes.pousar]
 	for _, v in ipairs(p) do S += v / 30 end
 	S *= self.esc
 	return topo - dir * S, dir, S
 end
 
 -- pontos de voo completos (rota explicita + ponto de inicio do pouso) e checagem de rota livre
-function K:planoVoo(destino)
+function K:planoVoo(destino, clipePouso)
 	local rota = self.rotas[self.poleiro .. "_" .. destino]
+	if not rota and self.rotaFn and self.poleiros[destino] then
+		-- 17/11: pontos da vivencia (margem, presa); se o ponto de origem ja saiu da lista, parte da posicao atual
+		local origem = self.poleiros[self.poleiro] and self.poleiros[self.poleiro].topo or self:pos()
+		rota = self.rotaFn(origem, self.poleiros[destino].topo)
+	end
 	if not rota then return nil, "sem rota" end
 	local pts = table.clone(rota)
-	local L, dirPouso = self:pontoPouso(destino, rota[#rota])
+	local L, dirPouso = self:pontoPouso(destino, rota[#rota], clipePouso)
 	table.insert(pts, L)
 	local ign = { self.poleiros[destino].inst, self.poleiros[self.poleiro].inst }
 	local corpo = Vector3.new(0, 1.2, 0)
@@ -466,15 +494,18 @@ function K:virarNoLugar(ponto)
 	end
 end
 
-function K:voar(destino, pts, dirPouso)
+function K:voar(destino, pts, dirPouso, opts)
+	opts = opts or {}
 	local C, V = self.cfg.clipes, self.cfg.voo
-	self:mudar("Decolagem", self.poleiro .. " -> " .. destino)
+	self:mudar(opts.estadoDecolagem or "Decolagem", self.poleiro .. " -> " .. destino)
 	self:virarNoLugar(pts[1])
 	local p0 = self:pos()
-	self:transicao(C.decolar, { voo = true, alvoPt = function() return Vector3.new(pts[1].X, p0.Y, pts[1].Z) end,
+	if opts.aoDecolar then opts.aoDecolar() end
+	self:transicao(opts.decolar or C.decolar, { voo = true, alvoPt = function() return Vector3.new(pts[1].X, p0.Y, pts[1].Z) end,
 		giro = V.giro, proxima = { C.bater, 1 } })
 	self:mudar("Voo", destino)
 	local i, planando, desvios = 1, false, 0
+	local tUlt = 0
 	local ign = { self.poleiros[destino].inst }
 	while self:vivo() and i <= #pts do
 		local dt = self:quadro()
@@ -496,15 +527,19 @@ function K:voar(destino, pts, dirPouso)
 			desvios += 1; pts[i] = alvo + Vector3.new(0, 4, 0); self:registrar("obstaculo em voo: sobe 4")
 		end
 		local ultimoPt = i == #pts      -- o inicio do pouso precisa ser exato: o clipe Pousar leva o pivo ate o topo
-		if dH < (ultimoPt and 0.15 or V.chegada) and math.abs(dY) < (ultimoPt and 0.2 or 1.5) then i += 1 end
+		if ultimoPt then tUlt = (tUlt or 0) + dt end
+		-- 17/11: se ficar orbitando o ponto final (raio de curva maior que a sobra), aceita perto apos 4 s
+		if dH < (ultimoPt and 0.15 or V.chegada) and math.abs(dY) < (ultimoPt and 0.2 or 1.5) then i += 1
+		elseif ultimoPt and tUlt > 4 and dH < 2.5 and math.abs(dY) < 1 then self:registrar(string.format("pouso aceito a %.2f do ponto (orbitava)", dH)); i += 1 end
 	end
 	-- pouso: chega no ponto L alinhado; Pousar leva o pivo ate o topo pelo perfil do clipe
-	self:mudar("Pouso", destino)
+	self:mudar(opts.estadoPouso or "Pouso", destino)
 	local topo = self.poleiros[destino].topo
 	local p = self:pos(); local ang = math.deg(math.abs(angulo(self.mov:frente(), dirPouso)))
 	self.m:PivotTo(CFrame.lookAt(Vector3.new(p.X, topo.Y, p.Z), Vector3.new(p.X, topo.Y, p.Z) + dirPouso))
 	if not planando then self.anim:base(C.planar, 0.1, 1) end
-	self:transicao(C.pousar, { voo = true, alvoPt = function() return topo end, giro = V.giro, proxima = { C.repouso, 1 } })
+	self:transicao(opts.pousar or C.pousar, { voo = true, alvoPt = function() return topo end, giro = V.giro,
+		proxima = opts.semRepouso and nil or { C.repouso, 1 } })
 	local erro = (self:pos() - topo).Magnitude
 	self.m:PivotTo(CFrame.lookAt(topo, topo + dirPouso))
 	self.poleiro = destino
@@ -516,7 +551,7 @@ function Fluxos.Coruja(self)
 	local c, C = self.cfg, self.cfg.clipes
 	while self:vivo() do
 		self:mudar("Pousada", self.poleiro); self.anim:base(C.repouso, 0.3)
-		repeat self:quadro() until not self:vivo() or self.alvo
+		self:esperarComVivencia()
 		if not self:vivo() then break end
 		self:mudar("Alerta", self.alvo.nome .. string.format(" a %.0f", self.dist))
 		local lado = angulo(self.mov:frente(), plano(self.alvo.parte.Position - self:pos()).Unit) > 0 and C.alertaE or C.alertaD
@@ -546,11 +581,33 @@ end
 function K:candidatos()
 	local r, seguro = {}, nil
 	for nome, P in pairs(self.poleiros) do
-		if nome ~= self.poleiro then if P.seguro then seguro = nome else table.insert(r, nome) end end
+		if nome ~= self.poleiro and not P.virtual then if P.seguro then seguro = nome else table.insert(r, nome) end end
 	end
 	table.sort(r)
 	if seguro then table.insert(r, seguro) end
 	return r
+end
+
+------------------------------------------------------------------ VIVENCIA (17/11)
+-- no repouso: roda a rotina autonoma (Vivencia) ate aparecer uma ameaca; sem rotina, espera parado como antes
+function K:esperarComVivencia()
+	if self.viv then
+		local ok, err = pcall(self.viv.rodar, self.viv)
+		if not ok then self:registrar("ERRO vivencia " .. tostring(err)); warn("[FaunaIA] vivencia", self.especie, err); self.viv:limpar() end
+	end
+	while self:vivo() and not self.alvo do self:quadro() end
+end
+
+-- inclina o corpo pela linha dos cascos (fundo/ chao, sem a lamina d'agua) e assenta o pivo: usado parado nas acoes de contato
+function K:poseNoTerreno(pos, dir)
+	local h = (self.cfg.cascos or 0) * self.fe
+	dir = plano(dir).Unit
+	if h <= 0 then local y = self.mov:chao(pos) or pos.Y; local p = Vector3.new(pos.X, y, pos.Z); return CFrame.lookAt(p, p + dir), 0 end
+	local yF = self.mov:chao(pos + dir * h) or pos.Y
+	local yT = self.mov:chao(pos - dir * h) or pos.Y
+	local p = Vector3.new(pos.X, (yF + yT) / 2, pos.Z)
+	local pitch = math.atan2(yF - yT, 2 * h)
+	return CFrame.lookAt(p, p + dir) * CFrame.Angles(pitch, 0, 0), pitch
 end
 
 ------------------------------------------------------------------

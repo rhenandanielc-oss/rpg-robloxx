@@ -175,3 +175,14 @@ Nada disso foi feito. Este arquivo é só leitura e organização.
 - **16/11 — IA piloto [PROPOSTA]:** cervo foge e retorna; javali ameaça, investe uma vez (visual, sem dano) e retorna; coruja troca de poleiro por rota aérea explícita (seguro C se o alternativo estiver bloqueado). Só na cena isolada, desligada (Ativo=false). Números [A TESTAR]. Detalhes, clipes por estado e testes em `BLENDER/Criaturas/Fauna_Floresta_Ancestral/studio/ia/LEIA-ME.md`.
 - **17/11 — correções pedidas pelo usuário:** nenhum animal gira parado (giro ligado à passada; curvas com VirarE/VirarD; coruja só gira no galho com o clipe de passos); javali dá uma **chifrada** (presas para cima) ao acertar o alvo, só visual, sem dano. Aguarda revisão do vídeo `studio/ia/review/v3/`. Sons licenciados instalados e testados em Play no mesmo dia (24 toques carregados; falta o usuário ouvir e aprovar os volumes).
 - **17/11 — sons:** os sons do javali (r2: grunhidos graves longos, fades, rosnado contínuo na tensão) foram APROVADOS pelo usuário no Studio. Cervo e coruja (r3: sorteio + fades) também APROVADOS 17/11.
+- **17/11 — piloto no mapa real [PROPOSTA]:** 3 cervos, 2 javalis e 1 coruja na clareira a leste da Vila (`Workspace.Fauna_Floresta_Piloto`), testados em Play. Aguarda avaliação do usuário. Detalhes em `studio/ia/LEIA-ME.md`.
+
+## 7. Vivência na Lagoa_5 (17/11/2026) [PROPOSTA]
+
+- Habitats aprovados pelo usuário em 17/11, implementados na IA piloto (`Workspace.Fauna_Floresta_Piloto`, `Cena=CenaLagoa`):
+  - **Cervo:** abrigo → arbusto (folhas e brotos) → água → volta.
+  - **Javali:** sob carvalhos perto da lagoa, longe da rota dos cervos; farejar → fuçar → água → volta.
+  - **Coruja:** galho de vigia → mergulho num roedor de TESTE → come no galho → água ocasional → poleiro abrigado.
+- Detalhes técnicos, coordenadas, testes, rollback das margens e pendências: `BLENDER/Criaturas/Fauna_Floresta_Ancestral/studio/ia/LEIA-ME.md` (seção 17/11 vivência).
+- O roedor é só alvo local de teste: não é fauna oficial nem recurso. O consumo é só visual, sem item nem recompensa.
+

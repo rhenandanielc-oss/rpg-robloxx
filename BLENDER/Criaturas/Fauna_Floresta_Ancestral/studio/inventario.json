@@ -458,6 +458,18 @@
    "bytes": 9833,
    "md5_json": "b888b2fea2a2c455cd54220fc6ed80f5"
   },
+  "Beber": {
+   "fonte": "Javali_Silvestre_Ref/rig/clipes_LF/json/Javali_Beber.json",
+   "lote": "clipes_LF",
+   "quadros": 157,
+   "fps": 30,
+   "duracao": 5.2,
+   "loop": false,
+   "velocidade": 0.0,
+   "ossos": 30,
+   "bytes": 16256,
+   "md5_json": "d01f821952c8d5cf6a56c0c05c6a59d2"
+  },
   "Chifrada": {
    "fonte": "Javali_Silvestre_Ref/rig/clipes_LE/json/Javali_Chifrada.json",
    "lote": "clipes_LE",
@@ -735,6 +747,18 @@
    "ossos": 30,
    "bytes": 4455,
    "md5_json": "ce4aec4ced21b2dd9be584aab286dba3"
+  },
+  "Beber": {
+   "fonte": "Coruja_da_Floresta_Ref/rig/clipes_LE/json/Coruja_Beber.json",
+   "lote": "clipes_LE",
+   "quadros": 169,
+   "fps": 30,
+   "duracao": 5.6,
+   "loop": false,
+   "velocidade": 0.0,
+   "ossos": 32,
+   "bytes": 10899,
+   "md5_json": "18832d478f4ab548988690bf6c76ea22"
   },
   "Comer": {
    "fonte": "Coruja_da_Floresta_Ref/rig/clipes_LC_r2/json/Coruja_Comer.json",

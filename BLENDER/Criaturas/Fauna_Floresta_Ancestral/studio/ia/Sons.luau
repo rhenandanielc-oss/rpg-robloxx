@@ -63,9 +63,9 @@ S.camada = {
 }
 -- "vida" em repouso: intervalo aleatorio [min, max] s; so nesses estados
 S.vida = {
-	Cervo = { estados = { Repouso = true }, min = 14, max = 28 },
-	Javali = { estados = { Repouso = true }, min = 7, max = 15 },
-	Coruja = { estados = { Pousada = true }, min = 12, max = 26 },
+	Cervo = { estados = { Repouso = true, Vivencia_Repouso = true, Vivencia_Comendo = true }, min = 14, max = 28 },
+	Javali = { estados = { Repouso = true, Vivencia_Repouso = true, Vivencia_Farejando = true, Vivencia_Comendo = true }, min = 7, max = 15 },
+	Coruja = { estados = { Pousada = true, Vivencia_Observando = true }, min = 12, max = 26 },   -- (17/11: estados da vivencia)
 }
 S.alcance = { min = 10, max = 140 }   -- RollOff (studs): ate 'min' volume cheio; some em 'max'
 

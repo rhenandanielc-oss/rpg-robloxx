@@ -240,6 +240,8 @@ if os.environ.get("CORUJA_LB"):                     # lote B (voo): so com a var
 if os.environ.get("CORUJA_LC"):                     # lote C (vida e caca): usa o voo do lote B
     if not os.environ.get("CORUJA_LB"): exec(open(os.path.join(AQUI, "clipes_coruja_lb.py"), encoding="utf-8").read())
     exec(open(os.path.join(AQUI, "clipes_coruja_lc.py"), encoding="utf-8").read())
+    if os.environ.get("CORUJA_LE"):                 # lote E (17/11): Beber na margem (usa o lote C)
+        exec(open(os.path.join(AQUI, "clipes_coruja_le.py"), encoding="utf-8").read())
 if os.environ.get("CORUJA_LD"):                     # lote D (defesa/derrota, ESTUDO): usa os lotes B e C
     if not os.environ.get("CORUJA_LB") and not os.environ.get("CORUJA_LC"): exec(open(os.path.join(AQUI, "clipes_coruja_lb.py"), encoding="utf-8").read())
     if not os.environ.get("CORUJA_LC"): exec(open(os.path.join(AQUI, "clipes_coruja_lc.py"), encoding="utf-8").read())
@@ -331,6 +333,7 @@ for nome, quadros in QUADROS.items():
     if VPERS.get(nome): act["v_perfil"] = VPERS[nome]
     act.use_fake_user = True
 arm.animation_data.action = None; zerar()
+if "MEDIR_BICO" in globals(): MEDIR_BICO()          # lote E: so leitura (bico x pes) antes de soltar o IK
 for o in list(ALVO.values()) + list(POLO.values()): bpy.data.objects.remove(o)
 for pb in PB:
     for c in list(pb.constraints): pb.constraints.remove(c)

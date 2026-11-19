@@ -1,0 +1,63 @@
+{
+ "Beber": {
+  "maior_extensao_cascos_u_quadro": [
+   0.735,
+   27
+  ],
+  "cabeca_z_min_cm": 8.66,
+  "alvos_limitados_pelo_alcance": 0,
+  "apoios_limitados_pelo_alcance": 0,
+  "maior_giro_entre_quadros_graus_osso_quadro": [
+   1.81,
+   "Cauda1",
+   108
+  ],
+  "duracao_s": 5.2,
+  "loop": false,
+  "quadros": 157,
+  "velocidade_u_s_PROPOSTA": 0.0,
+  "giro_graus_s_PROPOSTA": 0.0,
+  "entrada": "Repouso q0",
+  "saida": "Repouso q0",
+  "erro_ik_max": 0.0,
+  "erro_ik_por_pata": {
+   "QuartelaE": [
+    0.0,
+    156
+   ],
+   "QuartelaD": [
+    0.0,
+    156
+   ],
+   "QuartelaTrasE": [
+    0.0,
+    156
+   ],
+   "QuartelaTrasD": [
+    0.0,
+    156
+   ]
+  },
+  "casco_z_min": {
+   "QuartelaE": 0.0003,
+   "QuartelaD": 0.0003,
+   "QuartelaTrasE": 0.0006,
+   "QuartelaTrasD": 0.0002
+  },
+  "escorregao_casco_apoiado_max": {
+   "QuartelaE": 0.0,
+   "QuartelaD": 0.0,
+   "QuartelaTrasE": 0.0,
+   "QuartelaTrasD": 0.0
+  },
+  "deslocamento_total_u": 0.0,
+  "emenda_entrada_graus_transl": [
+   0.0,
+   0.0
+  ],
+  "emenda_saida_graus_transl": [
+   0.0,
+   0.0
+  ]
+ }
+}
