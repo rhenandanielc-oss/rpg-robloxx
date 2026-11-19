@@ -78,7 +78,7 @@ end
 local function naAltura(cf, y) return CFrame.new(cf.X, y, cf.Z) * cf.Rotation end
 local function centro(a) local r = a:FindFirstChild("HumanoidRootPart") or a.PrimaryPart; return r and r.Position end
 
--- O2 (17/11): o SERVIDOR diz para onde os olhos olham (atributo AlvoOlhar, Vector3; nil = o cliente escolhe sozinho).
+-- O2 (19/11): o SERVIDOR diz para onde os olhos olham (atributo AlvoOlhar, Vector3; nil = o cliente escolhe sozinho).
 -- So visual: o OlhosCrocodilo_Cliente gira os globos. Atualiza a 10 Hz (nao a cada quadro) para poupar rede.
 -- Emboscada = presa detectada; Agarrao = alvo ate o contato e o alvo preso; Giro = alvo preso; Giro de Emboscada = pouso.
 local function olharPara(p) modelo:SetAttribute("AlvoOlhar", p) end
@@ -93,6 +93,18 @@ local function seguirOlhar(g, fonte)                   -- fonte() -> Vector3 ou 
 end
 local function olharAlvo(a) return function() local p = a and a.Parent and centro(a); return p and p + Vector3.new(0, 1, 0) end end
 
+-- Agarrao PvP (19/11, numeros APROVADOS, A TESTAR). Boneco com atributo PvP=true simula a criatura de um jogador;
+-- atributo Porte = pequeno/medio/grande/colossal. Imunidade e reducao de controle ficam em atributos do alvo (tempo do servidor).
+local function agora() return workspace:GetServerTimeNow() end
+local function ehPvP(a) return a ~= nil and a:GetAttribute("PvP") == true end
+local function forcaIdade() return CFG.AgarraoPvP.forca_idade[modelo:GetAttribute("Idade") or "Adulto"] or 1 end
+local function fatorControle(a) local t = a:GetAttribute("ControleReduzidoAte"); return (t and agora() < t) and CFG.AgarraoPvP.reduz or 1 end
+local function marcarSoltoPvP(a)
+	local P = CFG.AgarraoPvP
+	a:SetAttribute("ImuneAgarraoAte", agora() + P.imune); a:SetAttribute("ControleReduzidoAte", agora() + P.reduz_janela)
+	log("PvP: %s imune a agarrao por %.0f s; controle nos %.0f s seguintes dura %.0f%%", a.Name, P.imune, P.reduz_janela, P.reduz * 100)
+end
+
 -- solta o alvo (sempre seguro de chamar): volta ao chao no ponto atual, marca liberado
 local function soltar(motivo)
 	local a = est.alvo; est.alvo = nil
@@ -101,6 +113,11 @@ local function soltar(motivo)
 		if p then a:PivotTo(CFrame.new(Vector3.new(p.X, 2.5, p.Z))) end
 		a:SetAttribute("Agarrado", false)
 		log("alvo %s solto (%s)", a.Name, motivo)
+		if ehPvP(a) then
+			marcarSoltoPvP(a)
+			local h = a:FindFirstChildOfClass("Humanoid")
+			if h and h.Health <= 0 then a:SetAttribute("Refugio", true); log("PvP: %s derrotado -> sai da luta e vai ao refugio (simulado; nao e comido nem levado)", a.Name) end
+		end
 	end
 end
 
@@ -122,6 +139,7 @@ function M.cancelar(motivo)
 	if not est.poder then return "nada ativo" end
 	log("FIM %s: %s", est.poder, motivo)
 	est.gen += 1; limparCons(); soltar(motivo)
+	est.pvp = nil; est.limite = nil                       -- PvP: fim da pegada
 	T.parar()
 	local dy = (modelo:GetPivot().Position - BASE.Position).Magnitude
 	moverPivo(BASE, dy > 0.05 and 0.4 or 0)               -- volta a altura normal sem salto
@@ -135,7 +153,10 @@ end
 
 local function iniciar(poder, manterPivo)
 	if est.poder then return false end
-	if est.mov then est.mov += 1 end                          -- para uma volta suave pendente
+	if poder == "Agarrao" and est.bocaAbertaAte and os.clock() < est.bocaAbertaAte then   -- PvP: soltou por aliado = 0,6 s sem nova pegada
+		log("Agarrao recusado: boca aberta (faltam %.2f s)", est.bocaAbertaAte - os.clock()); return false
+	end
+	if est.mov then est.mov += 1 end                         -- para uma volta suave pendente
 	if not manterPivo and (modelo:GetPivot().Position - BASE.Position).Magnitude > 0.001 then modelo:PivotTo(BASE) end
 	est.poder = poder; est.fase = nil; est.gen += 1
 	if not manterPivo then est.t0 = os.clock(); M.log = {} end     -- encadeado: o log continua
@@ -223,6 +244,35 @@ function M.agarrao(alvo, cena, opcoes)
 		local ponta = osso("Mandibula").TransformedWorldCFrame * Vector3.new(0, CFG.Agarrao.ponta, 0)   -- +Y do osso = frente
 		local d = (ponta - centro(alvo)).Magnitude
 		if d <= CFG.Agarrao.alcance and alvoValido(alvo) then
+			local P = CFG.AgarraoPvP
+			local imune = alvo:GetAttribute("ImuneAgarraoAte")
+			if imune and agora() < imune then                       -- PvP: resistencia a repeticao (8 s depois de solto)
+				alvo:FindFirstChildOfClass("Humanoid"):TakeDamage(CFG.Agarrao.dano_contato)
+				log("PvP: %s IMUNE ao agarrao (faltam %.1f s): so a mordida, dano %d", alvo.Name, imune - agora(), CFG.Agarrao.dano_contato)
+				resultado = "imune"; return
+			end
+			if ehPvP(alvo) and alvo:GetAttribute("Porte") == "colossal" then   -- PvP colossal: morde um membro, nao prende
+				local h = alvo:FindFirstChildOfClass("Humanoid"); h:TakeDamage(CFG.Agarrao.dano_contato)
+				local dur = P.colossal_dur * forcaIdade() * fatorControle(alvo)
+				local ws0 = h.WalkSpeed; h.WalkSpeed = ws0 * (1 - P.colossal_lentidao)
+				alvo:SetAttribute("Lentidao", P.colossal_lentidao); alvo:SetAttribute("SemSaltoVoo", true)
+				task.delay(dur, function() if alvo.Parent then h.WalkSpeed = ws0; alvo:SetAttribute("Lentidao", nil); alvo:SetAttribute("SemSaltoVoo", nil) end end)
+				log("PvP: %s COLOSSAL -> mordeu um membro: %.0f%% de lentidao por %.2f s, sem saltar/decolar (nao prende)", alvo.Name, P.colossal_lentidao * 100, dur)
+				resultado = "membro_colossal"; return
+			end
+			if ehPvP(alvo) then
+				est.pvp = true; est.danoPegada = 0; est.cortado = 0
+				local dur = P.duracao * forcaIdade() * fatorControle(alvo)
+				est.limite = dur                                 -- segundos que restam, contados pelo dt da simulacao (= tempo das animacoes)
+				log("PvP: pegada de %.2f s a partir do contato (agarrao + giro somados; idade %s)", dur, modelo:GetAttribute("Idade") or "Adulto")
+				table.insert(est.cons, RS.Heartbeat:Connect(function(dt)   -- solta NO prazo (nao espera o clipe terminar)
+					if est.gen ~= g or not est.alvo or not est.limite then return end
+					est.limite -= dt; if est.limite > 0 then return end
+					log("PvP: prazo da pegada -> solta"); soltar("pvp_prazo"); est.fase = "solto"
+					local fs = T.tocar("Crocodilo_SoltarPresa", 0.15)
+					table.insert(est.cons, fs.Stopped:Connect(function() if est.gen == g then M.cancelar("fim_agarrao") end end))
+				end))
+			else est.pvp = nil; est.limite = nil end
 			est.alvo = alvo; alvo:SetAttribute("Agarrado", true)
 			est.rel = osso("Mandibula").TransformedWorldCFrame:Inverse() * alvo:GetPivot()
 			local h = alvo:FindFirstChildOfClass("Humanoid"); h:TakeDamage(CFG.Agarrao.dano_contato)
@@ -234,8 +284,9 @@ function M.agarrao(alvo, cena, opcoes)
 	end))
 	table.insert(est.cons, f.Stopped:Connect(function()
 		if est.gen ~= g then return end
+		if est.pvp and not est.alvo then return end           -- PvP: ja soltou no prazo durante a mordida
 		if resultado ~= "acerto" then
-			if opcoes.emboscada then log("errou: segue nadando"); nadarAdiante(g, CFG.Submersao.velocidade * 0.7, CFG.Submersao.deriva, resultado .. "_seguiu_nadando"); return end
+			if opcoes.emboscada and resultado:sub(1, 4) == "erro" then log("errou: segue nadando"); nadarAdiante(g, CFG.Submersao.velocidade * 0.7, CFG.Submersao.deriva, resultado .. "_seguiu_nadando"); return end
 			M.cancelar(resultado); return
 		end
 		-- 16/11 (P2): sustentacao com clipe proprio (terra SegurarPresa, agua SegurarPresaAgua) no lugar de ArrastarPresa
@@ -247,6 +298,7 @@ function M.agarrao(alvo, cena, opcoes)
 			if est.gen ~= g or not est.alvo or est.fase ~= "segurando" then return end
 			if not alvoValido(est.alvo) then M.cancelar("alvo_removido_ou_derrotado"); return end
 			t += dt; est.alvo:FindFirstChildOfClass("Humanoid"):TakeDamage(CFG.Agarrao.dano_por_segundo * dt)
+			if est.limite then return end                         -- PvP: quem solta e o vigia do prazo (desde o contato)
 			if t < CFG.Agarrao.sustentacao then return end
 			-- fim normal: o dano para; SoltarPresa abre a boca e o marcador "solta" libera o boneco
 			est.fase = "soltando"
@@ -283,6 +335,13 @@ function M.giro()
 	if preso then est.gen += 1; limparCons(); est.poder = nil end   -- encadeia: o alvo continua preso
 	local g = iniciar("Giro", preso ~= nil); if not g then return "ocupado" end   -- encadeado: fica na altura da pegada
 	est.alvo = alvoAntes; if est.alvo then vigiaAlvo(g); seguirOlhar(g, function() return olharAlvo(est.alvo)() end) end   -- O2
+	if est.alvo and est.limite then                         -- PvP: o giro nao renova a pegada (agarrao + giro <= duracao)
+		table.insert(est.cons, RS.Heartbeat:Connect(function(dt)
+			if est.gen ~= g or not est.limite then return end
+			est.limite -= dt
+			if est.limite <= 0 then log("PvP: fim do prazo da pegada durante o giro"); M.cancelar("pvp_prazo") end
+		end))
+	end
 	local f = T.tocar("Crocodilo_RolarDaMorte", 0.15); local voltas = 0
 	log("GIRO comeca (alvo preso: %s)", est.alvo and est.alvo.Name or "nenhum")
 	table.insert(est.cons, f.DidLoop:Connect(function()
@@ -454,8 +513,10 @@ function M.giroEmboscada()
 					a:FindFirstChildOfClass("Humanoid"):TakeDamage(dano); acertos += 1
 					local orig = a:GetPivot(); a:SetAttribute("Derrubado", true)
 					a:PivotTo(orig * CFrame.Angles(math.rad(80), 0, 0) - Vector3.new(0, 1.5, 0))
-					task.delay(G.derruba, function() if a.Parent then a:PivotTo(orig); a:SetAttribute("Derrubado", false) end end)
-					log("IMPACTO: %s a %.1f -> dano %.0f%s, derrubado %.1f s", a.Name, d.Magnitude, dano, b > 1 and " (distraido +50%)" or "", G.derruba)
+					local derruba = G.derruba * fatorControle(a)          -- PvP: controle logo depois de solto dura 50%
+					if derruba < G.derruba then log("PvP: %s tinha sido solto ha pouco -> derrubada reduzida a %.2f s", a.Name, derruba) end
+					task.delay(derruba, function() if a.Parent then a:PivotTo(orig); a:SetAttribute("Derrubado", false) end end)
+					log("IMPACTO: %s a %.1f -> dano %.0f%s, derrubado %.2f s", a.Name, d.Magnitude, dano, b > 1 and " (distraido +50%)" or "", derruba)
 				end
 			end
 		end
@@ -530,9 +591,31 @@ end
 -- Ref. secao 4: -15% de dano fisico. Teste: dois golpes fisicos equivalentes, com e sem a passiva, em terra e na agua.
 -- O recuo (empurrao do golpe) e o mesmo com e sem a passiva; muda so com o meio (agua empurra mais). Pulso curto nas
 -- escamas no ponto do impacto (cliente), sem escudo permanente.
-function M.receberGolpe(dano, ponto, passiva)
+-- PvP (19/11): opcoes.deVitima = golpe da propria presa na cabeca (encurta a pegada); opcoes.pesado = golpe que atordoa/derruba.
+-- Golpe de aliado durante a pegada PvP soma dano; >= 8% da vida (ou pesado) solta na hora e deixa a boca aberta 0,6 s.
+function M.receberGolpe(dano, ponto, passiva, opcoes)
+	opcoes = opcoes or {}
 	local E = CFG.Escamas
 	local final = passiva and dano * (1 - E.reducao) or dano
+	if est.alvo and est.pvp and est.limite then
+		local P = CFG.AgarraoPvP
+		if opcoes.deVitima then
+			local corte = math.min(P.golpe_vitima, P.golpe_vitima_max - est.cortado)
+			if corte > 0 then est.cortado += corte; est.limite -= corte end
+			log("PvP: a presa golpeou a cabeca -> pegada -%.1f s (total -%.1f de %.1f)", corte, est.cortado, P.golpe_vitima_max)
+		else
+			est.danoPegada += final
+			local limiar = P.soltar_pct * E.vida
+			if opcoes.pesado or est.danoPegada >= limiar then
+				log("PvP: ALIADO SOLTOU a presa (%s; dano somado %.0f de %.0f) -> boca aberta %.1f s", opcoes.pesado and "golpe pesado" or "dano", est.danoPegada, limiar, P.boca_aberta)
+				est.bocaAbertaAte = os.clock() + P.boca_aberta
+				M.cancelar("aliado_soltou")
+				fx("escamas_pulso", ponto)
+			else
+				log("PvP: aliado golpeou (dano somado %.0f de %.0f)", est.danoPegada, limiar)
+			end
+		end
+	end
 	local cf = modelo:GetPivot(); local sup, fundo = medirAgua(cf.Position); local naAgua = sup ~= nil and (sup - fundo) > 1
 	local recuo = naAgua and E.recuo_agua or E.recuo_terra
 	local dir = (cf.Position - ponto) * Vector3.new(1, 0, 1); dir = dir.Magnitude > 0.1 and dir.Unit or -cf.LookVector

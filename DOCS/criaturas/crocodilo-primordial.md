@@ -42,7 +42,7 @@ Papel ecológico em relação aos vizinhos:
 ### Habilidades
 - **[OFICIAL — 30/10/2026]** Cada criatura tem no mínimo **1 passiva + 3 ativas**; nomes, efeitos e quantidades são aprovados criatura por criatura. Ataques básicos físicos não ocupam slots.
 - **Lista da Etapa 15.1** (era OFICIAL; após 30/10 vale como referência anterior; a lista final está **[PENDENTE]**):
-  1. **Mordida de Agarrão** — mordida que agarra. PvE: agarrões prolongados. PvP: ver conflito abaixo. [PROPOSTA] dano inicial, sinais de antecipação, esquiva por ângulo/distância.
+  1. **Mordida de Agarrão** — mordida que agarra. PvE: agarrões prolongados. PvP: **[OFICIAL 19/11] prende por mais tempo, interrompível por aliados** (ver seção abaixo). [PROPOSTA] dano inicial, sinais de antecipação, esquiva por ângulo/distância.
      - **[ANOTADO — A DEFINIR, usuário 17/11] Depois de neutralizar:** quando o crocodilo agarra e balança (rola) até neutralizar o oponente, ele pode escolher entre **(a) soltar o corpo e comer** ou **(b) continuar andando com o corpo na boca para mais longe, para evitar roubos**. Clipes já existentes que podem servir: SegurarPresa/SegurarPresaAgua, ArrastarPresa, SoltarPresa, Comer. Nada implementado.
        - **Quem decide (usuário 17/11):** quando o crocodilo está **selvagem**, ou **tem dono mas está andando sozinho pelo mundo**, **ele mesmo decide**: verifica se há **oponente próximo**; se houver, **leva o corpo embora para outro lugar**; se não houver, **come**.
        - **O que é roubo (usuário 17/11):** outro animal — **controlado pela IA ou montado por um jogador** — chegar e **pegar o corpo para comer**.
@@ -53,8 +53,34 @@ Papel ecológico em relação aos vizinhos:
 - **Passiva:** nenhuma definida. **[PENDENTE]**
 - **[PROPOSTA — histórico, superada]** Transformações por afinidade (Água/Terra/Natureza) e as seis fusões direcionais (Corrente de Cipós, Manguezal Vivo, Couraça Enraizada, Armadilha das Margens etc.) contrariam a regra de elemento único. Não implementar.
 
-### ⚠️ Conflito no documento: agarrão contra jogadores (PvP)
-O próprio RPG_02 se contradiz. **Perguntar ao usuário antes de qualquer combate PvP.**
+### Agarrão contra jogadores (PvP) — **[OFICIAL — usuário 19/11/2026: Versão B]**
+**Decisão do usuário (19/11/2026, "B: prende, aliados soltam"):** no PvP o agarrão **prende de verdade e segura por mais tempo, e os aliados da vítima podem interromper**. A Versão A ("só empurra") fica descartada. Continuam **[PENDENTE]**: duração no PvP, resistência a controle repetido (§18.2), como os aliados soltam (dano mínimo, golpe específico ou quebra de postura) e contrajogo da própria vítima. Histórico do conflito abaixo.
+
+#### Números do agarrão PvP — **APROVADOS pelo usuário em 19/11/2026 ("Aprovo") [A TESTAR]** (valores de partida; balanceamento final depois, como nos demais kits)
+Base: referência v6.2 §4 (agarrão 2,5 s, 4/s, alcance 9, cone 60°, recarga 10 s, energia 25), porte §0d (Crocodilo adulto 24–32 de comprimento ÷ 2,5 = **grande**), limites globais (controle PvP curto, resistência a repetição, mínimo de 4 s entre atordoamentos no mesmo alvo) e o padrão já definido das outras pegadas (Pinças do Escorpião, Espiral da Serpente: efeito muda com o tamanho do alvo).
+
+| Item | Proposta |
+|---|---|
+| Duração PvP | **2,5 s** (PvE continua 3,5 s) |
+| Por porte do alvo | pequeno/médio/grande: **preso e imobilizado**; **colossal** (dragões, Leviatã): morde um membro, **50% de lentidão**, não salta nem decola, 1,5 s |
+| Giro encadeado (Rolar da Morte) | usa o tempo que resta da pegada: **agarrão + giro ≤ 2,5 s no total** (o giro não renova a pegada) |
+| Dano | contato 0,5× a mordida (10) + 4/s (≈ 20 no total), igual ao protótipo |
+| Aliados soltam | dano somado no crocodilo durante a pegada **≥ 8% da vida dele** (950 → 76; Escamas contam) **ou** 1 golpe pesado (atordoa/derruba). Ao soltar assim, o crocodilo fica **0,6 s de boca aberta** (vulnerável, sem nova pegada) |
+| Contrajogo da vítima | esquivar na antecipação (sinal de ~0,35 s antes do bote); presa, cada golpe dela na cabeça do crocodilo tira **0,3 s** da pegada (máx. −1,0 s) |
+| Resistência a repetição | depois de solta, a vítima fica **8 s imune a qualquer agarrão** (de qualquer crocodilo); outro controle (atordoar, derrubar, prender) recebido nos **4 s** seguintes dura **50%** |
+| Idade do crocodilo | duração × Força da idade (§0c): Jovem 55%, Pré-adulto 80%, Adulto 100%, Ancião 110% (2,75 s) |
+| Água | no PvP **não arrasta a vítima para o fundo** (fica na superfície); emboscada submersa continua valendo para iniciar |
+| Depois de neutralizar (PvP) | criatura de jogador **não é comida nem levada**: sai da luta e vai ao refúgio (regra geral do contrato por porte); comer/levar o corpo fica só para presas e selvagens |
+
+Perguntas que seguem abertas: o crocodilo pode agarrar o **humano** jogador (a pé), ou só criaturas? Montado, quem conta como "aliado" que solta (o cavaleiro da vítima conta)?
+
+**19/11/2026 — protótipo no Crocodilo-testes (só bonecos). Implementado e testado em Play; APROVADO pelo usuário em 19/11/2026 ("Aprovar").**
+- `ConfigPoderes_Teste.AgarraoPvP` com os números aprovados; `PoderesTeste`: boneco com `PvP=true` simula a criatura de um jogador, `Porte` muda o efeito; imunidade 8 s e redução de controle 4 s em atributos do alvo; solta por aliado (`receberGolpe(..., {pesado})`), corte da vítima (`{deVitima}`), boca aberta 0,6 s, giro dentro do prazo, Idade do crocodilo, derrotado → `Refugio` (simulado). Backups `ServerStorage.*_ANTES_PvP_2026-11-19`. Place salvo.
+- Resultados: pegada 2,53 s; giro encadeado termina em 2,54 s no total; aliado solta no 3º golpe (102 ≥ 76) e a nova pegada é recusada por 0,6 s; golpe pesado solta na hora; vítima corta até −1,0 s (1,55 s); colossal só lentidão 1,52 s; PvE continua 3,5 s; Jovem 1,38 s; derrubada do Giro de Emboscada cai para 0,75 s logo depois de solto; reagarrar imune = só mordida.
+- Lição: prazo contado pelo `dt` da simulação (com o servidor a 4–7 fps o clipe atrasava e o relógio real vencia antes). Evidência: `review/pvp_1911/testes_agarrao_pvp_play.txt`.
+- Não testado: jogadores reais, celular, montado, humano a pé, refúgio real.
+
+O próprio RPG_02 se contradizia (resolvido em 19/11):
 - **Versão A — "PvP só empurra":** ficha da Etapa 15.1, catálogo §2, tabela de habilidades, comparação ecológica, tabela de balanceamento, tabela §10 e o texto "a decisão 7 foi opção C, não A". Diz: agarrões prolongados só no PvE; no PvP, efeitos de agarrão viram **empurrões, sem prender nem arrastar, mesmo com interrupção por aliados**.
 - **Versão B — "agarrão PvP mais longo, interrompível por aliados":** §12 (correção de consistência), §13 item 2 e §18.2. Diz que "só empurra" **foi um erro de auditoria** e que a escolha do usuário na Etapa 15.1 foi agarrão PvP mais longo, porém interrompível por aliados.
 - Em ambas: **PvE pode ter agarrão prolongado**; durações, resistência a controle repetido e contrajogo estão **[PENDENTE]**. A regra global (§18.2) exige resistência a controle repetido e interrupção por aliados.
@@ -350,7 +376,7 @@ Três gerações, nenhuma aprovada artisticamente pelo criador:
 
 ## 6. Pendências
 1. **Decisões do criador:**
-   - **conflito do agarrão PvP** (só empurra × agarrão mais longo interrompível por aliados);
+   - ~~conflito do agarrão PvP~~ **decidido 19/11: Versão B** (prende, aliados soltam); faltam duração PvP, resistência a controle repetido e forma de soltar;
    - elemento único;
    - lista final de passivas e ativas e seus efeitos;
    - **mergulho com cavaleiro** (sim/não; respiração, câmera, profundidade, segurança);
@@ -366,7 +392,7 @@ Três gerações, nenhuma aprovada artisticamente pelo criador:
 6. **Sistemas (não iniciados):** IA selvagem (território, emboscada submersa, toca, descanso na margem), companheiro domesticado, montaria anfíbia (troca terra↔água), sons (rugido grave, sibilo, batida de mandíbula, respingos), VFX (bolhas, ondulações, ondas da cauda). Tudo com validação no servidor; agarrão com autoridade do servidor e regra PvP/PvE separada.
 
 ## 7. Próximos passos sugeridos (aguardam aprovação)
-1. **Pedir ao criador** a decisão do conflito do agarrão PvP e, se possível, elemento único + kit (passiva + ativas) antes de qualquer VFX ou combate.
+1. ~~Pedir a decisão do agarrão PvP~~ (decidido 19/11: Versão B). Próximo: proposta de números do agarrão PvP (duração, resistência a controle repetido, como os aliados soltam) para aprovação; depois elemento único + kit (passiva + ativas).
 2. **Revisar V2 × V5** com prancha lado a lado com o painel 03 (só leitura e renders no Blender) e listar correções (boca, mandíbula, patas espalhadas, osteodermos).
 3. **Teste de importação num place vazio local** (sem tocar no mapa): escala 5–7 de ombro, nado na linha d'água, Mergulho/Emersão.
 4. **Só depois:** clipes refinados, sons, IA selvagem e montaria terra/água. Um sistema por vez; mergulho montado só depois de definido pelo criador.

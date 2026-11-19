@@ -10,6 +10,14 @@ return {
 		dano_contato = 10, dano_por_segundo = 4,
 		profundidade_agua = 0.85,           -- agua: desce da altura de nado para a de espreita (render R2: agua 5,15 x 4,3)
 	},
+	AgarraoPvP = {                          -- 19/11 numeros APROVADOS pelo usuario [A TESTAR]; boneco com PvP=true simula criatura de jogador
+		duracao = 2.5,                      -- s presa, do contato ao fim (agarrao + giro somados); PvE continua `Agarrao.sustentacao`
+		colossal_lentidao = 0.5, colossal_dur = 1.5,   -- Porte=colossal: morde um membro, 50% lentidao, sem saltar/decolar
+		soltar_pct = 0.08, boca_aberta = 0.6,          -- aliados: dano no croc >= 8% da vida (ou golpe pesado) solta; boca aberta 0,6 s
+		golpe_vitima = 0.3, golpe_vitima_max = 1.0,    -- cada golpe da vitima na cabeca tira 0,3 s (max 1,0)
+		imune = 8, reduz_janela = 4, reduz = 0.5,      -- solta: 8 s imune a agarrao; controle nos 4 s seguintes dura 50%
+		forca_idade = {Filhote = 0.3, Jovem = 0.55, ["Pre-adulto"] = 0.8, Adulto = 1.0, Anciao = 1.1},   -- atributo Idade do croc
+	},
 	Giro = {voltas = 2, dano_por_volta = 8},
 	GiroEmboscada = {                       -- P4 16/11 (ref. secao 4: Giro 2,0x a mordida 20, raio 12, derruba 1,5 s, +50% distraido; raso 1,2x)
 		janela = 1.5, mult = 2.0, mult_raso = 1.2, bonus_distraido = 1.5, dano_base = 20,
