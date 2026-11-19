@@ -4170,3 +4170,51 @@ Pendente: aprovação visual → export/reimport (GLB por LOD) → JSON → KFS 
 - Ancião com a cabeça mais baixa.
 - Evidência: `review/studio_idades_r2/fila_r2b.jpg`. Sem vídeo, para não pesar o PC.
 - **Pelagem r2b, cabeça do Ancião e números do kit APROVADOS pelo usuário (19/11).** A cor do Jovem ainda deve ser conferida no próximo Play.
+
+### 8.77 Levar o Lobo Ártico ao rpg_roblox — montagem isolada (19/11/2026)
+**Pedido:** "Abri o rpg, me diga o que devo importar lá" → "Importados".
+
+**M0 (somente leitura):**
+- Só existia o modelo antigo `ServerStorage.Biblioteca_Criaturas.Modelos.Lobo_Artico` (9 partes), que ficou intocado.
+- Existe o habitat `Tundra_Congelada.Habitats.Ecologia_Fauna.Lobo_Artico` (3 itens).
+- Não havia biblioteca de animações nem scripts do lobo novo.
+- O Workspace tem 372 mil descendentes.
+
+**Imports do usuário:** 5 GLB de idade + `CR_LoboArtico_GeloFX_E4.glb`. Identificados pelas medidas (Filhote sem Marca; altura dos cristais 0,81 / 1,13 / 1,37 / 1,90) e sem RBX_ANIMSAVES.
+
+**Montado (Edit; código enviado inline):**
+- `Workspace.Teste_LoboArtico` (área isolada a y=1500, vazia antes; atributo `Origem`), com 5 chãos de neve e um marco.
+- `LoboArtico_LOW` = import do Adulto no pivô (−600, 1500, −600):
+  - RootPart ancorada e invisível; MeshParts sem colisão e sem toque, Massless;
+  - SurfaceAppearance sem metal, com as máscaras de emissão iguais às do Teste-animacoes:
+    - Corpo: 103482067734616, tinta (60, 160, 255), força 0;
+    - Cabeça: 91057023039203, força 1;
+    - Marca: 123224124316631, força 1,4.
+- `FX_Boreal` (lógica do `montar_gelo_e4`): 8 espinhos nos ossos, Casca_Gelo e 6 moldes; o import foi guardado em ServerStorage.
+- `ServerStorage.LoboArtico_Idades` (lógica do `montar_idades_v1`): Adulto + 4 idades, SurfaceAppearance copiadas do Adulto e pelagem r2b no Filhote e no Jovem. Imports guardados como `ServerStorage.Import_CR_LoboArtico_*`.
+
+**Bloqueio:** o Assistant do Studio do rpg_roblox recusa `http://127.0.0.1:8766` ("not in the Assistant HTTP allowlist"). As animações (3,9 MB de JSON) e os scripts vêm desse servidor local. No Teste-animacoes o domínio já estava liberado. Liberar é configuração de segurança do Studio, ou seja, passo do usuário.
+
+**Depois de liberado (usuário: "Liberado"):**
+- **Animações:** 44 KeyframeSequences em `ReplicatedStorage.Animacoes_LoboArtico`, montadas pelos mesmos construtores (`montar_kfs_lobo_v41`, `v42b`, `v43r5`) medindo a convenção no lobo do próprio place.
+  - 34 de locomoção e vida, 5 do kit, 4 mordidas e o Piscar; as garras ficaram fora.
+  - Junto, o ModuleScript `Movimento_LoboArtico`.
+  - O place passou de 536 mil para 645 mil instâncias.
+- **Scripts:** os 7 scripts conferidos iguais aos do Teste-animacoes (Kit r13c, Kit_Cliente r6, Uivo r6/r8, Controle r5, Idade r3) foram instalados na pasta, com os clientes em RunContext Client.
+
+**Play no rpg_roblox (curto, captura a 10 q/s):**
+- Os 4 servidores rodaram.
+- Troca Filhote ↔ Adulto com malha própria.
+- 6 mordidas = 6 acertos (alvo 1000 → 940).
+- Uivo: velocidade 1,20, esquiva 0,30, linhas e espinhos acesos.
+- Evidência: `review/rpg_lobo/folha_play_rpg.jpg`.
+
+**Avisos e pendências:**
+- No início do Play os clientes avisam "Infinite yield possible" no `WaitForChild("LoboArtico_LOW")`, porque o place usa streaming e a área está longe do spawn. A espera termina quando o jogador chega perto, e tudo funcionou.
+- Os imports novos ainda estavam sendo processados ("being generated"); no Play o Filhote saiu claro.
+- Os scripts da pasta rodam em todo Play do rpg_roblox. São leves e só agem quando um jogador assume o lobo.
+- Não salvei nem publiquei o place (Team Create).
+- Não foi feito:
+  - substituir o modelo antigo da Biblioteca;
+  - pôr o lobo no habitat da Tundra, IA selvagem ou spawn;
+  - publicar as animações como Animation (a KeyframeSequence só toca no Studio).
