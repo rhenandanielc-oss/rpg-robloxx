@@ -96,6 +96,45 @@ local function seguirOlhar(g, fonte)                   -- fonte() -> Vector3 ou 
 end
 local function olharAlvo(a) return function() local p = a and a.Parent and centro(a); return p and p + Vector3.new(0, 1, 0) end end
 
+-- 20/11 HITBOX DE CONTATO (regra passada ao Lobo, adotada aqui): corpo do alvo = capsulas osso->pai (sem cauda/olhos/raiz);
+-- sem ossos = caixa das partes visiveis. A distancia de um golpe e da PONTA DOS DENTES (ou da cauda) ate a SUPERFICIE.
+local HB = CFG.Hitbox
+local cacheCorpo = setmetatable({}, {__mode = "k"})
+local function ignorarOsso(n) for _, k in ipairs(HB.ignorarOssos) do if n:find(k) then return true end end return false end
+local function corpoDe(m)
+	local c = cacheCorpo[m]; if c ~= nil then return c or nil end
+	local segs, tem = {}, false
+	local _, sz = m:GetBoundingBox(); local r = math.min(sz.X, sz.Y, sz.Z) * HB.raioGenerico
+	for _, b in ipairs(m:GetDescendants()) do
+		if b:IsA("Bone") then tem = true
+			local pai = b.Parent
+			if pai and pai:IsA("Bone") and not ignorarOsso(b.Name) and not ignorarOsso(pai.Name) then table.insert(segs, {pai, b, r}) end
+		end
+	end
+	if not tem or #segs == 0 then cacheCorpo[m] = false; return nil end
+	cacheCorpo[m] = segs; return segs
+end
+local function pontoSegm(p, a, b) local ab = b - a; local t = math.clamp((p - a):Dot(ab) / math.max(ab:Dot(ab), 1e-6), 0, 1); return a + ab * t end
+local function contatoCorpo(alvo, p)                       -- distancia do ponto p a superficie do corpo do alvo
+	local segs = corpoDe(alvo); local md = math.huge
+	if segs then
+		for _, sg in ipairs(segs) do
+			local q = pontoSegm(p, sg[1].TransformedWorldCFrame.Position, sg[2].TransformedWorldCFrame.Position)
+			md = math.min(md, (p - q).Magnitude - sg[3])
+		end
+		return math.max(0, md)
+	end
+	for _, pt in ipairs(alvo:GetDescendants()) do
+		if pt:IsA("BasePart") and pt.Transparency < 1 then
+			local l = pt.CFrame:PointToObjectSpace(p); local h = pt.Size / 2
+			local q = pt.CFrame:PointToWorldSpace(Vector3.new(math.clamp(l.X, -h.X, h.X), math.clamp(l.Y, -h.Y, h.Y), math.clamp(l.Z, -h.Z, h.Z)))
+			md = math.min(md, (p - q).Magnitude)
+		end
+	end
+	return md
+end
+M.contatoCorpo = contatoCorpo
+
 -- Agarrao PvP (19/11, numeros APROVADOS, A TESTAR). Boneco com atributo PvP=true simula a criatura de um jogador;
 -- atributo Porte = pequeno/medio/grande/colossal. Imunidade e reducao de controle ficam em atributos do alvo (tempo do servidor).
 local function agora() return workspace:GetServerTimeNow() end
@@ -292,8 +331,8 @@ function M.agarrao(alvo, cena, opcoes)
 	table.insert(est.cons, f:GetMarkerReachedSignal("fecha_boca"):Connect(function()
 		if est.gen ~= g then return end
 		local ponta = osso("Mandibula").TransformedWorldCFrame * Vector3.new(0, CFG.Agarrao.ponta, 0)   -- +Y do osso = frente
-		local d = (ponta - centro(alvo)).Magnitude
-		if d <= CFG.Agarrao.alcance and alvoValido(alvo) then
+		local d = contatoCorpo(alvo, ponta)                      -- 20/11: dentes ate a SUPERFICIE do corpo (antes: ao centro, alcance 6,5)
+		if d <= HB.contatoMordida and alvoValido(alvo) then
 			local P = CFG.AgarraoPvP
 			local imune = alvo:GetAttribute("ImuneAgarraoAte")
 			if imune and agora() < imune then                       -- PvP: resistencia a repeticao (8 s depois de solto)
@@ -341,10 +380,10 @@ function M.agarrao(alvo, cena, opcoes)
 				end
 			end
 			local h = alvo:FindFirstChildOfClass("Humanoid"); h:TakeDamage(CFG.Agarrao.dano_contato)
-			log("CONTATO: agarrou %s (distancia %.2f <= %.2f)", alvo.Name, d, CFG.Agarrao.alcance)
+			log("CONTATO: agarrou %s (dentes a %.2f da superficie <= %.2f)", alvo.Name, d, HB.contatoMordida)
 			resultado = "acerto"; vigiaAlvo(g)
 		else
-			log("ERROU: %s a %.2f (alcance %.2f)", alvo.Name, d, CFG.Agarrao.alcance); resultado = "erro_alcance"
+			log("ERROU: %s, dentes a %.2f da superficie (contato %.2f)", alvo.Name, d, HB.contatoMordida); resultado = "erro_alcance"
 		end
 	end))
 	table.insert(est.cons, f.Stopped:Connect(function()
@@ -569,20 +608,17 @@ function M.giroEmboscada()
 		local fp = T.tocar("Crocodilo_GiroPouso", 0.05)
 		local cen = destino.Position + destino.LookVector * G.centro_frente
 		fx("giro_pouso", Vector3.new(cen.X, chaoEm(cen), cen.Z), G.raio, est.naAgua)
-		local acertos = 0
+		local acertos, derrubados = 0, {}
 		for _, a in ipairs(workspace.Teste_Crocodilo.Arena:GetChildren()) do
 			if alvoValido(a) and not a:GetAttribute("Agarrado") then
-				local d = (centro(a) - cen) * Vector3.new(1, 0, 1)
-				if d.Magnitude <= G.raio then
+				local ca = centro(a); local d = contatoCorpo(a, Vector3.new(cen.X, ca.Y, cen.Z))   -- 20/11: ate a superficie
+				if d <= G.raio then
 					local b = a:GetAttribute("Distraido") and bonus or 1.0
 					local dano = G.dano_base * mult * b
 					a:FindFirstChildOfClass("Humanoid"):TakeDamage(dano); acertos += 1
-					local orig = a:GetPivot(); a:SetAttribute("Derrubado", true)
-					a:PivotTo(orig * CFrame.Angles(math.rad(80), 0, 0) - Vector3.new(0, 1.5, 0))
-					local derruba = G.derruba * fatorControle(a)          -- PvP: controle logo depois de solto dura 50%
-					if derruba < G.derruba then log("PvP: %s tinha sido solto ha pouco -> derrubada reduzida a %.2f s", a.Name, derruba) end
-					task.delay(derruba, function() if a.Parent then a:PivotTo(orig); a:SetAttribute("Derrubado", false) end end)
-					log("IMPACTO: %s a %.1f -> dano %.0f%s, derrubado %.2f s", a.Name, d.Magnitude, dano, b > 1 and " (distraido +50%)" or "", derruba)
+					log("IMPACTO: %s a %.1f da superficie -> dano %.0f%s", a.Name, d, dano, b > 1 and " (distraido +50%)" or "")
+					local r = M.rolarControle(a, "GiroEmboscada")             -- 20/11: queda pelo contrato de porte (Caido/CaidoAte)
+					if r.efeito == "queda" then table.insert(derrubados, a) end
 				end
 			end
 		end
@@ -590,6 +626,10 @@ function M.giroEmboscada()
 		task.delay(0.6, function() modelo:SetAttribute("Giro", false) end)
 		fp.Stopped:Wait()
 		if est.gen == g then M.cancelar("fim_giro_emboscada") end
+		-- 20/11: IA decide FINALIZAR / POUPAR / APROVEITAR cada alvo derrubado (uma decisao por queda)
+		for _, a in ipairs(derrubados) do
+			if M.decidirQueda(a) == "FINALIZAR" then M.finalizar(a); break end
+		end
 	end)
 	return "iniciado"
 end
@@ -626,14 +666,17 @@ function M.caudaDeMare()
 		for _, a in ipairs(workspace.Teste_Crocodilo.Arena:GetChildren()) do
 			if not atingidos[a] and alvoValido(a) and not a:GetAttribute("Agarrado") then
 				local c = centro(a); local c2 = Vector3.new(c.X, 0, c.Z); local d = math.huge
-				for i = 1, #pts - 1 do d = math.min(d, distSeg(c2, pts[i] * Vector3.new(1, 0, 1), pts[i + 1] * Vector3.new(1, 0, 1))) end
-				if d <= K.largura then
+				for i = 1, #pts - 1 do                              -- 20/11: a cauda precisa TOCAR a superficie do corpo
+					for k = 0, 3 do d = math.min(d, contatoCorpo(a, pts[i]:Lerp(pts[i + 1], k / 3))) end
+				end
+				if d <= HB.contatoCauda then
 					atingidos[a] = true
 					local emp = naAgua and K.empurrao_agua or K.empurrao_terra
 					local dir = dirV.Magnitude > 0.01 and dirV.Unit or (c2 - Vector3.new(cf0.X, 0, cf0.Z)).Unit
 					a:PivotTo(a:GetPivot() + dir * emp)
 					a:FindFirstChildOfClass("Humanoid"):TakeDamage(K.dano)
-					log("ACERTO na trajetoria: %s a %.1f da cauda (t=%.2f), dano %d, empurrado %.0f", a.Name, d, tp, K.dano, emp)
+					log("ACERTO na trajetoria: %s, cauda a %.2f da superficie (t=%.2f), dano %d, empurrado %.0f", a.Name, d, tp, K.dano, emp)
+					M.rolarControle(a, "CaudaDeMare")
 				end
 			end
 		end
@@ -661,6 +704,7 @@ end
 -- Golpe de aliado durante a pegada PvP soma dano; >= 8% da vida (ou pesado) solta na hora e deixa a boca aberta 0,6 s.
 function M.receberGolpe(dano, ponto, passiva, opcoes)
 	opcoes = opcoes or {}
+	if est.poder == "Finalizacao" and dano > 0 then est.feridoFinal = true end   -- 20/11: ferido durante a finalizacao = solta
 	local E = CFG.Escamas
 	local final = passiva and dano * (1 - E.reducao) or dano
 	if est.alvo and est.pvp and est.limite then
@@ -821,6 +865,206 @@ task.spawn(function()
 		if dono and #achados > 0 then VIB:FireClient(dono, achados) end
 	end
 end)
+
+-- ================================================================ Controle por porte + Finalizacao (20/11) [PROPOSTA]/[A TESTAR]
+-- Regras passadas ao Lobo Ancestral (contrato CONTRATO-CONTROLE-PORTE.md), adotadas no crocodilo:
+-- * depois de um acerto valido com dano, UMA rolagem no servidor: chance = base x impacto x porte relativo x Forca relativa;
+--   lentidao/claudicacao/queda (Caido/CaidoAte, nunca Incapacitado numa queda recuperavel); colossal metade; teto 60%;
+--   >= 4 s DE PE entre quedas (do fim do levantar); PvP (criatura de jogador): duracao x0,5, cai pela metade a cada repeticao
+--   em 12 s, depois de 2 seguidas imune por duracao + 8 s. O Giro de Emboscada derruba sempre (v6.2), com a duracao do contrato.
+-- * finalizacao PROPRIA do crocodilo = MORDIDA ESMAGADORA (usuario 20/11): sibilo anunciado, aproxima andando, prende a
+--   cabeca/pescoco do caido e aperta sacudindo; interrompivel o tempo todo (alvo levanta/protegido/removido/ferido = solta,
+--   sem dano). Desfecho: selvagem morre; criatura de jogador e RETIRADA (refugio simulado, Vida mantida); humano nunca.
+-- * IA: uma decisao por queda (FINALIZAR / POUPAR / APROVEITA), com motivo; crocodilo de dono nao finaliza sozinho.
+local CT = CFG.Controle
+local function deJogador(m) return (m:GetAttribute("DonoUserId") or 0) ~= 0 or m:GetAttribute("PvP") == true end
+local function classePorte(m)
+	local ombro, comp, idade, forca
+	if m == modelo then comp, idade, forca = CT.porte.comprimento, m:GetAttribute("Idade") or "Adulto", CT.porte.forca
+	else ombro, comp, idade, forca = m:GetAttribute("PorteOmbro"), m:GetAttribute("PorteComprimento"), m:GetAttribute("Idade") or "Adulto", m:GetAttribute("Forca") end
+	local medida, fonte = ombro, "ombro"
+	if not medida and comp then medida, fonte = comp / 2.5, "comprimento/2,5" end
+	if not medida then
+		local _, sz = m:GetBoundingBox(); medida, fonte = math.max(sz.Y, math.max(sz.X, sz.Z) / 2.5), "estimado pela caixa"
+	else medida *= (CT.tamanhoIdade[idade] or 1) end
+	local nome, idx = "colossal", 4
+	for i, c in ipairs(CT.classes) do if medida < c[2] then nome, idx = c[1], i; break end end
+	return {nome = nome, idx = idx, medida = medida, fonte = fonte, forca = (forca or 20) * (CT.forcaIdade[idade] or 1), idade = idade}
+end
+M.classePorte = classePorte
+local function levantar(a)
+	if not a.Parent or not a:GetAttribute("Caido") then return end
+	local orig = est.origQueda and est.origQueda[a]
+	if orig and a:FindFirstChildOfClass("Humanoid") and not a:GetAttribute("Agarrado") then a:PivotTo(orig) end
+	a:SetAttribute("Caido", false); a:SetAttribute("CaidoAte", nil); a:SetAttribute("Derrubado", false)
+	a:SetAttribute("LevantouEm", agora())
+	if est.origQueda then est.origQueda[a] = nil end
+	log("CONTROLE: %s levantou", a.Name)
+end
+M.levantar = levantar
+local function aplicarQueda(a, dur)
+	est.origQueda = est.origQueda or {}
+	local orig = a:GetPivot(); est.origQueda[a] = orig
+	a:SetAttribute("Caido", true); a:SetAttribute("CaidoAte", agora() + dur); a:SetAttribute("Derrubado", true)
+	local _, sz = a:GetBoundingBox()
+	if sz.Y > math.max(sz.X, sz.Z) then a:PivotTo(orig * CFrame.Angles(math.rad(80), 0, 0) - Vector3.new(0, 1.5, 0)) end   -- em pe (boneco): tomba
+	task.delay(dur, function() if a.Parent and a:GetAttribute("Caido") and (a:GetAttribute("CaidoAte") or 0) <= agora() + 0.05 then levantar(a) end end)
+end
+function M.rolarControle(a, tipo, forcar)
+	local g = CT.golpes[tipo]
+	if not g or not a or not a.Parent then return {efeito = "nenhum", motivo = "golpe sem controle"} end
+	if game.Players:GetPlayerFromCharacter(a) then return {efeito = "nenhum", motivo = "humano: regra so de criatura"} end
+	local A, B = classePorte(modelo), classePorte(a)
+	local dif = math.clamp(A.idx - B.idx, -3, 3)
+	local fP = CT.porteRelativo[dif]; local fF = math.clamp(A.forca / math.max(B.forca, 1), CT.forcaMinMax[1], CT.forcaMinMax[2])
+	local base = g.impacto * fP * fF
+	local cQ = (g.impacto >= CT.queda.impactoMin) and math.min(1, CT.queda.chance * base) or 0
+	local cM = (g.impacto >= CT.manca.impactoMin) and math.min(1, CT.manca.chance * base) or 0
+	local cL = math.min(1, CT.lento.chance * base)
+	local efeito, motivo = "nenhum", "sorteio"
+	local r = math.random()
+	if g.derrubaSempre or forcar == "queda" or r < cQ then efeito = "queda"
+	elseif forcar == "manca" or r < cQ + cM then efeito = "manca"
+	elseif forcar == "lento" or r < cQ + cM + cL then efeito = "lento" end
+	if efeito == "queda" then                                   -- anti-repeticao: >= 4 s de pe desde o fim do levantar
+		local lev = a:GetAttribute("LevantouEm")
+		if a:GetAttribute("Caido") then efeito, motivo = "manca", "ja caido"
+		elseif lev and agora() - lev < CT.queda.intervaloMin then efeito, motivo = "manca", string.format("so %.1f s de pe (< %.0f)", agora() - lev, CT.queda.intervaloMin) end
+	end
+	local dur
+	if efeito == "queda" then
+		dur = (tipo == "GiroEmboscada" and CFG.GiroEmboscada.derruba or 3.0) * (CT.duracaoPorte[B.nome] or 1)
+		if deJogador(a) then                                      -- PvP: curto e com resistencia a repeticao
+			local P = CT.pvp; local hist = a:GetAttribute("PvPQuedas") or ""; local n, ult = 0, 0
+			for t in hist:gmatch("[^,]+") do local x = tonumber(t); if x and agora() - x <= P.janela then n += 1; ult = math.max(ult, x) end end
+			local imune = a:GetAttribute("PvPImuneAte")
+			if imune and agora() < imune then efeito, motivo, dur = "nenhum", "PvP: imune a queda", nil
+			else
+				dur = dur * P.fatorDur * (0.5 ^ n)
+				a:SetAttribute("PvPQuedas", hist .. "," .. string.format("%.2f", agora()))
+				if n + 1 >= P.maxSeguidos then a:SetAttribute("PvPImuneAte", agora() + dur + P.imuneSeg) end
+			end
+		end
+		if dur then aplicarQueda(a, dur) end
+	elseif efeito == "manca" or efeito == "lento" then
+		local e = CT[efeito]; dur = e.dur * (CT.duracaoPorte[B.nome] or 1)
+		a:SetAttribute("LentidaoControle", math.min(0.6, e.fracao)); a:SetAttribute("LentidaoAte", agora() + dur)
+		if efeito == "manca" then a:SetAttribute("Mancando", true) end
+		task.delay(dur, function() if a.Parent and (a:GetAttribute("LentidaoAte") or 0) <= agora() + 0.05 then
+			a:SetAttribute("LentidaoControle", nil); a:SetAttribute("LentidaoAte", nil); a:SetAttribute("Mancando", nil) end end)
+	end
+	log("CONTROLE %s -> %s: croc %s %.1f (F%.0f) x alvo %s %.1f (%s, F%.0f), dif %+d; chances Q%.0f%% M%.0f%% L%.0f%% -> %s%s%s",
+		tipo, a.Name, A.nome, A.medida, A.forca, B.nome, B.medida, B.fonte, B.forca, dif, cQ * 100, cM * 100, cL * 100, efeito,
+		dur and string.format(" %.2f s", dur) or "", motivo ~= "sorteio" and (" (" .. motivo .. ")") or "")
+	return {efeito = efeito, dur = dur, motivo = motivo}
+end
+
+-- IA: uma decisao por queda
+function M.decidirQueda(a)
+	local F = CFG.Finalizacao; local h = a:FindFirstChildOfClass("Humanoid")
+	local dec, motivo = "FINALIZAR", "condicoes ok"
+	local vidaCroc = (modelo:GetAttribute("VidaTeste") or CFG.Escamas.vida) / CFG.Escamas.vida
+	if (modelo:GetAttribute("DonoUserId") or 0) ~= 0 then dec, motivo = "POUPAR", "crocodilo de dono nao finaliza sozinho"
+	elseif game.Players:GetPlayerFromCharacter(a) then dec, motivo = "POUPAR", "humano nunca"
+	elseif not h or h.Health / h.MaxHealth > F.vidaAlvoMax then dec, motivo = "APROVEITA", string.format("alvo ainda forte (%.0f%% > %.0f%%)", h and h.Health / h.MaxHealth * 100 or 0, F.vidaAlvoMax * 100)
+	elseif vidaCroc < F.vidaPropriaMin then dec, motivo = "POUPAR", string.format("propria vida baixa (%.0f%%)", vidaCroc * 100)
+	elseif (centro(a) - modelo:GetPivot().Position).Magnitude > F.abordarAte + C_.cabeca then dec, motivo = "POUPAR", "alvo longe demais"
+	else
+		for _, o in ipairs(workspace.Teste_Crocodilo.Arena:GetChildren()) do
+			if o ~= a and o:GetAttribute("Inimigo") and alvoValido(o) and not o:GetAttribute("Caido") and (centro(o) - modelo:GetPivot().Position).Magnitude < F.ameacaRaio then
+				dec, motivo = "POUPAR", "outro inimigo a menos de " .. F.ameacaRaio .. " studs (" .. o.Name .. ")"; break
+			end
+		end
+	end
+	a:SetAttribute("DecisaoQueda", dec .. ": " .. motivo)
+	log("DECISAO sobre %s caido: %s (%s)", a.Name, dec, motivo)
+	return dec, motivo
+end
+
+-- MORDIDA ESMAGADORA
+local function pontoFinal(a)                               -- osso de cabeca/pescoco do alvo; sem ossos, topo do corpo
+	local melhor, nome = nil, nil
+	for _, b in ipairs(a:GetDescendants()) do
+		if b:IsA("Bone") then for _, k in ipairs(CFG.Finalizacao.ossosAlvo) do if b.Name:find(k) and not b.Name:find("Olho") then melhor, nome = b, b.Name; break end end end
+		if melhor then break end
+	end
+	if melhor then return function() return melhor.TransformedWorldCFrame.Position end, nome end
+	return function() local c = centro(a); return c and Vector3.new(c.X, c.Y, c.Z) end, "corpo"
+end
+function M.finalizar(a, forcar)
+	local F = CFG.Finalizacao
+	if game.Players:GetPlayerFromCharacter(a) then log("FINALIZACAO recusada: humano nunca"); return "humano" end
+	if not alvoValido(a) then return "alvo_invalido" end
+	if not a:GetAttribute("Caido") then log("FINALIZACAO recusada: %s de pe", a.Name); return "alvo_de_pe" end
+	local h = a:FindFirstChildOfClass("Humanoid")
+	if not forcar and h.Health / h.MaxHealth > F.vidaAlvoMax then log("FINALIZACAO recusada: %s ainda forte", a.Name); return "alvo_forte" end
+	local g = iniciar("Finalizacao", true); if not g then return "ocupado" end
+	est.feridoFinal = false
+	local pto, nomePto = pontoFinal(a)
+	a:SetAttribute("FinalizacaoDe", modelo.Name); modelo:SetAttribute("EmAtaque", "Finalizacao")
+	olharPara(pto())
+	local function limpa() if a.Parent then a:SetAttribute("FinalizacaoDe", nil) end; modelo:SetAttribute("EmAtaque", nil) end
+	local function cancelar(m) if est.gen == g then log("FINALIZACAO CANCELADA (%s), sem dano", m); limpa(); M.cancelar("finalizacao_" .. m) end end
+	local function valida()
+		if est.gen ~= g then return false end
+		if not alvoValido(a) then cancelar("alvo removido ou morto"); return false end
+		if not a:GetAttribute("Caido") then cancelar("alvo levantou"); return false end
+		if est.feridoFinal then cancelar("crocodilo ferido"); return false end
+		return true
+	end
+	log("FINALIZACAO: sibilo %.1f s -> Mordida esmagadora em %s (%s)", F.anuncio, a.Name, nomePto)
+	local fa = T.tocar("Crocodilo_AmeacaInflada", 0.15)
+	task.spawn(function()
+		local t = 0
+		while t < F.anuncio do t += RS.Heartbeat:Wait(); if not valida() then return end end
+		-- aproxima andando ate os dentes tocarem a cabeca/pescoco
+		T.tocar("Crocodilo_Andar", 0.2)
+		local tAp = 0
+		while true do
+			local dt = RS.Heartbeat:Wait(); tAp += dt; if not valida() then return end
+			local mand = osso("Mandibula").TransformedWorldCFrame; local ponta = mand * Vector3.new(0, CFG.Agarrao.ponta, 0)
+			local alvoP = pto(); local dv = (alvoP - ponta) * Vector3.new(1, 0, 1)
+			if contatoCorpo(a, ponta) <= F.encostar or dv.Magnitude <= F.encostar then break end
+			if tAp > F.abordarMax then cancelar("nao alcancou a tempo"); return end
+			-- posiciona o CORPO para a ponta dos dentes chegar ao ponto (anda para a frente ou recua; alvo pode estar sob o pescoco)
+			local cf = modelo:GetPivot(); local dir = (alvoP - cf.Position) * Vector3.new(1, 0, 1)
+			local look = Vector3.new(cf.LookVector.X, 0, cf.LookVector.Z).Unit; local alvoDir = dir.Magnitude > 0.1 and dir.Unit or look
+			local ang = math.atan2(look:Cross(alvoDir).Y, look:Dot(alvoDir)); local passoAng = math.clamp(ang, -F.giro * dt, F.giro * dt)
+			local nr = CFrame.Angles(0, passoAng, 0) * cf.Rotation
+			local dPonta = ((ponta - cf.Position) * Vector3.new(1, 0, 1)).Magnitude
+			local desejado = Vector3.new(alvoP.X, cf.Y, alvoP.Z) - alvoDir * dPonta
+			local falta = desejado - cf.Position; falta = Vector3.new(falta.X, 0, falta.Z)
+			local np = cf.Position + (falta.Magnitude > 0.01 and falta.Unit * math.min(F.vel * dt, falta.Magnitude) or Vector3.zero)
+			BASE = CFrame.new(np) * nr; modelo:PivotTo(BASE)
+		end
+		-- prende e esmaga sacudindo
+		T.tocar("Crocodilo_SegurarPresa", 0.12)
+		log("FINALIZACAO: prendeu %s pelo %s; aperta sacudindo %.1f s", a.Name, nomePto, F.aperto)
+		-- preso na boca nao consegue levantar: a queda dura ate o desfecho (se a finalizacao for interrompida, levanta depois)
+		a:SetAttribute("CaidoAte", agora() + F.aperto + 0.6)
+		task.delay(F.aperto + 0.6, function() if a.Parent and a:GetAttribute("Caido") and not a:GetAttribute("Incapacitado") and (a:GetAttribute("CaidoAte") or 0) <= agora() + 0.05 then levantar(a) end end)
+		local base0 = modelo:GetPivot(); local t2 = 0
+		while t2 < F.aperto do
+			local dt = RS.Heartbeat:Wait(); t2 += dt; if not valida() then return end
+			local s = math.sin(t2 / F.periodo * 2 * math.pi) * math.rad(F.sacudir)
+			modelo:PivotTo(base0 * CFrame.Angles(0, s, 0))
+		end
+		modelo:PivotTo(base0)
+		-- desfecho
+		if deJogador(a) then
+			a:SetAttribute("RetiradaDeCombate", true); a:SetAttribute("Incapacitado", true)
+			log("FINALIZACAO: %s (criatura de jogador) RETIRADA da luta -> refugio (simulado; Vida %.0f mantida, sem morte)", a.Name, h.Health)
+		else
+			h.Health = 0; a:SetAttribute("Estado", "Morto"); a:SetAttribute("Incapacitado", true)
+			log("FINALIZACAO: %s (selvagem) morreu (prototipo: sem loot/respawn)", a.Name)
+		end
+		limpa()
+		local fs = T.tocar("Crocodilo_SoltarPresa", 0.15)
+		fs.Stopped:Wait()
+		if est.gen == g then M.cancelar("fim_finalizacao") end
+	end)
+	return "iniciado"
+end
 
 function M.estado() return {poder = est.poder, fase = est.fase, alvo = est.alvo and est.alvo.Name or nil, naAgua = est.naAgua} end
 return M

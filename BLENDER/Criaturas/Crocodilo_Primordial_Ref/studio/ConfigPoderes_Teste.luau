@@ -24,6 +24,32 @@ return {
 		soco_alcance = 8, soco_parar = 4.5, soco_intervalo = 0.55, soco_dano = 40,   -- golpe do jogador no crocodilo (dano de TESTE; o real vem do combate do jogador)
 		pulo_lado = 5, pulo_recuo = 1.5,    -- 19/11 usuario "pular mais perto": cai AO LADO da cabeca do crocodilo (5 de lado, 1,5 atras do focinho), ja no alcance para bater
 	},
+	-- 20/11 REGRAS DO LOBO ADOTADAS NO CROCODILO (usuario: "faca da mesma maneira"); contrato geral em
+	-- BLENDER/Criaturas/Lobo_Ancestral_Ref/studio/kit/CONTRATO-CONTROLE-PORTE.md. Regras oficiais v6.2 §0b-0d; resto [A TESTAR].
+	Hitbox = {                              -- golpes medidos da PONTA DOS DENTES / da cauda ate a SUPERFICIE do corpo (nao ao centro)
+		ignorarOssos = {"Cauda", "Tail", "Pelo", "Juba", "Orelha", "Palpebra", "Olho", "Ear", "Fur", "Hair", "Raiz", "Root"},
+		raioGenerico = 0.22,                -- corpo com ossos = capsulas osso->pai, raio = menor lado da caixa x 0,22 (como no Lobo)
+		contatoMordida = 1.5, contatoCauda = 1.0, -- tolerancia (studs) entre o ponto de ataque e a superficie
+	},
+	Controle = {
+		porte = {comprimento = 28, forca = 60},            -- Crocodilo Adulto: comprimento 28 / 2,5 = 11,2 = GRANDE; Forca 60 (contrato §5)
+		tamanhoIdade = {Filhote = 0.40, Jovem = 0.65, ["Pre-adulto"] = 0.85, Adulto = 1.0, Anciao = 1.10},
+		forcaIdade = {Filhote = 0.30, Jovem = 0.55, ["Pre-adulto"] = 0.80, Adulto = 1.0, Anciao = 1.10},
+		classes = {{"pequeno", 3}, {"medio", 8}, {"grande", 16}, {"colossal", math.huge}},
+		golpes = {CaudaDeMare = {impacto = 1.2}, GiroEmboscada = {impacto = 1.6, derrubaSempre = true}},   -- agarrao NAO derruba (contrato: nao somar agarrao e queda)
+		porteRelativo = {[-3] = 0.05, [-2] = 0.2, [-1] = 0.55, [0] = 1.0, [1] = 1.3, [2] = 1.6, [3] = 1.8},
+		forcaMinMax = {0.35, 1.5},
+		lento = {chance = 0.30, fracao = 0.25, dur = 1.5}, manca = {chance = 0.14, fracao = 0.45, dur = 2.0, impactoMin = 1.0},
+		queda = {chance = 0.16, impactoMin = 1.6, intervaloMin = 4.0},   -- 4 s DE PE (contados do fim do levantar) entre quedas
+		duracaoPorte = {pequeno = 1.15, medio = 1.0, grande = 0.8, colossal = 0.5},
+		pvp = {fatorDur = 0.5, janela = 12, maxSeguidos = 2, imuneSeg = 8},
+	},
+	Finalizacao = {                         -- 20/11 usuario: finalizacao PROPRIA DO CROCODILO = MORDIDA ESMAGADORA
+		anuncio = 0.9, abordarAte = 14, vel = 7, giro = 3.0, encostar = 1.5, abordarMax = 3.0,   -- sibilo, aproxima andando
+		aperto = 1.8, sacudir = 9, periodo = 0.3,   -- prende cabeca/pescoco e aperta sacudindo (graus, s)
+		vidaAlvoMax = 0.35, vidaPropriaMin = 0.30, ameacaRaio = 25,   -- IA: so finaliza alvo enfraquecido; poupa se fraco ou com outro inimigo perto
+		ossosAlvo = {"Cabeca", "Pescoco", "Head", "Neck"},
+	},
 	Giro = {voltas = 2, dano_por_volta = 8, ativo = false},   -- 19/11 usuario: Rolar da Morte REMOVIDO do kit (codigo guardado; ativo=false recusa)
 	Vibracao = {                            -- 19/11 usuario: passiva Sentido de Vibracao [PROPOSTA de numeros]
 		raio_agua = 40, raio_margem = 20, margem = 10,   -- na agua 40; em terra so a ate 10 studs da agua, raio 20
@@ -32,7 +58,7 @@ return {
 	},
 	GiroEmboscada = {                       -- P4 16/11 (ref. secao 4: Giro 2,0x a mordida 20, raio 12, derruba 1,5 s, +50% distraido; raso 1,2x)
 		janela = 1.5, mult = 2.0, mult_raso = 1.2, bonus_distraido = 1.5, dano_base = 20,
-		raio = 12, derruba = 1.5, distancia = 22, voo = 0.9, altura = 5, centro_frente = 6,
+		raio = 12, derruba = 3.0, distancia = 22, voo = 0.9, altura = 5, centro_frente = 6,   -- derruba 3,0 s (usuario 20/11; v6.2 dizia 1,5: curta para finalizar)
 	},
 	Submersao = {                           -- P4 16/11 (agua real; numeros de TESTE)
 		folga_topo = 4.0, folga_fundo = 1.0, -- topo do corpo abaixo da superficie / sola acima do fundo (P4b: usuario achou raso 1,5)
