@@ -30,9 +30,12 @@ local CFG = {
 	fade = 0.25,
 }
 -- r4 (18/11, idades): Escala (Idade_Servidor) encolhe/aumenta o corpo; o deslocamento dos clipes de transicao e o
--- apoio a frente acompanham a escala e o clipe toca a MultVelocidade / Escala (patas casadas com a velocidade do documento).
+-- apoio a frente acompanham a escala.
+-- r5 (19/11, pedido "prossiga" sobre a velocidade do filhote): a velocidade da idade passa a ser RELATIVA AO TAMANHO.
+-- O clipe toca a MultVelocidade (Filhote 1,15 = passada 15% mais rapida) e o deslocamento e o do clipe x Escala x mult:
+-- patas casadas sem o clipe a 2,9x. Filhote: 0,40 x 1,15 = 46% dos studs/s do Adulto. Copia da r4: Controle_Servidor_r4.
 local function esc() return lobo:GetAttribute("Escala") or 1 end
-local function ritmoDe(mult) return mult / esc() end
+local function ritmoDe(mult) return mult end
 local ORDEM = {"Andar", "Trote", "Corrida"}
 local SUBIR = {Andar = "AndarParaTrote", Trote = "TroteParaCorrida"}
 local DESCER = {Trote = "TroteParaAndar", Corrida = "CorridaParaTrote"}
@@ -109,7 +112,7 @@ local function iniciarClipe(nome, destino, ritmo)
 	publicar()
 end
 local function entrarLaco(m) E.modo = "Laco"; E.marcha = m; E.clipe = nil; tocar(m, ritmoDe(lobo:GetAttribute("MultVelocidade") or 1)); publicar() end
-local function entrarParado(fade) E.modo = "Parado"; E.marcha = nil; E.clipe = nil; tocar("Repouso", 1 / esc(), fade); publicar() end
+local function entrarParado(fade) E.modo = "Parado"; E.marcha = nil; E.clipe = nil; tocar("Repouso", 1, fade); publicar() end
 
 local FRENTE_PATAS = 4.5                           -- patas dianteiras ~3,9 a frente do pivo (rest_v41) + folga
 local function temChao(cf)                         -- pivo E a frente das patas dianteiras
@@ -195,7 +198,7 @@ RunService.Heartbeat:Connect(function(dt)
 				local a = angulo(frente, dir)
 				local passo = math.clamp(a, -math.rad(CFG.giro[m]) * dt, math.rad(CFG.giro[m]) * dt)
 				local rot = CFrame.Angles(0, passo, 0) * pv.Rotation
-				local v = Mov.Velocidade[m] * mult
+				local v = Mov.Velocidade[m] * mult * esc()
 				local p = pv.Position + plano(rot.LookVector).Unit * v * dt
 				if moverPara(CFrame.new(p) * rot) then vel = v
 				else lobo:SetAttribute("CtrlBloqueio", "sem chao @" .. string.format("%.1f", agora))
@@ -247,4 +250,4 @@ rede.OnServerEvent:Connect(function(j, acao, a1, a2)
 end)
 
 Players.PlayerRemoving:Connect(function(j) if j == ctrl.jogador then soltar("saiu do jogo") end end)
-pasta:SetAttribute("Controle_Versao", "r4 18/11 (idades: escala no deslocamento e ritmo do clipe; r3 pausa durante PoderAtivo)")
+pasta:SetAttribute("Controle_Versao", "r5 19/11 (velocidade da idade relativa ao tamanho) | r4 18/11 (idades: escala no deslocamento e ritmo do clipe; r3 pausa durante PoderAtivo)")

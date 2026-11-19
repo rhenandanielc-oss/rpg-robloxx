@@ -361,7 +361,7 @@ local function avalanche()
 	local alvo = escolherAlvo()
 	lobo:SetAttribute("PoderAtivo", "Avalanche"); lobo:SetAttribute("AvalancheAlvo", alvo and alvo.Name or "")
 	local pv = lobo:GetPivot(); local frente = plano(pv.LookVector).Unit
-	local corrida = so("AvalancheCorrida", nil, C.vel / 20.357)   -- r4: Corrida com cabeca de investida (v42)
+	local corrida = so("AvalancheCorrida", nil, C.vel / 20.357 / esc())   -- r13c: patas casadas no Pre-adulto/Anciao (alcance do poder igual)   -- r4: Corrida com cabeca de investida (v42)
 	local percorrido, ultimo = 0, pv.Position
 	local motivo = "alcance"
 	local giroAnt = 0
@@ -554,4 +554,4 @@ rede.OnServerEvent:Connect(function(j, acao, a1, a2)
 	end
 end)
 Players.PlayerRemoving:Connect(function(j) if j.UserId == dono() then travado = nil end end)
-pasta:SetAttribute("Kit_Versao", "r13b 19/11 (inimigo nao e obstaculo no Cometa/Avalanche; idades: dano, teto de esquiva, alcance e ativas liberadas; impacto e som da mordida) | r12 17/11 (ataque basico so mordidas, sem garras; garras sincronizadas por marcha v43r5, sem piscar no golpe; piscar + ataque basico andando + Cometa r7 segue o alvo, Avalanche, Instinto Boreal, Pelagem Polar)")
+pasta:SetAttribute("Kit_Versao", "r13c 19/11 (Avalanche: passada na escala da idade) | r13b 19/11 (inimigo nao e obstaculo no Cometa/Avalanche; idades: dano, teto de esquiva, alcance e ativas liberadas; impacto e som da mordida) | r12 17/11 (ataque basico so mordidas, sem garras; garras sincronizadas por marcha v43r5, sem piscar no golpe; piscar + ataque basico andando + Cometa r7 segue o alvo, Avalanche, Instinto Boreal, Pelagem Polar)")

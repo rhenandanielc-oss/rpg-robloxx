@@ -4022,3 +4022,105 @@ Pendente: aprovação visual → export/reimport (GLB por LOD) → JSON → KFS 
 - A nuvem de neve do acerto é branca sobre neve (pouco visível).
 - Place não salvo por mim (Team Create grava as mudanças do Edit).
 - **Vídeo e mudanças APROVADOS pelo usuário (19/11: "Aprovar e commitar").** Os números continuam [PROPOSTA][A TESTAR] do documento.
+
+### 8.73 Velocidade relativa ao tamanho + efeitos na escala da idade (19/11/2026, aprovado)
+**Pedido:** "Ok prossiga, já tem todos os tamanhos" (próximo passo do §8.72: filhote apressado e efeitos de tamanho fixo).
+
+**Alterações (cópias das versões anteriores com sufixo; no Studio em `ServerStorage.LoboArtico_Backups.Antes_r13c_escala_19_11`):**
+- `Controle_Servidor` r5: a velocidade da idade passa a ser **relativa ao tamanho**.
+  - O clipe toca a MultVelocidade (Filhote 1,15 = passada 15% mais rápida).
+  - O deslocamento é o do clipe ×Escala×mult.
+  - Filhote: corrida 9,3 studs/s (= 20,4 × 1,15 × 0,40), patas casadas. Antes: 23,4 studs/s com o clipe a 2,9×.
+  - Sobre a regra do documento, isso é uma interpretação: os 115% valem em relação ao corpo, não em studs/s absolutos.
+- `Kit_Servidor` r13c: a passada da Avalanche acompanha a escala (o alcance do poder não muda).
+- `Kit_Cliente` r5 e `Uivo_Cliente` r7 — os números fixos do Adulto passam a ×Escala:
+  - espinhos (OffsetOsso/BaseLocal/TamanhoCheio);
+  - olhos (tamanho e posição);
+  - rastro do Cometa (tamanho/velocidade das partículas);
+  - estilhaços do pouso (distâncias da coroa, lascas, pó);
+  - nuvem da mordida;
+  - ponto do som do uivo.
+  - As malhas do FX_Boreal (casca, moldes) já encolhem com `Model:ScaleTo`.
+  - Bug achado no 1º Play e corrigido: `BaseLocal` é Vector3, não CFrame.
+
+**Testes em Play (Teste-animacoes):**
+- Filhote andando/trotando/correndo: corrida 9,34 studs/s, sem bloqueio.
+- Uivo no Jovem (0,65): espinhos na crista com 1,19 de tamanho, olhos e linhas no corpo. Console sem erros depois da correção.
+- Avalanche no Pré-adulto (0,85): dano 9,6 (12 × 0,80). Passada e estouro na escala.
+- **Vídeo:** `review/studio_escala/video_escala_idades.mp4` (~48 s, sem som).
+
+**Não testado:** Cometa no Ancião (1,10); efeitos do Cometa em escala diferente de 1. O Cometa só libera a partir do Adulto.
+
+### 8.74 Proposta visual por idade — protótipo no Blender (19/11/2026, aprovado: "Aprovar e seguir")
+**Pedido:** "Também quero diferenças no visual, do bebê-jovem-préadulto-adulto-ancião".
+
+**Protótipo:** `idades_v1.py` sobre `anim_v42b` (não salva o .blend) + `prancha_idades_v1.py` → `review/idades_v1d/prancha_idades.jpg`.
+- Só pose dos ossos (escala por osso, com `inherit_scale = NONE` para não acumular), tinta multiplicada na cor da pelagem e cristais escalados em torno da própria base.
+- **Base real:** filhotes de lobo-ártico nascem escuros (cinza-acastanhado) e clareiam; cabeça grande, focinho curto, orelhas e patas grandes, cauda curta; o jovem é pernalta; o ancião engrossa pescoço/juba e baixa a cabeça.
+- **Fantasia [PROPOSTA]:** os cristais do dorso nascem no Jovem e crescem com a idade.
+
+| Idade | Escala | Proporções (cabeça / pernas / patas / cauda / corpo) | Pelagem (multiplica) | Cristais |
+|---|---|---|---|---|
+| Filhote | 0,40 | 1,30 (focinho 0,90) / 0,80 / 1,32 / 0,60 / 0,85; pescoço 0,75 | 0,30 0,27 0,25 (cinza-acastanhado) | não |
+| Jovem | 0,65 | 1,14 / 1,08 / 1,14 / 0,84 / 0,93 | 0,58 (cinza claro) | 0,45 |
+| Pré-adulto | 0,85 | 1,05 / 1,03 / 1,04 / 0,95 / 0,98 | 0,84 | 0,75 |
+| Adulto | 1,00 | base | base | 1,00 |
+| Ancião | 1,10 | pescoço/juba ×1,16, cabeça 10° mais baixa | 1,00 0,91 0,76 (marfim) | 1,35 |
+
+**Limites do protótipo:**
+- A marca do ombro está pintada na textura: no Filhote ela continua visível, mesmo com a malha de brilho escondida.
+- A escala da cabeça também aumenta a juba.
+
+**Caminho para o Roblox (depois da aprovação):**
+- Para cada idade, aplicar a pose como repouso numa cópia, mantendo os mesmos 37 ossos e nomes.
+- Exportar um GLB por idade, com a textura tingida assada (ou cor no SurfaceAppearance).
+- Os clipes atuais tocam nas 5 malhas: são rotações relativas ao repouso, mas é preciso conferir as alturas das patas por idade.
+- O `Idade_Servidor` troca a malha em vez de só usar `ScaleTo`.
+
+### 8.75 Malhas por idade — export, QA dos clipes e montagem no Studio (19/11/2026)
+**Pedido:** "Aprovar e seguir" (proposta §8.74). Depois: "Sem lagar a tarefa do Opera/Roblox, talvez as renderizações estejam travando".
+
+**Blender:**
+- `tingir_idades_v1.py`: cor da pelagem por idade, mais clara que o protótipo porque no GLB pesava mais.
+  - Filhote 0,46/0,42/0,39; Jovem 0,70; Pré-adulto 0,88; Ancião 1,00/0,95/0,86.
+- `exportar_idades_v1.py` → `idades_v1/export/CR_LoboArtico_<Idade>.glb` (+ .blend e JSON):
+  - proporções aplicadas como repouso, com os mesmos 37 ossos e as mesmas orientações;
+  - patas no chão, cristais na escala da idade;
+  - Filhote sem `LOW_Marca`;
+  - GLB sem animações (não cria RBX_ANIMSAVES).
+- `qa_idades_v1.py`: 19 clipes do jogo em cada idade.
+  - **r1:** perna curta = pata afundando ao andar (−0,32).
+  - **r2:** a perna inteira proporcional. Deitar e sentar ainda afundavam o filhote (−0,78) e faziam o jovem flutuar (+0,25).
+  - **r3 (final):** pernas com o comprimento do Adulto em todas as idades. A idade aparece na cabeça, corpo (curto/gordinho no Filhote, magro no Jovem), patas largas, cauda, pescoço, pelagem e cristais.
+  - Ancião: pescoço 1,10 e cabeça no repouso normal. Girar o repouso mudaria a convenção dos clipes.
+  - **Resultado:** o pior quadro de cada idade fica dentro do próprio Adulto (−0,233 no Deitar). O Filhote sentado afunda −0,185, o que dá 0,07 stud na escala 0,40.
+  - Prancha: `review/idades_qa/prancha_malhas_idades.jpg`.
+
+**Para não pesar o PC:**
+- `blender_leve.ps1`: Blender em prioridade Idle, `-t 2`, janela oculta.
+- Renders de revisão em Cycles CPU (sem GPU, que o Studio e o Opera usam). O `nice` do Git Bash não baixava a prioridade no Windows.
+
+**Studio:**
+- O usuário importou os 5 GLB; todos entraram como `Scene`. Identificados pelas medidas:
+  - Filhote: sem Marca;
+  - Jovem, Pré-adulto e Ancião: altura dos cristais 0,81 / 1,13 / 1,90;
+  - Adulto: igual ao atual.
+- `studio/montar_idades_v1.luau`:
+  - `ServerStorage.LoboArtico_Idades.{Adulto, Filhote, Jovem, PreAdulto, Anciao}` com as MeshParts LOW_*, posição relativa à RootPart e a tabela de repouso dos ossos;
+  - SurfaceAppearance sem metal e com a máscara de emissão do Uivo (103482067734616) copiada;
+  - os imports originais foram guardados em `ServerStorage.Import_CR_LoboArtico_*`; nada apagado.
+- `Idade_Servidor` r2: troca a malha e o repouso dos ossos na escala do Adulto, depois aplica `ScaleTo`.
+- `Kit_Cliente` r6 e `Uivo_Cliente` r8: pegam a SurfaceAppearance da LOW_Corpo nova.
+- Cópias: `_r1`, `_r5`, `_r7` e `ServerStorage.LoboArtico_Backups.Antes_idades_malha_19_11`.
+
+**Pendente:** testar a troca em Play. Não foi feito porque o Studio do Lobo Ancestral estava em Play (dois Plays juntos já derrubaram a placa de vídeo).
+
+**Play (usuário: "Pode fazer já", com dois outros Studios em Play; teste curto, captura a 10 q/s):**
+- 1º Play: os imports recém-enviados ainda estavam sendo processados pelo Roblox ("Asset content representation is being generated").
+- **Bug achado no 1º Play:** as MeshParts trocadas sumiam.
+  - Cada peça pende da RootPart por um Motor6D, e o do clone apontava para a RootPart do import guardado: a peça caía no vazio.
+  - **`Idade_Servidor` r2b** religa o Motor6D na RootPart do lobo (C0 = posição relativa guardada).
+- 2º Play: as 5 trocas OK (Filhote 4 peças, demais 5), malhas visíveis e animando. Filhote andou, trotou e correu; console sem erros.
+- **Vídeo:** `review/studio_idades_malha/video_idades_malha.mp4` (~40 s).
+- **Observado:** no Roblox, Filhote e Jovem saem mais escuros que no Blender (sem a curva AgX). Ajustar a tinta se o usuário quiser.
+- **APROVADO pelo usuário (19/11: "Aprovar e commitar")**, junto com §8.73 (velocidade relativa ao tamanho e efeitos na escala).

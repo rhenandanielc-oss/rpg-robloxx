@@ -1,3 +1,5 @@
+-- r6 (19/11): corpoSA acompanha a troca de malha por idade. Copia da r5: Kit_Cliente_r5.client.luau.
+-- r5 (19/11): efeitos na escala da idade. Copia da r4: Kit_Cliente_r4.client.luau.
 -- Kit_Cliente r4 (18/11: som e impacto da mordida; r3 ataque basico andando; r2 E4) (Script com RunContext = Client, Workspace.Teste_LoboArtico) - comandos e efeitos do KIT do Lobo Artico.
 -- So manda pedidos (o Kit_Servidor decide tudo) e desenha efeitos. Regra do usuario: efeitos NO CORPO, nada flutuando
 -- em volta do lobo. Fora do corpo so o que e do ALVO (marca, pegadas, deteccao) e o estouro curto do impacto.
@@ -108,6 +110,12 @@ end
 local casca = Instance.new("Highlight"); casca.Name = "Casca_Kit"; casca.Adornee = lobo; casca.Enabled = false
 casca.DepthMode = Enum.HighlightDepthMode.Occluded; casca.OutlineTransparency = 1; casca.Parent = lobo
 local corpoSA = (lobo:FindFirstChild("LOW_Corpo", true) or Instance.new("Part")):FindFirstChildOfClass("SurfaceAppearance")
+-- troca de malha por idade (Idade_Servidor r2): a LOW_Corpo nova traz outra SurfaceAppearance
+lobo.ChildAdded:Connect(function(c)
+	if c.Name ~= "LOW_Corpo" then return end
+	local sa = c:FindFirstChildOfClass("SurfaceAppearance") or c:WaitForChild("SurfaceAppearance", 5)
+	if sa then corpoSA = sa; end
+end)
 local fxPasta = lobo:WaitForChild("FX_Boreal", 10)
 local espinhos = {}
 if fxPasta then
@@ -148,6 +156,18 @@ local function emissor(tam, vida, taxa, tex)
 end
 local rastroLascas = emissor(0.8, 1.2, 160, SPRITE)          -- r2 (teste E4 no Studio): rastro estava ralo
 local rastroPo = emissor(0.25, 1.0, 300, "rbxasset://textures/particles/sparkles_main.dds")
+-- r7/r5 (19/11, idades): efeitos acompanham Escala (Idade_Servidor). As pecas do FX_Boreal ja encolhem com Model:ScaleTo,
+-- mas os atributos dos espinhos (OffsetOsso/BaseLocal/TamanhoCheio), olhos e particulas sao numeros fixos do Adulto.
+local function escLobo() return lobo:GetAttribute("Escala") or 1 end
+local function escCF(cf, e) if typeof(cf) == "Vector3" then return cf * e end; return CFrame.new(cf.Position * e) * cf.Rotation end   -- BaseLocal e Vector3
+local function escalarRastro()
+	local e = escLobo()
+	for _, par in ipairs({{rastroLascas, 0.8}, {rastroPo, 0.25}}) do
+		par[1].Size = NumberSequence.new({NumberSequenceKeypoint.new(0, par[2] * e), NumberSequenceKeypoint.new(1, par[2] * 0.15 * e)})
+		par[1].Speed = NumberRange.new(1.5 * e, 5 * e)
+	end
+end
+lobo:GetAttributeChangedSignal("Escala"):Connect(escalarRastro); escalarRastro()
 local function rastro(on) rastroLascas.Enabled = on; rastroPo.Enabled = on end
 -- pouso: coroa + lascas + crosta (tudo local e curto; some sozinho)
 local rpPouso = RaycastParams.new(); rpPouso.FilterType = Enum.RaycastFilterType.Exclude
@@ -159,6 +179,7 @@ end
 local function estilhacos(centro, raio, frente, escala)
 	if not moldes then return end
 	escala = escala or 1
+	local ee = escLobo()          -- r5: distancias e particulas na escala da idade (os moldes ja encolhem com o modelo)
 	local fx = Instance.new("Folder"); fx.Name = "Estilhacos_Gelo_Cliente"; fx.Parent = workspace
 	local up = Vector3.yAxis
 	frente = (frente and frente.Magnitude > 0.1) and Vector3.new(frente.X, 0, frente.Z).Unit or Vector3.zAxis
@@ -171,7 +192,7 @@ local function estilhacos(centro, raio, frente, escala)
 		local n = math.floor(an[3] * escala + 0.5)
 		for k = 1, n do
 			local ang = 2 * math.pi * (k + (math.random() - 0.5) * 0.6) / n
-			local d = (lado * math.cos(ang) * an[1] + frente * math.sin(ang) * an[2]) * escala * (0.92 + math.random() * 0.2)
+			local d = (lado * math.cos(ang) * an[1] + frente * math.sin(ang) * an[2]) * escala * ee * (0.92 + math.random() * 0.2)
 			local fora = d.Unit
 			local h = an[4] * escala * (0.55 + math.random() * 0.45)
 			local inc = (0.45 + math.random() * 0.4 + 0.25 * (ia - 1)) * 0.6
@@ -195,14 +216,14 @@ local function estilhacos(centro, raio, frente, escala)
 		local dir = (lado * math.cos(ang) + frente * math.sin(ang) * 1.3).Unit
 		local s = 0.15 + math.random() * 0.3
 		m.Size = m.Size * s * escala; m.Transparency = 0.1
-		m.CFrame = CFrame.new(c0 + dir * (1 + math.random() * 1.5) + up * 0.6) * CFrame.Angles(math.random() * 6, math.random() * 6, 0)
+		m.CFrame = CFrame.new(c0 + (dir * (1 + math.random() * 1.5) + up * 0.6) * ee) * CFrame.Angles(math.random() * 6, math.random() * 6, 0)
 		m.Parent = fx
-		table.insert(voando, {m = m, v = dir * (9 + math.random() * 10) + up * (6 + math.random() * 9), w = Vector3.new(math.random() * 8 - 4, math.random() * 8 - 4, 0)})
+		table.insert(voando, {m = m, v = (dir * (9 + math.random() * 10) + up * (6 + math.random() * 9)) * math.sqrt(ee), w = Vector3.new(math.random() * 8 - 4, math.random() * 8 - 4, 0)})
 	end
 	local at = Instance.new("Attachment"); at.WorldPosition = c0 + up * 0.5; at.Parent = workspace.Terrain
 	local po = Instance.new("ParticleEmitter"); po.Texture = "rbxasset://textures/particles/sparkles_main.dds"; po.Color = ColorSequence.new(GELO)
-	po.Size = NumberSequence.new({NumberSequenceKeypoint.new(0, 0.3), NumberSequenceKeypoint.new(1, 0)}); po.Lifetime = NumberRange.new(0.4, 0.9)
-	po.Speed = NumberRange.new(8, 18); po.SpreadAngle = Vector2.new(80, 80); po.EmissionDirection = Enum.NormalId.Top; po.Drag = 3
+	po.Size = NumberSequence.new({NumberSequenceKeypoint.new(0, 0.3 * ee), NumberSequenceKeypoint.new(1, 0)}); po.Lifetime = NumberRange.new(0.4, 0.9)
+	po.Speed = NumberRange.new(8 * ee, 18 * ee); po.SpreadAngle = Vector2.new(80, 80); po.EmissionDirection = Enum.NormalId.Top; po.Drag = 3
 	po.Acceleration = Vector3.new(0, -20, 0); po.LightEmission = 0.6; po.Rate = 0; po.Parent = at; po:Emit(math.floor(90 * escala))
 	local t0 = os.clock()
 	local con; con = RunService.Heartbeat:Connect(function(dt)
@@ -277,15 +298,16 @@ RunService:BindToRenderStep("Kit_Lobo_Efeitos", Enum.RenderPriority.Last.Value, 
 		elseif estado.fimEspinho then s = 1 - math.clamp((os.clock() - estado.fimEspinho) / 0.8, 0, 1); if s <= 0 then estado.fimEspinho = nil end end
 		if corpoSA and (s > 0 or estado.poder) then corpoSA.EmissiveStrength = 12 * s end
 		for _, o in ipairs(olhos) do
-			if s < 0.02 then o.p.Transparency = 1 else o.p.CFrame = o.b.TransformedWorldCFrame * CFrame.new(o.dx, 0, 0); o.p.Transparency = 1 - 0.9 * s end
+			if s < 0.02 then o.p.Transparency = 1 else local ee = escLobo(); o.p.Size = Vector3.new(0.14, 0.14, 0.14) * ee; o.p.CFrame = o.b.TransformedWorldCFrame * CFrame.new(o.dx * ee, 0, 0); o.p.Transparency = 1 - 0.9 * s end
 		end
 		for _, e in ipairs(espinhos) do
 			if s < 0.02 or not e.b then
 				if e.p.Transparency ~= 1 and not uivoAtivo() then e.p.Transparency = 1 end
 			else
-				local cheio = e.b.TransformedWorldCFrame * e.off
-				local base = cheio * e.base
-				e.p.Size = e.cheio * s; e.p.CFrame = CFrame.new(base + (cheio.Position - base) * s) * cheio.Rotation
+				local ee = escLobo()
+				local cheio = e.b.TransformedWorldCFrame * escCF(e.off, ee)
+				local base = cheio * escCF(e.base, ee)
+				e.p.Size = e.cheio * ee * s; e.p.CFrame = CFrame.new(base + (cheio.Position - base) * s) * cheio.Rotation
 				e.p.Transparency = 0.18
 			end
 		end
@@ -330,7 +352,8 @@ fxRede.OnClientEvent:Connect(function(tipo, a, b, c, d)
 		base.Transparency = 1; base.Size = Vector3.new(0.2, 0.2, 0.2); base.Position = p; base.Parent = workspace
 		local pe = Instance.new("ParticleEmitter")
 		pe.Texture = "rbxasset://textures/particles/smoke_main.dds"; pe.Color = ColorSequence.new(Color3.fromRGB(235, 245, 255))
-		pe.Size = NumberSequence.new({NumberSequenceKeypoint.new(0, 0.5), NumberSequenceKeypoint.new(1, 1.6)})
+		local ee = escLobo()
+		pe.Size = NumberSequence.new({NumberSequenceKeypoint.new(0, 0.5 * ee), NumberSequenceKeypoint.new(1, 1.6 * ee)})
 		pe.Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0.35), NumberSequenceKeypoint.new(1, 1)})
 		pe.Lifetime = NumberRange.new(0.35, 0.6); pe.Speed = NumberRange.new(3, 6); pe.SpreadAngle = Vector2.new(70, 70)
 		pe.Drag = 5; pe.Rate = 0; pe.Parent = base

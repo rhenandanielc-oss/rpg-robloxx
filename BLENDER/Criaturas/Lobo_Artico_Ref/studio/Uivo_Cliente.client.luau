@@ -1,3 +1,5 @@
+-- r8 (19/11): corpoSA acompanha a troca de malha por idade. Copia da r7: Uivo_Cliente_r7.client.luau.
+-- r7 (19/11): efeitos na escala da idade. Copia da r6: Uivo_Cliente_r6.client.luau.
 -- Uivo_Cliente (Script com RunContext = Client, Workspace.Teste_LoboArtico) - efeitos do UIVO BOREAL (r3, 16/11/2026).
 -- So cosmetico: le os atributos do Uivo_Servidor e nunca decide nada.
 -- r3 segue REFERENCIAS_PODERES_E_EFEITOS.md v5.2 §5.1/§5.3 (decisoes do usuario de 16/11):
@@ -40,7 +42,13 @@ local function ponto(pai, nome, pos)
 	b.Name = nome; b.CFrame = CFrame.new(pos); b.Parent = pai
 	return b
 end
+-- r7/r5 (19/11, idades): efeitos acompanham Escala (Idade_Servidor). As pecas do FX_Boreal ja encolhem com Model:ScaleTo,
+-- mas os atributos dos espinhos (OffsetOsso/BaseLocal/TamanhoCheio), olhos e particulas sao numeros fixos do Adulto.
+local function escLobo() return lobo:GetAttribute("Escala") or 1 end
+local function escCF(cf, e) if typeof(cf) == "Vector3" then return cf * e end; return CFrame.new(cf.Position * e) * cf.Rotation end   -- BaseLocal e Vector3
 local pNariz = ponto(cab, "FX_Nariz", Vector3.new(0, 1.565, 0))
+lobo:GetAttributeChangedSignal("Escala"):Connect(function() pNariz.CFrame = CFrame.new(0, 1.565 * escLobo(), 0) end)
+pNariz.CFrame = CFrame.new(0, 1.565 * escLobo(), 0)
 -- limpa o que a r2 deixou (nevoa da boca e luz do ombro) caso exista
 for _, n in ipairs({"FX_Boca", "FX_Marca"}) do local b = lobo:FindFirstChild(n, true); if b then b:Destroy() end end
 
@@ -92,6 +100,12 @@ end
 local corpoSA = (lobo:FindFirstChild("LOW_Corpo", true) or Instance.new("Part")):FindFirstChildOfClass("SurfaceAppearance")
 local TINTA = Color3.fromRGB(60, 160, 255)
 if corpoSA then corpoSA.EmissiveStrength = 0; corpoSA.EmissiveTint = TINTA end
+-- troca de malha por idade (Idade_Servidor r2): a LOW_Corpo nova traz outra SurfaceAppearance
+lobo.ChildAdded:Connect(function(c)
+	if c.Name ~= "LOW_Corpo" then return end
+	local sa = c:FindFirstChildOfClass("SurfaceAppearance") or c:WaitForChild("SurfaceAppearance", 5)
+	if sa then corpoSA = sa; corpoSA.EmissiveTint = TINTA; corpoSA.EmissiveStrength = 0; end
+end)
 local faixas = {}       -- (r5: sem neve em orbita)
 local linhasFx = {}     -- (r5: sem fitas soltas)
 
@@ -186,9 +200,10 @@ RunService.RenderStepped:Connect(function()
 	s = s * math.clamp(resta / 0.8, 0, 1)
 	for _, e in ipairs(espinhos) do
 		if s < 0.02 or not e.b then e.p.Transparency = 1 else
-			local cheio = e.b.TransformedWorldCFrame * e.off
-			local base = cheio * e.base
-			e.p.Size = e.cheio * s
+			local ee = escLobo()
+			local cheio = e.b.TransformedWorldCFrame * escCF(e.off, ee)
+			local base = cheio * escCF(e.base, ee)
+			e.p.Size = e.cheio * ee * s
 			e.p.CFrame = CFrame.new(base + (cheio.Position - base) * s) * cheio.Rotation
 			e.p.Transparency = 0.18
 		end
@@ -196,7 +211,8 @@ RunService.RenderStepped:Connect(function()
 	-- olhos
 	for _, o in ipairs(olhos) do
 		local cf = o.b.TransformedWorldCFrame
-		o.p.CFrame = cf * CFrame.new(o.dx, 0, 0)
+		local ee = escLobo(); o.p.Size = Vector3.new(0.14, 0.14, 0.14) * ee
+		o.p.CFrame = cf * CFrame.new(o.dx * ee, 0, 0)
 		o.p.Transparency = 1 - env * (0.55 + 0.35 * pico)
 	end
 	-- linhas do corpo: emissao respira (1,5 s) e sobe no pico do uivo; fade-in 0,6 s / fade-out 1,5 s
