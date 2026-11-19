@@ -341,6 +341,13 @@ Três gerações, nenhuma aprovada artisticamente pelo criador:
 - Evidência: `review/O1_1711/Crocodilo_O1_Olhos_Studio.mp4`, `folha_video_studio.jpg`, `testes_O1_studio_play.txt`.
 - Não testado: celular, vários jogadores, câmera montada. No ângulo de jogo o olho quase não aparece (é pequeno).
 
+**19/11/2026 — O2: olhar definido pelo servidor nos poderes (Crocodilo-testes). APROVADO pelo usuário em 19/11/2026 ("Aprovar").**
+- `studio/PoderesTeste.luau`: `olharPara` / `seguirOlhar` (atributo `AlvoOlhar`, 10 Hz) — Emboscada: fixa a presa no instante da detecção; Agarrão: alvo do bote e, depois, o preso; Giro (encadeado): o preso; Giro de Emboscada: ponto de pouso (chão + 1). `cancelar` limpa o atributo (o cliente volta a escolher sozinho). Só visual; dano, alcance e decisões inalterados.
+- Aplicado por patch com âncoras únicas, compilação conferida; backup `ServerStorage.PoderesTeste_ANTES_O2_2026-11-19`. Place salvo. O arquivo local foi igualado ao do Studio (33.676 bytes).
+- Testes em Play (servidor): emboscada no canal → `AlvoOlhar` na presa aos 4,1 s (detecção), segue o boneco no bote, no contato e nos 3,5 s de sustentação, volta a nil no fim; agarrão em terra + Giro encadeado → alvo preso o tempo todo, nil no fim; Giro de Emboscada (raso, z −522) → (−300, 22, −550) = centro do pouso desde o início, nil no fim (8,35 s).
+- Cliente: com o preso na boca o alvo fica a 58–105° do eixo de cada olho; os dois globos giram até o limite de 22° na direção dele (o crocodilo não consegue "olhar" para dentro da própria boca) — comportamento esperado.
+- Não testado: vídeo, celular, vários jogadores.
+
 ## 6. Pendências
 1. **Decisões do criador:**
    - **conflito do agarrão PvP** (só empurra × agarrão mais longo interrompível por aliados);

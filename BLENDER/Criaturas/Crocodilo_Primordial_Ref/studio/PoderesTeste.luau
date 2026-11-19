@@ -78,6 +78,21 @@ end
 local function naAltura(cf, y) return CFrame.new(cf.X, y, cf.Z) * cf.Rotation end
 local function centro(a) local r = a:FindFirstChild("HumanoidRootPart") or a.PrimaryPart; return r and r.Position end
 
+-- O2 (17/11): o SERVIDOR diz para onde os olhos olham (atributo AlvoOlhar, Vector3; nil = o cliente escolhe sozinho).
+-- So visual: o OlhosCrocodilo_Cliente gira os globos. Atualiza a 10 Hz (nao a cada quadro) para poupar rede.
+-- Emboscada = presa detectada; Agarrao = alvo ate o contato e o alvo preso; Giro = alvo preso; Giro de Emboscada = pouso.
+local function olharPara(p) modelo:SetAttribute("AlvoOlhar", p) end
+local function seguirOlhar(g, fonte)                   -- fonte() -> Vector3 ou nil; para sozinho no fim do poder
+	local acum = 1
+	olharPara(fonte())
+	table.insert(est.cons, RS.Heartbeat:Connect(function(dt)
+		if est.gen ~= g then return end
+		acum += dt; if acum < 0.1 then return end; acum = 0
+		olharPara(fonte())
+	end))
+end
+local function olharAlvo(a) return function() local p = a and a.Parent and centro(a); return p and p + Vector3.new(0, 1, 0) end end
+
 -- solta o alvo (sempre seguro de chamar): volta ao chao no ponto atual, marca liberado
 local function soltar(motivo)
 	local a = est.alvo; est.alvo = nil
@@ -110,8 +125,10 @@ function M.cancelar(motivo)
 	T.parar()
 	local dy = (modelo:GetPivot().Position - BASE.Position).Magnitude
 	moverPivo(BASE, dy > 0.05 and 0.4 or 0)               -- volta a altura normal sem salto
+	--                                   -- profundidade/posicao de teste voltam ao normal
 	est.poder = nil; est.fase = nil
 	modelo:SetAttribute("Submerso", false); modelo:SetAttribute("Movendo", false); modelo:SetAttribute("Giro", false); modelo:SetAttribute("CaudaVarre", nil)
+	olharPara(nil)                                        -- O2: devolve o olhar ao cliente
 	if modelo:IsDescendantOf(workspace) then T.tocar(est.naAgua and "Crocodilo_Espreita" or "Crocodilo_Repouso", 0.2) end
 	return motivo
 end
@@ -168,6 +185,7 @@ function M.agarrao(alvo, cena, opcoes)
 	opcoes = opcoes or {}
 	local g = iniciar("Agarrao", opcoes.emboscada); if not g then return "ocupado" end
 	if not alvoValido(alvo) then M.cancelar("alvo_invalido"); return "alvo_invalido" end
+	seguirOlhar(g, function() return olharAlvo(est.alvo or alvo)() end)   -- O2: olha o alvo do bote e, depois, o preso
 	local clipe
 	if cena == "agua" and opcoes.emboscada then
 		-- P4b: vem SUBMERSO da Submersao: sobe rapido ate a espreita e continua avancando (impulso que se apaga no bote)
@@ -264,7 +282,7 @@ function M.giro()
 	local alvoAntes = preso
 	if preso then est.gen += 1; limparCons(); est.poder = nil end   -- encadeia: o alvo continua preso
 	local g = iniciar("Giro", preso ~= nil); if not g then return "ocupado" end   -- encadeado: fica na altura da pegada
-	est.alvo = alvoAntes; if est.alvo then vigiaAlvo(g) end
+	est.alvo = alvoAntes; if est.alvo then vigiaAlvo(g); seguirOlhar(g, function() return olharAlvo(est.alvo)() end) end   -- O2
 	local f = T.tocar("Crocodilo_RolarDaMorte", 0.15); local voltas = 0
 	log("GIRO comeca (alvo preso: %s)", est.alvo and est.alvo.Name or "nenhum")
 	table.insert(est.cons, f.DidLoop:Connect(function()
@@ -337,7 +355,7 @@ function M.submersao(meio)
 				energia -= C.energia_s * dt
 				if energia <= 0 then motivo = "sem_energia"; break end
 				local presa = presaAFrente(cf)
-				if presa then motivo = "presa_detectada"; est.presa = presa; est.presaDist = select(2, presaAFrente(cf)); break end
+				if presa then motivo = "presa_detectada"; est.presa = presa; est.presaDist = select(2, presaAFrente(cf)); olharPara(olharAlvo(presa)()); break end   -- O2: fixa a presa
 				local passo = math.min(C.velocidade * dt, C.distancia - andou)
 				cf = naAltura(cf + cf.LookVector * passo, ySubmerso(s2)); modelo:PivotTo(cf); andou += passo
 				BASE = naAltura(cf, yEspreita(s2))                   -- cancelar aqui = sobe no lugar, sem voltar
@@ -399,6 +417,7 @@ function M.giroEmboscada()
 	local dist = G.distancia; local alvoXZ = cf0.Position + Vector3.new(cf0.LookVector.X, 0, cf0.LookVector.Z).Unit * dist
 	local yPouso = math.max(chaoEm(alvoXZ), chaoEm(alvoXZ + cf0.LookVector * C_.cabeca * 0.6) - 0.6) + C_.pivo
 	local destino = naAltura(cf0.Rotation + alvoXZ, yPouso)
+	do local cen = destino.Position + destino.LookVector * G.centro_frente; olharPara(Vector3.new(cen.X, chaoEm(cen) + 1, cen.Z)) end   -- O2: olha o pouso
 	log("GIRO %s (x%.1f%s): de y %.2f ate (%.1f, %.2f, %.1f), %.0f studs", modo, mult, bonus > 1 and ", +50% em distraido" or "", cf0.Y, destino.X, destino.Y, destino.Z, dist)
 	task.spawn(function()
 		-- antes: agua ondula e escurece, bolhas sobem (silencioso)
