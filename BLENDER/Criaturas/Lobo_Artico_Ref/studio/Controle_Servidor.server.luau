@@ -29,6 +29,10 @@ local CFG = {
 	pacoteVelho = 0.6, pacotesPorSeg = 30,
 	fade = 0.25,
 }
+-- r4 (18/11, idades): Escala (Idade_Servidor) encolhe/aumenta o corpo; o deslocamento dos clipes de transicao e o
+-- apoio a frente acompanham a escala e o clipe toca a MultVelocidade / Escala (patas casadas com a velocidade do documento).
+local function esc() return lobo:GetAttribute("Escala") or 1 end
+local function ritmoDe(mult) return mult / esc() end
 local ORDEM = {"Andar", "Trote", "Corrida"}
 local SUBIR = {Andar = "AndarParaTrote", Trote = "TroteParaCorrida"}
 local DESCER = {Trote = "TroteParaAndar", Corrida = "CorridaParaTrote"}
@@ -94,7 +98,8 @@ local function curva(nome, t)                     -- posicao/giro do clipe no te
 	local c = Mov.Curvas[nome]; local q = math.clamp(t * Mov.Fps, 0, #c - 1)
 	local i = math.floor(q); local f = q - i
 	local a = c[i + 1]; local b = c[math.min(i + 2, #c)]
-	return a[1] + (b[1] - a[1]) * f, a[2] + (b[2] - a[2]) * f, a[3] + (b[3] - a[3]) * f
+	local e = esc()
+	return (a[1] + (b[1] - a[1]) * f) * e, (a[2] + (b[2] - a[2]) * f) * e, a[3] + (b[3] - a[3]) * f
 end
 
 local function iniciarClipe(nome, destino, ritmo)
@@ -103,12 +108,12 @@ local function iniciarClipe(nome, destino, ritmo)
 	tocar(nome, ritmo, 0.15).TimePosition = 0
 	publicar()
 end
-local function entrarLaco(m) E.modo = "Laco"; E.marcha = m; E.clipe = nil; tocar(m, lobo:GetAttribute("MultVelocidade") or 1); publicar() end
-local function entrarParado(fade) E.modo = "Parado"; E.marcha = nil; E.clipe = nil; tocar("Repouso", 1, fade); publicar() end
+local function entrarLaco(m) E.modo = "Laco"; E.marcha = m; E.clipe = nil; tocar(m, ritmoDe(lobo:GetAttribute("MultVelocidade") or 1)); publicar() end
+local function entrarParado(fade) E.modo = "Parado"; E.marcha = nil; E.clipe = nil; tocar("Repouso", 1 / esc(), fade); publicar() end
 
 local FRENTE_PATAS = 4.5                           -- patas dianteiras ~3,9 a frente do pivo (rest_v41) + folga
 local function temChao(cf)                         -- pivo E a frente das patas dianteiras
-	return chao(cf.Position) ~= nil and chao(cf.Position + plano(cf.LookVector).Unit * FRENTE_PATAS) ~= nil
+	return chao(cf.Position) ~= nil and chao(cf.Position + plano(cf.LookVector).Unit * FRENTE_PATAS * esc()) ~= nil
 end
 local function moverPara(cf, soPivo)              -- aplica com o chao; false se nao ha chao (nao anda no ar)
 	local y = chao(cf.Position)
@@ -149,7 +154,7 @@ RunService.Heartbeat:Connect(function(dt)
 
 	if E.modo == "Clipe" then
 		local f = faixas[E.clipe]
-		f:AdjustSpeed((E.clipe == "VirarEsquerda" or E.clipe == "VirarDireita") and 1 or mult)
+		f:AdjustSpeed((E.clipe == "VirarEsquerda" or E.clipe == "VirarDireita") and 1 or ritmoDe(mult))
 		local len = (#Mov.Curvas[E.clipe] - 1) / Mov.Fps
 		local t = f.IsPlaying and f.TimePosition or len
 		local dx, dz, g = curva(E.clipe, t)
@@ -170,7 +175,7 @@ RunService.Heartbeat:Connect(function(dt)
 				-- r2: sem chao a frente fica parado (antes alternava Parado/Andar a cada quadro na borda)
 				lobo:SetAttribute("CtrlBloqueio", "sem chao a frente @" .. string.format("%.1f", agora))
 			elseif pedida == "Corrida" then
-				iniciarClipe("Arrancada", "Corrida", mult)
+				iniciarClipe("Arrancada", "Corrida", ritmoDe(mult))
 			else
 				entrarLaco("Andar")
 			end
@@ -178,15 +183,15 @@ RunService.Heartbeat:Connect(function(dt)
 	elseif E.modo == "Laco" then
 		local m = E.marcha
 		if dir.Magnitude < 0.1 then
-			if m == "Corrida" then iniciarClipe("Frenagem", nil, mult)
-			elseif m == "Trote" then iniciarClipe("TroteParaAndar", "Andar", mult)
+			if m == "Corrida" then iniciarClipe("Frenagem", nil, ritmoDe(mult))
+			elseif m == "Trote" then iniciarClipe("TroteParaAndar", "Andar", ritmoDe(mult))
 			else entrarParado(0.3) end
 		else
 			local iA, iP = table.find(ORDEM, m), table.find(ORDEM, pedida)
-			if iP > iA and SUBIR[m] then iniciarClipe(SUBIR[m], ORDEM[iA + 1], mult)
-			elseif iP < iA and DESCER[m] then iniciarClipe(DESCER[m], ORDEM[iA - 1], mult)
+			if iP > iA and SUBIR[m] then iniciarClipe(SUBIR[m], ORDEM[iA + 1], ritmoDe(mult))
+			elseif iP < iA and DESCER[m] then iniciarClipe(DESCER[m], ORDEM[iA - 1], ritmoDe(mult))
 			else
-				tocar(m, mult)
+				tocar(m, ritmoDe(mult))
 				local a = angulo(frente, dir)
 				local passo = math.clamp(a, -math.rad(CFG.giro[m]) * dt, math.rad(CFG.giro[m]) * dt)
 				local rot = CFrame.Angles(0, passo, 0) * pv.Rotation
@@ -242,4 +247,4 @@ rede.OnServerEvent:Connect(function(j, acao, a1, a2)
 end)
 
 Players.PlayerRemoving:Connect(function(j) if j == ctrl.jogador then soltar("saiu do jogo") end end)
-pasta:SetAttribute("Controle_Versao", "r3 16/11 (pausa durante PoderAtivo)")
+pasta:SetAttribute("Controle_Versao", "r4 18/11 (idades: escala no deslocamento e ritmo do clipe; r3 pausa durante PoderAtivo)")

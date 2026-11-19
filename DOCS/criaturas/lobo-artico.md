@@ -30,6 +30,17 @@ Ficha criada em 03/11/2026, só com leitura. Nada foi alterado no Studio nem em 
 
 ## 2. Elemento e habilidades
 
+> **Consolidação de 18/11/2026 (§8.72; aprovada pelo usuário em 19/11).** Vale sobre o texto histórico abaixo:
+> - **Elemento:** **Gelo e Ar**, decisão do usuário de 16/11 (`REFERENCIAS_PODERES_E_EFEITOS.md` §0). Ela supera, para os lobos, a regra de "elemento único" de 30/10. Se essa regra também cai para as outras criaturas: [A CONFIRMAR].
+> - **Kit final [PROPOSTA][A TESTAR]:** 3 ativas e 2 passivas (§3 do documento). Todas estão implementadas e testadas no Teste-animacoes:
+>   - **Ativas:** Cometa Glacial (slot 1), Uivo Boreal (slot 2) e Avalanche (slot 3).
+>   - **Passivas:** Instinto Boreal e Pelagem Polar.
+>   - **Ataque básico:** só mordidas, inclusive andando ou correndo.
+> - **Números:** são os do documento, com uma exceção pedida pelo usuário: o Cometa tem alcance de 60 e segue o alvo (r7, 17/11). Os demais valores (velocidade, altura, cone) estão marcados [ENSAIO] no `Kit_Servidor`.
+> - **Idades [PROPOSTA][A TESTAR]:** multiplicadores de `ESTATISTICAS_POR_IDADE.md` no `Idade_Servidor`.
+>   - Por enquanto o modelo Adulto é usado em escala para todas as idades.
+>   - Modelos próprios por idade e o ovo: [PENDENTE].
+
 ### Elemento
 - **[OFICIAL — 30/10/2026]** Cada criatura tem **um único elemento natural**. Não há 2º/3º elemento, alternância nem fusão elemental no sistema atual.
 - **[PENDENTE]** O elemento único do Lobo Ártico **ainda não foi escolhido**.
@@ -3957,3 +3968,57 @@ Pendente: aprovação visual → export/reimport (GLB por LOD) → JSON → KFS 
 - Lição: depois que o Studio reabre a JANELA muda (hwnd novo); a primeira gravação saiu preta por usar a janela antiga — achar o hwnd de novo antes de capturar.
 - Play: Uivo Boreal 2× (recarga 22 s), corpo inteiro em 3/4 e close da cabeça (`review/studio_uivo_e4/corpo`, `cabeca`, folhas, `zoom_uivo_e4.jpg`, vídeo **`review/studio_uivo_e4/video_uivo_boreal_e4.mp4`**). Visto: linhas de gelo acendem no corpo e na pata dianteira com a espiral, olhos azul-gelo, cristais r8l na crista, uivo de boca aberta. Sem erros.
 - **Uivo Boreal com os efeitos E4 APROVADO pelo usuário (17/11).**
+
+### 8.72 Kit consolidado + idades + mordida com som/impacto + vídeo dos poderes (18–19/11/2026)
+**Pedido:** "Prossiga com todos os passos de uma vez e depois eu avalio. Mande um vídeo dos poderes ao finalizar tudo." (e: "sem lagar o Opera e o Roblox").
+
+**Consolidação (§2, nota no topo):**
+- elemento Gelo e Ar (decisão do usuário de 16/11);
+- kit: Cometa Glacial, Uivo Boreal, Avalanche + Instinto Boreal e Pelagem Polar;
+- números do documento [PROPOSTA][A TESTAR].
+
+**Idades — `studio/Idade_Servidor.server.luau` r1 (novo):**
+- O atributo `Idade` do lobo (Filhote/Jovem/PreAdulto/Adulto/Anciao) aplica os multiplicadores de `ESTATISTICAS_POR_IDADE.md`.
+- O modelo Adulto é usado em escala (`Model:ScaleTo`); modelos próprios por idade e o ovo: [PENDENTE].
+- **Grava:** Escala, VidaMax/Vida (proporcional), MultDano, MultDefesa, MultForca, BonusVel_Idade, TetoEsquiva, EnergiaMax, RegenEnergia e Ativas.
+- **Liberação [A CONFIRMAR]:** Filhote nenhuma ativa; Jovem Uivo; Pré-adulto + Avalanche; Adulto/Ancião + Cometa. A ordem é proposta minha.
+
+**Ajustes nos scripts (cópias das versões anteriores com sufixo `_r12`/`_r3`/`_r5`/`_r3`, e no Studio em `ServerStorage.LoboArtico_Backups.Antes_r13_idades_19_11`):**
+- `Controle_Servidor` r4: deslocamento dos clipes de transição e apoio à frente ×Escala; o clipe toca a MultVelocidade/Escala (patas casadas).
+- `Kit_Servidor` r13:
+  - dano ×MultDano, teto de esquiva por idade, focinho/alcance da mordida ×Escala;
+  - recusa "bloqueada na idade";
+  - evento `basico_acerto`.
+- `Kit_Servidor` r13b — **bug antigo corrigido:** o raio de obstáculo do Cometa (e da Avalanche) batia no próprio alvo. O Cometa pousava ~7 studs antes e a explosão (raio 8) não o alcançava. Agora inimigo não conta como obstáculo.
+- `Uivo_Servidor` r6: EnergiaMax/RegenEnergia/TetoEsquiva por idade e bloqueio do Uivo.
+- `Kit_Cliente` r4:
+  - estalo da mordida (sons "Creature Bite" já usados nos dragões, 9125467298/9125466463, mais agudos);
+  - no acerto, pancada surda (9113445183) + nuvem curta de neve e lascas de gelo no ponto da mordida.
+
+**Clipes de garra:** os 8 `LoboArtico_Garra*` saíram de `ReplicatedStorage.Animacoes_LoboArtico` para `ServerStorage.LoboArtico_Backups.Garras_retiradas_19_11` (sem apagar).
+
+**Testes em Play (Teste-animacoes, alvo de ensaio criado só no Play):**
+
+| Caso | Resultado |
+|---|---|
+| 5 idades | escala 0,40/0,65/0,85/1,00/1,10; vida 120/200/300/400/460; vel 1,15/1,10/1,05/1,00/0,90 |
+| Filhote andando/trotando/correndo | 3,5 / 7,7 / 23,4 studs/s, sem bloqueio |
+| Mordida andando | 8 a 11 acertos em 8 s, 10 de dano cada; eventos `basico_acerto` recebidos no cliente |
+| Cometa a 50 studs (r13b) | pousou a 7,4 do alvo, dano 8, alvo atingido (antes da correção: 0) |
+| Avalanche | dano 12 |
+| Uivo | vel 1,20, esquiva 0,30 durante o efeito |
+| Pelagem | Camuflado = true, AlcanceNotarMult 0,6 parado |
+| Instinto | marca no alvo (MarcaBoreal_Fim) |
+| Filhote | Cometa, Avalanche e Uivo recusados |
+| Jovem | Uivo aceito, Avalanche recusada |
+| Energia | máxima 60 (Filhote) e 75 (Jovem) |
+
+- **Vídeo:** `review/studio_poderes/video_poderes_lobo_artico.mp4` (~87 s; capturas de 6–10 q/s para não pesar o PC).
+- **Sem som na captura:** o PrintWindow não grava áudio. O som da mordida está só no código, sem ser ouvido por mim.
+
+**Pendências/riscos:**
+- Filhote a 115% do adulto, com 40% do tamanho: o clipe toca ~2,9× mais rápido (visual apressado). Decidir se a velocidade da idade deve ser relativa ao tamanho.
+- Os efeitos de gelo (espinhos, casca, lascas) têm tamanho fixo e podem ficar grandes no filhote.
+- A nuvem de neve do acerto é branca sobre neve (pouco visível).
+- Place não salvo por mim (Team Create grava as mudanças do Edit).
+- **Vídeo e mudanças APROVADOS pelo usuário (19/11: "Aprovar e commitar").** Os números continuam [PROPOSTA][A TESTAR] do documento.

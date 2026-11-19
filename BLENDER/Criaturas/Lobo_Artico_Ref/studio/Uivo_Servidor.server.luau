@@ -38,8 +38,13 @@ local interromper = pasta:FindFirstChild("Interromper_Uivo") or Instance.new("Bi
 interromper.Name = "Interromper_Uivo"; interromper.Parent = pasta   -- servidor: dano forte / atordoamento
 
 local function agora() return workspace:GetServerTimeNow() end
-local energia = CFG.energiaMax
-lobo:SetAttribute("EnergiaMax", CFG.energiaMax); lobo:SetAttribute("Energia", energia)
+-- r6 (18/11, idades): EnergiaMax, RegenEnergia, TetoEsquiva e Ativas vem do Idade_Servidor (sem ele = Adulto)
+local function eMax() return lobo:GetAttribute("EnergiaMax") or CFG.energiaMax end
+local function regen() return lobo:GetAttribute("RegenEnergia") or CFG.energiaRegen end
+local function tetoE() return math.min(0.35, lobo:GetAttribute("TetoEsquiva") or CFG.tetoEsquiva) end
+local energia = eMax()
+if not lobo:GetAttribute("EnergiaMax") then lobo:SetAttribute("EnergiaMax", CFG.energiaMax) end
+lobo:SetAttribute("Energia", energia)
 lobo:SetAttribute("MultVelocidade", 1); lobo:SetAttribute("ChanceEsquiva", CFG.esquivaBase)
 lobo:SetAttribute("BonusVel_Uivo", 0); lobo:SetAttribute("BonusEsquiva_Uivo", 0)
 lobo:SetAttribute("MultEsquiva", nil)
@@ -148,6 +153,8 @@ end
 local function uivar(origem)
 	local t = agora()
 	if lobo:GetAttribute("Incapacitado") then return recusar("incapacitado") end
+	local at = lobo:GetAttribute("Ativas")
+	if at ~= nil and not string.find("," .. at .. ",", ",Uivo,", 1, true) then return recusar("bloqueado na idade " .. tostring(lobo:GetAttribute("Idade"))) end
 	if lobo:GetAttribute("UivoFase") ~= "" then return recusar("ja uivando") end
 	if lobo:GetAttribute("PoderAtivo") then return recusar("outro poder ativo") end          -- r5 (kit)
 	if (lobo:GetAttribute("VelAtual") or 0) > 0.3 then return recusar("em movimento") end   -- uiva parado (o controlador freia antes)
@@ -204,7 +211,7 @@ end)
 local sortear = pasta:FindFirstChild("SortearEsquiva") or Instance.new("BindableFunction")
 sortear.Name = "SortearEsquiva"; sortear.Parent = pasta
 sortear.OnInvoke = function()
-	return math.random() < math.min(CFG.tetoEsquiva, lobo:GetAttribute("ChanceEsquiva") or CFG.esquivaBase)
+	return math.random() < math.min(tetoE(), lobo:GetAttribute("ChanceEsquiva") or CFG.esquivaBase)
 end
 
 -- r5: lentidao generica e energia compartilhada (para o Kit_Servidor)
@@ -227,15 +234,17 @@ end)
 task.spawn(function()
 	while lobo.Parent do
 		local dt = task.wait(0.25)
-		if energia < CFG.energiaMax then
-			energia = math.min(CFG.energiaMax, energia + CFG.energiaRegen * dt)
+		local mx = eMax()
+		if energia > mx then energia = mx; lobo:SetAttribute("Energia", math.floor(energia))
+		elseif energia < mx then
+			energia = math.min(mx, energia + regen() * dt)
 			lobo:SetAttribute("Energia", math.floor(energia))
 		end
 	end
 end)
 
-pasta:SetAttribute("Uivo_Versao", "Boreal r5 16/11 (bonus somados no Kit, lentidao generica, energia compartilhada)")
+pasta:SetAttribute("Uivo_Versao", "Boreal r6 18/11 (idades: energia, regen, teto, bloqueio) | r5 16/11 (bonus somados no Kit, lentidao generica, energia compartilhada)")
 -- so ensaio: permite zerar/ajustar energia pelo servidor para testar a recusa
 local definir = pasta:FindFirstChild("Ensaio_DefinirEnergia") or Instance.new("BindableEvent")
 definir.Name = "Ensaio_DefinirEnergia"; definir.Parent = pasta
-definir.Event:Connect(function(v) energia = math.clamp(v, 0, CFG.energiaMax); lobo:SetAttribute("Energia", math.floor(energia)) end)
+definir.Event:Connect(function(v) energia = math.clamp(v, 0, eMax()); lobo:SetAttribute("Energia", math.floor(energia)) end)

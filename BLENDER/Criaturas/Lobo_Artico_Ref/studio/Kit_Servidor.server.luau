@@ -1,3 +1,4 @@
+-- r13 18/11: idades (Idade_Servidor) + impacto da mordida. Copia da r12: Kit_Servidor_r12.server.luau.
 -- Kit_Servidor (Script, Workspace.Teste_LoboArtico) - KIT COMPLETO do Lobo Artico / "Lobo Glacial" (16/11/2026).
 -- Usuario: "Prossiga com os poderes, seguindo o documento de poderes, ja faca todos os poderes de uma vez."
 -- Fonte: REFERENCIAS_PODERES_E_EFEITOS.md v5.2 §1 (mira), §3 (kit), §0b (balanceamento), §5.4-5.7 (efeitos).
@@ -50,6 +51,15 @@ local CFG = {
 local rede = pasta:FindFirstChild("Rede_Kit") or Instance.new("RemoteEvent"); rede.Name = "Rede_Kit"; rede.Parent = pasta
 local fx = pasta:FindFirstChild("Kit_FX") or Instance.new("RemoteEvent"); fx.Name = "Kit_FX"; fx.Parent = pasta
 local function agora() return workspace:GetServerTimeNow() end
+-- r13 (18/11, idades [PROPOSTA][A TESTAR], ESTATISTICAS_POR_IDADE.md): o Idade_Servidor grava Escala, MultDano e
+-- TetoEsquiva e a lista Ativas liberadas; aqui o dano, o teto, o focinho e o alcance do golpe acompanham a idade.
+local function esc() return lobo:GetAttribute("Escala") or 1 end
+local function danoBase() return CFG.mordida * (lobo:GetAttribute("MultDano") or 1) end
+local function teto() return math.min(0.35, lobo:GetAttribute("TetoEsquiva") or CFG.tetoEsquiva) end
+local function liberada(nome)
+	local l = lobo:GetAttribute("Ativas"); if l == nil then return true end
+	return string.find("," .. l .. ",", "," .. nome .. ",", 1, true) ~= nil
+end
 local function plano(v) return Vector3.new(v.X, 0, v.Z) end
 local function angulo(a, b) return math.atan2(a.Z * b.X - a.X * b.Z, a.X * b.X + a.Z * b.Z) end   -- + = esquerda
 
@@ -69,9 +79,9 @@ local function recomputar()
 			if k:sub(1, 9) == "BonusVel_" then vel += v elseif k:sub(1, 13) == "BonusEsquiva_" then esq += v end
 		end
 	end
-	lobo:SetAttribute("MultVelocidade", vel); lobo:SetAttribute("ChanceEsquiva", math.min(CFG.tetoEsquiva, esq))
+	lobo:SetAttribute("MultVelocidade", vel); lobo:SetAttribute("ChanceEsquiva", math.min(teto(), esq))
 end
-lobo.AttributeChanged:Connect(function(k) if k:sub(1, 9) == "BonusVel_" or k:sub(1, 13) == "BonusEsquiva_" then recomputar() end end)
+lobo.AttributeChanged:Connect(function(k) if k:sub(1, 9) == "BonusVel_" or k:sub(1, 13) == "BonusEsquiva_" or k == "TetoEsquiva" then recomputar() end end)
 -- Instinto Boreal: nevasca (atributo Nevasca no Workspace no ensaio; no jogo vem do clima da Tundra)
 local function nevasca()
 	local on = workspace:GetAttribute("Nevasca") == true
@@ -179,7 +189,7 @@ local function inimigosEm(centro, raio)
 	end
 	return l
 end
-local function cabeca() return lobo:GetPivot().Position + Vector3.new(0, 4.5, 0) end
+local function cabeca() return lobo:GetPivot().Position + Vector3.new(0, 4.5 * esc(), 0) end
 local function visivel(m)
 	filtro({m})
 	local d = posDe(m) - cabeca()
@@ -242,6 +252,7 @@ local dirCliente, dirT = nil, 0
 local function recusar(poder, motivo) lobo:SetAttribute("KitUltimaRecusa", poder .. ": " .. motivo .. " @" .. string.format("%.2f", agora())); return false end
 local function podeUsar(nome, cfg)
 	local t = agora()
+	if not liberada(nome) then return recusar(nome, "bloqueada na idade " .. tostring(lobo:GetAttribute("Idade"))) end
 	if lobo:GetAttribute("PoderAtivo") then return recusar(nome, "outro poder ativo") end
 	if (lobo:GetAttribute("UivoFase") or "") ~= "" or lobo:GetAttribute("Parado") then return recusar(nome, "uivando") end
 	if lobo:GetAttribute("Incapacitado") then return recusar(nome, "incapacitado") end
@@ -274,7 +285,7 @@ local function cometa()
 	local fr = plano(pv0.LookVector).Unit
 	local d0 = direcaoDesejada(alvo, fr); if d0.Magnitude < 1e-3 then d0 = fr end
 	-- r3: com alvo, pousa 2,5 studs antes (na r2 pousava em cima do inimigo)
-	local dist = math.clamp(alvo and (d0.Magnitude - CFG.focinho - CFG.folgaAlvo) or C.alcance, C.alcanceMin, C.alcance)
+	local dist = math.clamp(alvo and (d0.Magnitude - (CFG.focinho * esc()) - CFG.folgaAlvo) or C.alcance, C.alcanceMin, C.alcance)
 	lobo:SetAttribute("PoderAtivo", "Cometa"); lobo:SetAttribute("CometaFase", "Preparo"); lobo:SetAttribute("CometaAlvo", alvo and alvo.Name or "")
 	-- preparo 0,25 s: vira para a direcao e agacha (inicio do impulso da Arrancada)
 	so("CometaPreparar", 0, (8 / 30) / C.prep)                 -- r4: clipe proprio v42 (8 q esticados para 0,25 s)
@@ -297,7 +308,7 @@ local function cometa()
 		frente = girar(frente, plano(direcaoDesejada(alvo, frente)), C.giro, dt)
 		-- r7: SEGUE O ALVO - o ponto de pouso acompanha o alvo durante o voo (suavizado; teto = alcance)
 		if alvo and alvo.Parent then
-			local resta = (plano(posDe(alvo) - pos)).Magnitude - CFG.focinho - CFG.folgaAlvo
+			local resta = (plano(posDe(alvo) - pos)).Magnitude - (CFG.focinho * esc()) - CFG.folgaAlvo
 			local novo = math.clamp(percorrido + math.max(resta, 0), C.alcanceMin, C.alcance)
 			dist += (novo - dist) * math.min(1, dt * 6)
 			if percorrido >= dist then break end
@@ -313,7 +324,9 @@ local function cometa()
 		-- obstaculo: raio do peito do lobo na direcao do movimento
 		filtro()
 		local de = pos + Vector3.new(0, 3, 0)
-		local hit = workspace:Raycast(de, (nova + Vector3.new(0, 3, 0)) - de + frente * (CFG.focinho + 0.5), rp)
+		local hit = workspace:Raycast(de, (nova + Vector3.new(0, 3, 0)) - de + frente * ((CFG.focinho * esc()) + 0.5), rp)
+		-- r13b (19/11): o proprio inimigo NAO e obstaculo (o raio batia no alvo e o Cometa pousava ~7 studs antes, fora do raio 8)
+		if hit and ehInimigo(modeloAlvo(hit.Instance)) then hit = nil end
 		if hit and not (hit.Instance and hit.Normal.Y > 0.7 and u > 0.6) then
 			fim = Vector3.new(pos.X, (chao(pos) or yRef), pos.Z); motivo = "obstaculo: " .. hit.Instance.Name; break
 		end
@@ -329,7 +342,7 @@ local function cometa()
 	local centro = fim + frente * 3                            -- r5: explosao no peito, nao nas ancas
 	for _, m in ipairs(inimigosEm(centro, C.raio)) do
 		if (plano(posDe(m) - centro)).Magnitude <= C.raio then
-			causarDano(m, CFG.mordida * C.mult, "Gelo"); lentidao(m, C.lent, C.lentDur); table.insert(atingidos, m.Name)
+			causarDano(m, danoBase() * C.mult, "Gelo"); lentidao(m, C.lent, C.lentDur); table.insert(atingidos, m.Name)
 		end
 	end
 	lobo:SetAttribute("CometaAtingidos", table.concat(atingidos, ","))
@@ -363,14 +376,15 @@ local function avalanche()
 		local yF = chao(p + frente * 4.5)
 		if not y or not yF then motivo = "sem chao"; break end
 		filtro()
-		if workspace:Raycast(lobo:GetPivot().Position + Vector3.new(0, 3, 0), frente * (CFG.focinho + 0.5), rp) then motivo = "obstaculo"; break end
+		local hitA = workspace:Raycast(lobo:GetPivot().Position + Vector3.new(0, 3, 0), frente * ((CFG.focinho * esc()) + 0.5), rp)
+		if hitA and not ehInimigo(modeloAlvo(hitA.Instance)) then motivo = "obstaculo"; break end   -- r13b: inimigo nao e parede
 		local inclina = math.clamp(-giroAnt * 0.12, -0.18, 0.18)
 		local np = Vector3.new(p.X, y, p.Z)
 		lobo:PivotTo(CFrame.lookAt(np, np + frente) * CFrame.Angles(0, 0, inclina))
 		lobo:SetAttribute("VelPoder", C.vel)
 		percorrido += C.vel * dt
 		if (np - ultimo).Magnitude >= 1 then table.insert(trilha, {np, agora() + C.trilhaDur}); ultimo = np end
-		if alvo and alvo.Parent and (plano(posDe(alvo) - np)).Magnitude < CFG.focinho + CFG.folgaAlvo + 0.5 then motivo = "chegou no alvo"; break end
+		if alvo and alvo.Parent and (plano(posDe(alvo) - np)).Magnitude < (CFG.focinho * esc()) + CFG.folgaAlvo + 0.5 then motivo = "chegou no alvo"; break end
 	end
 	-- onda conica a frente
 	local pvF = lobo:GetPivot(); local frF = plano(pvF.LookVector).Unit
@@ -379,7 +393,7 @@ local function avalanche()
 	for _, m in ipairs(inimigosEm(pvF.Position, C.coneDist + 2)) do
 		local d = plano(posDe(m) - pvF.Position)
 		if d.Magnitude <= C.coneDist and (d.Magnitude < 1 or math.abs(math.deg(angulo(frF, d.Unit))) <= C.coneAng) then
-			causarDano(m, CFG.mordida * C.mult, "Gelo"); lentidao(m, C.lent, C.lentDur); table.insert(atingidos, m.Name)
+			causarDano(m, danoBase() * C.mult, "Gelo"); lentidao(m, C.lent, C.lentDur); table.insert(atingidos, m.Name)
 		end
 	end
 	lobo:SetAttribute("AvalancheMotivo", motivo); lobo:SetAttribute("AvalancheAtingidos", table.concat(atingidos, ","))
@@ -494,16 +508,18 @@ local function basico()
 	task.delay(atraso + contato, function()
 		if lobo:GetAttribute("PoderAtivo") then return end
 		local pv = lobo:GetPivot(); local fr = plano(pv.LookVector).Unit
-		local focinho = pv.Position + fr * CFG.focinho
+		local focinho = pv.Position + fr * (CFG.focinho * esc())
 		local melhor, dm = nil, math.huge
-		for _, m in ipairs(inimigosEm(focinho, B.alcance + 4)) do
+		local alc = B.alcance * esc()
+		for _, m in ipairs(inimigosEm(focinho, alc + 4)) do
 			local d = plano(posDe(m) - focinho)
 			local ang = math.abs(math.deg(angulo(fr, plano(posDe(m) - pv.Position).Unit)))
-			if d.Magnitude <= B.alcance + 1.5 and ang <= B.cone / 2 and d.Magnitude < dm then melhor, dm = m, d.Magnitude end
+			if d.Magnitude <= alc + 1.5 and ang <= B.cone / 2 and d.Magnitude < dm then melhor, dm = m, d.Magnitude end
 		end
 		if melhor then
 			local mult = nome:sub(1, 5) == "Garra" and B.danoGarra or B.danoMordida
-			causarDano(melhor, CFG.mordida * mult, "Fisico")
+			causarDano(melhor, danoBase() * mult, "Fisico")
+			fx:FireAllClients("basico_acerto", posDe(melhor), focinho)   -- r13: impacto da mordida (som + neve no alvo)
 			lobo:SetAttribute("BasicoAcertou", melhor.Name .. string.format(" %.1f", dm))
 		else lobo:SetAttribute("BasicoAcertou", "") end
 	end)
@@ -538,4 +554,4 @@ rede.OnServerEvent:Connect(function(j, acao, a1, a2)
 	end
 end)
 Players.PlayerRemoving:Connect(function(j) if j.UserId == dono() then travado = nil end end)
-pasta:SetAttribute("Kit_Versao", "r12 17/11 (ataque basico so mordidas, sem garras; garras sincronizadas por marcha v43r5, sem piscar no golpe; piscar + ataque basico andando + Cometa r7 segue o alvo, Avalanche, Instinto Boreal, Pelagem Polar)")
+pasta:SetAttribute("Kit_Versao", "r13b 19/11 (inimigo nao e obstaculo no Cometa/Avalanche; idades: dano, teto de esquiva, alcance e ativas liberadas; impacto e som da mordida) | r12 17/11 (ataque basico so mordidas, sem garras; garras sincronizadas por marcha v43r5, sem piscar no golpe; piscar + ataque basico andando + Cometa r7 segue o alvo, Avalanche, Instinto Boreal, Pelagem Polar)")

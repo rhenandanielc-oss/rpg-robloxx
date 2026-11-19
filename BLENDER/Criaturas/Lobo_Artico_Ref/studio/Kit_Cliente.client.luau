@@ -1,4 +1,4 @@
--- Kit_Cliente r3 (17/11: ataque basico andando; r2 E4) (Script com RunContext = Client, Workspace.Teste_LoboArtico) - comandos e efeitos do KIT do Lobo Artico.
+-- Kit_Cliente r4 (18/11: som e impacto da mordida; r3 ataque basico andando; r2 E4) (Script com RunContext = Client, Workspace.Teste_LoboArtico) - comandos e efeitos do KIT do Lobo Artico.
 -- So manda pedidos (o Kit_Servidor decide tudo) e desenha efeitos. Regra do usuario: efeitos NO CORPO, nada flutuando
 -- em volta do lobo. Fora do corpo so o que e do ALVO (marca, pegadas, deteccao) e o estouro curto do impacto.
 -- PC: Q Cometa Glacial | E Avalanche | clique num inimigo = travar alvo | T solta o alvo. Celular: botoes de toque.
@@ -23,7 +23,9 @@ local fxRede = pasta:WaitForChild("Kit_FX")
 local raiz = lobo:WaitForChild("RootPart")
 local GELO = Color3.fromRGB(165, 222, 255)
 local function id(n) return "rbxassetid://" .. n end
-local SONS = {voo = id(9125648149), impacto = id(9114591164), ronco = id(9125443744), neve = id(9119316414), tinido = id(9114590297)}
+local SONS = {voo = id(9125648149), impacto = id(9114591164), ronco = id(9125443744), neve = id(9119316414), tinido = id(9114590297),
+	-- r4 (18/11): mordida = "Creature Bite Pterodactyl Crunch" (ja usado nos dragoes do projeto), mais agudo para o lobo
+	mordida = {id(9125467298), id(9125466463)}, acerto = id(9113445183)}
 local function souDono() return lobo:GetAttribute("Controlador") == jogador.UserId end
 local camera = workspace.CurrentCamera
 
@@ -311,8 +313,38 @@ local function tremer(intens, dur)
 		cam.CFrame = cam.CFrame * CFrame.Angles(math.rad((math.random() - 0.5) * intens * k), math.rad((math.random() - 0.5) * intens * k), 0)
 	end)
 end
+local function escLobo() return lobo:GetAttribute("Escala") or 1 end
 fxRede.OnClientEvent:Connect(function(tipo, a, b, c, d)
-	if tipo == "cometa_impacto" then
+	if tipo == "basico" then
+		-- r4: estalo da mordida saindo da cabeca, no tempo do fechamento da boca (contato q6 = 0,2 s)
+		task.delay(0.16, function()
+			local s = SONS.mordida[math.random(1, #SONS.mordida)]
+			som(s, 0.55, (1.35 + math.random() * 0.15) / math.sqrt(escLobo()), raiz, 2)
+		end)
+		return
+	elseif tipo == "basico_acerto" then
+		-- r4: impacto no ALVO: pancada surda + pequena nuvem de neve/geada no ponto da mordida (regra: so neve fora do corpo)
+		if typeof(a) ~= "Vector3" then return end
+		local p = typeof(b) == "Vector3" and (a:Lerp(b, 0.55) + Vector3.new(0, 0.6, 0)) or a
+		local base = Instance.new("Part"); base.Anchored = true; base.CanCollide = false; base.CanQuery = false; base.CanTouch = false
+		base.Transparency = 1; base.Size = Vector3.new(0.2, 0.2, 0.2); base.Position = p; base.Parent = workspace
+		local pe = Instance.new("ParticleEmitter")
+		pe.Texture = "rbxasset://textures/particles/smoke_main.dds"; pe.Color = ColorSequence.new(Color3.fromRGB(235, 245, 255))
+		pe.Size = NumberSequence.new({NumberSequenceKeypoint.new(0, 0.5), NumberSequenceKeypoint.new(1, 1.6)})
+		pe.Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0.35), NumberSequenceKeypoint.new(1, 1)})
+		pe.Lifetime = NumberRange.new(0.35, 0.6); pe.Speed = NumberRange.new(3, 6); pe.SpreadAngle = Vector2.new(70, 70)
+		pe.Drag = 5; pe.Rate = 0; pe.Parent = base
+		local pg = Instance.new("ParticleEmitter")
+		pg.Texture = "rbxasset://textures/particles/sparkles_main.dds"; pg.Color = ColorSequence.new(GELO)
+		pg.Size = NumberSequence.new({NumberSequenceKeypoint.new(0, 0.12), NumberSequenceKeypoint.new(1, 0)})
+		pg.Lifetime = NumberRange.new(0.15, 0.3); pg.Speed = NumberRange.new(6, 10); pg.SpreadAngle = Vector2.new(120, 120)
+		pg.Drag = 8; pg.Rate = 0; pg.LightEmission = 0.5; pg.Parent = base
+		pe:Emit(10); pg:Emit(14)
+		som(SONS.acerto, 0.5, 1.25, base, 2)
+		if souDono() then tremer(0.35, 0.12) end
+		task.delay(1.2, function() base:Destroy() end)
+		return
+	elseif tipo == "cometa_impacto" then
 		-- casca estoura: flash rapido no corpo + estilhacos finos curtos (0,3 s) + vidro
 		rastro(false); if cascaMalha then cascaMalha.Transparency = 1 end
 		if moldes then
