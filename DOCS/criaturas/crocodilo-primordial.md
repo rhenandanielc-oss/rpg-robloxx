@@ -716,3 +716,26 @@ Testado em Play. **APROVADO pelo usuário em 20/11.**
 2. **Revisar V2 × V5** com prancha lado a lado com o painel 03 (só leitura e renders no Blender) e listar correções (boca, mandíbula, patas espalhadas, osteodermos).
 3. **Teste de importação num place vazio local** (sem tocar no mapa): escala 5–7 de ombro, nado na linha d'água, Mergulho/Emersão.
 4. **Só depois:** clipes refinados, sons, IA selvagem e montaria terra/água. Um sistema por vez; mergulho montado só depois de definido pelo criador.
+
+### Painel de teste para o usuário — 20/11/2026 (só no place de teste)
+- Pedido do usuário: "libere tudo, quero testar os poderes e a montaria, e deixe uma criatura viva".
+- `PainelCrocodilo_Servidor` (ServerScriptService) + `PainelCrocodilo_Cliente` (StarterPlayerScripts), fontes em `studio/`.
+  - Botões/teclas: 1 Mordida de Agarrão (vira para a presa mais perto, até 18 studs), 2 Emboscada, 3 Submersão, 4 Cauda de Maré, R virar para a presa, X cancelar, "Bonecos de pé", "Ir ao crocodilo".
+  - O servidor valida a ação e recusa poderes com cavaleiro (poderes montado ainda não decididos).
+  - O jogador nasce ao lado do crocodilo; o primeiro jogador vira `DonoUserId` (Sentido de Vibração).
+- `Presa_Viva`: criatura de teste (caixa marrom de quatro patas, 100 de vida, `BonecoTeste`) que passeia na terra em frente ao crocodilo e renasce 6 s depois de morrer.
+- Conferido em Play curto: painel aparece, Cauda de Maré e Agarrão disparam pelo painel, a presa anda. Teste completo é do usuário.
+
+### Mordida mais natural — 20/11/2026 (decisões do usuário) — **APROVADA pelo usuário em 20/11**
+- Pedido: "quando usa mordida de agarrão a presa sumiu, evaporou; com o alvo em pé o crocodilo vira muito a cabeça e o corpo todo; quero um movimento mais natural e real".
+- Causas medidas em Play:
+  - a `Presa_Viva` tinha física e o corpo do crocodilo, ao se ajustar na mordida ou girar, a empurrava/arremessava;
+  - em terra a mordida usava sempre a varrida lateral (cabeça ~35° para o lado);
+  - o painel virava o corpo de uma vez (estalo).
+- Decisões do usuário (20/11): **bote frontal curto** com a presa à frente; **gira devagar com as patas** quando ela está fora da frente; **alvo em pé = morde a parte baixa e puxa**.
+- Implementado (números PROVISÓRIOS em `ConfigPoderes_Teste.Agarrao`):
+  - `cone_frontal = 20`: até 20° = clipe `Mordida` (abre, avança reto, impulso do corpo; contato no estalo, `estalo_frontal = 0.38` s; alcance +`bote_frontal = 0.9`); acima = varrida lateral;
+  - `M.virarPara(alvo, tol)`: gira a `virar_vel = 45`°/s com `VirarEsquerda/Direita`; o painel vira antes se a presa passar de `cone_virar = 30`°;
+  - `peso_alto = 3` em `EncaixeBoca.escolher`: cada stud acima da faixa baixa custa 3 studs → escolhe perna/pata;
+  - painel: presa firme (ancorada) enquanto o crocodilo ataca ou gira perto, presa na boca ou caída; volta a andar 0,4 s depois.
+- Testes em Play curto: presa a 60° → virou 52° em 1,2 s, bote frontal, mordeu a Pata1, a presa não se mexeu (HP 100→90); boneco em pé → virou 41° em 0,9 s, bote frontal, região baixa (pose de lado). Sem vídeo (pedido de não pesar o PC).

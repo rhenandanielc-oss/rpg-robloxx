@@ -323,7 +323,8 @@ local function pegarEm(g, alvo, agua, maxCorr, alvoR, sim)
 end
 -- tenta a regiao que cabe; se a boca nao chega nela, tenta a regiao mais perto (que nao cabe = so mordida)
 local function pegar(g, alvo, agua, maxCorr, preferir)
-	local sim, nao = E.escolher(modelo, alvo, 40, preferir, nil, not agua and (modelo:GetPivot().Y - C_.pivo + CFG.Agarrao.altura_lado) or nil)
+	local sim, nao = E.escolher(modelo, alvo, 40, preferir, nil, not agua and (modelo:GetPivot().Y - C_.pivo + CFG.Agarrao.altura_lado) or nil,
+		not agua and CFG.Agarrao.peso_alto or nil)                -- 20/11: alvo em pe = morde a parte BAIXA ao alcance (perna/pata) e puxa
 	if not (sim or nao) then return {modo = "erro", motivo = "nenhuma regiao ao alcance"} end
 	local base0 = modelo:GetPivot()
 	local r = sim and pegarEm(g, alvo, agua, maxCorr, sim, sim)
@@ -544,7 +545,7 @@ function M.agarrao(alvo, cena, opcoes)
 	seguirOlhar(g, function() return olharAlvo(est.alvo or alvo)() end)   -- O2: olha o alvo do bote e, depois, o preso
 	local ov = ehPvP(alvo) and alvo:FindFirstChild("Cavaleiro")
 	if ov and ov:IsA("ObjectValue") and ov.Value and ov.Value.Parent then pularCavaleiro(g, alvo, ov.Value) end   -- 19/11: montada
-	local clipe
+	local clipe, frontal
 	if cena == "agua" and opcoes.emboscada then
 		-- P4b: vem SUBMERSO da Submersao: sobe rapido ate a espreita e continua avancando (impulso que se apaga no bote)
 		local cf = modelo:GetPivot(); local sup = medirAgua(cf.Position) or cf.Y
@@ -571,7 +572,15 @@ function M.agarrao(alvo, cena, opcoes)
 		-- espreita: so olhos/narinas/cristas fora (0,85 abaixo do nado de teste), afunda na antecipacao do bote
 		moverPivo(BASE * CFrame.new(0, -(est.naAgua and 0 or CFG.Agarrao.profundidade_agua), 0), 0.3); clipe = "Crocodilo_BoteAquatico"
 	else
-		clipe = (BASE:PointToObjectSpace(centro(alvo)).X < 0) and "Crocodilo_MordidaLateralEsquerda" or "Crocodilo_MordidaLateralDireita"
+		-- 20/11 "movimento mais natural": presa A FRENTE (cone_frontal) = bote frontal curto (clipe Mordida: abre, a cabeca
+		-- avanca reto e o corpo da um pequeno impulso); presa ao lado = varrida lateral (so ela gira a cabeca para o lado)
+		local l = BASE:PointToObjectSpace(centro(alvo)); local ang = math.deg(math.atan2(-l.X, -l.Z))
+		if math.abs(ang) <= CFG.Agarrao.cone_frontal and PASTA.Animacoes:FindFirstChild("Crocodilo_Mordida") then
+			clipe = "Crocodilo_Mordida"; frontal = true
+		else
+			clipe = (l.X < 0) and "Crocodilo_MordidaLateralEsquerda" or "Crocodilo_MordidaLateralDireita"
+		end
+		log("presa a %.0f graus da frente -> %s", ang, frontal and "BOTE FRONTAL" or "varrida lateral")
 	end
 	log("aproximacao: %s (%s)", clipe:sub(11), cena or "terra")
 	local f = T.tocar(clipe, 0.1)
@@ -625,8 +634,10 @@ function M.agarrao(alvo, cena, opcoes)
 			end)
 		end))
 	end
-	table.insert(est.cons, f:GetMarkerReachedSignal("fecha_boca"):Connect(function()
-		if est.gen ~= g then return end
+	local fechou = false
+	local function aoFechar()
+		if est.gen ~= g or fechou then return end
+		fechou = true
 		if not alvoValido(alvo) then resultado = "alvo_invalido"; return end
 		local P = CFG.AgarraoPvP
 		local imune = alvo:GetAttribute("ImuneAgarraoAte")
@@ -646,7 +657,7 @@ function M.agarrao(alvo, cena, opcoes)
 		end
 		-- 20/11 PEGADA REAL: regiao que cabe, boca centralizada, fecha ate a espessura; nao cabe = so mordida
 		pegando = true
-		local r = pegar(g, alvo, cena == "agua", CFG.Agarrao.corrigir_agarrao)
+		local r = pegar(g, alvo, cena == "agua", CFG.Agarrao.corrigir_agarrao + (frontal and CFG.Agarrao.bote_frontal or 0))   -- bote frontal: o corpo ja avanca no impulso
 		pegando = false; M.ultimaPegada = r
 		if est.gen ~= g then return end
 		log("PEGADA %s: regiao %s, pose %s; %s%s", string.upper(r.modo), tostring(r.nome), tostring(r.pose), r.motivo or "",
@@ -691,7 +702,9 @@ function M.agarrao(alvo, cena, opcoes)
 			resultado = "acerto"
 		end
 		if not f.IsPlaying then aposBote() end                  -- o par da pose ja parou o clipe do bote
-	end))
+	end
+	table.insert(est.cons, f:GetMarkerReachedSignal("fecha_boca"):Connect(aoFechar))
+	if frontal then task.delay(CFG.Agarrao.estalo_frontal, function() if est.gen == g then aoFechar() end end) end   -- estalo do clipe Mordida (0,30-0,42 s)
 	table.insert(est.cons, f.Stopped:Connect(function()
 		if pegando then return end                            -- a pegada em curso chama aposBote ao terminar
 		aposBote()
@@ -1658,6 +1671,36 @@ function M.montariaIniciar()
 	return "ok"
 end
 function M.montariaEstado() return {fase = mont.fase, cavaleiro = mont.plr and mont.plr.Name, lado = mont.lado, v = mont.v, naAgua = mont.naAgua, recusados = mont.recusados or 0} end
+
+-- 20/11 "gira devagar com as patas": vira o corpo ate a presa ficar a `tol` graus da frente, a `virar_vel` graus/s, com
+-- os clipes VirarEsquerda/VirarDireita (os mesmos do giro parado da montaria, aprovada). Nada de girar de uma vez.
+-- Rende (yield) ate terminar; quem chama (painel/IA) usa o poder depois. Nao ocupa est.poder.
+function M.virarPara(alvo, tol, maxS)
+	if est.poder then return "ocupado" end
+	if est.montadoFase then return "montado" end
+	local function ponto() if typeof(alvo) == "Vector3" then return alvo end return alvo and alvo.Parent and centro(alvo) end
+	if not ponto() then return "sem_alvo" end
+	tol = math.rad(tol or 3); est.virar = (est.virar or 0) + 1; local tok = est.virar
+	local taxa = math.rad(CFG.Agarrao.virar_vel); local t, tocando, total = 0, nil, 0
+	modelo:SetAttribute("Virando", true)                          -- (painel: segura a presa firme enquanto o corpo gira perto dela)
+	while true do
+		if est.virar ~= tok or est.poder or est.montadoFase then if est.virar == tok then modelo:SetAttribute("Virando", false) end return "interrompido" end
+		local p = ponto(); if not p then break end
+		local cf = modelo:GetPivot(); local l = cf:PointToObjectSpace(p)
+		local d = math.atan2(-l.X, -l.Z)                           -- >0 = presa a esquerda (giro anti-horario)
+		if math.abs(d) <= tol then break end
+		local nome = d > 0 and "Crocodilo_VirarEsquerda" or "Crocodilo_VirarDireita"
+		if tocando ~= nome then T.tocar(nome, 0.2); tocando = nome end
+		local dt = RS.Heartbeat:Wait(); t += dt
+		local passo = math.clamp(d, -taxa * dt, taxa * dt); total += passo
+		BASE = CFrame.new(cf.Position) * CFrame.Angles(0, passo, 0) * cf.Rotation; modelo:PivotTo(BASE)
+		if t > (maxS or 6) then break end
+	end
+	modelo:SetAttribute("Virando", false)
+	if tocando then T.tocar(est.naAgua and "Crocodilo_Espreita" or "Crocodilo_Repouso", 0.25) end
+	log("VIROU %.0f graus em %.2f s (com as patas)", math.deg(total), t)
+	return string.format("virou %.0f graus em %.1f s", math.deg(total), t)
+end
 
 function M.estado() return {poder = est.poder, fase = est.fase, alvo = est.alvo and est.alvo.Name or nil, naAgua = est.naAgua} end
 return M

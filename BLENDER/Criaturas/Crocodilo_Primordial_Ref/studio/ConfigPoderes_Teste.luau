@@ -10,6 +10,7 @@ return {
 		ponta = 4.5,                        -- ponta dos dentes = 4,5 a frente do osso Mandibula (+Y do osso)
 		sustentacao = 3.5,                  -- s segurando antes de soltar (usuario 16/11: 3,5 s por enquanto)
 		dano_contato = 10, dano_por_segundo = 4,
+		cone_frontal = 20, estalo_frontal = 0.38, virar_vel = 45, cone_virar = 30, peso_alto = 3, bote_frontal = 0.9,   -- 20/11 movimento natural [PROVISORIO]: bote frontal ate 20 graus; vira com as patas a 45 graus/s se a presa passar de 30; alvo em pe: +3 de custo por stud acima da faixa baixa
 		altura_lado = 1.9,                  -- 20/11 encaixe: regiao a ate 1,9 do chao = MORDIDA DE LADO (cabeca baixa e girada); acima = boca normal
 		subir_agua = 5.0,                   -- 20/11: na agua o corpo pode SUBIR ate 5 para a boca alcancar a presa na superficie (bote vindo do fundo)
 		corrigir_agarrao = 1.5, corrigir_final = 3.0,   -- quanto o corpo do croc pode se ajustar para centralizar a boca na regiao (studs)

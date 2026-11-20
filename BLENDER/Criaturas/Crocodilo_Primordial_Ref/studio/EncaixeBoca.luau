@@ -141,7 +141,7 @@ function M.avaliar(presa, p, b, crava)
 end
 
 -- escolhe a regiao de pegada: mais perto da boca entre as que cabem; se nenhuma cabe, a mais perto (so mordida)
-function M.escolher(croc, presa, alcanceMax, preferir, bRef, yLado)
+function M.escolher(croc, presa, alcanceMax, preferir, bRef, yLado, pesoAlto)
 	local b = bRef or M.boca(croc)
 	local pv = croc:GetPivot()
 	local ref = pv * M.CENTRO_LOCAL                        -- fixo no corpo: a cabeca virada do bote nao muda a escolha
@@ -157,6 +157,7 @@ function M.escolher(croc, presa, alcanceMax, preferir, bRef, yLado)
 			if baixo then bb.F = yaw; bb.U = Vector3.new(-yaw.Z, 0, yaw.X); bb.R = bb.F:Cross(bb.U) end
 			local r = M.avaliar(presa, c.p, bb); r.p = c.p; r.nome = c.nome; r.dist = dist
 			r.score = dist - (pref(c.nome) and 6 or 0)       -- regiao preferida (ex.: pescoco na finalizacao) ganha 6 studs
+			if pesoAlto and yLado then r.score += math.max(0, c.p.Y - yLado) * pesoAlto end   -- 20/11: alvo em pe = prefere a parte baixa
 			if r.cabe then if not melhor or r.score < melhor.score then melhor = r end
 			elseif not melhorNao or dist < melhorNao.dist then melhorNao = r end
 		end
