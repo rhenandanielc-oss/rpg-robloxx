@@ -189,3 +189,9 @@ Base de comparação: Chamas Tríplices v6.2 (3 × 0,6× = 1,8× total, queimadu
   - Continua UMA ação: recarga 12 s e energia 25 inalteradas. Contatos validados no servidor; um acerto por boca.
 - **Entre metade e o tamanho do Cérbero (inclusive iguais):** A DEFINIR pelo usuário.
 - **20/11 — APROVADO pelo usuário:** a Investida r5 (rastro rente ao chão, InvestidaSobre e InvestidaImpacto em `rig/clipes_L3r7`) e o dano proposto vs alvo maior: impacto 0,6× + mordidas C/E/D 0,7× cada = **2,7×**, numa única ação (recarga 12 s, energia 25). Passagem por cima segue 1,0×. Faixa entre metade e o tamanho do Cérbero e a métrica de tamanho continuam A DEFINIR. Valores a validar no Roblox.
+- **20/11 — Vigília das Três Cabeças:** prévia no Blender (`aura/fx_vigilia.py`). Pupilas das 3 cabeças brilham 1 s ao detectar uma criatura invisível a até 15 studs; contorno laranja só para o dono (Highlight local no Roblox [PROPOSTA]). **APROVADA pelo usuário em 20/11** (cor laranja-fogo mantida); detecção real a testar no Roblox.
+- **20/11 — Fúria roxa APROVADA pelo usuário** (com as brasas da marca de explosão corrigidas para roxo):
+  - Durante os 8 s de Fúria, o Sol Infernal e a Investida (rastro e impacto) saem em fogo roxo, com núcleo branco-lilás e bordas roxo-escuro.
+  - Só a cor muda; os números continuam iguais.
+  - A cor é decidida no lançamento [PROPOSTA].
+  - Prévia em `aura/fx_furia_roxo.py` (sem alterar os aprovados). Ainda não testado no Roblox.

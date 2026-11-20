@@ -786,3 +786,53 @@ A faixa antiga presa ao corpo foi desligada.
 - A câmera de frente termina com o Cérbero muito perto.
 - Salto com 0,93 s no ar e 5 studs de subida [A TESTAR na física do Roblox].
 - Integração no Studio só com autorização (`DOCS/estado/studio-em-uso.md`).
+
+## Vigília das Três Cabeças (passiva, Sombra) — prévia 20/11 — **APROVADA pelo usuário 20/11** ("Aprovo a passiva")
+- Regra OFICIAL (v6.2 §4h/§5.9h): visão de 360°; enxerga criaturas INVISÍVEIS a até 15 studs; −50% no tempo de atordoamento. Visual pedido: as pupilas das três cabeças brilham por 1 s na detecção e o contorno da criatura aparece SÓ para o dono.
+- `aura/fx_vigilia.py` → `aura/fx_vigilia/` (base fx_teste_alvo, intacto). Render leve.
+- **Cena:** uma criatura em emboscada (blocos 12 × 5,5 studs) vem da frente-esquerda.
+  - Ela cruza os 15 studs em 2,0 s, chega a 9 studs e recua; sai do raio em 4,57 s.
+  - O Alerta (lote 2B) entra em 2,0 s só como orientação do olhar.
+- **Pupilas:** 6 brilhos (billboards) presos aos ossos Cabeca C/E/D, acesos de 2,0 a 3,0 s, mais o realce de olhos da pele.
+  - A posição foi achada por raio na geometria da cabeça: a textura só marca a BOCA em vermelho.
+  - No Roblox: Billboard/Attachment por olho, sem PointLight.
+- **Contorno (só o dono):** casca invertida laranja + preenchimento translúcido, de 2,0 a 4,57 s.
+  - No Roblox: Highlight criado só no cliente do dono, com DepthMode AlwaysOnTop [PROPOSTA].
+  - Os outros jogadores não veem nada (vídeo "outros").
+- **Pendências:**
+  - visual dos −50% de atordoamento (não pedido);
+  - cor das pupilas e do contorno é PROPOSTA (paleta de fogo aprovada; violeta como alternativa de Sombra);
+  - detecção e alcance são do servidor/cliente no Roblox (não testados).
+- **20/11 — APROVADA pelo usuário** ("Aprovo a passiva"): prévia da Vigília como entregue (pupilas 1 s, contorno laranja-fogo só para o dono, nada para os outros). Cor laranja-fogo mantida. Simulação de Blender; detecção real [A TESTAR] no Roblox.
+
+## Fúria roxa (20/11) — poderes em fogo roxo DURANTE a Fúria — **APROVADA pelo usuário 20/11**
+- **Pedido do usuário:** "a Fúria muda a cor dos poderes para roxo, tanto do Sol Infernal quanto da Investida".
+- **Decisões do usuário (20/11):**
+  - o roxo vale só durante a Fúria (8 s); fora dela, os poderes ficam no laranja aprovado;
+  - fogo roxo de núcleo branco-lilás e bordas roxo-escuro;
+  - só a cor muda; os números aprovados continuam iguais;
+  - o rastro da Investida fica roxo;
+  - a aura do corpo segue o estado sustentado da Fúria r4 (violeta).
+- **[PROPOSTA]:** a cor é decidida no lançamento. Um Sol Infernal lançado aos 7,9 s de Fúria voa roxo até o fim.
+- **Script:** `aura/fx_furia_roxo.py`.
+  - Os scripts aprovados (`fx_bola_infernal_r3b.py`, `fx_investida_r5.py`) **não foram alterados**.
+  - O script executa uma cópia do fonte com um gancho que roda antes de cada render. O gancho faz três coisas:
+    - troca a cor de emissão dos materiais do poder por uma rampa violeta guiada pela luminância da cor de fogo original. A forma e o brilho continuam os mesmos.
+    - deixa violeta a luz da bola (`Luz_Bola`).
+    - coloca pele, chamas da aura e bocas em violeta total.
+- **Uso:** `-- <saida> poder=sol|investida [args do base] [vistas=...]`.
+- **Saída:** `aura/fx_furia_roxo/`, com:
+  - `prancha_furia_roxo.png`, com o laranja aprovado em cima e o roxo embaixo;
+  - os vídeos `FX_Bola_parado_{jogo,aberta}.mp4`, `FX_Investida_sobre_34.mp4` e `FX_Investida_impacto_34tras.mp4`.
+- **Materiais trocados:**
+  - Sol Infernal: esfera, halo, massa, línguas, núcleo, faíscas e impacto;
+  - Investida: `M_Rastro_r5` e as chamas do impacto.
+- **Mantidos:** a fumaça (escura), os alvos e o vento quente da Investida (finos riscos laranja rente ao corpo; podem ficar roxos se o usuário quiser).
+- **Correção durante a revisão:** no impacto, a aura voltava ao laranja, porque essa parte refaz as chaves do corpo. O gancho passou a rodar antes de cada render.
+- **Observação:** o rastro roxo lê um pouco mais escuro que o laranja no chão escuro, o que é natural do roxo. Se o usuário pedir, dá para reforçar o brilho só do rastro.
+- **Escopo:** é só uma simulação no Blender. No Roblox, seria uma variante de cor dos VFX, escolhida pelo servidor no lançamento. Não foi testada.
+- **20/11 — APROVADA pelo usuário**, com uma correção pedida: "as partículas geradas no final da explosão do Sol ainda estão laranjas".
+  - Causa: as brasas da marca queimada no chão (`M_Marca`) estavam fora da troca de cor.
+  - Correção: `M_Marca` entrou na troca. Os vídeos do Sol foram refeitos.
+  - A versão anterior está em `fx_furia_roxo/r1_marca_laranja/`. A comparação está em `fx_furia_roxo/marca_antes_depois.png`.
+  - Rastro e vento quente ficaram como estão (o usuário não pediu ajuste). A regra "cor decidida no lançamento" continua [PROPOSTA].

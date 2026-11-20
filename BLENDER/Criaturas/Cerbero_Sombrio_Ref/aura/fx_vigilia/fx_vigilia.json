@@ -1,0 +1,20 @@
+{
+ "alvo": {
+  "jogador": "bloco ~5,5 studs (avatar R6), barra de vida ILUSTRATIVA de 200 PV"
+ },
+ "vigilia": {
+  "raio_studs": 15.0,
+  "deteccao_s": 2.0,
+  "pupilas_s": [
+   2.0,
+   3.0
+  ],
+  "contorno_s": [
+   2.0,
+   4.57
+  ],
+  "distancia_min_studs": 9.0,
+  "alvo": "criatura rasteira 12 x 5,5 studs, invisivel",
+  "nota": "o Alerta (clipe aceito do lote 2B) entra em 2,0 s so como orientacao do olhar; no jogo a reacao e da IA/dono"
+ }
+}
