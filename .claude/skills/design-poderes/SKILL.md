@@ -94,6 +94,9 @@ Referências: `VFXSombra.luau` (PATCH_UMBRAL_BRILHO r3), `VFXFogo.luau` (PATCH_F
 8. **Depois de aprovar:** registre no diário da criatura, em `PROJECT-STATE.md` e na memória. Commit só quando o usuário pedir, adicionando só as partes deste chat (outros chats deixam linhas nos mesmos arquivos de notas).
 
 ## 5. Ferramentas úteis
+- Corretor Luau `selene` (ver skill `roblox-patch`) antes de cada aplicação no Studio; `stylua` só formata quando o usuário pedir (o estilo do projeto usa vários comandos por linha).
+- Vídeo: `ffmpeg` está instalado (winget Gyan.FFmpeg); pode montar os quadros do `cap.py` direto (`ffmpeg -framerate 12 -i q%05d.jpg -c:v libx264 -pix_fmt yuv420p saida.mp4`), mais leve que passar pelo Blender.
+- Testes de lógica fora do Studio: `lune` roda Luau local; `luau-lsp` faz análise de tipos.
 - **Skills do Roblox Studio** (via `list_roblox_skills` / `get_roblox_skill`):
   - `rbx-perf-profiling` e `rbx-scene-analysis` para o custo dos efeitos;
   - `rbx-network-simulator` para PvP com lag;

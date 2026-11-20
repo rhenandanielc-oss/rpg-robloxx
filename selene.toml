@@ -1,0 +1,6 @@
+# Selene (corretor de Luau) — configuracao do projeto, 20/11/2026.
+# multiple_statements desligado: o estilo do projeto usa varios comandos por linha com ";".
+std = "roblox"
+
+[lints]
+multiple_statements = "allow"

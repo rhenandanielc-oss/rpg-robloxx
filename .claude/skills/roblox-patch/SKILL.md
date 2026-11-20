@@ -27,6 +27,7 @@ Antes de tudo: CLAUDE.md exige autorização do usuário para mexer no Studio na
 - Depois de aplicar no Studio, reexporte para `src/` e faça commit (o git é a fonte da verdade).
 
 ## Regras do jogo que todo patch respeita
+- Antes de aplicar qualquer `.luau`, rode o corretor: `~/.ferramentas-luau/bin/selene.exe <arquivo>` na raiz do repo (usa `selene.toml`; `roblox.yml` é gerado por `selene generate-roblox-std` e fica fora do git). Erros (`error[...]`) bloqueiam; avisos novos que o seu patch criou devem ser corrigidos. Avisos antigos não são seus para corrigir sem pedido.
 - Servidor valida tudo (dano, moedas, inventário, loot, montaria); cliente só envia intenção.
 - Números experimentais marcados `NAO_APROVADO`; não inventar habilidades nem regras oficiais.
 - Teste em Play com evidência (log/captura) antes de dizer que funciona; registre em PROJECT-STATE.
