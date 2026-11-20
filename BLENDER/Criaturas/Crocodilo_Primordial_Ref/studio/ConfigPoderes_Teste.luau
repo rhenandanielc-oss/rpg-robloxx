@@ -8,6 +8,10 @@ return {
 		ponta = 4.5,                        -- ponta dos dentes = 4,5 a frente do osso Mandibula (+Y do osso)
 		sustentacao = 3.5,                  -- s segurando antes de soltar (usuario 16/11: 3,5 s por enquanto)
 		dano_contato = 10, dano_por_segundo = 4,
+		altura_lado = 1.9,                  -- 20/11 encaixe: regiao a ate 1,9 do chao = MORDIDA DE LADO (cabeca baixa e girada); acima = boca normal
+		corrigir_agarrao = 1.5, corrigir_final = 3.0,   -- quanto o corpo do croc pode se ajustar para centralizar a boca na regiao (studs)
+		revalidar = 0.5,                    -- s entre revalidacoes da pegada (espessura x vao) enquanto segura
+		cravar = 0.4,                       -- 20/11 r2 usuario: dentes cravam ~0,4 studs no corpo (arcadas fecham alem da espessura)
 		rigido_max = 6,                     -- 19/11: alvo com mais de 6 studs = PONTO DE MORDIDA (osso mais perto dos dentes), corpo fica em pe e e arrastado
 		giro_corpo = 2.5,                   -- rad/s: o corpo arrastado vira para ficar atras da mordida (sem girar inteiro com a mandibula)
 		profundidade_agua = 0.85,           -- agua: desce da altura de nado para a de espreita (render R2: agua 5,15 x 4,3)
@@ -23,6 +27,15 @@ return {
 		aviso_raio = 60, ir_max = 6,        -- 19/11 usuario: opcao "Soltar aliado" para aliados a ate 60 studs; a acao dura no maximo 6 s [PROPOSTA]
 		soco_alcance = 8, soco_parar = 4.5, soco_intervalo = 0.55, soco_dano = 40,   -- golpe do jogador no crocodilo (dano de TESTE; o real vem do combate do jogador)
 		pulo_lado = 5, pulo_recuo = 1.5,    -- 19/11 usuario "pular mais perto": cai AO LADO da cabeca do crocodilo (5 de lado, 1,5 atras do focinho), ja no alcance para bater
+	},
+	Arremesso = {                           -- 20/11 r2 usuario: ao soltar, sacudida de cabeca DE LADO e a presa voa ~8 studs, cai e levanta
+		distancia = 8, altura = 2.5, voo = 0.7,          -- studs do ponto de soltura ate a queda; altura do arco; s no ar
+		giro = 20, giro_dur = 0.22, volta_dur = 0.5,     -- SEM o clipe: graus de sacudida do corpo inteiro (acelera e solta no fim); volta ao rumo
+		giro_clipe = 6, solta_clipe = 0.44,              -- r3 COM o clipe ArremessarPresaE/D (usuario: arma e chicoteia; corpo gira ~6 graus); evento solta 0,44 s
+		lateral = 0.85, frente = 0.5,                    -- direcao do lancamento: mais para o lado que para a frente
+		queda = 1.5,                                     -- PvE: fica caida 1,5 s e levanta (sem dano na queda)
+		pvp_fator = 0.5, pvp_queda = false,              -- PvP: metade da distancia e NAO derruba (contrato: nao somar agarrao e queda)
+		agua = false,                                    -- na agua so solta (sem arremesso) [PROPOSTA]
 	},
 	-- 20/11 REGRAS DO LOBO ADOTADAS NO CROCODILO (usuario: "faca da mesma maneira"); contrato geral em
 	-- BLENDER/Criaturas/Lobo_Ancestral_Ref/studio/kit/CONTRATO-CONTROLE-PORTE.md. Regras oficiais v6.2 §0b-0d; resto [A TESTAR].
@@ -45,8 +58,8 @@ return {
 		pvp = {fatorDur = 0.5, janela = 12, maxSeguidos = 2, imuneSeg = 8},
 	},
 	Finalizacao = {                         -- 20/11 usuario: finalizacao PROPRIA DO CROCODILO = MORDIDA ESMAGADORA
-		anuncio = 0.9, abordarAte = 14, vel = 7, giro = 3.0, encostar = 1.5, abordarMax = 3.0,   -- sibilo, aproxima andando
-		aperto = 1.8, sacudir = 9, periodo = 0.3,   -- prende cabeca/pescoco e aperta sacudindo (graus, s)
+		anuncio = 0.9, abordarAte = 14, vel = 7, giro = 3.0, encostar = 0.4, abordarMax = 3.0,   -- sibilo, aproxima ate os dentes ENCOSTAREM no corpo
+		aperto = 1.8, danoCrava = 5,        -- 20/11 r2: segura o corpo e o clipe MordidaEsmagadora (1,8 s) crava 2x; corpo firme, sem girar
 		vidaAlvoMax = 0.35, vidaPropriaMin = 0.30, ameacaRaio = 25,   -- IA: so finaliza alvo enfraquecido; poupa se fraco ou com outro inimigo perto
 		ossosAlvo = {"Cabeca", "Pescoco", "Head", "Neck"},
 	},

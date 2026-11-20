@@ -403,7 +403,122 @@ Três gerações, nenhuma aprovada artisticamente pelo criador:
 - **IA:** uma decisão por queda: FINALIZAR / POUPAR / APROVEITA, com motivo (`DecisaoQueda`); crocodilo de dono nunca finaliza sozinho; alvo > 35% = aproveita; própria vida < 30%, alvo longe ou outro inimigo a < 25 = poupa.
 - Backups `ServerStorage.*_ANTES_RegrasLobo_2026-11-20`; place salvo; local = Studio (hash).
 - **Testes (Play):** mordida em boneco a 3,6 e 7,8 da superfície → erra (antes acertava pelo centro); encostado → acerta (0,00). Cauda acerta a 0,80 da superfície e rola lento. Frequência da Cauda (400 sorteios): pequeno M42/L58, médio M34/L66, grande (Leão sim.) M24/L57, colossal (Dragão sim.) M6/L11 (nada 83%). Giro de Emboscada: queda 1,50 s; alvo forte → APROVEITA; alvo 30% → FINALIZAR → **cancela (alvo levantou)**. Com queda-base de 3 s: selvagem morre (Boneco e crocodilo jovem, mordido no **Pescoco**); criatura de jogador RETIRADA (Vida 30 mantida); crocodilo ferido no aperto → solta sem dano; alvo levanta no sibilo → cancela; humano e alvo forte → recusados. Vídeo `review/regras_lobo_2011/Crocodilo_MordidaEsmagadora.mp4` (8,5 s).
+- **20/11 r2 — Mordida esmagadora corrigida (usuário: "não faz sentido o crocodilo girar; morda, segure a criatura de maneira correta, o seu corpo e não o vento, e para finalizar mexa a boca para cravar mais os dentes"). Aguarda avaliação.**
+  - **Clipe novo `MordidaEsmagadora`** (Blender, `scripts/anim_crocodilo.py`; 1,8 s, 55 quadros, IK 0, pés sem escorregar): parte da pose de segurar, **abaixa a cabeça até o corpo da presa** (Pescoço +7°, Pescoço2 +3°, Cabeça +3°) e dá **2 re-mordidas** (a boca abre um pouco e trava mais fundo, a cabeça pressiona e torce de leve, o tronco empurra para a frente); eventos `crava1` 0,49 s e `crava2` 1,24 s. **O corpo fica parado** (sem girar). Montado no Studio (61 clipes; Dados_Clipes atualizado).
+  - **Servidor:** removido o giro do corpo; aproxima (de ré com `ArrastarPresa` quando a presa ficou sob o pescoço) até os dentes ficarem sobre o corpo na altura do ponto mordido; **prende o corpo** (o ponto mordido fica nos dentes, como no agarrão); toca SegurarPresa → MordidaEsmagadora; dano 5 em cada cravada; ao terminar, larga o corpo onde caiu. Backups `ServerStorage.*_ANTES_MordidaR2_2026-11-20`; place salvo; local = Studio (hash).
+  - **Teste (Play):** antes os dentes ficavam **1,4 stud acima do corpo** (mordendo o ar). Agora: dentes a **0,05 e 0,06** da superfície nas cravadas (mediana 0,09 enquanto preso); **giro do corpo 0°**; presa selvagem morre no fim. Vídeo `review/regras_lobo_2011/Crocodilo_MordidaEsmagadora_r2.mp4` (aberto + de perto).
+  - Limitações: a presa caída não tem animação própria (fica no Repouso); a tomada de perto ficou com o corpo do crocodilo grande no quadro.
 - **Achados para decisão:** (1) a queda do Giro de Emboscada (1,5 s, v6.2) é mais curta que sibilo + aproximação (~1,4 s + 1,8 s de aperto), então a finalização natural depois do Giro não acontece — o mesmo achado do Lobo no PvP. **→ Decisão do usuário 20/11: queda do Giro de Emboscada = 3 s** (`GiroEmboscada.derruba = 3.0`; backup `ConfigPoderes_Teste_ANTES_QuedaGiro3s_2026-11-20`). A aproximação também foi corrigida: depois do Giro o alvo fica sob o pescoço, então o corpo agora recua/avança até a ponta dos dentes chegar ao ponto (antes só andava para a frente e se afastava). Teste: selvagem fraco → Giro → queda 3,0 s → FINALIZAR → prendeu aos 4,23 s → morreu aos 6,02 s; alvo forte → APROVEITA; **criatura de jogador (PvP) → queda 1,5 s (x0,5 do contrato) → cancela "alvo levantou"** — igual ao Lobo (em PvP só finaliza se já estiver em posição); (2) contra alvos pequenos/médios a Cauda sempre causa algum efeito (crocodilo grande e Força 60) — números [A TESTAR]; (3) a vítima caída não tem animação de caída/morte própria (o crocodilo jovem continua no Repouso); (4) no protótipo "PvP" = atributo da vítima; no contrato do Lobo, ataque de selvagem é PvE — alinhar.
+
+**20/11/2026 — Encaixe real da presa na boca, ETAPA 1 (pedido "quero REALISMO... agarre o alvo na boca, simetricamente, o corpo encaixe certinho; se não couber, só morde"). Em andamento; nada ligado ao PoderesTeste ainda.**
+- **Vídeo r2 revisto** (folhas `review/regras_lobo_2011/q30b`, `q30c`): os dentes encostavam no pescoço do crocodilo jovem, mas o pescoço medido tem **3,1 de espessura** (raios) e a boca só abre **1,52** de vão: a r2 era geometricamente impossível (não era encaixe; era "dente encostado").
+- **Referencial e capacidade da boca** (`scripts/medir_boca.py` → `boca_medidas.json`, malha 1:1 com o Studio): dobradiça (osso Mandibula), F/U/R do crânio (osso Cabeca); folga interna entre as arcadas por profundidade d (2,5–5,5 a partir da dobradiça; ponta em 5,74) e abertura α (0 = fechada … 25,57° = máximo do rig). **Folga máxima ~1,3–1,5 na metade da frente** (d 4,0–5,5); < 0,7 no fundo.
+- **Abertura variável sem atravessar o corpo:** 6 poses novas (Blender) `SegurarPresa`, `SegurarPresaAgua`, `MordidaEsmagadora` em `_Boca0` (α 0) e `_Boca1` (α 25,57), idênticas no corpo (diferença só na Mandibula, 25,57° exatos). No Studio, tocadas juntas com pesos (1−w, w): **medido linear** — w 0/0,25/0,5/0,75/1 → mandíbula −8,0/−1,7/4,8/11,2/17,5° em relação ao crânio (faixa 25,5°). Assim a boca fecha só até a espessura da presa. Re-mordidas: abre 6° e crava 1,5° além do contato.
+- **`studio/EncaixeBoca.luau`** (novo módulo no place): seção da presa por raios na própria colisão (espessura ao longo de U e extensão ao longo de F), candidatos nos segmentos osso→pai (sem olhos/raiz; sem ossos = caixa), decisão cabe/não cabe com motivo, profundidade e abertura de contato, e desenho de diagnóstico (eixos, vão, pegada). Medido (Play): crocodilo escala 0,4 → cabe na canela (1,21); 0,55 → antebraço (1,27); 0,65 → cauda (1,28; pescoço/canela 2,0+ não cabem); 1,0 → ponta da cauda (1,18; canela 3,1 não cabe); boneco em pé 5,5 → não cabe; boneco deitado 1,42 de espessura mas 2,92 de extensão → não entra. Imagem `review/encaixe_2011/diag_boca_r2_x_encaixe.jpg`.
+- **Achado que bloqueia a etapa 2:** o centro da boca fica a **2,4–3,0 do chão** na pose de segurar (3,1–3,3 em repouso); as partes mordíveis de uma presa **caída** ficam a 0,3–1,0 do chão — para fechar a boca nelas a arcada de baixo teria de entrar no chão. Precisa de poses novas (cabeça baixa e/ou mordida de lado, cabeça girada como o crocodilo real) antes de ligar o encaixe ao agarrão e à finalização.
+
+**20/11/2026 — Encaixe real da presa, ETAPA 2 (usuário: "Mordida de lado"). Ligado ao agarrão e à Mordida esmagadora; testado em Play. Aguarda avaliação.**
+- **Poses de mordida de lado** (Blender, `scripts/anim_crocodilo.py`): `SegurarLadoE/D` e `EsmagarLadoE/D`, cada uma em `_Boca0/_Boca1` (8 clipes; 75 no manifesto). A cabeça gira ~79° pelo pescoço e desce; o vão fica na horizontal. Medido em Play, com a boca aberta: o centro do vão fica a **1,8 (E) / 1,4 (D)** do chão, contra 2,3 na pose normal. O lado E leva a boca para +X local (convenção giro180y).
+- **Pegada real** (`studio/PoderesTeste.luau`, `pegar`/`fixarPegada`), no fecha_boca do agarrão e na finalização:
+  1. Escolhe a região que cabe mais perto do centro do vão. A distância é medida em 3D a partir de um ponto fixo no corpo (`EncaixeBoca.CENTRO_LOCAL`/`CENTRO_LADO_E/D`). Região baixa (≤ 1,9 do chão) é medida com o eixo da mordida de lado.
+  2. Põe a pose (normal / de lado / água) com a boca aberta.
+  3. Ajusta o corpo do crocodilo para o centro do vão chegar na região. O limite é o deslocamento líquido: agarrão 1,5, finalização 3,0. A boca morde onde alcança: desliza no plano mediano e centraliza a espessura.
+  4. Mede de novo no referencial real da boca.
+  5. Resultado:
+     - cabe → fecha até as arcadas encostarem (pesos do par) e prende a presa ao vão;
+     - não cabe → **só a mordida de contato** (dano 10, sem prender nem esmagar);
+     - fora do plano/alcance → **erra**.
+  6. Se a região que cabe está fora de alcance, tenta a mais perto.
+  7. Enquanto segura, revalida a cada 0,5 s (espessura × vão na faixa ocupada → penetração; solta se não couber mais) e registra a deriva.
+- **Finalização:** escolhe a região preferindo Pescoço/Cabeça e se aproxima pondo o centro do vão da pose escolhida na região. Toca o par `MordidaEsmagadora`/`EsmagarLado` na abertura de contato. Só dá dano numa cravada se houver corpo entre as arcadas; se não couber, só morde e cancela. A presa selvagem toca a própria Morte (presa com esqueleto); a queda toca DescansoDeitado e o levantar toca Levantar (os bonecos de teste não têm esqueleto: tombam como antes).
+- **`EncaixeBoca`:** a extensão agora é separada em trás (lado da dobradiça, que precisa entrar na faixa útil) e frente (pode sair pela ponta). Assim um focinho comprido de presa grande cabe.
+- **Testes em Play** (presas de teste com partes e Humanoid, `studio/TesteEncaixe.luau`):
+
+  | Caso | Situação | Resultado | Medidas |
+  |---|---|---|---|
+  | 1 | Filhote (tronco 1,0) | **CAPTURA** pelo tronco | α 22,8°, d 4,30; corrigiu 0,7; penetração máx **−0,01**; deriva 0,000 |
+  | 2 | No limite (1,25) | CAPTURA | α 23,5°; penetração 0,00 |
+  | 2b | Passa do limite (1,6 > vão 1,52) | **SÓ MORDIDA** | — |
+  | 3 | Presa grande, focinho 0,95 | CAPTURA pelo focinho | extensão 6,9, o resto fica para fora da ponta |
+  | 4 | Búfalo (3,0) | SÓ MORDIDA | — |
+  | 5 | Oblíquo a 3,8 de lado / sob o pescoço | **ERRA** ("fora de alcance") | — |
+  | 5c | Deitado com o pescoço 0,9 em pé | **MORDIDA DE LADO** (ladoE) | desvio lateral 0,03, vão 0,02 |
+  | 6 | Água (filhote nadando) | CAPTURA em SegurarPresaAgua | — |
+  | F1 | Finalização, pescoço 0,9 | CAPTURA de lado (ladoD), 2 cravadas, morre | penetração **0,08** nas cravadas |
+  | F2 | Finalização, pescoço 2,2 | SÓ MORDIDA, vida 30→20, sem morte | — |
+
+  Regressões:
+  - PvP solta no prazo de 2,50 s, com imunidade de 8 s;
+  - `cancelar` no meio solta na hora (a presa não se move depois);
+  - presa removida → cancela;
+  - a sustentação de 3,5 s foi mantida.
+- **Vídeo** `review/encaixe_2011/Crocodilo_Encaixe_Presa_r1.mp4` (~93 s, 30 qps):
+  - tomadas: presa inteira, frente, lado e perto do caso que cabe; frente e lado do que não cabe; presa grande pelo focinho; finalização geral, perto e "não cabe"; água sob a superfície;
+  - repete em câmera lenta 0,5× a tomada de perto da pegada e a da finalização.
+- **Imagens:** comparação `antes_depois_r2_x_encaixe.jpg` (r2 × agarrão e finalização novos), folhas em `pranchas/` e `still_cabe_lado.jpg` (presa semitransparente entre as arcadas).
+- **No place:** `EncaixeBoca`, `PoderesTeste`, `ConfigPoderes_Teste` (`altura_lado`, `corrigir_*`, `revalidar`) e `TesteEncaixe` foram instalados. Backup em `ServerStorage.Crocodilo_ANTES_Encaixe2`; place local salvo; local = Studio (hash).
+- **Limitações:**
+  - A deriva é 0 por construção: a presa é presa ao referencial da boca, por isso esse número não prova nada visualmente.
+  - Uma presa grande presa pelo focinho é levantada até ~0,5 (o crocodilo não abaixa a cabeça por IK).
+  - Presas muito baixas (< ~1,2 de altura deitadas) ficam abaixo do vão da mordida de lado → erra.
+  - Nos testes foram usados blocos de teste, não criaturas reais.
+  - A tomada geral da finalização ficou mal enquadrada (a câmera ficou atrás do corpo do crocodilo).
+
+**20/11/2026 — Encaixe r2: dentes cravados + arremesso.** O usuário aprovou a mordida da etapa 2 e pediu "enfincar mais os dentes" e "jogar a criatura presa mais pra longe". Respostas às perguntas:
+- os dentes cravam ~0,4;
+- a sacudida é de lado e a presa voa ~8 studs;
+- a presa cai e levanta;
+- no PvP o arremesso é mais curto.
+
+Testado em Play. **APROVADO pelo usuário em 20/11.**
+- **Dentes cravados** (`EncaixeBoca.avaliar(..., crava)`, `Agarrao.cravar = 0.4`):
+  - as arcadas fecham até `espessura − 0,4`, com o corpo no centro do vão, então os dois lados cravam por igual;
+  - medido: penetração 0,39–0,40 no agarrão (filhote, deitado, água) e 0,48 na finalização. Antes era −0,01 a 0,00.
+  - A abertura de contato fica registrada em `alfaContato`, por exemplo 22,8° contato → 17,0° cravado.
+- **Arremesso** (`PoderesTeste`: `arremessar`/`lancar`, `CFG.Arremesso`):
+  1. O crocodilo dá uma sacudida de lado: o corpo e a cabeça giram 20° em 0,22 s, acelerando, com a presa ainda presa.
+  2. Ele solta no pico. A sustentação continua em 3,5 s no total, porque a sacudida começa 0,22 s antes.
+  3. A presa voa em arco (2,5 de altura, 0,7 s) até 8 studs, mais para o lado que para a frente, dando uma cambalhota.
+  4. Ela fica caída 1,5 s, sem dano na queda, e levanta.
+  - O lado segue a pose: lado E/D na mordida de lado; na boca normal é sorteado.
+  - **PvP:** metade (4 studs, arco 1,2), sem cambalhota e sem queda. Solta aos 2,52 s do contato, com 8 s de imunidade.
+  - **Água:** só solta, como antes (`Arremesso.agua = false`).
+  - **Presa com física** (não ancorada): recebe velocidade balística no servidor. Isso não foi testado, porque os testes usaram só bonecos ancorados.
+- **Testes (Play):**
+  - filhote: cravou 0,39 e voou 8,0;
+  - queda: levantou após 1,50 s;
+  - PvP: 4,0, sem queda, imune;
+  - deitado com mordida de lado: cravou 0,40 e voou 8,0 para E;
+  - finalização F1: 2 cravadas, morte, penetração 0,48;
+  - água: SoltarPresa sem arremesso.
+- **Vídeo** em `review/encaixe_r2_2011/`: perto dos dentes, arremesso visto de cima, mordida de lado e PvP, com câmera lenta 0,35× das 3 primeiras tomadas.
+- **No place:** backup `ServerStorage.Crocodilo_ANTES_Encaixe_r2`, módulos com hash conferido.
+- **Limitação:** a sacudida é um giro do corpo inteiro em volta do pivô, não um clipe próprio de cabeça e pescoço. Um clipe `ArremessarPresa` E/D no Blender deixaria o movimento mais natural. **Resolvido no r3, abaixo.**
+
+**20/11/2026 — Arremesso r3: clipes `ArremessarPresaE/D`.** Pedido do usuário: "Fazer os clipes". Escolhas dele: "Arma e chicoteia" e "corpo gira pouco, ~6°". Testado em Play. **APROVADO pelo usuário em 20/11.**
+- **Clipe** (`scripts/anim_crocodilo.py`, `_arremessar`):
+  - dura 1,0 s, em par `_Boca0`/`_Boca1`, com a boca na abertura da pegada até soltar;
+  - parte do quadro 0 do SegurarPresa;
+  - **arma:** a cabeça vai ~15° para o lado oposto, com o focinho um pouco baixo;
+  - **chicoteia:** ~35° para o lado do arremesso, erguendo o focinho; o tronco da frente acompanha e a cauda contrapesa;
+  - evento **solta em 0,44 s**: a boca abre 12° além do encaixe;
+  - depois volta ao Repouso.
+  - QA: IK 0,000, pé sem deslizar. Revisão no Blender: `review/arremesso_r3/prancha_clipe_E.jpg`.
+  - **Sinal:** com lado +1 no Blender, a boca ia para −X local do jogo (medido em Play). Por isso o nome segue o jogo: `ArremessarPresaE` lança para +X, como `SegurarLadoE`.
+- **Jogo** (`PoderesTeste`):
+  1. O clipe começa 0,44 s antes do fim da sustentação, então o total continua 3,5 s.
+  2. O corpo gira só `giro_clipe` = 6° durante a chicotada (0,30 → 0,44 s).
+  3. No evento "solta", a presa é solta e lançada.
+  4. O próprio clipe volta ao Repouso, sem tocar o SoltarPresa.
+  - Sem o clipe no place, o código volta ao giro de 20° do r2.
+- **Testes (Play):**
+  - deitado: chicotada +3,47 em X, pousa em X 13,2, Caido;
+  - filhote: E +3,22 / D −3,62, pousa a ~10,5 do eixo, Caido;
+  - PvP: D −3,21, pousa a −6,5, sem queda, solta aos 2,50 s;
+  - sustentação PvE: 3,07 s + 0,43 s = 3,50 s;
+  - água: SoltarPresa, sem arremesso.
+- **Vídeo:** `review/arremesso_r3/Crocodilo_ArremessarPresa_r3.mp4`, com frente, de cima, mordida de lado e PvP, e câmera lenta 0,35× das 3 primeiras tomadas. Captura a 15 qps e codificação em prioridade baixa.
+- **No place:** backup `ServerStorage.Crocodilo_ANTES_Arremesso_r3`; 4 KFS em `Animacoes` com o marcador `solta`; place local salvo.
 
 ## 6. Pendências
 1. **Decisões do criador:**

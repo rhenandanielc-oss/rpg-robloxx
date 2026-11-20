@@ -805,6 +805,121 @@ EXTRA["SegurarPresa"] = {"de": "MordidaLateralE/D", "para": "SoltarPresa/RolarDa
 EXTRA["SoltarPresa"] = {"eventos": {"solta": 0.12}, "de": "SegurarPresa", "para": "Repouso"}
 EXTRA["SegurarPresaAgua"] = {"de": "BoteAquatico", "para": "RolarDaMorte/NadoParado", "obs": "PROTOTIPO do agarrao na agua"}
 PES_CORPO["SegurarPresaAgua"] = 1.0
+# 20/11 (usuario): finalizacao do crocodilo = MORDIDA ESMAGADORA. "Nao faz sentido o crocodilo girar": segura o CORPO da
+# presa com a mandibula travada e MEXE A BOCA para cravar mais os dentes - 2 re-mordidas (abre um pouco e trava mais fundo,
+# cabeca pressionando para baixo/frente com uma leve torcao, corpo empurrando para a frente). Corpo firme nas 4 patas, sem
+# sacudir/girar o corpo. Parte e termina no quadro 0 do SegurarPresa. So animacao: dano/desfecho sao do jogo.
+def clipe_mordida_esmagadora(t):
+    r, raiz0, pes = segurar(0.0, 2.0)
+    r.pop("Mandibula", None)
+    def ciclo(t0):
+        x = t - t0
+        abre = kf(x, [(0, 0), (0.12, 1), (0.20, 1), (0.30, 0), (0.9, 0)])            # reabre um pouco a boca
+        crava = kf(x, [(0, 0), (0.22, 0), (0.34, 1), (0.55, 0.85), (0.75, 0)])      # trava mais fundo e pressiona
+        return abre, crava
+    a1, c1 = ciclo(0.15); a2, c2 = ciclo(0.90)
+    abre, crava = a1 + a2, c1 + c2
+    torc = 3.0 * c1 - 3.0 * c2                                                       # torce para um lado e depois para o outro
+    baixa = kf(t, [(0, 0), (0.15, 1), (1.62, 1), (1.8, 0)])                          # r2: abaixa a cabeca ATE O CORPO da presa caida
+    soma(r, "Pescoco", X_, 7.0 * baixa); soma(r, "Pescoco2", X_, 3.0 * baixa); soma_cab(r, X_, 3.0 * baixa)   # (no Studio os dentes ficavam 1,4 acima)
+    soma(r, "Pescoco", X_, 3.5 * crava - 1.5 * abre); soma_cab(r, X_, 2.5 * crava - 1.0 * abre)
+    soma(r, "Pescoco", Z_, 0.6 * torc); soma(r, "Pescoco2", Z_, 0.3 * torc); soma_cab(r, Z_, 0.4 * torc)
+    soma(r, "Coluna2", X_, -1.0 * crava)                                             # o tronco acompanha o empurrao
+    r["Mandibula"] = boca_frac(max(0.0, 0.12 + 0.30 * abre - 0.12 * crava))
+    raiz = V((0, raiz0.y - 0.15 * crava, 0))                                         # empurra o corpo para a frente (-Y)
+    return r, raiz, pes
+CLIPES["MordidaEsmagadora"] = (boca_acompanha(clipe_mordida_esmagadora), 1.8, False, 0.0)
+EXTRA["MordidaEsmagadora"] = {"eventos": {"crava1": 0.49, "crava2": 1.24}, "de": "SegurarPresa", "para": "SegurarPresa/SoltarPresa",
+                              "obs": "finalizacao (usuario 20/11): mexe a boca para cravar os dentes; corpo firme, sem girar"}
+# 20/11 ENCAIXE REAL DA PRESA (usuario: "agarre o alvo na boca, simetricamente, o corpo encaixe certinho; se nao couber,
+# so morde"). A boca precisa FECHAR ATE A ESPESSURA da presa, nao fechar 100% atravessando o corpo. Para isso cada pose de
+# segurar sai em 2 versoes iguais no corpo e diferentes so na abertura base da mandibula: _Boca0 (alfa 0 = fechada) e _Boca1
+# (alfa = ALFA_MAX, a abertura maxima do rig). O jogo toca as duas no MESMO prioridade com pesos (1-w, w): a mandibula fica
+# em alfa = w * ALFA_MAX (abertura medida por scripts/medir_boca.py para a espessura da presa) e o corpo nao muda.
+# A modulacao propria de cada clipe (reajuste do SegurarPresa; re-mordidas) e somada IGUAL nas duas -> continua no blend.
+# Nas cravadas a boca fecha no maximo 1,5 graus alem do contato (os dentes afundam um pouco no corpo, nao atravessam).
+ALFA_MAX = math.degrees(math.radians(ABRE_MAX) - FECHADA)               # 25,57 graus da fechada a abertura maxima
+def _boca_base(fn, alfa, delta):
+    def f(t):
+        r, raiz, pes = fn(t)
+        r["Mandibula"] = [(X_, FECHADA + math.radians(alfa) + delta(t))]
+        return r, raiz, pes
+    return f
+_RANGE = math.radians(ABRE_MAX) - FECHADA
+def _delta_segurar(T):
+    return lambda t: 0.25 * _RANGE * math.exp(-((t - 0.78 * T) / (0.05 * T)) ** 2)   # reajuste (abre um pouco e trava)
+def _delta_esmagar(t):
+    a1 = kf(t - 0.15, [(0, 0), (0.12, 1), (0.20, 1), (0.30, 0), (0.9, 0)]); a2 = kf(t - 0.90, [(0, 0), (0.12, 1), (0.20, 1), (0.30, 0), (0.9, 0)])
+    c1 = kf(t - 0.15, [(0, 0), (0.22, 0), (0.34, 1), (0.55, 0.85), (0.75, 0)]); c2 = kf(t - 0.90, [(0, 0), (0.22, 0), (0.34, 1), (0.55, 0.85), (0.75, 0)])
+    return math.radians(6.0) * (a1 + a2) - math.radians(1.5) * (c1 + c2)       # re-mordida: abre 6 graus e crava 1,5 alem do contato
+def _segurar_corpo(T, agua=False):
+    return lambda t: segurar(t, T, agua)
+for _sufixo, _alfa in (("_Boca0", 0.0), ("_Boca1", ALFA_MAX)):
+    CLIPES["SegurarPresa" + _sufixo] = (boca_acompanha(_boca_base(_segurar_corpo(2.0), _alfa, _delta_segurar(2.0))), 2.0, True, 0.0)
+    CLIPES["SegurarPresaAgua" + _sufixo] = (boca_acompanha(_boca_base(_segurar_corpo(2.0, True), _alfa, _delta_segurar(2.0))), 2.0, True, 0.0)
+    CLIPES["MordidaEsmagadora" + _sufixo] = (boca_acompanha(_boca_base(clipe_mordida_esmagadora, _alfa, _delta_esmagar)), 1.8, False, 0.0)
+    PES_CORPO["SegurarPresaAgua" + _sufixo] = 1.0
+    EXTRA["MordidaEsmagadora" + _sufixo] = {"eventos": {"crava1": 0.49, "crava2": 1.24}, "alfa_base_graus": round(_alfa, 2),
+                                            "obs": "par de encaixe (_Boca0/_Boca1): o jogo mistura pelos pesos para a abertura da presa"}
+    EXTRA["SegurarPresa" + _sufixo] = {"alfa_base_graus": round(_alfa, 2), "obs": "par de encaixe"}
+    EXTRA["SegurarPresaAgua" + _sufixo] = {"alfa_base_graus": round(_alfa, 2), "obs": "par de encaixe"}
+# 20/11 MORDIDA DE LADO (usuario: "Mordida de lado"): presa no chao/caida. Como o crocodilo real, abaixa a cabeca e a GIRA
+# ~70 graus para o lado (rolagem no pescoco e cabeca): a boca abre na HORIZONTAL rente ao chao, a arcada de baixo nao
+# precisa passar por baixo da presa. lado +1 = gira para a esquerda (+X), -1 = direita. Mesmo par _Boca0/_Boca1 de encaixe.
+LADO_ROLA = (25.0, 27.0, 27.0)                                           # Pescoco, Pescoco2, Cabeca (graus de rolagem)
+LADO_DESCE = (14.0, 8.0, 6.0)                                            # arfagem para baixo nos mesmos ossos
+LADO_K_SEGURAR, LADO_K_ESMAGAR = 0.45, 0.5                               # r2: k=1 enfiava o focinho 1,4 no chao (medido)
+def _lado(r, lado, k_desce=1.0):
+    soma(r, "Pescoco", X_, LADO_DESCE[0] * k_desce); soma(r, "Pescoco2", X_, LADO_DESCE[1] * k_desce); soma_cab(r, X_, LADO_DESCE[2] * k_desce)
+    soma(r, "Pescoco", Y_, LADO_ROLA[0] * lado); soma(r, "Pescoco2", Y_, LADO_ROLA[1] * lado); soma_cab(r, Y_, LADO_ROLA[2] * lado)
+    soma(r, "Coluna2", X_, 3.0 * k_desce); soma(r, "Coluna1", X_, 1.5 * k_desce)          # o tronco da frente acompanha
+def _segurar_lado(lado):
+    def f(t):
+        r, raiz, pes = segurar(t, 2.0); _lado(r, lado, LADO_K_SEGURAR)
+        return r, V((raiz.x, raiz.y, raiz.z - 0.25)), pes                 # agacha um pouco (patas no chao pelo IK)
+    return f
+def _esmagar_lado(lado):
+    def f(t):
+        r, raiz, pes = clipe_mordida_esmagadora(t); _lado(r, lado, LADO_K_ESMAGAR)  # a Esmagadora ja abaixa a cabeca 13 graus
+        return r, V((raiz.x, raiz.y, raiz.z - 0.25)), pes
+    return f
+for _ld, _ln in ((1, "E"), (-1, "D")):
+    for _sufixo, _alfa in (("_Boca0", 0.0), ("_Boca1", ALFA_MAX)):
+        CLIPES["SegurarLado" + _ln + _sufixo] = (boca_acompanha(_boca_base(_segurar_lado(_ld), _alfa, _delta_segurar(2.0))), 2.0, True, 0.0)
+        CLIPES["EsmagarLado" + _ln + _sufixo] = (boca_acompanha(_boca_base(_esmagar_lado(_ld), _alfa, _delta_esmagar)), 1.8, False, 0.0)
+        EXTRA["SegurarLado" + _ln + _sufixo] = {"alfa_base_graus": round(_alfa, 2), "lado": _ln, "obs": "mordida de lado (presa no chao), par de encaixe"}
+        EXTRA["EsmagarLado" + _ln + _sufixo] = {"eventos": {"crava1": 0.49, "crava2": 1.24}, "alfa_base_graus": round(_alfa, 2), "lado": _ln,
+                                                "obs": "Mordida esmagadora de lado, par de encaixe"}
+# 20/11 ARREMESSAR PRESA (usuario: "jogar a criatura presa mais pra longe"; "Arma e chicoteia"; corpo gira so ~6 graus no
+# jogo). Parte do quadro 0 do SegurarPresa com a presa no vao: ARMA (cabeca ~15 graus para o lado oposto, focinho um pouco
+# baixo), CHICOTEIA ~35 graus para o lado do arremesso erguendo o focinho, SOLTA no evento "solta" (boca abre alem do
+# encaixe), volta ao Repouso. Tronco da frente e cauda acompanham (cauda contrapesa). lado +1 = arremessa para a esquerda
+# (no Blender; ver a nota do sinal abaixo). Mesmo par _Boca0/_Boca1: a boca fica na abertura da presa ate soltar.
+ARR_T, ARR_SOLTA = 1.0, 0.44
+def _arremessar(lado):
+    def f(t):
+        rh, raiz_h, _ = segurar(0.0, 2.0)
+        w = 1.0 - suave((t - 0.52) / 0.45)                                   # pose de segurar -> Repouso depois da soltura
+        r = mix(REP0, rh, w); r.pop("Mandibula", None)
+        g = kf(t, [(0, 0), (0.28, -15), (0.36, -8), (0.47, 35), (0.58, 30), (0.98, 0)]) * lado
+        erg = kf(t, [(0, 0), (0.28, 3), (0.40, -4), (0.50, -9), (0.70, -4), (0.98, 0)])   # + baixa / - ergue o focinho
+        soma(r, "Pescoco", Z_, 0.55 * g); soma(r, "Pescoco2", Z_, 0.25 * g); soma_cab(r, Z_, 0.40 * g)
+        soma(r, "Coluna2", Z_, 0.15 * g); soma(r, "Coluna1", Z_, 0.06 * g)
+        soma(r, "Pescoco", X_, 0.6 * erg); soma(r, "Pescoco2", X_, 0.2 * erg); soma_cab(r, X_, 0.4 * erg)
+        for i, nm in enumerate(CAUDA): soma(r, nm, Z_, -0.12 * (i / 7) * g)   # cauda contrapesa a chicotada
+        raiz = V((0, raiz_h.y * w, 0))
+        return r, raiz, {}
+    return f
+def _delta_arremessar(t):                                                    # abre 12 graus alem do encaixe ao soltar e fecha
+    return math.radians(12.0) * kf(t, [(0, 0), (ARR_SOLTA - 0.02, 0), (ARR_SOLTA + 0.08, 1), (0.70, 0.8), (0.95, 0)])
+# Medido em Play (20/11): com lado +1 no Blender a chicotada levava a boca a -X LOCAL DO JOGO (convencao giro180y). O nome
+# segue o JOGO (como SegurarLadoE = boca em +X): ArremessarPresaE = chicoteia e lanca para +X no jogo -> lado -1 aqui.
+for _ld, _ln in ((-1, "E"), (1, "D")):
+    for _sufixo, _alfa in (("_Boca0", 0.0), ("_Boca1", ALFA_MAX)):
+        CLIPES["ArremessarPresa" + _ln + _sufixo] = (boca_acompanha(_boca_base(_arremessar(_ld), _alfa, _delta_arremessar)), ARR_T, False, 0.0)
+        EXTRA["ArremessarPresa" + _ln + _sufixo] = {"eventos": {"solta": ARR_SOLTA}, "alfa_base_graus": round(_alfa, 2), "lado": _ln,
+                                                    "de": "SegurarPresa/SegurarLado", "para": "Repouso",
+                                                    "obs": "arremesso (usuario 20/11): arma e chicoteia de lado; par de encaixe; o jogo gira o corpo ~6 graus"}
 # ================================================================== Poderes P4 (16/11): Giro de Emboscada (PROTOTIPO)
 # Saida da agua com impulso da cauda ate a pose de giro do RolarDaMorte r2, e pouso com peso em terra. O voo, a rotacao
 # no eixo longo (RolarDaMorte em laco) e a distancia sao do jogo. So animacao: dano/derrubar/janela sao do criador.

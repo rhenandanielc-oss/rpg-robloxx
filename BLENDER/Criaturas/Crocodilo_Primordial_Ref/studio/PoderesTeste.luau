@@ -180,7 +180,7 @@ local function soltar(motivo)
 	for _, pl in ipairs(est.avisados or {}) do AVISO:FireClient(pl, "esconder") end; est.avisados = nil   -- some o botao Soltar aliado
 	if a and a.Parent then
 		local p = centro(a)
-		if p and not est.ponto then a:PivotTo(CFrame.new(Vector3.new(p.X, 2.5, p.Z))) end   -- ponto de mordida: ja esta no chao, fica onde esta
+		if p and not est.ponto and not est.pegada then a:PivotTo(CFrame.new(Vector3.new(p.X, 2.5, p.Z))) end   -- ponto de mordida: ja esta no chao, fica onde esta
 		a:SetAttribute("Agarrado", false)
 		log("alvo %s solto (%s)", a.Name, motivo)
 		if ehPvP(a) then
@@ -210,7 +210,7 @@ function M.cancelar(motivo)
 	log("FIM %s: %s", est.poder, motivo)
 	est.gen += 1; limparCons(); soltar(motivo)
 	est.pvp = nil; est.limite = nil; est.cavaleiro = nil  -- PvP: fim da pegada
-	est.ponto = nil; est.yFix = nil
+	est.ponto = nil; est.yFix = nil; est.pegada = nil; est.par = nil
 	T.parar()
 	local dy = (modelo:GetPivot().Position - BASE.Position).Magnitude
 	moverPivo(BASE, dy > 0.05 and 0.4 or 0)               -- volta a altura normal sem salto
@@ -238,11 +238,157 @@ local function iniciar(poder, manterPivo)
 	end))
 	return est.gen
 end
-local function vigiaAlvo(g)
+-- ================================================================ PEGADA REAL (20/11) [PROPOSTA]
+-- Pedido do usuario: "agarre o alvo na boca, simetricamente na boca, o corpo encaixe certinho; se nao couber, so morde".
+-- 1) escolhe a regiao mordivel (EncaixeBoca: secao por raios na colisao da presa); 2) poe a boca na pose da pegada, aberta
+-- (regiao baixa = MORDIDA DE LADO, cabeca baixa e girada; senao a normal; na agua a de agua); 3) ajusta o corpo para o
+-- CENTRO do vao ficar na regiao (lateral = plano mediano); 4) mede de novo no referencial real; 5) cabe -> fecha ate a
+-- espessura (pesos do par _Boca0/_Boca1) e prende a presa ao referencial da boca; nao cabe -> so mordida; fora -> erra.
+-- Enquanto segura, revalida (espessura x vao) e registra penetracao (espessura - vao na abertura medida) e deriva.
+local E = require(PASTA.EncaixeBoca)
+local vigiaAlvo                                            -- (definida logo abaixo)
+local OFS_ALFA = 8.01                                      -- calibrado no Studio: par em _Boca0 = -8,01 graus mandibula/cranio
+local function alfaAtual()
+	local cab = osso("Cabeca").TransformedWorldCFrame; local J = osso("Mandibula").TransformedWorldCFrame.UpVector
+	local F, U = cab.UpVector, -cab.LookVector
+	return math.deg(math.atan2(-J:Dot(U), J:Dot(F))) + OFS_ALFA
+end
+local function cfBoca(b, d, alfa) return CFrame.fromMatrix(E.pontoBoca(b, d, alfa), b.R, b.U, -b.F) end
+local function tocarPar(base, w, fade)
+	T.parar(); local f0, f1 = T.faixa(base .. "_Boca0"), T.faixa(base .. "_Boca1")
+	f0:Play(fade or 0.2, math.max(0.001, 1 - w)); f1:Play(fade or 0.2, math.max(0.001, w)); est.par = {f0, f1, base}
+	return f1, f0
+end
+local function pesoPar(w, fade)
+	if not est.par then return end
+	est.par[1]:AdjustWeight(math.max(0.001, 1 - w), fade or 0.15); est.par[2]:AdjustWeight(math.max(0.001, w), fade or 0.15)
+end
+local function poseDe(p, agua)
+	if agua then return "Crocodilo_SegurarPresaAgua", "Crocodilo_MordidaEsmagadora", "agua" end
+	local chao = modelo:GetPivot().Y - C_.pivo
+	if p.Y - chao <= CFG.Agarrao.altura_lado then
+		local lado = (modelo:GetPivot():PointToObjectSpace(p).X > 0) and "E" or "D"   -- medido em Play: LadoE leva a boca a +X local (convencao giro180y)
+		return "Crocodilo_SegurarLado" .. lado, "Crocodilo_EsmagarLado" .. lado, "lado" .. lado
+	end
+	return "Crocodilo_SegurarPresa", "Crocodilo_MordidaEsmagadora", "normal"
+end
+-- tenta prender a presa; devolve r com r.modo = "captura" | "mordida" | "erro" e as medidas (para log e teste)
+local function pegarEm(g, alvo, agua, maxCorr, alvoR, sim)
+	local baseSeg, baseEsm, pose = poseDe(alvoR.p, agua)
+	tocarPar(baseSeg, 1, 0.2)                                   -- boca aberta no maximo, cabeca na pose da pegada
+	local t = 0; while t < 0.3 do t += RS.Heartbeat:Wait(); if est.gen ~= g then return {modo = "erro", motivo = "cancelado"} end end
+	local dEst = sim and sim.dPega or 4.8; local andou = 0; local p0 = modelo:GetPivot().Position
+	local pR = alvoR.p
+	for volta = 1, 2 do
+		for _ = 1, 15 do                                        -- leva o centro do vao (abertura maxima) ate a regiao
+			local Mp = E.pontoBoca(E.boca(modelo), dEst, E.ALFA_MAX); local hz = (pR - Mp) * Vector3.new(1, 0, 1)
+			if hz.Magnitude < 0.03 then break end
+			local liq = ((modelo:GetPivot().Position + hz - p0) * Vector3.new(1, 0, 1)).Magnitude   -- deslocamento liquido do corpo
+			if liq > maxCorr then
+				return {modo = "erro", motivo = string.format("fora de alcance: o corpo precisaria se ajustar %.2f (max %.1f)", liq, maxCorr), p = pR, nome = alvoR.nome, pose = pose}
+			end
+			andou = liq; BASE = modelo:GetPivot() + hz; modelo:PivotTo(BASE); RS.Heartbeat:Wait()
+		end
+		if volta == 2 then break end
+		-- morde o corpo ONDE a boca chega: desliza no plano mediano da boca (eixo R) e centra no corpo ao longo de U
+		local b0 = E.boca(modelo); local Mp = E.pontoBoca(b0, dEst, E.ALFA_MAX)
+		local pM = pR + b0.R * (Mp - pR):Dot(b0.R)
+		local s0 = E.secao(alvo, pM, b0.F, b0.U)
+		if s0 then pR = s0.centro end
+	end
+	local b = E.boca(modelo)
+	local r = E.avaliar(alvo, pR, b, CFG.Agarrao.cravar)        -- medida no referencial REAL da boca (pose tocada); r2: dentes cravados
+	r.p, r.nome, r.pose, r.baseSeg, r.baseEsm, r.andou = pR, alvoR.nome, pose, baseSeg, baseEsm, andou
+	local dv = pR - E.pontoBoca(b, r.dPega or dEst, E.ALFA_MAX)
+	r.lateral, r.altura, r.prof = dv:Dot(b.R), dv:Dot(b.U), dv:Dot(b.F)
+	if math.abs(r.lateral) > E.TOL.lateral or math.abs(r.altura) > E.TOL.contato then
+		r.modo = "erro"; r.motivo = string.format("a boca nao alcanca a regiao (fora do plano mediano %.2f, fora do vao %.2f)", r.lateral, r.altura); return r
+	end
+	if not r.cabe then r.modo = "mordida"; return r end
+	pesoPar(r.w, 0.12)                                          -- fecha ate os dentes cravarem (espessura - cravar)
+	r.modo = "captura"
+	return r
+end
+-- tenta a regiao que cabe; se a boca nao chega nela, tenta a regiao mais perto (que nao cabe = so mordida)
+local function pegar(g, alvo, agua, maxCorr, preferir)
+	local sim, nao = E.escolher(modelo, alvo, 40, preferir, nil, not agua and (modelo:GetPivot().Y - C_.pivo + CFG.Agarrao.altura_lado) or nil)
+	if not (sim or nao) then return {modo = "erro", motivo = "nenhuma regiao ao alcance"} end
+	local base0 = modelo:GetPivot()
+	local r = sim and pegarEm(g, alvo, agua, maxCorr, sim, sim)
+	if (not r or r.modo == "erro") and nao and est.gen == g then
+		if r then log("PEGADA: regiao que cabe (%s) fora: %s -> tenta a mais perto (%s)", tostring(sim.nome), r.motivo, nao.nome) end
+		BASE = base0; modelo:PivotTo(base0)
+		local r2 = pegarEm(g, alvo, agua, maxCorr, nao, nil)
+		log("PEGADA (mais perto, %s): %s - %s", nao.nome, r2.modo, r2.motivo or "")
+		if r2.modo ~= "erro" or not r then r = r2 end
+	end
+	return r
+end
+-- prende a presa no referencial da boca (centro do vao, na abertura de contato) e vigia a pegada
+local function fixarPegada(g, alvo, r)
+	local b = E.boca(modelo); local cfB = cfBoca(b, r.dPega, r.alfa)
+	local tam = alvo:GetExtentsSize(); local grande = math.max(tam.X, tam.Y, tam.Z) > CFG.Agarrao.rigido_max
+	est.pegada = {d = r.dPega, alfa = r.alfa, rel = cfB:Inverse() * alvo:GetPivot(), grande = grande, local_ = alvo:GetPivot():PointToObjectSpace(r.p),
+		pontoLocal = alvo:GetPivot():PointToObjectSpace(r.p), penMax = -math.huge, derMax = 0, tU = r.tU, d0 = r.d0, d1 = r.d1, base = r.baseSeg, w = r.w,
+		pose = r.pose, crava = r.crava, alfaContato = r.alfaContato}
+	do                                                             -- r2 arremesso: altura do pivo sobre o chao e rumo da presa em pe
+		local pv = alvo:GetPivot(); local rp = RaycastParams.new(); rp.FilterType = Enum.RaycastFilterType.Exclude
+		rp.FilterDescendantsInstances = {modelo, alvo}
+		local hit = workspace:Raycast(pv.Position + Vector3.new(0, 4, 0), Vector3.new(0, -40, 0), rp)
+		est.pegada.altChao = pv.Y - (hit and hit.Position.Y or (modelo:GetPivot().Y - C_.pivo))
+		local _, ry = pv:ToOrientation(); est.pegada.ry0 = ry
+	end
+	-- corrige o resto: o ponto agarrado vai exatamente ao centro do vao (sem atravessar: so o desvio residual medido)
+	if not grande then est.pegada.rel = cfB:Inverse() * (alvo:GetPivot() + (cfB.Position - r.p)) end
+	local acum = 0
+	table.insert(est.cons, RS.Heartbeat:Connect(function(dt)
+		local pg = est.pegada; if est.gen ~= g or not pg or est.alvo ~= alvo or est.fase == "soltando" then return end
+		local b2 = E.boca(modelo); local M2 = E.pontoBoca(b2, pg.d, pg.alfa)
+		local pw = alvo:GetPivot() * pg.pontoLocal
+		pg.derMax = math.max(pg.derMax, (pw - M2).Magnitude)                       -- deriva do ponto agarrado no vao
+		acum += dt; if acum < CFG.Agarrao.revalidar then return end; acum = 0
+		local s = E.secao(alvo, pw, b2.F, b2.U); local aMed = alfaAtual()
+		if s then
+			local fmin = math.huge                                                       -- vao mais apertado na faixa ocupada pelo corpo
+			for d = pg.d0 or pg.d, pg.d1 or pg.d, 0.1 do fmin = math.min(fmin, E.folga(aMed, d)) end
+			local pen = s.tU - fmin; pg.penMax = math.max(pg.penMax, pen)               -- >0: arcadas apertam o corpo; <0 = folga
+			if s.tU > E.folga(E.ALFA_MAX, pg.d) + 0.15 then log("PEGADA: secao %.2f nao cabe mais no vao -> solta", s.tU); M.cancelar("pegada_nao_cabe") end
+		end
+	end))
+	vigiaAlvo(g)
+end
+local ACP_ = game:GetService("AnimationClipProvider")
+local function tocarNaPresa(a, nome, loop, congelarFim)      -- pose da PRESA com os clipes dela (mesmo esqueleto de crocodilo)
+	local ac = a:FindFirstChildOfClass("AnimationController"); if not ac then return nil end
+	local kfs = PASTA.Animacoes:FindFirstChild(nome); if not kfs then return nil end
+	local an = ac:FindFirstChildOfClass("Animator") or Instance.new("Animator", ac)
+	for _, tr in ipairs(an:GetPlayingAnimationTracks()) do tr:Stop(0.25) end
+	est.idsPresa = est.idsPresa or {}; est.idsPresa[nome] = est.idsPresa[nome] or ACP_:RegisterAnimationClip(kfs)
+	local anim = Instance.new("Animation"); anim.AnimationId = est.idsPresa[nome]
+	local tr = an:LoadAnimation(anim); tr.Looped = loop and true or false; tr:Play(0.25)
+	if congelarFim then task.delay(math.max(0, kfs:GetKeyframes()[#kfs:GetKeyframes()].Time - 0.05), function() if tr.IsPlaying then tr:AdjustSpeed(0) end end) end
+	return tr
+end
+M.tocarNaPresa = tocarNaPresa
+vigiaAlvo = function(g)
 	table.insert(est.cons, RS.Heartbeat:Connect(function(dt)
 		if est.gen ~= g or not est.alvo then return end
 		if not alvoValido(est.alvo) then M.cancelar("alvo_removido_ou_derrotado"); return end
 		local mand = osso("Mandibula").TransformedWorldCFrame
+		if est.pegada then                                         -- 20/11 PEGADA REAL: preso ao referencial da BOCA (centro do vao)
+			local pg = est.pegada; local b = E.boca(modelo); local cfB = cfBoca(b, pg.d, pg.alfa)
+			if not pg.grande then est.alvo:PivotTo(cfB * pg.rel); return end
+			-- presa grande: o ponto agarrado fica no centro da boca; o corpo fica no chao e vira para tras (arrastado)
+			local cf = est.alvo:GetPivot(); local _, ry = cf:ToOrientation(); local rot = CFrame.Angles(0, ry, 0)
+			local loc = -pg.local_ * Vector3.new(1, 0, 1); local atras = (cf.Position - cfB.Position) * Vector3.new(1, 0, 1)
+			if loc.Magnitude > 0.5 and atras.Magnitude > 0.5 then
+				local w, t = rot:VectorToWorldSpace(loc).Unit, atras.Unit
+				local dd = math.atan2(w:Cross(t).Y, w:Dot(t)); local passo = CFG.Agarrao.giro_corpo * dt
+				rot = CFrame.Angles(0, math.clamp(dd, -passo, passo), 0) * rot
+			end
+			est.alvo:PivotTo(CFrame.new(cfB.Position - rot:VectorToWorldSpace(pg.local_)) * rot)
+			return
+		end
 		if not est.ponto then
 			-- alvo pequeno: acompanha a mandibula no encaixe medido no contato (gira junto no Giro)
 			est.alvo:PivotTo(mand * est.rel); return
@@ -261,6 +407,96 @@ local function vigiaAlvo(g)
 		local pos = ponta - rot:VectorToWorldSpace(est.ponto)
 		est.alvo:PivotTo(CFrame.new(pos.X, est.yFix, pos.Z) * rot)
 	end))
+end
+
+-- ================================================================ ARREMESSO (20/11 r2) [PROPOSTA]
+-- Usuario: "ele deve jogar a criatura presa mais pra longe". Fim da pegada: o crocodilo da uma sacudida DE LADO (corpo e
+-- cabeca giram `giro` graus acelerando, a presa ainda presa no vao), solta no pico e a presa voa em arco ~8 studs para
+-- o lado/frente, cai (PvE: Caido 1,5 s e levanta; sem dano na queda). PvP: metade da distancia e sem queda.
+-- Presa ancorada (bonecos) = arco por script; presa com fisica = velocidade balistica no servidor.
+local aplicarQueda                                         -- (definida mais abaixo, no controle por porte)
+local function chaoEm(p, ignorar)
+	local rp = RaycastParams.new(); rp.FilterType = Enum.RaycastFilterType.Exclude; rp.FilterDescendantsInstances = ignorar
+	local hit = workspace:Raycast(p + Vector3.new(0, 15, 0), Vector3.new(0, -60, 0), rp)
+	return hit and hit.Position.Y or (modelo:GetPivot().Y - C_.pivo)
+end
+local function lancar(a, pg, lado, pvp)
+	local A = CFG.Arremesso; local fator = pvp and A.pvp_fator or 1
+	local cfC = modelo:GetPivot()
+	local dir = ((cfC.RightVector * lado * A.lateral + cfC.LookVector * A.frente) * Vector3.new(1, 0, 1)).Unit
+	local ini = a:GetPivot(); local dist, alt, T = A.distancia * fator, A.altura * fator, A.voo * math.sqrt(fator)
+	local alvoXZ = ini.Position + dir * dist
+	local yFim = chaoEm(alvoXZ, {modelo, a}) + (pg.altChao or 0)
+	local fim = CFrame.new(alvoXZ.X, yFim, alvoXZ.Z) * CFrame.Angles(0, (pg.ry0 or 0) - lado * math.rad(35), 0)
+	log("ARREMESSO: %s para o lado %s, %.1f studs (arco %.1f, %.2f s)%s", a.Name, lado > 0 and "E" or "D", dist, alt, T, pvp and " [PvP: metade, sem queda]" or "")
+	local raiz = a:FindFirstChild("HumanoidRootPart") or a.PrimaryPart
+	if raiz and not raiz.Anchored then                         -- presa com fisica: velocidade balistica (servidor e dono da rede no lance)
+		local g = workspace.Gravity; local dy = yFim - ini.Y
+		pcall(function() raiz:SetNetworkOwner(nil) end)
+		raiz.AssemblyLinearVelocity = dir * (dist / T) + Vector3.new(0, (dy + 0.5 * g * T * T) / T, 0)
+		task.delay(T, function() if a.Parent and (not pvp or A.pvp_queda) then aplicarQueda(a, A.queda) end end)
+		return
+	end
+	local eixo = dir:Cross(Vector3.yAxis); local cambalhota = pvp and 0 or (math.pi * 2 * lado)
+	local rot0 = ini - ini.Position; local rot1 = fim - fim.Position
+	task.spawn(function()
+		local t = 0
+		while t < T do
+			t += RS.Heartbeat:Wait(); if not a.Parent then return end
+			local u = math.min(1, t / T)
+			local p = ini.Position:Lerp(fim.Position, u) + Vector3.new(0, 4 * alt * u * (1 - u), 0)
+			a:PivotTo(CFrame.new(p) * CFrame.fromAxisAngle(eixo, cambalhota * u) * rot0:Lerp(rot1, u))
+		end
+		a:PivotTo(fim)
+		log("ARREMESSO: %s caiu a %.1f studs da soltura", a.Name, ((fim.Position - ini.Position) * Vector3.new(1, 0, 1)).Magnitude)
+		if not pvp or A.pvp_queda then aplicarQueda(a, A.queda) end
+	end)
+end
+-- r3 (usuario "Fazer os clipes"): clipe ArremessarPresaE/D (par _Boca0/_Boca1 na abertura da pegada) arma e chicoteia a
+-- cabeca; o corpo gira so `giro_clipe` graus junto da chicotada; o evento "solta" do clipe solta e lanca a presa.
+local function temClipeArr(lado)
+	local n = "Crocodilo_ArremessarPresa" .. (lado > 0 and "E" or "D")
+	return PASTA.Animacoes:FindFirstChild(n .. "_Boca0") and PASTA.Animacoes:FindFirstChild(n .. "_Boca1") and n
+end
+local function antecedenciaArr() return temClipeArr(1) and CFG.Arremesso.solta_clipe or CFG.Arremesso.giro_dur end
+-- sacudida + soltura + lancamento; devolve true se arremessou (ja soltou a presa), false se so deve soltar como antes;
+-- 2o retorno = faixa do clipe de arremesso (quem chama espera ela terminar em vez de tocar SoltarPresa)
+local function arremessar(g, cena)
+	local A = CFG.Arremesso; local a, pg, pvp = est.alvo, est.pegada, est.pvp
+	if not a or not pg or (cena == "agua" and not A.agua) then return false end
+	local lado = (pg.pose == "ladoE" and 1) or (pg.pose == "ladoD" and -1) or (math.random() < 0.5 and 1 or -1)
+	local clipe = temClipeArr(lado)
+	if clipe then
+		local f1 = tocarPar(clipe, pg.w or 0.5, 0.15)
+		local solto = false
+		local con = f1:GetMarkerReachedSignal("solta"):Connect(function() solto = true end)
+		est.mov = (est.mov or 0) + 1; local tok = est.mov
+		local base = modelo:GetPivot(); local ang = math.rad(A.giro_clipe)
+		log("ARREMESSO: clipe %s (arma e chicoteia), corpo gira %.0f graus", clipe, A.giro_clipe)
+		local t = 0
+		while not solto and t < 1.5 do                         -- corpo acompanha a chicotada (0,30 -> evento solta)
+			t += RS.Heartbeat:Wait()
+			if est.gen ~= g or est.mov ~= tok or est.alvo ~= a then con:Disconnect(); return est.alvo ~= a end
+			local u = math.clamp((f1.TimePosition - 0.30) / math.max(0.05, A.solta_clipe - 0.30), 0, 1)
+			modelo:PivotTo(base * CFrame.Angles(0, -lado * ang * u * u, 0))
+		end
+		con:Disconnect()
+		soltar("arremesso"); lancar(a, pg, lado, pvp)
+		moverPivo(base, A.volta_dur)
+		return true, f1
+	end
+	est.mov = (est.mov or 0) + 1; local tok = est.mov
+	local base = modelo:GetPivot(); local ang = math.rad(A.giro); local t = 0
+	while t < A.giro_dur do                                    -- acelera (u^2): a velocidade maxima e no instante da soltura
+		t += RS.Heartbeat:Wait()
+		if est.gen ~= g or est.mov ~= tok or est.alvo ~= a then return est.alvo ~= a end
+		local u = math.min(1, t / A.giro_dur)
+		modelo:PivotTo(base * CFrame.Angles(0, -lado * ang * u * u, 0))
+	end
+	soltar("arremesso")
+	lancar(a, pg, lado, pvp)
+	moverPivo(base, A.volta_dur)                               -- volta ao rumo enquanto a presa voa
+	return true
 end
 
 -- ================================================================ Mordida de Agarrao
@@ -328,95 +564,125 @@ function M.agarrao(alvo, cena, opcoes)
 	log("aproximacao: %s (%s)", clipe:sub(11), cena or "terra")
 	local f = T.tocar(clipe, 0.1)
 	local resultado = "andamento"
-	table.insert(est.cons, f:GetMarkerReachedSignal("fecha_boca"):Connect(function()
-		if est.gen ~= g then return end
-		local ponta = osso("Mandibula").TransformedWorldCFrame * Vector3.new(0, CFG.Agarrao.ponta, 0)   -- +Y do osso = frente
-		local d = contatoCorpo(alvo, ponta)                      -- 20/11: dentes ate a SUPERFICIE do corpo (antes: ao centro, alcance 6,5)
-		if d <= HB.contatoMordida and alvoValido(alvo) then
-			local P = CFG.AgarraoPvP
-			local imune = alvo:GetAttribute("ImuneAgarraoAte")
-			if imune and agora() < imune then                       -- PvP: resistencia a repeticao (8 s depois de solto)
-				alvo:FindFirstChildOfClass("Humanoid"):TakeDamage(CFG.Agarrao.dano_contato)
-				log("PvP: %s IMUNE ao agarrao (faltam %.1f s): so a mordida, dano %d", alvo.Name, imune - agora(), CFG.Agarrao.dano_contato)
-				resultado = "imune"; return
-			end
-			if ehPvP(alvo) and alvo:GetAttribute("Porte") == "colossal" then   -- PvP colossal: morde um membro, nao prende
-				local h = alvo:FindFirstChildOfClass("Humanoid"); h:TakeDamage(CFG.Agarrao.dano_contato)
-				local dur = P.colossal_dur * forcaIdade() * fatorControle(alvo)
-				local ws0 = h.WalkSpeed; h.WalkSpeed = ws0 * (1 - P.colossal_lentidao)
-				alvo:SetAttribute("Lentidao", P.colossal_lentidao); alvo:SetAttribute("SemSaltoVoo", true)
-				task.delay(dur, function() if alvo.Parent then h.WalkSpeed = ws0; alvo:SetAttribute("Lentidao", nil); alvo:SetAttribute("SemSaltoVoo", nil) end end)
-				log("PvP: %s COLOSSAL -> mordeu um membro: %.0f%% de lentidao por %.2f s, sem saltar/decolar (nao prende)", alvo.Name, P.colossal_lentidao * 100, dur)
-				resultado = "membro_colossal"; return
-			end
-			if ehPvP(alvo) then
-				est.pvp = true; est.danoPegada = 0; est.cortado = 0
-				local dur = P.duracao * forcaIdade() * fatorControle(alvo)
-				est.limite = dur                                 -- segundos que restam, contados pelo dt da simulacao (= tempo das animacoes)
-				log("PvP: pegada de %.2f s a partir do contato (agarrao + giro somados; idade %s)", dur, modelo:GetAttribute("Idade") or "Adulto")
-				table.insert(est.cons, RS.Heartbeat:Connect(function(dt)   -- solta NO prazo (nao espera o clipe terminar)
-					if est.gen ~= g or not est.alvo or not est.limite then return end
-					est.limite -= dt; if est.limite > 0 then return end
-					log("PvP: prazo da pegada -> solta"); soltar("pvp_prazo"); est.fase = "solto"
-					local fs = T.tocar("Crocodilo_SoltarPresa", 0.15)
-					table.insert(est.cons, fs.Stopped:Connect(function() if est.gen == g then M.cancelar("fim_agarrao") end end))
-				end))
-			else est.pvp = nil; est.limite = nil end
-			est.alvo = alvo; alvo:SetAttribute("Agarrado", true)
-			if est.pvp then avisarAliados(alvo) end                -- 19/11: aparece "Soltar aliado" para os aliados
-			est.rel = osso("Mandibula").TransformedWorldCFrame:Inverse() * alvo:GetPivot()
-			do                                                      -- 19/11: alvo grande = PONTO DE MORDIDA (osso mais perto dos dentes)
-				local cfA = alvo:GetPivot(); local tam = alvo:GetExtentsSize()
-				est.ponto = nil
-				if math.max(tam.X, tam.Y, tam.Z) > CFG.Agarrao.rigido_max then
-					local melhor, dm, nome = nil, math.huge, "caixa"
-					for _, b in ipairs(alvo:GetDescendants()) do
-						if b:IsA("Bone") then local dd = (b.TransformedWorldCFrame.Position - ponta).Magnitude; if dd < dm then melhor, dm, nome = b.TransformedWorldCFrame.Position, dd, b.Name end end
-					end
-					local lp = cfA:PointToObjectSpace(melhor or ponta)
-					if not melhor then local h = tam / 2; lp = Vector3.new(math.clamp(lp.X, -h.X, h.X), math.clamp(lp.Y, -h.Y, h.Y), math.clamp(lp.Z, -h.Z, h.Z)) end
-					est.ponto = Vector3.new(lp.X, 0, lp.Z); est.yFix = cfA.Y
-					log("PONTO DE MORDIDA: %s (%.1f dos dentes); o corpo (%.0f studs) fica em pe e e arrastado", nome, dm == math.huge and 0 or dm, math.max(tam.X, tam.Z))
-				end
-			end
-			local h = alvo:FindFirstChildOfClass("Humanoid"); h:TakeDamage(CFG.Agarrao.dano_contato)
-			log("CONTATO: agarrou %s (dentes a %.2f da superficie <= %.2f)", alvo.Name, d, HB.contatoMordida)
-			resultado = "acerto"; vigiaAlvo(g)
-		else
-			log("ERROU: %s, dentes a %.2f da superficie (contato %.2f)", alvo.Name, d, HB.contatoMordida); resultado = "erro_alcance"
-		end
-	end))
-	table.insert(est.cons, f.Stopped:Connect(function()
+	local pegando = false
+	local function aposBote()
 		if est.gen ~= g then return end
 		if est.pvp and not est.alvo then return end           -- PvP: ja soltou no prazo durante a mordida
 		if resultado ~= "acerto" then
 			if opcoes.emboscada and resultado:sub(1, 4) == "erro" then log("errou: segue nadando"); nadarAdiante(g, CFG.Submersao.velocidade * 0.7, CFG.Submersao.deriva, resultado .. "_seguiu_nadando"); return end
 			M.cancelar(resultado); return
 		end
-		-- 16/11 (P2): sustentacao com clipe proprio (terra SegurarPresa, agua SegurarPresaAgua) no lugar de ArrastarPresa
-		local nomeSeg = (cena == "agua") and "Crocodilo_SegurarPresaAgua" or "Crocodilo_SegurarPresa"
-		T.tocar(nomeSeg, 0.2); est.fase = "segurando"
-		log("SUSTENTACAO: %s", nomeSeg:sub(11))
+		-- 20/11: sustentacao = o PAR da pose da pegada (normal / de lado / agua) ja tocando na abertura de contato
+		est.fase = "segurando"
+		log("SUSTENTACAO: %s (abertura %.1f graus, peso %.2f)", est.pegada and est.pegada.base:sub(11) or "?", est.pegada and est.pegada.alfa or -1, est.pegada and est.pegada.w or -1)
 		local t = 0
 		table.insert(est.cons, RS.Heartbeat:Connect(function(dt)
 			if est.gen ~= g or not est.alvo or est.fase ~= "segurando" then return end
 			if not alvoValido(est.alvo) then M.cancelar("alvo_removido_ou_derrotado"); return end
 			t += dt; est.alvo:FindFirstChildOfClass("Humanoid"):TakeDamage(CFG.Agarrao.dano_por_segundo * dt)
-			if est.limite then return end                         -- PvP: quem solta e o vigia do prazo (desde o contato)
-			if t < CFG.Agarrao.sustentacao then return end
-			-- fim normal: o dano para; SoltarPresa abre a boca e o marcador "solta" libera o boneco
+			if est.limite or est.pvpFim then return end           -- PvP: quem solta e o vigia do prazo (desde o contato)
+			-- r2: a sacudida do arremesso comeca `giro_dur` antes do fim, para soltar exatamente na sustentacao
+			local arr = est.pegada and (cena ~= "agua" or CFG.Arremesso.agua)
+			if t < CFG.Agarrao.sustentacao - (arr and antecedenciaArr() or 0) then return end
+			-- fim normal: o dano para; sacudida + arremesso (terra) ou SoltarPresa com o marcador "solta" (agua)
 			est.fase = "soltando"
-			local fs = T.tocar("Crocodilo_SoltarPresa", 0.15)
-			if cena == "agua" then moverPivo(BASE, 0.8) end        -- sobe a superficie enquanto solta
-			log("FIM DA SUSTENTACAO (%.2f s): SoltarPresa", t)
-			table.insert(est.cons, fs:GetMarkerReachedSignal("solta"):Connect(function()
+			local pg = est.pegada
+			if pg then log("FIM DA PEGADA: penetracao max %.2f (cravar %.2f), deriva max %.3f (espessura %.2f, abertura %.1f, contato %.1f)", pg.penMax, pg.crava or 0, pg.derMax, pg.tU, pg.alfa, pg.alfaContato or pg.alfa) end
+			log("FIM DA SUSTENTACAO (%.2f s): %s", t, arr and "sacudida + arremesso" or "SoltarPresa")
+			task.spawn(function()
+				local jogou, fimClipe = false, nil
+				if arr then jogou, fimClipe = arremessar(g, cena) end
 				if est.gen ~= g then return end
-				soltar("marcador_solta"); est.fase = "solto"
-			end))
-			table.insert(est.cons, fs.Stopped:Connect(function()
-				if est.gen == g then M.cancelar("fim_agarrao") end
-			end))
+				if fimClipe then                                   -- r3: o proprio clipe volta ao Repouso
+					est.fase = "solto"
+					if fimClipe.IsPlaying then table.insert(est.cons, fimClipe.Stopped:Connect(function() if est.gen == g then M.cancelar("fim_agarrao") end end))
+					else M.cancelar("fim_agarrao") end
+					return
+				end
+				local fs = T.tocar("Crocodilo_SoltarPresa", 0.15)
+				if cena == "agua" then moverPivo(BASE, 0.8) end    -- sobe a superficie enquanto solta
+				if jogou then est.fase = "solto" else
+					table.insert(est.cons, fs:GetMarkerReachedSignal("solta"):Connect(function()
+						if est.gen ~= g then return end
+						soltar("marcador_solta"); est.fase = "solto"
+					end))
+				end
+				table.insert(est.cons, fs.Stopped:Connect(function()
+					if est.gen == g then M.cancelar("fim_agarrao") end
+				end))
+			end)
 		end))
+	end
+	table.insert(est.cons, f:GetMarkerReachedSignal("fecha_boca"):Connect(function()
+		if est.gen ~= g then return end
+		if not alvoValido(alvo) then resultado = "alvo_invalido"; return end
+		local P = CFG.AgarraoPvP
+		local imune = alvo:GetAttribute("ImuneAgarraoAte")
+		if imune and agora() < imune then                       -- PvP: resistencia a repeticao (8 s depois de solto)
+			alvo:FindFirstChildOfClass("Humanoid"):TakeDamage(CFG.Agarrao.dano_contato)
+			log("PvP: %s IMUNE ao agarrao (faltam %.1f s): so a mordida, dano %d", alvo.Name, imune - agora(), CFG.Agarrao.dano_contato)
+			resultado = "imune"; return
+		end
+		if ehPvP(alvo) and alvo:GetAttribute("Porte") == "colossal" then   -- PvP colossal: morde um membro, nao prende
+			local h = alvo:FindFirstChildOfClass("Humanoid"); h:TakeDamage(CFG.Agarrao.dano_contato)
+			local dur = P.colossal_dur * forcaIdade() * fatorControle(alvo)
+			local ws0 = h.WalkSpeed; h.WalkSpeed = ws0 * (1 - P.colossal_lentidao)
+			alvo:SetAttribute("Lentidao", P.colossal_lentidao); alvo:SetAttribute("SemSaltoVoo", true)
+			task.delay(dur, function() if alvo.Parent then h.WalkSpeed = ws0; alvo:SetAttribute("Lentidao", nil); alvo:SetAttribute("SemSaltoVoo", nil) end end)
+			log("PvP: %s COLOSSAL -> mordeu um membro: %.0f%% de lentidao por %.2f s, sem saltar/decolar (nao prende)", alvo.Name, P.colossal_lentidao * 100, dur)
+			resultado = "membro_colossal"; return
+		end
+		-- 20/11 PEGADA REAL: regiao que cabe, boca centralizada, fecha ate a espessura; nao cabe = so mordida
+		pegando = true
+		local r = pegar(g, alvo, cena == "agua", CFG.Agarrao.corrigir_agarrao)
+		pegando = false; M.ultimaPegada = r
+		if est.gen ~= g then return end
+		log("PEGADA %s: regiao %s, pose %s; %s%s", string.upper(r.modo), tostring(r.nome), tostring(r.pose), r.motivo or "",
+			r.lateral and string.format(" | desvio lateral %.2f, vao %.2f, corrigiu %.2f", r.lateral, r.altura, r.andou or 0) or "")
+		if r.modo == "erro" then resultado = "erro_alcance"
+		elseif r.modo == "mordida" then
+			alvo:FindFirstChildOfClass("Humanoid"):TakeDamage(CFG.Agarrao.dano_contato)
+			log("SO MORDIDA: %s nao cabe na boca (dano %d, sem prender)", alvo.Name, CFG.Agarrao.dano_contato); resultado = "so_mordida"
+		else
+			if ehPvP(alvo) then
+				est.pvp = true; est.danoPegada = 0; est.cortado = 0; est.pvpFim = nil
+				local dur = P.duracao * forcaIdade() * fatorControle(alvo)
+				est.limite = dur                                 -- segundos que restam, contados pelo dt da simulacao (= tempo das animacoes)
+				log("PvP: pegada de %.2f s a partir do contato (agarrao + giro somados; idade %s)", dur, modelo:GetAttribute("Idade") or "Adulto")
+				table.insert(est.cons, RS.Heartbeat:Connect(function(dt)   -- solta NO prazo (nao espera o clipe terminar)
+					if est.gen ~= g or not est.alvo or not est.limite then return end
+					local arr = est.pegada and (cena ~= "agua" or CFG.Arremesso.agua)
+					est.limite -= dt; if est.limite > (arr and antecedenciaArr() or 0) then return end
+					est.limite = nil; est.pvpFim = true; est.fase = "soltando"
+					log("PvP: prazo da pegada -> %s", arr and "sacudida + arremesso curto" or "solta")
+					task.spawn(function()
+						local jogou, fimClipe = false, nil
+						if arr then jogou, fimClipe = arremessar(g, cena) end
+						if not jogou and est.gen == g then soltar("pvp_prazo") end
+						if est.gen ~= g then return end
+						est.fase = "solto"
+						if fimClipe then
+							if fimClipe.IsPlaying then table.insert(est.cons, fimClipe.Stopped:Connect(function() if est.gen == g then M.cancelar("fim_agarrao") end end))
+							else M.cancelar("fim_agarrao") end
+							return
+						end
+						local fs = T.tocar("Crocodilo_SoltarPresa", 0.15)
+						table.insert(est.cons, fs.Stopped:Connect(function() if est.gen == g then M.cancelar("fim_agarrao") end end))
+					end)
+				end))
+			else est.pvp = nil; est.limite = nil; est.pvpFim = nil end
+			est.alvo = alvo; alvo:SetAttribute("Agarrado", true)
+			if est.pvp then avisarAliados(alvo) end                -- 19/11: aparece "Soltar aliado" para os aliados
+			fixarPegada(g, alvo, r)
+			local h = alvo:FindFirstChildOfClass("Humanoid"); h:TakeDamage(CFG.Agarrao.dano_contato)
+			log("CONTATO: prendeu %s pela %s (espessura %.2f, abertura %.1f graus, d %.2f)", alvo.Name, r.nome, r.tU, r.alfa, r.dPega)
+			resultado = "acerto"
+		end
+		if not f.IsPlaying then aposBote() end                  -- o par da pose ja parou o clipe do bote
+	end))
+	table.insert(est.cons, f.Stopped:Connect(function()
+		if pegando then return end                            -- a pegada em curso chama aposBote ao terminar
+		aposBote()
 	end))
 	return "iniciado"
 end
@@ -873,7 +1139,7 @@ end)
 --   >= 4 s DE PE entre quedas (do fim do levantar); PvP (criatura de jogador): duracao x0,5, cai pela metade a cada repeticao
 --   em 12 s, depois de 2 seguidas imune por duracao + 8 s. O Giro de Emboscada derruba sempre (v6.2), com a duracao do contrato.
 -- * finalizacao PROPRIA do crocodilo = MORDIDA ESMAGADORA (usuario 20/11): sibilo anunciado, aproxima andando, prende a
---   cabeca/pescoco do caido e aperta sacudindo; interrompivel o tempo todo (alvo levanta/protegido/removido/ferido = solta,
+--   cabeca/pescoco do caido e MEXE A BOCA cravando os dentes (sem girar o corpo); interrompivel o tempo todo (alvo levanta/protegido/removido/ferido = solta,
 --   sem dano). Desfecho: selvagem morre; criatura de jogador e RETIRADA (refugio simulado, Vida mantida); humano nunca.
 -- * IA: uma decisao por queda (FINALIZAR / POUPAR / APROVEITA), com motivo; crocodilo de dono nao finaliza sozinho.
 local CT = CFG.Controle
@@ -899,15 +1165,20 @@ local function levantar(a)
 	a:SetAttribute("Caido", false); a:SetAttribute("CaidoAte", nil); a:SetAttribute("Derrubado", false)
 	a:SetAttribute("LevantouEm", agora())
 	if est.origQueda then est.origQueda[a] = nil end
+	if not a:GetAttribute("Incapacitado") then
+		local tl = tocarNaPresa(a, "Crocodilo_Levantar", false)
+		if tl then tl.Stopped:Once(function() if a.Parent and not a:GetAttribute("Caido") and not a:GetAttribute("Incapacitado") then tocarNaPresa(a, "Crocodilo_Repouso", true) end end) end
+	end
 	log("CONTROLE: %s levantou", a.Name)
 end
 M.levantar = levantar
-local function aplicarQueda(a, dur)
+aplicarQueda = function(a, dur)                          -- (declarada no ARREMESSO)
 	est.origQueda = est.origQueda or {}
 	local orig = a:GetPivot(); est.origQueda[a] = orig
 	a:SetAttribute("Caido", true); a:SetAttribute("CaidoAte", agora() + dur); a:SetAttribute("Derrubado", true)
 	local _, sz = a:GetBoundingBox()
-	if sz.Y > math.max(sz.X, sz.Z) then a:PivotTo(orig * CFrame.Angles(math.rad(80), 0, 0) - Vector3.new(0, 1.5, 0)) end   -- em pe (boneco): tomba
+	-- 20/11 encaixe: presa com esqueleto proprio fica CAIDA com o clipe dela (deitada); boneco em pe sem clipes: tomba
+	if not tocarNaPresa(a, "Crocodilo_DescansoDeitado", true) and sz.Y > math.max(sz.X, sz.Z) then a:PivotTo(orig * CFrame.Angles(math.rad(80), 0, 0) - Vector3.new(0, 1.5, 0)) end
 	task.delay(dur, function() if a.Parent and a:GetAttribute("Caido") and (a:GetAttribute("CaidoAte") or 0) <= agora() + 0.05 then levantar(a) end end)
 end
 function M.rolarControle(a, tipo, forcar)
@@ -1017,45 +1288,80 @@ function M.finalizar(a, forcar)
 	task.spawn(function()
 		local t = 0
 		while t < F.anuncio do t += RS.Heartbeat:Wait(); if not valida() then return end end
-		-- aproxima andando ate os dentes tocarem a cabeca/pescoco
-		T.tocar("Crocodilo_Andar", 0.2)
+		-- 20/11 ENCAIXE (usuario): escolhe a regiao do caido que CABE (prefere pescoco/cabeca), aproxima ate a boca ficar perto
+		-- dela, poe a boca centralizada (de lado se a regiao estiver baixa) e fecha ate a espessura; nao cabe = so mordida
+		local sim, nao = E.escolher(modelo, a, 40, F.ossosAlvo, nil, not est.naAgua and (modelo:GetPivot().Y - C_.pivo + CFG.Agarrao.altura_lado) or nil)
+		local reg = sim or nao
+		if not reg then cancelar("nenhuma regiao mordivel"); return end
+		log("FINALIZACAO: regiao %s (%s)", reg.nome, sim and "cabe" or "NAO cabe")
+		local yL = not est.naAgua and (modelo:GetPivot().Y - C_.pivo + CFG.Agarrao.altura_lado) or nil
+		local offL = E.CENTRO_LOCAL                                -- onde fica o centro do vao na pose que vai usar (normal / de lado)
+		if yL and reg.p.Y <= yL then offL = (modelo:GetPivot():PointToObjectSpace(reg.p).X > 0) and E.CENTRO_LADO_E or E.CENTRO_LADO_D end
+		local phi = math.atan2(offL.X, -offL.Z)
+		local andando
+		local function marcha(nome) if andando ~= nome then andando = nome; T.tocar(nome, 0.2) end end
 		local tAp = 0
 		while true do
 			local dt = RS.Heartbeat:Wait(); tAp += dt; if not valida() then return end
-			local mand = osso("Mandibula").TransformedWorldCFrame; local ponta = mand * Vector3.new(0, CFG.Agarrao.ponta, 0)
-			local alvoP = pto(); local dv = (alvoP - ponta) * Vector3.new(1, 0, 1)
-			if contatoCorpo(a, ponta) <= F.encostar or dv.Magnitude <= F.encostar then break end
+			local cf = modelo:GetPivot(); local Mp = cf * offL
+			local dir = (reg.p - cf.Position) * Vector3.new(1, 0, 1)
+			local look = Vector3.new(cf.LookVector.X, 0, cf.LookVector.Z).Unit
+			local alvoDir = dir.Magnitude > 0.1 and CFrame.Angles(0, phi, 0):VectorToWorldSpace(dir.Unit) or look
+			local ang = math.atan2(look:Cross(alvoDir).Y, look:Dot(alvoDir))
+			local falta = (reg.p - Mp) * Vector3.new(1, 0, 1)
+			if falta.Magnitude <= F.encostar + 0.6 and math.abs(ang) < math.rad(8) then break end   -- o resto o pegar corrige
 			if tAp > F.abordarMax then cancelar("nao alcancou a tempo"); return end
-			-- posiciona o CORPO para a ponta dos dentes chegar ao ponto (anda para a frente ou recua; alvo pode estar sob o pescoco)
-			local cf = modelo:GetPivot(); local dir = (alvoP - cf.Position) * Vector3.new(1, 0, 1)
-			local look = Vector3.new(cf.LookVector.X, 0, cf.LookVector.Z).Unit; local alvoDir = dir.Magnitude > 0.1 and dir.Unit or look
-			local ang = math.atan2(look:Cross(alvoDir).Y, look:Dot(alvoDir)); local passoAng = math.clamp(ang, -F.giro * dt, F.giro * dt)
-			local nr = CFrame.Angles(0, passoAng, 0) * cf.Rotation
-			local dPonta = ((ponta - cf.Position) * Vector3.new(1, 0, 1)).Magnitude
-			local desejado = Vector3.new(alvoP.X, cf.Y, alvoP.Z) - alvoDir * dPonta
-			local falta = desejado - cf.Position; falta = Vector3.new(falta.X, 0, falta.Z)
-			local np = cf.Position + (falta.Magnitude > 0.01 and falta.Unit * math.min(F.vel * dt, falta.Magnitude) or Vector3.zero)
+			local nr = CFrame.Angles(0, math.clamp(ang, -F.giro * dt, F.giro * dt), 0) * cf.Rotation
+			local desejado = reg.p - nr:VectorToWorldSpace(offL)
+			local fp = (desejado - cf.Position) * Vector3.new(1, 0, 1)
+			marcha((fp.Magnitude > 0.05 and fp:Dot(look) < 0) and "Crocodilo_ArrastarPresa" or "Crocodilo_Andar")   -- de re ou para a frente
+			local np = cf.Position + (fp.Magnitude > 0.01 and fp.Unit * math.min(F.vel * dt, fp.Magnitude) or Vector3.zero)
 			BASE = CFrame.new(np) * nr; modelo:PivotTo(BASE)
 		end
-		-- prende e esmaga sacudindo
-		T.tocar("Crocodilo_SegurarPresa", 0.12)
-		log("FINALIZACAO: prendeu %s pelo %s; aperta sacudindo %.1f s", a.Name, nomePto, F.aperto)
 		-- preso na boca nao consegue levantar: a queda dura ate o desfecho (se a finalizacao for interrompida, levanta depois)
-		a:SetAttribute("CaidoAte", agora() + F.aperto + 0.6)
-		task.delay(F.aperto + 0.6, function() if a.Parent and a:GetAttribute("Caido") and not a:GetAttribute("Incapacitado") and (a:GetAttribute("CaidoAte") or 0) <= agora() + 0.05 then levantar(a) end end)
-		local base0 = modelo:GetPivot(); local t2 = 0
-		while t2 < F.aperto do
-			local dt = RS.Heartbeat:Wait(); t2 += dt; if not valida() then return end
-			local s = math.sin(t2 / F.periodo * 2 * math.pi) * math.rad(F.sacudir)
-			modelo:PivotTo(base0 * CFrame.Angles(0, s, 0))
+		a:SetAttribute("CaidoAte", agora() + F.aperto + 1.4)
+		task.delay(F.aperto + 1.4, function() if a.Parent and a:GetAttribute("Caido") and not a:GetAttribute("Incapacitado") and (a:GetAttribute("CaidoAte") or 0) <= agora() + 0.05 then levantar(a) end end)
+		local r = pegar(g, a, est.naAgua, CFG.Agarrao.corrigir_final, F.ossosAlvo); M.ultimaPegada = r
+		if est.gen ~= g then return end
+		log("PEGADA %s (finalizacao): regiao %s, pose %s; %s%s", string.upper(r.modo), tostring(r.nome), tostring(r.pose), r.motivo or "",
+			r.lateral and string.format(" | desvio lateral %.2f, vao %.2f, corrigiu %.2f", r.lateral, r.altura, r.andou or 0) or "")
+		if r.modo == "erro" then cancelar(r.motivo or "erro"); return end
+		if not valida() then return end
+		if r.modo == "mordida" then                                -- nao cabe: so a mordida de contato, sem esmagar
+			h:TakeDamage(CFG.Agarrao.dano_contato)
+			log("FINALIZACAO: %s nao cabe na boca -> SO MORDIDA (dano %d, sem prender nem esmagar)", r.nome, CFG.Agarrao.dano_contato)
+			limpa(); local fs = T.tocar("Crocodilo_SoltarPresa", 0.15); fs.Stopped:Wait()
+			if est.gen == g then M.cancelar("finalizacao_so_mordida") end
+			return
 		end
-		modelo:PivotTo(base0)
-		-- desfecho
+		est.alvo = a; fixarPegada(g, a, r)
+		log("FINALIZACAO: prendeu %s pela %s (espessura %.2f, abertura %.1f graus); crava", a.Name, r.nome, r.tU, r.alfa)
+		local t1 = 0; while t1 < 0.15 do t1 += RS.Heartbeat:Wait(); if not valida() then return end end
+		-- MORDIDA ESMAGADORA no par da pose (mesma abertura de contato): o corpo fica firme; so a boca/cabeca trabalham
+		local fm = tocarPar(r.baseEsm, r.w, 0.12); est.pegada.base = r.baseEsm
+		for _, mk in ipairs({"crava1", "crava2"}) do
+			table.insert(est.cons, fm:GetMarkerReachedSignal(mk):Connect(function()
+				if est.gen ~= g or not est.pegada then return end
+				local pg = est.pegada; local b2 = E.boca(modelo); local pw = a:GetPivot() * pg.pontoLocal
+				local s = E.secao(a, pw, b2.F, b2.U); local aMed = alfaAtual()
+				if s then                                            -- dano so com o corpo de verdade entre as arcadas
+					h:TakeDamage(F.danoCrava)
+					log("FINALIZACAO: %s - dentes cravam (dano %d; espessura %.2f x vao %.2f a %.1f graus)", mk, F.danoCrava, s.tU, E.folga(aMed, pg.d), aMed)
+				else log("FINALIZACAO: %s sem corpo entre as arcadas (sem dano)", mk) end
+			end))
+		end
+		local t2 = 0
+		while t2 < F.aperto and fm.IsPlaying do t2 += RS.Heartbeat:Wait(); if not valida() then return end end
+		local pg = est.pegada
+		if pg then log("FIM DA PEGADA: penetracao max %.2f, deriva max %.3f (espessura %.2f, abertura %.1f)", pg.penMax, pg.derMax, pg.tU, pg.alfa) end
+		-- desfecho (para de segurar antes: o corpo fica onde caiu)
+		est.alvo = nil; est.ponto = nil; est.pegada = nil
 		if deJogador(a) then
 			a:SetAttribute("RetiradaDeCombate", true); a:SetAttribute("Incapacitado", true)
 			log("FINALIZACAO: %s (criatura de jogador) RETIRADA da luta -> refugio (simulado; Vida %.0f mantida, sem morte)", a.Name, h.Health)
 		else
 			h.Health = 0; a:SetAttribute("Estado", "Morto"); a:SetAttribute("Incapacitado", true)
+			tocarNaPresa(a, "Crocodilo_Morte", false, true)
 			log("FINALIZACAO: %s (selvagem) morreu (prototipo: sem loot/respawn)", a.Name)
 		end
 		limpa()

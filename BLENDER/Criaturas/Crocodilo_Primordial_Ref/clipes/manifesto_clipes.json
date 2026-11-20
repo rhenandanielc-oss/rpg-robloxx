@@ -852,5 +852,313 @@
    },
    "obs": "SO OLHOS (O1): tocar por cima dos clipes de corpo; prioridade Action"
   }
+ },
+ "MordidaEsmagadora": {
+  "duracao": 1.8,
+  "loop": false,
+  "quadros": 55,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.18,
+  "sincronizacao": {
+   "eventos": {
+    "crava1": 0.49,
+    "crava2": 1.24
+   },
+   "de": "SegurarPresa",
+   "para": "SegurarPresa/SoltarPresa",
+   "obs": "finalizacao (usuario 20/11): mexe a boca para cravar os dentes; corpo firme, sem girar"
+  }
+ },
+ "SegurarPresa_Boca0": {
+  "duracao": 2.0,
+  "loop": true,
+  "quadros": 60,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.18,
+  "sincronizacao": {
+   "alfa_base_graus": 0.0,
+   "obs": "par de encaixe"
+  }
+ },
+ "SegurarPresa_Boca1": {
+  "duracao": 2.0,
+  "loop": true,
+  "quadros": 60,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.18,
+  "sincronizacao": {
+   "alfa_base_graus": 25.57,
+   "obs": "par de encaixe"
+  }
+ },
+ "SegurarPresaAgua_Boca0": {
+  "duracao": 2.0,
+  "loop": true,
+  "quadros": 60,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.011,
+  "sincronizacao": {
+   "alfa_base_graus": 0.0,
+   "obs": "par de encaixe"
+  }
+ },
+ "SegurarPresaAgua_Boca1": {
+  "duracao": 2.0,
+  "loop": true,
+  "quadros": 60,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.011,
+  "sincronizacao": {
+   "alfa_base_graus": 25.57,
+   "obs": "par de encaixe"
+  }
+ },
+ "MordidaEsmagadora_Boca0": {
+  "duracao": 1.8,
+  "loop": false,
+  "quadros": 55,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.18,
+  "sincronizacao": {
+   "eventos": {
+    "crava1": 0.49,
+    "crava2": 1.24
+   },
+   "alfa_base_graus": 0.0,
+   "obs": "par de encaixe (_Boca0/_Boca1): o jogo mistura pelos pesos para a abertura da presa"
+  }
+ },
+ "MordidaEsmagadora_Boca1": {
+  "duracao": 1.8,
+  "loop": false,
+  "quadros": 55,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.18,
+  "sincronizacao": {
+   "eventos": {
+    "crava1": 0.49,
+    "crava2": 1.24
+   },
+   "alfa_base_graus": 25.57,
+   "obs": "par de encaixe (_Boca0/_Boca1): o jogo mistura pelos pesos para a abertura da presa"
+  }
+ },
+ "SegurarLadoE_Boca0": {
+  "duracao": 2.0,
+  "loop": true,
+  "quadros": 60,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.18,
+  "sincronizacao": {
+   "alfa_base_graus": 0.0,
+   "lado": "E",
+   "obs": "mordida de lado (presa no chao), par de encaixe"
+  }
+ },
+ "SegurarLadoE_Boca1": {
+  "duracao": 2.0,
+  "loop": true,
+  "quadros": 60,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.18,
+  "sincronizacao": {
+   "alfa_base_graus": 25.57,
+   "lado": "E",
+   "obs": "mordida de lado (presa no chao), par de encaixe"
+  }
+ },
+ "SegurarLadoD_Boca0": {
+  "duracao": 2.0,
+  "loop": true,
+  "quadros": 60,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.18,
+  "sincronizacao": {
+   "alfa_base_graus": 0.0,
+   "lado": "D",
+   "obs": "mordida de lado (presa no chao), par de encaixe"
+  }
+ },
+ "SegurarLadoD_Boca1": {
+  "duracao": 2.0,
+  "loop": true,
+  "quadros": 60,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.18,
+  "sincronizacao": {
+   "alfa_base_graus": 25.57,
+   "lado": "D",
+   "obs": "mordida de lado (presa no chao), par de encaixe"
+  }
+ },
+ "EsmagarLadoE_Boca0": {
+  "duracao": 1.8,
+  "loop": false,
+  "quadros": 55,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.18,
+  "sincronizacao": {
+   "eventos": {
+    "crava1": 0.49,
+    "crava2": 1.24
+   },
+   "alfa_base_graus": 0.0,
+   "lado": "E",
+   "obs": "Mordida esmagadora de lado, par de encaixe"
+  }
+ },
+ "EsmagarLadoE_Boca1": {
+  "duracao": 1.8,
+  "loop": false,
+  "quadros": 55,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.18,
+  "sincronizacao": {
+   "eventos": {
+    "crava1": 0.49,
+    "crava2": 1.24
+   },
+   "alfa_base_graus": 25.57,
+   "lado": "E",
+   "obs": "Mordida esmagadora de lado, par de encaixe"
+  }
+ },
+ "EsmagarLadoD_Boca0": {
+  "duracao": 1.8,
+  "loop": false,
+  "quadros": 55,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.18,
+  "sincronizacao": {
+   "eventos": {
+    "crava1": 0.49,
+    "crava2": 1.24
+   },
+   "alfa_base_graus": 0.0,
+   "lado": "D",
+   "obs": "Mordida esmagadora de lado, par de encaixe"
+  }
+ },
+ "EsmagarLadoD_Boca1": {
+  "duracao": 1.8,
+  "loop": false,
+  "quadros": 55,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.18,
+  "sincronizacao": {
+   "eventos": {
+    "crava1": 0.49,
+    "crava2": 1.24
+   },
+   "alfa_base_graus": 25.57,
+   "lado": "D",
+   "obs": "Mordida esmagadora de lado, par de encaixe"
+  }
+ },
+ "ArremessarPresaE_Boca0": {
+  "duracao": 1.0,
+  "loop": false,
+  "quadros": 31,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.18,
+  "sincronizacao": {
+   "eventos": {
+    "solta": 0.44
+   },
+   "alfa_base_graus": 0.0,
+   "lado": "E",
+   "de": "SegurarPresa/SegurarLado",
+   "para": "Repouso",
+   "obs": "arremesso (usuario 20/11): arma e chicoteia de lado; par de encaixe; o jogo gira o corpo ~6 graus"
+  }
+ },
+ "ArremessarPresaE_Boca1": {
+  "duracao": 1.0,
+  "loop": false,
+  "quadros": 31,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.18,
+  "sincronizacao": {
+   "eventos": {
+    "solta": 0.44
+   },
+   "alfa_base_graus": 25.57,
+   "lado": "E",
+   "de": "SegurarPresa/SegurarLado",
+   "para": "Repouso",
+   "obs": "arremesso (usuario 20/11): arma e chicoteia de lado; par de encaixe; o jogo gira o corpo ~6 graus"
+  }
+ },
+ "ArremessarPresaD_Boca0": {
+  "duracao": 1.0,
+  "loop": false,
+  "quadros": 31,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.18,
+  "sincronizacao": {
+   "eventos": {
+    "solta": 0.44
+   },
+   "alfa_base_graus": 0.0,
+   "lado": "D",
+   "de": "SegurarPresa/SegurarLado",
+   "para": "Repouso",
+   "obs": "arremesso (usuario 20/11): arma e chicoteia de lado; par de encaixe; o jogo gira o corpo ~6 graus"
+  }
+ },
+ "ArremessarPresaD_Boca1": {
+  "duracao": 1.0,
+  "loop": false,
+  "quadros": 31,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": 0.18,
+  "sincronizacao": {
+   "eventos": {
+    "solta": 0.44
+   },
+   "alfa_base_graus": 25.57,
+   "lado": "D",
+   "de": "SegurarPresa/SegurarLado",
+   "para": "Repouso",
+   "obs": "arremesso (usuario 20/11): arma e chicoteia de lado; par de encaixe; o jogo gira o corpo ~6 graus"
+  }
  }
 }
