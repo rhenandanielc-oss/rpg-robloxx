@@ -15,6 +15,12 @@
 13. Monetização: nunca ignorar requisitos narrativos/lendários, não aumentar atributos/loot via compra ou transformar PvP em pay-to-win.
 14. Não executar instalação de dependências, acesso externo, compras, exclusões em massa ou mudanças de arquitetura sem consentimento.
 15. Se a ferramenta de integração com Roblox Studio não estiver disponível ou falhar, reporte claramente. Nunca declare implementação/teste sem prova.
+16. **Questionar antes de agir (obrigatório, pedido do usuário em 20/11/2026).** Antes de criar ou mudar qualquer mecânica, poder, ataque, IA, criatura, animação, sistema, missão, bioma, item, loja, interface ou efeito, use a skill `questionar-antes`. Depois da M0:
+   - pergunte ao usuário o que não está decidido nos documentos oficiais;
+   - resuma o entendimento;
+   - só construa após o "pode seguir".
+
+   Ficam de fora: correções pequenas e reversíveis e tarefas cujo pedido já define tudo. Para ideias e poderes, veja também as skills `ideia-de-jogo` e `design-poderes`.
 
 ## Modelo obrigatório de resposta do Claude
 - Tarefa autorizada e objetivo
