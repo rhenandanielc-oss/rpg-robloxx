@@ -617,6 +617,82 @@ Testado em Play. **APROVADO pelo usuário em 20/11.**
 - **Vídeo:** `review/arremesso_r3/Crocodilo_ArremessarPresa_r3.mp4`, com frente, de cima, mordida de lado e PvP, e câmera lenta 0,35× das 3 primeiras tomadas. Captura a 15 qps e codificação em prioridade baixa.
 - **No place:** backup `ServerStorage.Crocodilo_ANTES_Arremesso_r3`; 4 KFS em `Animacoes` com o marcador `solta`; place local salvo.
 
+**20/11/2026 — Montaria no Roblox, primeira entrega: decisões do usuário (rodada de perguntas).**
+- **Montar:** botão perto da sela ("Montar [E]", toque no celular). Sobe pelo lado em que está, com o clipe daquele lado; a mesma tecla desce.
+- **Controle:** pela direção da câmera (WASD/analógico em relação à câmera; Shift corre). O crocodilo vira com peso, como no controlador do Lobo Ártico. Câmera atrás, livre no mouse.
+- **Água:** montado, entra na água e nada sozinho na superfície, com o cavaleiro fora d'água. **Submersão montada bloqueada** até o criador decidir o mergulho com cavaleiro.
+- **Poderes montado:** ficam para depois. A primeira entrega é só locomoção: montar, andar, correr, nadar e desmontar.
+
+**20/11/2026 — Montaria no Roblox, primeira entrega: implementada e testada em Play no Crocodilo-testes. Base da r2, aprovada junto com ela em 20/11.**
+- **Sela no corpo:**
+  - Model separado `Teste_Crocodilo.Crocodilo_Sela`, com a sela já importada (Import 3D) alinhada pelo osso Raiz (erro 0,0000) e soldada ao corpo.
+  - No cliente, cada osso da sela copia o osso animado do crocodilo, pelo mesmo método do Urso: ossos de mesmo nome no mesmo Model fariam a pele do crocodilo usar os da sela.
+- **Assento e botão:**
+  - assento invisível (`Assento_Sela`, Seat) no topo da sela (y 5,88), soldado ao corpo;
+  - botão "Montar [E]" (ProximityPrompt, alcance 12).
+- **Servidor** (`PoderesTeste`, seção MONTARIA; ligada pelo Script `MontariaCrocodilo_Servidor`):
+  - **Montar:** confere fase, poder em uso, Submersão, distância e se o jogador já está sentado. O lado vem do X local do jogador (−X = E, clipe `Montar`; +X = D, `MontarDireita`). O servidor conduz o jogador numa curva até a sela durante o clipe (4 s) e depois o senta.
+  - **Descer:** pela mesma tecla E (`Comando` "desmontar", só aceito do cavaleiro). Toca `Desmontar`/`DesmontarDireita` do lado da subida e conduz o jogador até o chão (3,6 s).
+  - **Movimento:** a intenção (`Entrada`, ~15 Hz) é validada: só do cavaleiro, Vector3 finito, módulo ≤ 1. Pacote velho (> 0,6 s) solta o comando.
+  - **Velocidades e giro (provisórios):**
+    - andar 2,8 (clipe Andar a 1,5×); correr 8,75 (velocidade do próprio clipe);
+    - nado 8 (Shift 1,3×); aceleração 5/4, frenagem 9;
+    - giro 60/70/45/55°/s (parado/andar/correr/nado).
+  - **Relevo:** sem chão ou com degrau > 2,5 à frente, ele para.
+  - **Água funda (≥ 5):** toca EntradaAgua, nada na superfície (0,4 acima da altura de espreita) e, ao sair, toca SaidaAgua.
+  - **Poderes e Submersão:** recusados enquanto montado ("poderes montado ficam para depois").
+- **Cliente** (`MontariaCrocodilo_Cliente`):
+  - sela seguindo os ossos;
+  - direção pela câmera (Humanoid.MoveDirection; se faltar, WASD relativo à câmera, porque este place não tem PlayerModule);
+  - Shift corre, E desce, pular fica desligado montado;
+  - no celular, botões Correr (alterna) e Descer, e uma dica na tela.
+  - Tem um gancho **só de teste**: os atributos `TESTE_MontariaDir`/`TESTE_MontariaCorrer` no jogador, usados no ensaio automático.
+- **Correções durante o teste:**
+  - ao montar em terra tocava SaidaAgua (o estado inicial da água não estava definido);
+  - o Sentido de Vibração percebia o próprio cavaleiro (agora ele é ignorado).
+- **Testes (Play, jogador R15 do Studio):**
+  - montar pelo lado E: subindo em 0,4 s, montado em 3,8 s, Sit=true, painel de comandos na tela;
+  - andar: 9,2 studs em 4 s; correr: 24,2 em 3 s; correndo, vira 90° à direita; soltar o comando: freia;
+  - água funda: nada 24 studs em 4 s (rápido: 31,9 em 3 s); cavaleiro 2,9 acima da água; no raso volta a andar pelo fundo;
+  - pacotes falsos (NaN, vetor de 500, texto): andou 0,00;
+  - descer pela tecla: livre em 4,1 s, no chão do lado E, sem âncora;
+  - montar pelo lado D: montado em 3,9 s;
+  - cavaleiro morto montado: livre em 0,1 s e o botão volta.
+- **Vídeo:** `review/montaria_2011/Crocodilo_Montaria_1aEntrega.mp4` (montar E, andar/correr/virar, nado, descer). A captura ficou em ~5 qps porque o PC estava ocupado.
+- **No place:** backup `ServerStorage.Crocodilo_ANTES_Montaria` (módulos); place local salvo.
+- **Não testado / limitações:**
+  - dois jogadores reais (só existe um no Studio); jogador saindo do jogo (o código trata, mas não foi exercitado);
+  - celular de verdade; câmera sem atravessar obstáculos (o script do jogo não está neste place);
+  - o cavaleiro usa a pose padrão de sentado do Roblox (sem inércia, ao contrário do Urso);
+  - a subida e a descida do jogador são uma curva conduzida, sem animação própria do personagem;
+  - nas tomadas em terra aparece a placa de água de teste (só visual).
+
+**20/11/2026 — Montaria r2: o cavaleiro igual ao do Blender** (usuário: "quero a montaria igual havíamos montado no blender"). Testada em Play. **APROVADA pelo usuário em 20/11.**
+- **Fonte:** o cavaleiro de teste aprovado no Lote 5.
+  - `scripts/exportar_cavaleiro.py` lê `CR_Crocodilo_Montaria_L5.blend` e grava `studio/cavaleiro/cavaleiro_L5.json`. Por quadro (15 qps), exporta o centro do LowerTorso no espaço do pivô do crocodilo e a rotação de cada parte R15.
+  - Eixos: Blender (x, y, z) → Roblox (−x, z, y); a origem é o osso Raiz.
+  - Conferência: reconstruindo as posições das 15 partes a partir dos dados, o erro em relação ao Blender é ≤ 0,001.
+  - O módulo gerado `CavaleiroCrocodilo` (ReplicatedStorage, 98 KB) traz Montar, Desmontar, MontarDireita, DesmontarDireita e Sentado.
+- **Servidor:**
+  - subir e descer: a HRP percorre o caminho do Blender, sincronizada com o clipe do crocodilo, juntando 0,35 s a partir de onde o jogador estava;
+  - o lado escolhe a ação;
+  - ao sentar, a solda do assento é posta na pose sentada do Blender;
+  - aceita as juntas antigas (Motor6D) e as novas (AnimationConstraint) do avatar.
+- **Cliente** (todos os clientes, para quem está montando):
+  - dobra as juntas R15 como no Blender, depois das animações do avatar (PreSimulation) — no RenderStepped elas eram sobrescritas;
+  - montado, o cavaleiro inteiro acompanha a Coluna2 do crocodilo pela solda do assento (o Humanoid sentado zera a junta do quadril);
+  - os ossos são procurados de novo até chegarem ao cliente (o place usa streaming: antes a sela e a coluna não eram achadas ao iniciar).
+- **Testes (Play):**
+  - montado: as 13 partes ficam com a rotação do Blender (erro 0°); pés a ±1,78–1,8 e altura 2,47–2,5 (Blender ±1,75, 2,45); cabeça em 6,0 (5,99);
+  - subindo: o quadril segue o caminho (aos 3,2 s em (0, 3,4, −4,6), como no Blender);
+  - descendo: a 2,4 s difere ~0,1 do Blender e termina de pé no chão;
+  - lado D: pernas abertas iguais;
+  - correndo montado: o quadril inclina até ~5,6° com a coluna; sela × coluna ≤ 0,28.
+- **Diferença que fica:** as mãos podem ficar ~0,5–0,7 fora do lugar do Blender por causa das proporções do avatar (ombro a ±1 do centro do tronco, contra ±1,5 no boneco do Blender). As rotações são as mesmas.
+- **Evidências:** vídeo `review/montaria_r2_2011/Crocodilo_Montaria_IgualBlender.mp4` (subir E, montado andando/correndo, descer E, subir D) e `prancha_montaria_r2.jpg`, ao lado de `blender_L5_referencia.png`.
+- **No place:** backup `ServerStorage.Crocodilo_ANTES_Montaria_r2`; place local salvo.
+- **Para a versão do jogo:** publicar a pose do cavaleiro como animação na conta do usuário. Hoje ela é aplicada direto nas juntas, o que serve só para teste.
+
 ## 6. Pendências
 1. **Decisões do criador:**
    - ~~conflito do agarrão PvP~~ **decidido 19/11: Versão B** (prende, aliados soltam); números aprovados e protótipo com bonecos/jogador feitos;

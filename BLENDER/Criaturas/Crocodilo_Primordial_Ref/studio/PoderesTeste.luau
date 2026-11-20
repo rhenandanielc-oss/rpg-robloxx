@@ -231,6 +231,7 @@ end
 
 local function iniciar(poder, manterPivo)
 	if est.poder then return false end
+	if est.montadoFase then log("%s recusado: montado (poderes montado ficam para depois, usuario 20/11)", poder); return false end
 	if poder == "Agarrao" and est.bocaAbertaAte and os.clock() < est.bocaAbertaAte then   -- PvP: soltou por aliado = 0,6 s sem nova pegada
 		log("Agarrao recusado: boca aberta (faltam %.2f s)", est.bocaAbertaAte - os.clock()); return false
 	end
@@ -1171,7 +1172,7 @@ task.spawn(function()
 		local achados, nomes = {}, {}
 		local cands = {}
 		for _, a in ipairs(workspace.Teste_Crocodilo.Arena:GetChildren()) do if a:IsA("Model") then table.insert(cands, a) end end
-		for _, pl in ipairs(game.Players:GetPlayers()) do if pl.Character then table.insert(cands, pl.Character) end end
+		for _, pl in ipairs(game.Players:GetPlayers()) do if pl.Character and pl.UserId ~= modelo:GetAttribute("CavaleiroUserId") then table.insert(cands, pl.Character) end end   -- 20/11: o proprio cavaleiro nao conta
 		local vistos = {}
 		for _, m in ipairs(cands) do
 			local h = m:FindFirstChildOfClass("Humanoid"); local c = centro(m)
@@ -1435,6 +1436,228 @@ function M.finalizar(a, forcar)
 	end)
 	return "iniciado"
 end
+
+-- ================================================================ MONTARIA (20/11, 1a entrega) [PROPOSTA de numeros]
+-- Usuario 20/11: botao "Montar [E]" perto da sela (sobe pelo lado em que esta, clipe daquele lado; a mesma tecla desce);
+-- controle pela DIRECAO DA CAMERA (WASD/analogico; Shift corre) com o crocodilo virando com peso; na agua NADA NA
+-- SUPERFICIE (Submersao montada bloqueada ate decidir o mergulho com cavaleiro); poderes montado ficam para depois.
+-- AUTORIDADE DO SERVIDOR: o cliente so manda a intencao (direcao no plano + correr, ~15 Hz); o servidor valida (cavaleiro
+-- certo, fase, vetor finito, pacote velho), integra velocidade/giro, acha chao/agua e move o modelo por PivotTo.
+-- Cavaleiro: Seat invisivel soldado ao corpo (Assento_Sela, criado na instalacao); subir/descer = clipe do crocodilo +
+-- trajetoria do jogador conduzida pelo servidor (HRP ancorada so durante a subida/descida). Um cavaleiro por vez.
+local Players_ = game:GetService("Players")
+local RepS_ = game:GetService("ReplicatedStorage")
+local MC = CFG.Montaria
+local mont = {fase = "livre"}                               -- livre | subindo | montado | descendo
+local function remotoMont(nome, classe)
+	local p = RepS_:FindFirstChild("Crocodilo_Montaria") or Instance.new("Folder"); p.Name = "Crocodilo_Montaria"; p.Parent = RepS_
+	local r = p:FindFirstChild(nome) or Instance.new(classe); r.Name = nome; r.Parent = p; return r
+end
+local function faseMont(f)
+	mont.fase = f; est.montadoFase = (f ~= "livre") and f or nil
+	modelo:SetAttribute("FaseMontaria", f); modelo:SetAttribute("Montado", f == "montado" or f == "subindo" or f == "descendo")
+end
+local function chaoMont(pos)
+	local p = RaycastParams.new(); p.FilterType = Enum.RaycastFilterType.Exclude; p.IgnoreWater = true
+	local ign = {modelo, workspace.Teste_Crocodilo:FindFirstChild("Arena"), workspace.Teste_Crocodilo:FindFirstChild("Crocodilo_Sela")}
+	for _, pl in ipairs(Players_:GetPlayers()) do if pl.Character then table.insert(ign, pl.Character) end end
+	p.FilterDescendantsInstances = ign
+	local r = workspace:Raycast(Vector3.new(pos.X, pos.Y + 12, pos.Z), Vector3.new(0, -80, 0), p)
+	return r and r.Position.Y
+end
+local function hrpDe(plr) local c = plr and plr.Character; return c and c:FindFirstChild("HumanoidRootPart"), c and c:FindFirstChildOfClass("Humanoid") end
+-- conduz a HRP (ancorada) por uma curva ate o destino, acompanhando o crocodilo (destino em coordenadas do crocodilo)
+-- r2 20/11 (usuario: "quero a montaria igual haviamos montado no blender"): o cavaleiro segue o movimento do cavaleiro de
+-- TESTE aprovado no Lote 5 (CavaleiroCrocodilo, exportado do Blender): subir/descer = o centro do LowerTorso percorre o
+-- caminho do Blender (espaco do pivo do crocodilo), sincronizado com o clipe do crocodilo; o cliente dobra as juntas R15
+-- (pe no cotovelo, perna pela garupa, montado de pernas abertas, desce pelo flanco) e, montado, o quadril segue a Coluna2.
+local CAV = require(RepS_:WaitForChild("CavaleiroCrocodilo"))
+local function cavQuadro(acao, t)                          -- CFrame local (pivo) do LowerTorso no tempo t (interpolado)
+	local a = CAV.acoes[acao]; local n = a.n
+	local x = math.clamp(t * CAV.fps, 0, n - 1); local i = math.floor(x); local u = x - i; local j = math.min(i + 1, n - 1)
+	local function p(k) return Vector3.new(a.lt[3 * k + 1], a.lt[3 * k + 2], a.lt[3 * k + 3]) end
+	local r = a.r.LowerTorso
+	local function q(k) return CFrame.new(0, 0, 0, r[4 * k + 1], r[4 * k + 2], r[4 * k + 3], r[4 * k + 4]) end
+	return CFrame.new(p(i):Lerp(p(j), u)) * q(i):Lerp(q(j), u)
+end
+local function hrpParaLT(plr, ltWorld)                      -- HRP tal que o LowerTorso (Root sem Transform) caia em ltWorld
+	local c = plr.Character; local root = c and c:FindFirstChild("LowerTorso") and c.LowerTorso:FindFirstChild("Root")
+	if root and root:IsA("Motor6D") then return ltWorld * root.C1 * root.C0:Inverse() end
+	if root and root.ClassName == "AnimationConstraint" and root.Attachment0 and root.Attachment1 then   -- avatar novo (juntas fisicas)
+		return ltWorld * root.Attachment1.CFrame * root.Attachment0.CFrame:Inverse()
+	end
+	return ltWorld * CFrame.new(0, 0.8, 0)                     -- (sem R15: aproximado)
+end
+local function marcarAcao(acao) modelo:SetAttribute("CavAcao", acao); modelo:SetAttribute("CavT0", workspace:GetServerTimeNow()) end
+-- conduz a HRP (ancorada) pelo caminho do Blender; nos primeiros `junta` s mistura a partir de onde o jogador estava
+local function seguirCaminho(plr, hrp, acao, tok, junta)
+	local dur = CAV.acoes[acao].dur; local t = 0; local de = hrp.CFrame
+	while t < dur do
+		t += RS.Heartbeat:Wait(); if mont.tok ~= tok or not hrp.Parent then return false end
+		local alvo = hrpParaLT(plr, modelo:GetPivot() * cavQuadro(acao, t))
+		if junta and t < junta then local u = t / junta; u = u * u * (3 - 2 * u); alvo = de:Lerp(alvo, u) end
+		hrp.CFrame = alvo
+	end
+	return true
+end
+local function sentarComoBlender(plr, hum, seat)            -- ajusta a solda do assento para a pose sentada do Blender
+	local w = seat:FindFirstChild("SeatWeld"); local hrp = plr.Character and plr.Character:FindFirstChild("HumanoidRootPart")
+	if not (w and hrp) then return end
+	local desejado = hrpParaLT(plr, modelo:GetPivot() * cavQuadro("Sentado", 0))
+	w.C1 = CFrame.identity; w.C0 = seat.CFrame:ToObjectSpace(desejado)
+end
+
+local function liberarMont(seat)
+	mont.plr = nil; mont.dir = nil; faseMont("livre"); modelo:SetAttribute("CavaleiroUserId", nil); modelo:SetAttribute("CavAcao", nil)
+	if seat and seat:FindFirstChildOfClass("ProximityPrompt") then seat:FindFirstChildOfClass("ProximityPrompt").Enabled = true end
+end
+local function desmontar(motivo, imediato)
+	if mont.fase ~= "montado" and mont.fase ~= "subindo" then return end
+	mont.tok = (mont.tok or 0) + 1; local tok = mont.tok
+	local plr, lado = mont.plr, mont.lado or "E"
+	local hrp, hum = hrpDe(plr)
+	local seat = modelo:FindFirstChild("Assento_Sela")
+	local w = seat and seat:FindFirstChild("SeatWeld"); if w then w:Destroy() end
+	if hum then hum.Sit = false end
+	log("DESMONTAR (%s): %s pelo lado %s", motivo, plr and plr.Name or "?", lado)
+	if imediato or not (hrp and hum and hum.Health > 0) then
+		if hrp then hrp.Anchored = false end
+		liberarMont(seat); T.tocar("Crocodilo_Repouso", 0.2); return
+	end
+	faseMont("descendo"); mont.v = 0
+	local acao = (lado == "E") and "Desmontar" or "DesmontarDireita"
+	T.tocar("Crocodilo_" .. acao, 0.15); marcarAcao(acao)
+	hrp.Anchored = true
+	task.spawn(function()
+		seguirCaminho(plr, hrp, acao, tok, 0.15)
+		if mont.tok ~= tok then return end
+		if hrp.Parent then
+			local p = hrp.CFrame; local y = chaoMont(p.Position)
+			local _, ry = p:ToOrientation()
+			hrp.CFrame = CFrame.new(p.X, (y or (p.Y - 3)) + 3.0, p.Z) * CFrame.Angles(0, ry, 0)   -- em pe no chao real
+			hrp.Anchored = false
+		end
+		liberarMont(seat); T.tocar("Crocodilo_Repouso", 0.25)
+		log("DESMONTADO: %s no chao do lado %s (caminho do Blender)", plr.Name, lado)
+	end)
+end
+
+local function montar(plr)
+	if mont.fase ~= "livre" then log("MONTAR recusado (%s): ja ha cavaleiro/fase %s", plr.Name, mont.fase); return end
+	if est.poder then log("MONTAR recusado (%s): crocodilo usando %s", plr.Name, est.poder); return end
+	if modelo:GetAttribute("Submerso") then log("MONTAR recusado (%s): crocodilo submerso", plr.Name); return end
+	local hrp, hum = hrpDe(plr); local seat = modelo:FindFirstChild("Assento_Sela")
+	if not (hrp and hum and hum.Health > 0 and seat) then return end
+	local d = (hrp.Position - seat.Position).Magnitude
+	if d > MC.raio + 2 then log("MONTAR recusado (%s): longe (%.1f)", plr.Name, d); return end
+	if hum.Sit or hum.SeatPart then log("MONTAR recusado (%s): ja sentado em outra coisa", plr.Name); return end
+	local xl = modelo:GetPivot():PointToObjectSpace(hrp.Position).X
+	local lado = (xl < 0) and "E" or "D"                                        -- E = -X local (convencao giro180y medida)
+	mont.plr = plr; mont.lado = lado; mont.v = 0; mont.dir = nil; mont.correr = false; mont.tIn = 0
+	do local sp, fp = medirAgua(modelo:GetPivot().Position); mont.naAgua = sp ~= nil and (sp - fp) >= C_.olhos end   -- estado inicial (nao toca SaidaAgua ao montar)
+	mont.tok = (mont.tok or 0) + 1; local tok = mont.tok
+	seat:FindFirstChildOfClass("ProximityPrompt").Enabled = false
+	faseMont("subindo"); modelo:SetAttribute("CavaleiroUserId", plr.UserId)
+	local acao = (lado == "E") and "Montar" or "MontarDireita"
+	log("MONTAR: %s pelo lado %s (x local %.1f, a %.1f da sela) - caminho do Blender %s", plr.Name, lado, xl, d, acao)
+	T.tocar("Crocodilo_" .. acao, 0.15); marcarAcao(acao)
+	hrp.Anchored = true
+	task.spawn(function()
+		local ok = seguirCaminho(plr, hrp, acao, tok, MC.junta_inicio)
+		if mont.tok ~= tok or not ok then return end
+		hrp.Anchored = false
+		if not (hum.Parent and hum.Health > 0) then desmontar("morreu_subindo", true); return end
+		seat:Sit(hum); mont.sentouEm = os.clock()
+		task.wait(); sentarComoBlender(plr, hum, seat)
+		faseMont("montado"); marcarAcao("Sentado"); T.tocar("Crocodilo_Repouso", 0.25); mont.anim = "Repouso"
+		log("MONTADO: %s na sela (lado %s), pose sentada do Blender", plr.Name, lado)
+	end)
+end
+
+-- integra a locomocao montada (so com cavaleiro sentado)
+local function animMont(nome, vel, fade)
+	if mont.anim ~= nome then mont.anim = nome; mont.track = T.tocar("Crocodilo_" .. nome, fade or 0.25, vel or 1)
+	elseif mont.track and vel then mont.track:AdjustSpeed(vel) end
+end
+local function difAngM(a, b) local d = (b - a) % (2 * math.pi); if d > math.pi then d -= 2 * math.pi end; return d end
+local function passoMont(dt)
+	if mont.fase ~= "montado" then return end
+	local plr = mont.plr; local hrp, hum = hrpDe(plr)
+	local seat = modelo:FindFirstChild("Assento_Sela")
+	if not (hrp and hum and hum.Health > 0) then desmontar("cavaleiro_invalido", true); return end
+	if seat and seat.Occupant ~= hum and os.clock() - (mont.sentouEm or 0) > 0.6 then desmontar("saiu_da_sela", false); return end
+	local dir = mont.dir
+	if os.clock() - (mont.tIn or 0) > MC.timeout then dir = nil end            -- pacote velho = solta o comando
+	local cf = modelo:GetPivot(); local pos = cf.Position
+	local sup, fundo = medirAgua(pos)
+	local naAgua = sup ~= nil and (sup - fundo) >= C_.olhos
+	if naAgua ~= mont.naAgua then
+		mont.naAgua = naAgua; est.naAgua = naAgua
+		log("MONTADO: %s", naAgua and "ENTROU NA AGUA -> nada na superficie" or "SAIU DA AGUA -> anda em terra")
+		mont.anim = nil; mont.track = T.tocar(naAgua and "Crocodilo_EntradaAgua" or "Crocodilo_SaidaAgua", 0.2); mont.transAte = os.clock() + (naAgua and 1.2 or 1.4)
+	end
+	local alvoV = 0
+	if dir then alvoV = naAgua and (mont.correr and MC.vel_nado * MC.nado_rapido or MC.vel_nado) or (mont.correr and MC.vel_corrida or MC.vel_andar) end
+	local ac = (alvoV > mont.v) and (naAgua and MC.acel_nado or MC.acel) or MC.frear
+	mont.v = mont.v + math.clamp(alvoV - mont.v, -ac * dt, ac * dt)
+	-- giro com peso
+	local _, yaw = cf:ToOrientation(); local giro = 0
+	if dir then
+		local yawAlvo = math.atan2(-dir.X, -dir.Z)                                 -- LookVector = -Z local
+		local d = difAngM(yaw, yawAlvo)
+		local taxa = math.rad(naAgua and MC.giro_nado or (mont.v > MC.vel_andar * 1.3 and MC.giro_corrida or (mont.v > 0.3 and MC.giro_andar or MC.giro_parado)))
+		giro = math.clamp(d, -taxa * dt, taxa * dt); yaw += giro
+	end
+	local rot = CFrame.Angles(0, yaw, 0)
+	local novo = pos + rot.LookVector * mont.v * dt
+	local y
+	if naAgua then
+		local s2 = select(1, medirAgua(novo)) or sup
+		y = yEspreita(s2) + MC.nado_extra
+	else
+		local ch = chaoMont(novo)
+		if not ch or (ch + C_.pivo - pos.Y) > MC.degrau_max then novo = pos; mont.v = 0; ch = chaoMont(pos) end   -- sem chao/parede a frente: para (descer e livre)
+		y = (ch or (pos.Y - C_.pivo)) + C_.pivo
+		y = pos.Y + math.clamp(y - pos.Y, -MC.subida_s * dt, MC.subida_s * dt)       -- sobe/desce suave no relevo
+	end
+	BASE = CFrame.new(novo.X, y, novo.Z) * rot; modelo:PivotTo(BASE)
+	-- animacao (patas casadas com a velocidade do clipe)
+	if mont.transAte and os.clock() < mont.transAte then return end
+	if naAgua then
+		if mont.v < 0.6 then animMont("NadoParado", 1) else animMont("Nado", math.clamp(mont.v / MC.vel_nado, 0.6, 1.6)) end
+	else
+		if mont.v < 0.25 then
+			if math.abs(giro) > 0.0005 then animMont(giro > 0 and "VirarEsquerda" or "VirarDireita", 1) else animMont("Repouso", 1, 0.35) end
+		elseif mont.v <= MC.vel_andar * 1.3 then animMont("Andar", mont.v / MC.vel_andar_clipe)
+		else animMont("Corrida", mont.v / MC.vel_corrida_clipe) end
+	end
+end
+
+function M.montariaIniciar()
+	if mont.ligada then return "ja ligada" end
+	local seat = modelo:FindFirstChild("Assento_Sela"); if not seat then return "sem Assento_Sela (rodar a instalacao)" end
+	mont.ligada = true; faseMont("livre")
+	local pr = seat:FindFirstChildOfClass("ProximityPrompt")
+	local Cmd, Ent = remotoMont("Comando", "RemoteEvent"), remotoMont("Entrada", "UnreliableRemoteEvent")
+	pr.Triggered:Connect(function(plr) montar(plr) end)
+	Cmd.OnServerEvent:Connect(function(plr, acao)
+		if acao == "desmontar" then
+			if plr ~= mont.plr then log("DESMONTAR recusado: %s nao e o cavaleiro", plr.Name); return end
+			desmontar("pedido", false)
+		end
+	end)
+	Ent.OnServerEvent:Connect(function(plr, dir, correr)
+		if plr ~= mont.plr or mont.fase ~= "montado" then mont.recusados = (mont.recusados or 0) + 1; return end
+		if typeof(dir) ~= "Vector3" or dir ~= dir or dir.Magnitude > 1.05 or math.abs(dir.X) == math.huge then mont.recusados = (mont.recusados or 0) + 1; return end
+		local p = Vector3.new(dir.X, 0, dir.Z)
+		mont.dir = (p.Magnitude > 0.1) and p.Unit or nil; mont.correr = (correr == true); mont.tIn = os.clock()
+	end)
+	Players_.PlayerRemoving:Connect(function(plr) if plr == mont.plr then desmontar("jogador_saiu", true) end end)
+	RS.Heartbeat:Connect(function(dt) if mont.fase == "montado" then passoMont(dt) end end)
+	log("MONTARIA ligada (botao Montar na sela, raio %d)", MC.raio)
+	return "ok"
+end
+function M.montariaEstado() return {fase = mont.fase, cavaleiro = mont.plr and mont.plr.Name, lado = mont.lado, v = mont.v, naAgua = mont.naAgua, recusados = mont.recusados or 0} end
 
 function M.estado() return {poder = est.poder, fase = est.fase, alvo = est.alvo and est.alvo.Name or nil, naAgua = est.naAgua} end
 return M

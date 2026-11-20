@@ -40,6 +40,20 @@ return {
 		pvp_fator = 0.5, pvp_queda = false,              -- PvP: metade da distancia e NAO derruba (contrato: nao somar agarrao e queda)
 		agua = false,                                    -- na agua so solta (sem arremesso) [PROPOSTA]
 	},
+	Montaria = {                            -- 20/11 1a entrega (usuario): botao Montar [E], controle pela camera, nada na superficie [PROPOSTA de numeros]
+		raio = 12,                          -- studs do botao (ProximityPrompt) na sela
+		subida = 4.0, descida = 3.6,        -- s = duracao dos clipes Montar/Desmontar (E/D)
+		altura_hrp = 2.3, altura_chao_hrp = 3.0, lado_x = 6.0, lado_z = -4.0,   -- HRP sobre o assento; ponto de descida ao lado da sela
+		timeout = 0.6,                      -- s sem pacote do cliente = solta o comando
+		junta_inicio = 0.35,                -- r2: s para juntar a posicao do jogador ao comeco do caminho do Blender
+		vel_andar = 2.8, vel_andar_clipe = 1.85,       -- Andar tocado 1,5x (clipe 1,85 studs/s: lento demais para montaria)
+		vel_corrida = 8.75, vel_corrida_clipe = 8.75,  -- velocidade do proprio clipe (patas casadas)
+		vel_nado = 8, nado_rapido = 1.3,    -- nado na superficie (Shift: 1,3x)
+		acel = 5, acel_nado = 4, frear = 9, -- studs/s2
+		giro_parado = 60, giro_andar = 70, giro_corrida = 45, giro_nado = 55,   -- graus/s (vira com peso)
+		nado_extra = 0.4,                   -- nada 0,4 acima da altura de espreita (sela fora d'agua)
+		degrau_max = 2.5, subida_s = 8,     -- maior degrau que sobe de uma vez; velocidade vertical maxima no relevo
+	},
 	-- 20/11 REGRAS DO LOBO ADOTADAS NO CROCODILO (usuario: "faca da mesma maneira"); contrato geral em
 	-- BLENDER/Criaturas/Lobo_Ancestral_Ref/studio/kit/CONTRATO-CONTROLE-PORTE.md. Regras oficiais v6.2 §0b-0d; resto [A TESTAR].
 	Hitbox = {                              -- golpes medidos da PONTA DOS DENTES / da cauda ate a SUPERFICIE do corpo (nao ao centro)
