@@ -1,0 +1,1442 @@
+{
+ "Repouso": {
+  "duracao_s": 6.0,
+  "loop": true,
+  "quadros": 180,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 0.0,
+  "erro_ik_max": 0.0,
+  "pior_ik_pata_quadro": [
+   "PeE",
+   21
+  ],
+  "erro_ik_no_ar": 0.0,
+  "desliza_pata_max_studs_s": 0.0,
+  "pior_desliza_pata_quadro": null,
+  "pata_min_z": -0.002,
+  "malha_min_z_fora_das_patas": 2.219,
+  "folga_cabecas_min": 3.067
+ },
+ "Andar": {
+  "duracao_s": 1.2,
+  "loop": true,
+  "quadros": 36,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 4.84,
+  "erro_ik_max": 0.0003,
+  "pior_ik_pata_quadro": [
+   "MaoE",
+   22
+  ],
+  "erro_ik_no_ar": 0.0,
+  "desliza_pata_max_studs_s": 0.0,
+  "pior_desliza_pata_quadro": [
+   "MaoD",
+   10
+  ],
+  "pata_min_z": -0.002,
+  "malha_min_z_fora_das_patas": 1.989,
+  "folga_cabecas_min": 3.492
+ },
+ "Corrida": {
+  "duracao_s": 0.5333,
+  "loop": true,
+  "quadros": 16,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 22.3,
+  "erro_ik_max": 0.0009,
+  "pior_ik_pata_quadro": [
+   "PeD",
+   11
+  ],
+  "erro_ik_no_ar": 0.0,
+  "desliza_pata_max_studs_s": 0.008,
+  "pior_desliza_pata_quadro": [
+   "MaoE",
+   9
+  ],
+  "pata_min_z": -0.002,
+  "malha_min_z_fora_das_patas": 1.766,
+  "folga_cabecas_min": 3.69
+ },
+ "Mordida": {
+  "duracao_s": 1.1,
+  "loop": false,
+  "quadros": 34,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 0.0,
+  "erro_ik_max": 0.0,
+  "pior_ik_pata_quadro": [
+   "MaoE",
+   13
+  ],
+  "erro_ik_no_ar": 0.0,
+  "desliza_pata_max_studs_s": 0.0,
+  "pior_desliza_pata_quadro": null,
+  "pata_min_z": -0.002,
+  "malha_min_z_fora_das_patas": 2.199,
+  "folga_cabecas_min": 3.205,
+  "eventos_s": {
+   "antecipacao": 0.0,
+   "bote": 0.3,
+   "contato": 0.42,
+   "recuperacao": 0.55,
+   "fim": 1.1
+  }
+ },
+ "Trote": {
+  "duracao_s": 0.6,
+  "loop": true,
+  "quadros": 18,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 11.85,
+  "erro_ik_max": 0.0006,
+  "pior_ik_pata_quadro": [
+   "MaoE",
+   5
+  ],
+  "erro_ik_no_ar": 0.0,
+  "desliza_pata_max_studs_s": 0.0,
+  "pior_desliza_pata_quadro": [
+   "MaoE",
+   12
+  ],
+  "pata_min_z": -0.002,
+  "malha_min_z_fora_das_patas": 1.99,
+  "folga_cabecas_min": 3.605
+ },
+ "Partida": {
+  "duracao_s": 1.9667,
+  "loop": false,
+  "quadros": 60,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 0.0,
+  "erro_ik_max": 0.0009,
+  "pior_ik_pata_quadro": [
+   "PeD",
+   54
+  ],
+  "erro_ik_no_ar": 0.0,
+  "desliza_pata_max_studs_s": 0.027,
+  "pior_desliza_pata_quadro": [
+   "MaoD",
+   23
+  ],
+  "pata_min_z": -0.002,
+  "malha_min_z_fora_das_patas": 1.766,
+  "folga_cabecas_min": 3.552,
+  "eventos_s": {
+   "agachar": 0.0,
+   "primeira_passada": 0.367,
+   "encaixa_corrida": 1.967
+  }
+ },
+ "Freada": {
+  "duracao_s": 1.5,
+  "loop": false,
+  "quadros": 46,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 0.0,
+  "erro_ik_max": 0.0008,
+  "pior_ik_pata_quadro": [
+   "MaoE",
+   4
+  ],
+  "erro_ik_no_ar": 0.0,
+  "desliza_pata_max_studs_s": 0.032,
+  "pior_desliza_pata_quadro": [
+   "MaoE",
+   8
+  ],
+  "pata_min_z": -0.002,
+  "malha_min_z_fora_das_patas": 1.832,
+  "folga_cabecas_min": 3.353,
+  "eventos_s": {
+   "inicio_na_corrida": 0.0,
+   "parada": 0.95,
+   "fim_em_repouso": 1.5
+  }
+ },
+ "VirarE": {
+  "duracao_s": 1.2,
+  "loop": true,
+  "quadros": 36,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 0.0,
+  "erro_ik_max": 0.0,
+  "pior_ik_pata_quadro": [
+   "MaoE",
+   20
+  ],
+  "erro_ik_no_ar": 0.0,
+  "desliza_pata_max_studs_s": 0.0,
+  "pior_desliza_pata_quadro": [
+   "PeD",
+   20
+  ],
+  "pata_min_z": -0.002,
+  "malha_min_z_fora_das_patas": 2.147,
+  "folga_cabecas_min": 3.571
+ },
+ "VirarD": {
+  "duracao_s": 1.2,
+  "loop": true,
+  "quadros": 36,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 0.0,
+  "erro_ik_max": 0.0001,
+  "pior_ik_pata_quadro": [
+   "MaoE",
+   21
+  ],
+  "erro_ik_no_ar": 0.0,
+  "desliza_pata_max_studs_s": 0.0,
+  "pior_desliza_pata_quadro": [
+   "MaoD",
+   17
+  ],
+  "pata_min_z": -0.002,
+  "malha_min_z_fora_das_patas": 2.135,
+  "folga_cabecas_min": 3.513
+ },
+ "Salto": {
+  "duracao_s": 1.5,
+  "loop": false,
+  "quadros": 46,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 0.0,
+  "erro_ik_max": 0.0008,
+  "pior_ik_pata_quadro": [
+   "MaoE",
+   31
+  ],
+  "erro_ik_no_ar": 0.704,
+  "desliza_pata_max_studs_s": 0.022,
+  "pior_desliza_pata_quadro": [
+   "MaoE",
+   13
+  ],
+  "pata_min_z": -0.002,
+  "malha_min_z_fora_das_patas": 1.954,
+  "folga_cabecas_min": 3.422,
+  "eventos_s": {
+   "agachar": 0.0,
+   "decolagem": 0.42,
+   "apice": 0.7,
+   "pouso": 0.98,
+   "recuperacao": 1.1,
+   "fim": 1.5
+  }
+ },
+ "Alerta": {
+  "duracao_s": 2.4,
+  "loop": false,
+  "quadros": 73,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 0.0,
+  "erro_ik_max": 0.0,
+  "pior_ik_pata_quadro": [
+   "MaoD",
+   4
+  ],
+  "erro_ik_no_ar": 0.0,
+  "desliza_pata_max_studs_s": 0.0,
+  "pior_desliza_pata_quadro": null,
+  "pata_min_z": -0.002,
+  "malha_min_z_fora_das_patas": 2.219,
+  "folga_cabecas_min": 3.076,
+  "eventos_s": {
+   "mira": 0.05,
+   "segura": 0.6,
+   "volta": 1.85,
+   "fim": 2.4
+  }
+ },
+ "Observar": {
+  "duracao_s": 4.4,
+  "loop": false,
+  "quadros": 133,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 0.0,
+  "erro_ik_max": 0.0,
+  "pior_ik_pata_quadro": [
+   "MaoD",
+   19
+  ],
+  "erro_ik_no_ar": 0.0,
+  "desliza_pata_max_studs_s": 0.0,
+  "pior_desliza_pata_quadro": null,
+  "pata_min_z": -0.002,
+  "malha_min_z_fora_das_patas": 2.206,
+  "folga_cabecas_min": 2.491
+ },
+ "ReacaoGolpe": {
+  "duracao_s": 1.0,
+  "loop": false,
+  "quadros": 31,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 0.0,
+  "erro_ik_max": 0.0,
+  "pior_ik_pata_quadro": [
+   "MaoE",
+   17
+  ],
+  "erro_ik_no_ar": 0.0,
+  "desliza_pata_max_studs_s": 0.0,
+  "pior_desliza_pata_quadro": null,
+  "pata_min_z": -0.002,
+  "malha_min_z_fora_das_patas": 2.126,
+  "folga_cabecas_min": 3.367,
+  "eventos_s": {
+   "impacto": 0.0,
+   "recuperacao": 0.22,
+   "fim": 1.0
+  }
+ },
+ "Deitar": {
+  "duracao_s": 2.6,
+  "loop": false,
+  "quadros": 79,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 0.0,
+  "erro_ik_max": 0.001,
+  "pior_ik_pata_quadro": [
+   "PeD",
+   61
+  ],
+  "erro_ik_no_ar": 0.0,
+  "desliza_pata_max_studs_s": 0.256,
+  "pior_desliza_pata_quadro": [
+   "MaoE",
+   48
+  ],
+  "pata_min_z": -0.081,
+  "malha_min_z_fora_das_patas": -0.139,
+  "folga_cabecas_min": 3.416,
+  "eventos_s": {
+   "passo_dianteiras": 0.15,
+   "traseiras_dobram": 0.55,
+   "peito_no_chao": 2.25,
+   "fim_deitado": 2.6
+  }
+ },
+ "Descanso": {
+  "duracao_s": 6.0,
+  "loop": true,
+  "quadros": 180,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 0.0,
+  "erro_ik_max": 0.0004,
+  "pior_ik_pata_quadro": [
+   "MaoE",
+   19
+  ],
+  "erro_ik_no_ar": 0.0,
+  "desliza_pata_max_studs_s": 0.0,
+  "pior_desliza_pata_quadro": [
+   "MaoD",
+   49
+  ],
+  "pata_min_z": -0.081,
+  "malha_min_z_fora_das_patas": -0.178,
+  "folga_cabecas_min": 3.353
+ },
+ "Levantar": {
+  "duracao_s": 2.2,
+  "loop": false,
+  "quadros": 67,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 0.0,
+  "erro_ik_max": 0.001,
+  "pior_ik_pata_quadro": [
+   "PeD",
+   12
+  ],
+  "erro_ik_no_ar": 0.0,
+  "desliza_pata_max_studs_s": 0.352,
+  "pior_desliza_pata_quadro": [
+   "MaoE",
+   12
+  ],
+  "pata_min_z": -0.081,
+  "malha_min_z_fora_das_patas": -0.139,
+  "folga_cabecas_min": 3.183,
+  "eventos_s": {
+   "dianteiras_empurram": 0.0,
+   "traseiras_sobem": 0.55,
+   "passo_dianteiras": 1.25,
+   "fim_em_pe": 2.2
+  }
+ },
+ "MordidaC": {
+  "duracao_s": 0.8,
+  "loop": false,
+  "quadros": 25,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 0.0,
+  "erro_ik_max": 0.0,
+  "pior_ik_pata_quadro": [
+   "MaoD",
+   0
+  ],
+  "erro_ik_no_ar": 0.0,
+  "desliza_pata_max_studs_s": 0.0,
+  "pior_desliza_pata_quadro": null,
+  "pata_min_z": -0.002,
+  "malha_min_z_fora_das_patas": 2.219,
+  "folga_cabecas_min": 3.499,
+  "camada": true,
+  "mascara": [
+   "PescocoC1",
+   "PescocoC2",
+   "CabecaC",
+   "MandibulaC"
+  ],
+  "prioridade_sugerida": "Action",
+  "eventos_s": {
+   "contato": 0.3,
+   "fim": 0.8
+  }
+ },
+ "MordidaE": {
+  "duracao_s": 0.8,
+  "loop": false,
+  "quadros": 25,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 0.0,
+  "erro_ik_max": 0.0,
+  "pior_ik_pata_quadro": [
+   "MaoD",
+   0
+  ],
+  "erro_ik_no_ar": 0.0,
+  "desliza_pata_max_studs_s": 0.0,
+  "pior_desliza_pata_quadro": null,
+  "pata_min_z": -0.002,
+  "malha_min_z_fora_das_patas": 2.219,
+  "folga_cabecas_min": 3.339,
+  "camada": true,
+  "mascara": [
+   "PescocoE1",
+   "PescocoE2",
+   "CabecaE",
+   "MandibulaE"
+  ],
+  "prioridade_sugerida": "Action",
+  "eventos_s": {
+   "contato": 0.3,
+   "fim": 0.8
+  }
+ },
+ "MordidaD": {
+  "duracao_s": 0.8,
+  "loop": false,
+  "quadros": 25,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 0.0,
+  "erro_ik_max": 0.0,
+  "pior_ik_pata_quadro": [
+   "MaoD",
+   0
+  ],
+  "erro_ik_no_ar": 0.0,
+  "desliza_pata_max_studs_s": 0.0,
+  "pior_desliza_pata_quadro": null,
+  "pata_min_z": -0.002,
+  "malha_min_z_fora_das_patas": 2.219,
+  "folga_cabecas_min": 3.377,
+  "camada": true,
+  "mascara": [
+   "PescocoD1",
+   "PescocoD2",
+   "CabecaD",
+   "MandibulaD"
+  ],
+  "prioridade_sugerida": "Action",
+  "eventos_s": {
+   "contato": 0.3,
+   "fim": 0.8
+  }
+ },
+ "GarraE": {
+  "duracao_s": 0.75,
+  "loop": false,
+  "quadros": 23,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 0.0,
+  "erro_ik_max": 0.0,
+  "pior_ik_pata_quadro": [
+   "MaoD",
+   0
+  ],
+  "erro_ik_no_ar": 0.0,
+  "desliza_pata_max_studs_s": 0.0,
+  "pior_desliza_pata_quadro": null,
+  "pata_min_z": -0.002,
+  "malha_min_z_fora_das_patas": 2.219,
+  "folga_cabecas_min": 3.561,
+  "camada": true,
+  "mascara": [
+   "EscapulaE",
+   "BracoE",
+   "AntebracoE",
+   "MaoE",
+   "DedosE"
+  ],
+  "prioridade_sugerida": "Action",
+  "eventos_s": {
+   "contato": 0.32,
+   "fim": 0.75
+  }
+ },
+ "GarraD": {
+  "duracao_s": 0.75,
+  "loop": false,
+  "quadros": 23,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 0.0,
+  "erro_ik_max": 0.0,
+  "pior_ik_pata_quadro": [
+   "PeD",
+   0
+  ],
+  "erro_ik_no_ar": 0.0,
+  "desliza_pata_max_studs_s": 0.0,
+  "pior_desliza_pata_quadro": null,
+  "pata_min_z": 0.01,
+  "malha_min_z_fora_das_patas": 2.222,
+  "folga_cabecas_min": 3.561,
+  "camada": true,
+  "mascara": [
+   "EscapulaD",
+   "BracoD",
+   "AntebracoD",
+   "MaoD",
+   "DedosD"
+  ],
+  "prioridade_sugerida": "Action",
+  "eventos_s": {
+   "contato": 0.32,
+   "fim": 0.75
+  }
+ },
+ "ChamasTriplices": {
+  "duracao_s": 1.6,
+  "loop": false,
+  "quadros": 49,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 0.0,
+  "erro_ik_max": 0.0,
+  "pior_ik_pata_quadro": [
+   "MaoD",
+   0
+  ],
+  "erro_ik_no_ar": 0.0,
+  "desliza_pata_max_studs_s": 0.0,
+  "pior_desliza_pata_quadro": null,
+  "pata_min_z": -0.002,
+  "malha_min_z_fora_das_patas": 2.219,
+  "folga_cabecas_min": 2.96,
+  "camada": true,
+  "mascara": [
+   "PescocoC1",
+   "PescocoC2",
+   "CabecaC",
+   "MandibulaC",
+   "PescocoE1",
+   "PescocoE2",
+   "CabecaE",
+   "MandibulaE",
+   "PescocoD1",
+   "PescocoD2",
+   "CabecaD",
+   "MandibulaD"
+  ],
+  "prioridade_sugerida": "Action",
+  "eventos_info": {
+   "disparo_E": {
+    "cabeca": "E",
+    "osso_boca": "CabecaE",
+    "mandibula": "MandibulaE"
+   },
+   "disparo_C": {
+    "cabeca": "C",
+    "osso_boca": "CabecaC",
+    "mandibula": "MandibulaC"
+   },
+   "disparo_D": {
+    "cabeca": "D",
+    "osso_boca": "CabecaD",
+    "mandibula": "MandibulaD"
+   }
+  },
+  "ponto_boca_local_Cabeca": {
+   "C": [
+    -0.4749,
+    1.8189,
+    0.1485
+   ],
+   "E": [
+    0.1424,
+    1.5189,
+    -0.2179
+   ],
+   "D": [
+    -0.129,
+    1.425,
+    -0.4353
+   ]
+  },
+  "eventos_s": {
+   "preparo": 0.0,
+   "disparo_E": 0.45,
+   "disparo_C": 0.7,
+   "disparo_D": 0.95,
+   "recuperacao": 1.1,
+   "fim": 1.6
+  }
+ },
+ "FuriaRugido": {
+  "duracao_s": 1.6,
+  "loop": false,
+  "quadros": 49,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 0.0,
+  "erro_ik_max": 0.0,
+  "pior_ik_pata_quadro": [
+   "MaoD",
+   0
+  ],
+  "erro_ik_no_ar": 0.0,
+  "desliza_pata_max_studs_s": 0.0,
+  "pior_desliza_pata_quadro": null,
+  "pata_min_z": -0.002,
+  "malha_min_z_fora_das_patas": 2.219,
+  "folga_cabecas_min": 3.164,
+  "camada": true,
+  "mascara": [
+   "PescocoC1",
+   "PescocoC2",
+   "CabecaC",
+   "MandibulaC",
+   "PescocoE1",
+   "PescocoE2",
+   "CabecaE",
+   "MandibulaE",
+   "PescocoD1",
+   "PescocoD2",
+   "CabecaD",
+   "MandibulaD"
+  ],
+  "prioridade_sugerida": "Action",
+  "eventos_info": {
+   "rugido_C": {
+    "cabeca": "C"
+   },
+   "rugido_E": {
+    "cabeca": "E"
+   },
+   "rugido_D": {
+    "cabeca": "D"
+   }
+  },
+  "eventos_s": {
+   "rugido_C": 0.15,
+   "rugido_E": 0.4,
+   "rugido_D": 0.65,
+   "entra_furia": 1.6
+  }
+ },
+ "FuriaLoop": {
+  "duracao_s": 2.0,
+  "loop": true,
+  "quadros": 60,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 0.0,
+  "erro_ik_max": 0.0,
+  "pior_ik_pata_quadro": [
+   "MaoD",
+   0
+  ],
+  "erro_ik_no_ar": 0.0,
+  "desliza_pata_max_studs_s": 0.0,
+  "pior_desliza_pata_quadro": null,
+  "pata_min_z": -0.002,
+  "malha_min_z_fora_das_patas": 2.219,
+  "folga_cabecas_min": 3.285,
+  "camada": true,
+  "mascara": [
+   "PescocoC1",
+   "PescocoC2",
+   "CabecaC",
+   "MandibulaC",
+   "PescocoE1",
+   "PescocoE2",
+   "CabecaE",
+   "MandibulaE",
+   "PescocoD1",
+   "PescocoD2",
+   "CabecaD",
+   "MandibulaD"
+  ],
+  "prioridade_sugerida": "Action",
+  "eventos_info": {
+   "contato_C": {
+    "cabeca": "C"
+   },
+   "contato_E": {
+    "cabeca": "E"
+   },
+   "contato_D": {
+    "cabeca": "D"
+   }
+  },
+  "eventos_s": {
+   "contato_C": 0.3,
+   "contato_E": 0.95,
+   "contato_D": 1.55
+  }
+ },
+ "FuriaSaida": {
+  "duracao_s": 0.8,
+  "loop": false,
+  "quadros": 25,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 0.0,
+  "erro_ik_max": 0.0,
+  "pior_ik_pata_quadro": [
+   "MaoD",
+   0
+  ],
+  "erro_ik_no_ar": 0.0,
+  "desliza_pata_max_studs_s": 0.0,
+  "pior_desliza_pata_quadro": null,
+  "pata_min_z": -0.002,
+  "malha_min_z_fora_das_patas": 2.219,
+  "folga_cabecas_min": 3.452,
+  "camada": true,
+  "mascara": [
+   "PescocoC1",
+   "PescocoC2",
+   "CabecaC",
+   "MandibulaC",
+   "PescocoE1",
+   "PescocoE2",
+   "CabecaE",
+   "MandibulaE",
+   "PescocoD1",
+   "PescocoD2",
+   "CabecaD",
+   "MandibulaD"
+  ],
+  "prioridade_sugerida": "Action",
+  "eventos_s": {
+   "fim": 0.8
+  }
+ },
+ "Investida": {
+  "duracao_s": 1.3667,
+  "loop": false,
+  "quadros": 42,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 0.0,
+  "erro_ik_max": 0.0009,
+  "pior_ik_pata_quadro": [
+   "PeD",
+   36
+  ],
+  "erro_ik_no_ar": 0.0,
+  "desliza_pata_max_studs_s": 0.251,
+  "pior_desliza_pata_quadro": [
+   "PeD",
+   9
+  ],
+  "pata_min_z": -0.002,
+  "malha_min_z_fora_das_patas": 1.766,
+  "folga_cabecas_min": 3.552,
+  "eventos_s": {
+   "compressao": 0.0,
+   "impulso": 0.3,
+   "fim_impulso": 0.8,
+   "passa_corrida": 0.8,
+   "encaixa_corrida": 1.367
+  }
+ },
+ "InvestidaR3": {
+  "duracao_s": 1.4667,
+  "loop": false,
+  "quadros": 45,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 0.0,
+  "erro_ik_max": 0.0009,
+  "pior_ik_pata_quadro": [
+   "MaoE",
+   10
+  ],
+  "erro_ik_no_ar": 0.0,
+  "desliza_pata_max_studs_s": 0.299,
+  "pior_desliza_pata_quadro": [
+   "PeE",
+   12
+  ],
+  "pata_min_z": -0.002,
+  "malha_min_z_fora_das_patas": 1.766,
+  "folga_cabecas_min": 3.543,
+  "eventos_s": {
+   "compressao": 0.0,
+   "patas_fincadas": 0.18,
+   "impulso": 0.4,
+   "extensao_max": 0.58,
+   "fim_impulso": 0.9,
+   "passa_corrida": 0.9,
+   "encaixa_corrida": 1.467
+  }
+ },
+ "InvestidaSobre": {
+  "duracao_s": 2.6667,
+  "loop": false,
+  "quadros": 81,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 22.3,
+  "erro_ik_max": 0.0575,
+  "pior_ik_pata_quadro": [
+   "PeD",
+   21
+  ],
+  "erro_ik_no_ar": 0.0,
+  "desliza_pata_max_studs_s": 0.008,
+  "pior_desliza_pata_quadro": [
+   "MaoE",
+   9
+  ],
+  "pata_min_z": -0.002,
+  "malha_min_z_fora_das_patas": 1.766,
+  "folga_cabecas_min": 3.444,
+  "eventos_s": {
+   "decola_dianteiras": 0.421,
+   "decola_traseiras": 0.667,
+   "suspensao": 0.667,
+   "apice": 1.133,
+   "pouso_traseiras": 1.6,
+   "pouso_dianteiras": 1.824,
+   "encaixa_corrida": 2.667
+  }
+ },
+ "InvestidaImpacto": {
+  "duracao_s": 1.9,
+  "loop": false,
+  "quadros": 58,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 0.0,
+  "erro_ik_max": 0.0009,
+  "pior_ik_pata_quadro": [
+   "MaoE",
+   3
+  ],
+  "erro_ik_no_ar": 0.0,
+  "desliza_pata_max_studs_s": 0.143,
+  "pior_desliza_pata_quadro": [
+   "PeE",
+   1
+  ],
+  "pata_min_z": -0.002,
+  "malha_min_z_fora_das_patas": 2.023,
+  "folga_cabecas_min": 2.912,
+  "eventos_s": {
+   "contato_corpo": 0.0,
+   "absorve": 0.12,
+   "preparo": 0.18,
+   "mordida_C": 0.46,
+   "mordida_E": 0.52,
+   "mordida_D": 0.58,
+   "solta": 0.86,
+   "recuperacao": 1.0,
+   "fim_em_repouso": 1.9
+  }
+ },
+ "FuriaRugidoR4": {
+  "duracao_s": 2.9,
+  "loop": false,
+  "quadros": 88,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 0.0,
+  "erro_ik_max": 0.0,
+  "pior_ik_pata_quadro": [
+   "MaoE",
+   7
+  ],
+  "erro_ik_no_ar": 0.0,
+  "desliza_pata_max_studs_s": 0.0,
+  "pior_desliza_pata_quadro": null,
+  "pata_min_z": -0.002,
+  "malha_min_z_fora_das_patas": 2.206,
+  "folga_cabecas_min": 2.685,
+  "eventos_info": {
+   "rugido_C": {
+    "cabeca": "C",
+    "som": "rugido",
+    "vfx": "violeta"
+   },
+   "rugido_E": {
+    "cabeca": "E",
+    "som": "rugido",
+    "vfx": "violeta"
+   },
+   "rugido_D": {
+    "cabeca": "D",
+    "som": "rugido",
+    "vfx": "violeta"
+   }
+  },
+  "eventos_s": {
+   "inspira": 0.0,
+   "ergue_C": 0.1,
+   "rugido_C": 0.26,
+   "boca_max_C": 0.52,
+   "fecha_C": 0.9,
+   "fechada_C": 1.18,
+   "ergue_E": 0.8,
+   "rugido_E": 0.96,
+   "boca_max_E": 1.22,
+   "fecha_E": 1.6,
+   "fechada_E": 1.88,
+   "ergue_D": 1.5,
+   "rugido_D": 1.66,
+   "boca_max_D": 1.92,
+   "fecha_D": 2.3,
+   "fechada_D": 2.58,
+   "entra_furia": 2.9
+  }
+ },
+ "FuriaRugidoR4Camada": {
+  "duracao_s": 2.9,
+  "loop": false,
+  "quadros": 88,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 0.0,
+  "erro_ik_max": 0.0,
+  "pior_ik_pata_quadro": [
+   "MaoD",
+   0
+  ],
+  "erro_ik_no_ar": 0.0,
+  "desliza_pata_max_studs_s": 0.0,
+  "pior_desliza_pata_quadro": null,
+  "pata_min_z": -0.002,
+  "malha_min_z_fora_das_patas": 2.219,
+  "folga_cabecas_min": 2.685,
+  "camada": true,
+  "mascara": [
+   "PescocoC1",
+   "PescocoC2",
+   "CabecaC",
+   "MandibulaC",
+   "PescocoE1",
+   "PescocoE2",
+   "CabecaE",
+   "MandibulaE",
+   "PescocoD1",
+   "PescocoD2",
+   "CabecaD",
+   "MandibulaD"
+  ],
+  "prioridade_sugerida": "Action",
+  "eventos_info": {
+   "rugido_C": {
+    "cabeca": "C",
+    "som": "rugido",
+    "vfx": "violeta"
+   },
+   "rugido_E": {
+    "cabeca": "E",
+    "som": "rugido",
+    "vfx": "violeta"
+   },
+   "rugido_D": {
+    "cabeca": "D",
+    "som": "rugido",
+    "vfx": "violeta"
+   }
+  },
+  "eventos_s": {
+   "inspira": 0.0,
+   "ergue_C": 0.1,
+   "rugido_C": 0.26,
+   "boca_max_C": 0.52,
+   "fecha_C": 0.9,
+   "fechada_C": 1.18,
+   "ergue_E": 0.8,
+   "rugido_E": 0.96,
+   "boca_max_E": 1.22,
+   "fecha_E": 1.6,
+   "fechada_E": 1.88,
+   "ergue_D": 1.5,
+   "rugido_D": 1.66,
+   "boca_max_D": 1.92,
+   "fecha_D": 2.3,
+   "fechada_D": 2.58,
+   "entra_furia": 2.9
+  }
+ },
+ "BolaInfernal": {
+  "duracao_s": 2.2,
+  "loop": false,
+  "quadros": 67,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 0.0,
+  "erro_ik_max": 0.0,
+  "pior_ik_pata_quadro": [
+   "MaoD",
+   0
+  ],
+  "erro_ik_no_ar": 0.0,
+  "desliza_pata_max_studs_s": 0.0,
+  "pior_desliza_pata_quadro": null,
+  "pata_min_z": -0.002,
+  "malha_min_z_fora_das_patas": 2.219,
+  "folga_cabecas_min": 2.926,
+  "camada": true,
+  "mascara": [
+   "PescocoC1",
+   "PescocoC2",
+   "CabecaC",
+   "MandibulaC",
+   "PescocoE1",
+   "PescocoE2",
+   "CabecaE",
+   "MandibulaE",
+   "PescocoD1",
+   "PescocoD2",
+   "CabecaD",
+   "MandibulaD"
+  ],
+  "prioridade_sugerida": "Action",
+  "eventos_info": {
+   "carga_inicio": {
+    "bocas": "CED",
+    "osso_boca": [
+     "CabecaC",
+     "CabecaE",
+     "CabecaD"
+    ]
+   },
+   "disparo": {
+    "origem": "bola a frente das tres bocas"
+   }
+  },
+  "ponto_boca_local_Cabeca": {
+   "C": [
+    -0.4749,
+    1.8189,
+    0.1485
+   ],
+   "E": [
+    0.1424,
+    1.5189,
+    -0.2179
+   ],
+   "D": [
+    -0.129,
+    1.425,
+    -0.4353
+   ]
+  },
+  "eventos_s": {
+   "converge": 0.0,
+   "carga_inicio": 0.35,
+   "carga_max": 1.2,
+   "disparo": 1.3,
+   "recuperacao": 1.55,
+   "fim": 2.2
+  }
+ },
+ "BolaInfernalR2": {
+  "duracao_s": 4.3,
+  "loop": false,
+  "quadros": 130,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 0.0,
+  "erro_ik_max": 0.036,
+  "pior_ik_pata_quadro": [
+   "MaoE",
+   102
+  ],
+  "erro_ik_no_ar": 0.0,
+  "desliza_pata_max_studs_s": 0.0,
+  "pior_desliza_pata_quadro": null,
+  "pata_min_z": -0.002,
+  "malha_min_z_fora_das_patas": 2.219,
+  "folga_cabecas_min": 2.206,
+  "eventos_info": {
+   "carga_inicio": {
+    "bocas": "CED",
+    "osso_boca": [
+     "CabecaC",
+     "CabecaE",
+     "CabecaD"
+    ]
+   },
+   "disparo": {
+    "origem": "bola gigante acima e a frente das tres bocas"
+   }
+  },
+  "ponto_boca_local_Cabeca": {
+   "C": [
+    -0.4749,
+    1.8189,
+    0.1485
+   ],
+   "E": [
+    0.1424,
+    1.5189,
+    -0.2179
+   ],
+   "D": [
+    -0.129,
+    1.425,
+    -0.4353
+   ]
+  },
+  "eventos_s": {
+   "ergue": 0.0,
+   "rugido": 0.4,
+   "carga_inicio": 0.5,
+   "carga_max": 3.0,
+   "preparo": 3.0,
+   "disparo": 3.35,
+   "recuperacao": 3.55,
+   "fim": 4.3
+  }
+ },
+ "BolaInfernalR2Camada": {
+  "duracao_s": 4.3,
+  "loop": false,
+  "quadros": 130,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 0.0,
+  "erro_ik_max": 0.0,
+  "pior_ik_pata_quadro": [
+   "MaoD",
+   0
+  ],
+  "erro_ik_no_ar": 0.0,
+  "desliza_pata_max_studs_s": 0.0,
+  "pior_desliza_pata_quadro": null,
+  "pata_min_z": -0.002,
+  "malha_min_z_fora_das_patas": 2.219,
+  "folga_cabecas_min": 2.206,
+  "camada": true,
+  "mascara": [
+   "PescocoC1",
+   "PescocoC2",
+   "CabecaC",
+   "MandibulaC",
+   "PescocoE1",
+   "PescocoE2",
+   "CabecaE",
+   "MandibulaE",
+   "PescocoD1",
+   "PescocoD2",
+   "CabecaD",
+   "MandibulaD"
+  ],
+  "prioridade_sugerida": "Action",
+  "eventos_info": {
+   "carga_inicio": {
+    "bocas": "CED"
+   },
+   "disparo": {
+    "origem": "bola gigante acima e a frente das tres bocas"
+   }
+  },
+  "ponto_boca_local_Cabeca": {
+   "C": [
+    -0.4749,
+    1.8189,
+    0.1485
+   ],
+   "E": [
+    0.1424,
+    1.5189,
+    -0.2179
+   ],
+   "D": [
+    -0.129,
+    1.425,
+    -0.4353
+   ]
+  },
+  "eventos_s": {
+   "ergue": 0.0,
+   "rugido": 0.4,
+   "carga_inicio": 0.5,
+   "carga_max": 3.0,
+   "preparo": 3.0,
+   "disparo": 3.35,
+   "recuperacao": 3.55,
+   "fim": 4.3
+  }
+ },
+ "Prev_Bola_Repouso": {
+  "duracao_s": 3.0,
+  "loop": false,
+  "quadros": 91,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 0.0,
+  "erro_ik_max": 0.0,
+  "pior_ik_pata_quadro": [
+   "PeE",
+   21
+  ],
+  "erro_ik_no_ar": 0.0,
+  "desliza_pata_max_studs_s": 0.0,
+  "pior_desliza_pata_quadro": null,
+  "pata_min_z": -0.002,
+  "malha_min_z_fora_das_patas": 2.219,
+  "folga_cabecas_min": 2.926,
+  "previa_so_render": true
+ },
+ "Prev_Bola_Andar": {
+  "duracao_s": 3.6,
+  "loop": false,
+  "quadros": 109,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 4.84,
+  "erro_ik_max": 0.0003,
+  "pior_ik_pata_quadro": [
+   "MaoE",
+   22
+  ],
+  "erro_ik_no_ar": 0.0,
+  "desliza_pata_max_studs_s": 0.0,
+  "pior_desliza_pata_quadro": [
+   "MaoD",
+   10
+  ],
+  "pata_min_z": -0.002,
+  "malha_min_z_fora_das_patas": 1.989,
+  "folga_cabecas_min": 2.926,
+  "previa_so_render": true
+ },
+ "Prev_Bola2": {
+  "duracao_s": 5.0,
+  "loop": false,
+  "quadros": 151,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 0.0,
+  "erro_ik_max": 0.036,
+  "pior_ik_pata_quadro": [
+   "MaoE",
+   102
+  ],
+  "erro_ik_no_ar": 0.0,
+  "desliza_pata_max_studs_s": 0.0,
+  "pior_desliza_pata_quadro": null,
+  "pata_min_z": -0.002,
+  "malha_min_z_fora_das_patas": 2.219,
+  "folga_cabecas_min": 2.206,
+  "previa_so_render": true
+ },
+ "Prev_Bola2_Andar": {
+  "duracao_s": 6.0,
+  "loop": false,
+  "quadros": 181,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 4.84,
+  "erro_ik_max": 0.0003,
+  "pior_ik_pata_quadro": [
+   "MaoE",
+   22
+  ],
+  "erro_ik_no_ar": 0.0,
+  "desliza_pata_max_studs_s": 0.0,
+  "pior_desliza_pata_quadro": [
+   "MaoD",
+   10
+  ],
+  "pata_min_z": -0.002,
+  "malha_min_z_fora_das_patas": 1.989,
+  "folga_cabecas_min": 2.206,
+  "previa_so_render": true
+ },
+ "Prev_FuriaR4": {
+  "duracao_s": 7.7,
+  "loop": false,
+  "quadros": 232,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 0.0,
+  "erro_ik_max": 0.0,
+  "pior_ik_pata_quadro": [
+   "MaoE",
+   7
+  ],
+  "erro_ik_no_ar": 0.0,
+  "desliza_pata_max_studs_s": 0.0,
+  "pior_desliza_pata_quadro": null,
+  "pata_min_z": -0.002,
+  "malha_min_z_fora_das_patas": 2.206,
+  "folga_cabecas_min": 2.685,
+  "previa_so_render": true,
+  "eventos_s": {
+   "rugido": 0.0,
+   "loop": 2.9,
+   "saida": 6.9
+  }
+ },
+ "Prev_MordidaC_Andar": {
+  "duracao_s": 2.4,
+  "loop": false,
+  "quadros": 73,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 4.84,
+  "erro_ik_max": 0.0003,
+  "pior_ik_pata_quadro": [
+   "MaoE",
+   22
+  ],
+  "erro_ik_no_ar": 0.0,
+  "desliza_pata_max_studs_s": 0.0,
+  "pior_desliza_pata_quadro": [
+   "MaoD",
+   10
+  ],
+  "pata_min_z": -0.002,
+  "malha_min_z_fora_das_patas": 1.989,
+  "folga_cabecas_min": 3.447,
+  "previa_so_render": true
+ },
+ "Prev_MordidaE_Corrida": {
+  "duracao_s": 1.6,
+  "loop": false,
+  "quadros": 49,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 22.3,
+  "erro_ik_max": 0.0009,
+  "pior_ik_pata_quadro": [
+   "PeD",
+   11
+  ],
+  "erro_ik_no_ar": 0.0,
+  "desliza_pata_max_studs_s": 0.008,
+  "pior_desliza_pata_quadro": [
+   "MaoE",
+   9
+  ],
+  "pata_min_z": -0.002,
+  "malha_min_z_fora_das_patas": 1.766,
+  "folga_cabecas_min": 3.3,
+  "previa_so_render": true
+ },
+ "Prev_GarraE_Andar": {
+  "duracao_s": 2.4,
+  "loop": false,
+  "quadros": 73,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 4.84,
+  "erro_ik_max": 0.0003,
+  "pior_ik_pata_quadro": [
+   "MaoE",
+   58
+  ],
+  "erro_ik_no_ar": 0.0,
+  "desliza_pata_max_studs_s": 0.0,
+  "pior_desliza_pata_quadro": [
+   "MaoD",
+   10
+  ],
+  "pata_min_z": -0.002,
+  "malha_min_z_fora_das_patas": 1.989,
+  "folga_cabecas_min": 3.492,
+  "previa_so_render": true
+ },
+ "Prev_GarraD_Trote": {
+  "duracao_s": 1.8,
+  "loop": false,
+  "quadros": 55,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 11.85,
+  "erro_ik_max": 0.0006,
+  "pior_ik_pata_quadro": [
+   "MaoE",
+   5
+  ],
+  "erro_ik_no_ar": 0.0,
+  "desliza_pata_max_studs_s": 0.0,
+  "pior_desliza_pata_quadro": [
+   "MaoE",
+   12
+  ],
+  "pata_min_z": -0.002,
+  "malha_min_z_fora_das_patas": 1.99,
+  "folga_cabecas_min": 3.605,
+  "previa_so_render": true
+ },
+ "Prev_Chamas_Repouso": {
+  "duracao_s": 2.0,
+  "loop": false,
+  "quadros": 61,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 0.0,
+  "erro_ik_max": 0.0,
+  "pior_ik_pata_quadro": [
+   "PeE",
+   21
+  ],
+  "erro_ik_no_ar": 0.0,
+  "desliza_pata_max_studs_s": 0.0,
+  "pior_desliza_pata_quadro": null,
+  "pata_min_z": -0.002,
+  "malha_min_z_fora_das_patas": 2.219,
+  "folga_cabecas_min": 2.96,
+  "previa_so_render": true
+ },
+ "Prev_Chamas_Andar": {
+  "duracao_s": 2.4,
+  "loop": false,
+  "quadros": 73,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 4.84,
+  "erro_ik_max": 0.0003,
+  "pior_ik_pata_quadro": [
+   "MaoE",
+   22
+  ],
+  "erro_ik_no_ar": 0.0,
+  "desliza_pata_max_studs_s": 0.0,
+  "pior_desliza_pata_quadro": [
+   "MaoD",
+   10
+  ],
+  "pata_min_z": -0.002,
+  "malha_min_z_fora_das_patas": 1.989,
+  "folga_cabecas_min": 2.96,
+  "previa_so_render": true
+ },
+ "Prev_Furia_Andar": {
+  "duracao_s": 4.8,
+  "loop": false,
+  "quadros": 145,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 4.84,
+  "erro_ik_max": 0.0003,
+  "pior_ik_pata_quadro": [
+   "MaoE",
+   22
+  ],
+  "erro_ik_no_ar": 0.0,
+  "desliza_pata_max_studs_s": 0.0,
+  "pior_desliza_pata_quadro": [
+   "MaoD",
+   10
+  ],
+  "pata_min_z": -0.002,
+  "malha_min_z_fora_das_patas": 1.989,
+  "folga_cabecas_min": 3.164,
+  "previa_so_render": true,
+  "eventos_s": {
+   "rugido": 0.0,
+   "loop": 1.6,
+   "saida": 3.6
+  }
+ }
+}

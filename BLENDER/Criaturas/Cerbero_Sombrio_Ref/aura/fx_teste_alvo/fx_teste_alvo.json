@@ -1,0 +1,39 @@
+{
+ "alvo": {
+  "jogador": "bloco ~5,5 studs (avatar R6), barra de vida ILUSTRATIVA de 200 PV"
+ },
+ "investida_alvo": {
+  "impulso_s": [
+   0.9,
+   1.4
+  ],
+  "boost_fim_s": 4.9,
+  "faixa_some_s": 7.9,
+  "jogador_a_studs_do_focinho": 9.0,
+  "contato_s": 1.23,
+  "dano": "1,0x = 17 (ilustrativo)",
+  "regra": "alvo pequeno: o Cerbero ATRAVESSA; jogador empurrado de lado (visual, fisica do jogo)",
+  "previa_s": 3.33
+ },
+ "furia_alvo": {
+  "alvo": "criatura de teste (quadrupede de blocos, cabeca a 12.5 studs = altura das bocas)",
+  "alvo_y": -21.31,
+  "debuff_rugido_s": [
+   0.52,
+   5.92
+  ],
+  "lentidao": "-15% (16 -> 13,6 studs/s)",
+  "chegada_s_sem_debuff": 0.88,
+  "chegada_s_com_debuff": 0.94,
+  "mordidas_s": [
+   3.2,
+   3.85,
+   4.45,
+   5.2,
+   5.85,
+   6.45
+  ],
+  "dano_por_mordida": "17 x 1,2 = 20,4 (Furia +20%)",
+  "pv_final_ilustrativo": 77.6
+ }
+}

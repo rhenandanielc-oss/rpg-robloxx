@@ -1,0 +1,88 @@
+{
+ "alvo": {
+  "jogador": "bloco ~5,5 studs (avatar R6), barra de vida ILUSTRATIVA de 200 PV"
+ },
+ "medidas_cerbero_studs": {
+  "cernelha": 13.72,
+  "cernelha_def": "topo do dorso no meio do tronco (Coluna2), sem chamas",
+  "comprimento_bbox": 24.15,
+  "largura_bbox": 13.05,
+  "altura_bbox": 19.19
+ },
+ "sobre": {
+  "impulso_s": [
+   0.9,
+   1.4
+  ],
+  "boost_fim_s": 4.9,
+  "faixa_some_s": 7.9,
+  "alvo": {
+   "cernelha": 6.86,
+   "comprimento": 12.07,
+   "largura_no_caminho": 3.62,
+   "topo_real": 7.18
+  },
+  "metrica": "cernelha e comprimento (bbox) do Cerbero x 0,5",
+  "folga_min_corpo_sobre_alvo_studs": -0.18,
+  "quadro_folga_min": [
+   80,
+   "Cerbero_Corpo",
+   1.98,
+   7.0
+  ],
+  "apice_s": 3.1,
+  "janela_apoios": {
+   "decolagem_dianteiras_y": [
+    -39.1,
+    -40.15
+   ],
+   "pouso_traseiras_y": [
+    -57.21,
+    -67.59
+   ],
+   "janela_studs": 17.06,
+   "dianteiras_decolam_a_studs_do_alvo": 5.14,
+   "traseiras_pousam_a_studs_do_alvo": 8.3
+  },
+  "golpe_passagem_s": 2.53,
+  "previa_s": 6.3
+ },
+ "custo_rastro": {
+  "PC": "segmentos de 2,2 studs com Decal/Texture que some por trecho (~30 vivos em 3 s a 22 studs/s) OU Beams com Attachments a cada 2 studs; brasas: 1 ParticleEmitter 20/s rente ao chao; linguas nos apoios: ~4 vivas (1 por apoio, 0,4 s)",
+  "celular": "segmentos de 4 studs (~17 vivos), brasas 8/s, linguas so nas dianteiras (~2 vivas)",
+  "terreno": "raycast para baixo por segmento (1 por 2,2 studs) no servidor ou cliente; Decal alinhado a normal",
+  "nota": "ESTIMATIVA da previa; medir no Roblox"
+ },
+ "impacto": {
+  "impulso_s": [
+   0.9,
+   1.4
+  ],
+  "boost_fim_s": 4.9,
+  "faixa_some_s": 7.9,
+  "alvo": {
+   "cernelha": 19.21,
+   "comprimento": 33.81,
+   "largura": 10.14
+  },
+  "metrica": "cernelha e comprimento (bbox) do Cerbero x 1,4",
+  "contato_corpo_s": 2.5,
+  "mordidas_s": {
+   "C": 2.96,
+   "E": 3.02,
+   "D": 3.08
+  },
+  "boca_alem_da_superficie_studs": {
+   "C": 0.18,
+   "E": 0.03,
+   "D": 0.0
+  },
+  "altura_das_bocas": {
+   "C": 18.05,
+   "E": 16.04,
+   "D": 13.16
+  },
+  "previa_s": 5.47
+ },
+ "terreno": "fita projetada por raio no terreno ondulado (+0,04 na normal); inclinacao media 9 graus"
+}

@@ -178,3 +178,14 @@ Base de comparação: Chamas Tríplices v6.2 (3 × 0,6× = 1,8× total, queimadu
   - **Mira:** alvo travado, depois mouse, depois câmera. Não atravessa obstáculos. É uma bola só.
   - **Custo:** recarga de 14 s e 35 de energia.
   - **Validação:** autoridade no servidor; valores sujeitos a ajuste de balanceamento no teste do Studio, inclusive PvP.
+
+### [PROPOSTA] 19/11 — Investida Sombria por tamanho do alvo (aguarda decisão do usuário; NÃO oficial)
+- **Métrica de tamanho (a confirmar):** cernelha (topo do dorso no meio do tronco) e comprimento. Cérbero: cernelha 13,72 e comprimento 24,15 studs.
+- **Até metade do porte:** passa POR CIMA (clipe InvestidaSobre) e causa 1,0× na passagem (v6.2, sem mudança).
+- **Maior que o Cérbero:** a Investida TERMINA no contato (clipe InvestidaImpacto).
+  - Impacto 0,6× + mordidas C 0,7× · E 0,7× · D 0,7× = **2,7× no total** (com mordida básica 17: ~46).
+  - Comparação: Carga de Chifres 1,9×, Sol Infernal 1,8× + explosão.
+  - Justificativa: só contra alvo maior, exige acertar a corrida e deixa o Cérbero parado e exposto ~1,4 s.
+  - Continua UMA ação: recarga 12 s e energia 25 inalteradas. Contatos validados no servidor; um acerto por boca.
+- **Entre metade e o tamanho do Cérbero (inclusive iguais):** A DEFINIR pelo usuário.
+- **20/11 — APROVADO pelo usuário:** a Investida r5 (rastro rente ao chão, InvestidaSobre e InvestidaImpacto em `rig/clipes_L3r7`) e o dano proposto vs alvo maior: impacto 0,6× + mordidas C/E/D 0,7× cada = **2,7×**, numa única ação (recarga 12 s, energia 25). Passagem por cima segue 1,0×. Faixa entre metade e o tamanho do Cérbero e a métrica de tamanho continuam A DEFINIR. Valores a validar no Roblox.

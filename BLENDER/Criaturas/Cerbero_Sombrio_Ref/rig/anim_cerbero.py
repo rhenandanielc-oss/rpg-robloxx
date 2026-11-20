@@ -570,6 +570,105 @@ def c_investida_r3(t):
     z = BASE_Z + (Z_GAL - BASE_Z) * k + 0.30 * k * math.sin(2 * math.pi * (tt / T_GAL - 0.05)) - 1.05 * comp - 0.25 * estica
     return r, V((0, 0.25 * comp - 0.10 * estica, z)), pes, ext_
 CLIPES["InvestidaR3"] = (c_investida_r3, DUR_R3, False, 0.0)
+# Investida r5 (19/11, pedido "Investida Sombria - rastro e reacao ao tamanho do alvo"). Clipes NOVOS (InvestidaR3 intacta):
+# (a) InvestidaSobre: alvo com METADE do porte no caminho -> o Cerbero passa POR CIMA: na Corrida, cada pata PULA um apoio
+#     (1 ciclo extra de balanco), o corpo sobe num arco durante a suspensao comum das 4 patas, nariz sobe na decolagem e desce no
+#     pouso, patas recolhidas sobre o alvo. Comeca e termina no quadro 0 da Corrida (encaixa depois da InvestidaR3).
+# (b) InvestidaImpacto: alvo MAIOR que o Cerbero -> a Investida TERMINA no contato: freia em ~0,3 s absorvendo nas dianteiras,
+#     recolhe as cabecas (preparo) e as TRES mordem o corpo do alvo (C -> E -> D, 0,06 s), seguram, soltam e voltam ao Repouso.
+# NO LUGAR: deslocamento, parada e colisao sao do jogo; valores [A TESTAR].
+SOB_J0 = T_GAL                                               # apoios que comecariam a partir daqui sao pulados
+SOB_D = 2.0 * T_GAL                                          # r3: atraso do galope apos o salto (1 ciclo: janela 4,8; 1,5: 11,1 studs, curta
+                                                             # para as dianteiras subirem E as traseiras pousarem longe do alvo)
+DUR_SOB = 3 * T_GAL + SOB_D                                  # 2,67 s; no fim = Corrida(3T) = quadro 0
+SOB_H = 5.0                                                  # subida do corpo no arco (studs) [A TESTAR]
+def _sob_tempos(fase):
+    n = math.floor(SOB_J0 / T_GAL + fase - 1e-9); tc = (n - fase) * T_GAL       # ultimo apoio que comeca antes de J0
+    while tc >= SOB_J0 - 1e-9: n -= 1; tc = (n - fase) * T_GAL
+    a = tc + AP_GAL * T_GAL                                                       # decola no fim dele
+    m = math.ceil((a + (1 - AP_GAL) * T_GAL + SOB_D - 0.5 * T_GAL - SOB_D) / T_GAL + fase - 1e-9)   # pousa ~(SOB_D - T/2) depois do balanco normal
+    b = (m - fase) * T_GAL + SOB_D                                                # primeiro apoio do galope atrasado
+    return a, b
+SOB_LIFT = {k_: _sob_tempos(f_) for k_, f_ in FASE_GALOPE.items()}
+SOB_W0 = max(a for a, b in SOB_LIFT.values()); SOB_W1 = min(b for a, b in SOB_LIFT.values())     # suspensao comum
+SOB_LF = min(SOB_LIFT["MaoE"][0], SOB_LIFT["MaoD"][0])                                       # dianteiras saem primeiro
+EV_SOBRE = {"decola_dianteiras": round(SOB_LF, 3), "decola_traseiras": round(SOB_W0, 3), "suspensao": round(SOB_W0, 3),
+            "apice": round((SOB_W0 + SOB_W1) / 2, 3), "pouso_traseiras": round(SOB_W1, 3),
+            "pouso_dianteiras": round(min(SOB_LIFT["MaoE"][1], SOB_LIFT["MaoD"][1]), 3), "encaixa_corrida": round(DUR_SOB, 3)}
+def sob_arco(t):
+    if SOB_W0 < t < SOB_W1: return math.sin(math.pi * (t - SOB_W0) / (SOB_W1 - SOB_W0))
+    return 0.0
+def c_sobre(t):
+    r = {}; pes = {}; ext = {"rot_pe": {}, "apoio": {}, "v": V_GAL}
+    arco = sob_arco(t); vo = suave((t - (SOB_LF - 0.05)) / 0.16) * (1 - suave((t - (SOB_W1 - 0.04)) / 0.18))
+    for k_, fase in FASE_GALOPE.items():
+        a_, b_ = SOB_LIFT[k_]
+        if t < a_: p, uu = passo_var(t, fase, T_GAL, AP_GAL, ALT_GAL, lambda x: L_GAL, PERF_GAL)
+        elif t >= b_: p, uu = passo_var(t - SOB_D, fase, T_GAL, AP_GAL, ALT_GAL, lambda x: L_GAL, PERF_GAL)
+        else:
+            p0, _ = passo_var(a_ - 1e-4, fase, T_GAL, AP_GAL, ALT_GAL, lambda x: L_GAL, PERF_GAL)
+            p1, _ = passo_var(b_ - SOB_D, fase, T_GAL, AP_GAL, ALT_GAL, lambda x: L_GAL, PERF_GAL)
+            uu = (t - a_) / (b_ - a_); s_ = suave(uu); dian = k_.startswith("Mao")
+            # r4: patamar - recolhe logo, FICA no alto durante o voo e so desce no fim (o arco em sino baixava a traseira sobre o alvo)
+            sino = suave(uu / (0.08 if dian else 0.18)) * (1 - suave((uu - (0.85 if dian else 0.88)) / (0.15 if dian else 0.12)))
+            tuck = V((0, -1.6 if dian else 1.0, 6.2 if dian else 4.2)) * sino     # r5: antebraco raspava 1,3 na borda
+            p = V((0, p0.y + (p1.y - p0.y) * s_, ALT_GAL * math.sin(math.pi * uu))) + V((0, 0, SOB_H * arco * sino)) + tuck
+            uu = max(uu, 1e-3)
+        pes[k_] = p; rot_sola(ext, k_, uu, 32 if not (a_ <= t < b_) else 50 * vo + 32 * (1 - vo)); ext["apoio"][k_] = uu == 0
+        # (sem "no_ar": no QA ele pula o quadro e junta apoios de antes e depois do salto como se fossem seguidos)
+    tg = t if t < SOB_J0 + 0.5 * T_GAL else t - SOB_D                              # fase do galope (antes/depois do salto)
+    corpo_galope(r, tg / T_GAL, 1.0 - 0.6 * vo)
+    # r2: a frente sobe primeiro (nariz para cima com as traseiras ainda no chao), nivela no apice e o nariz desce no pouso
+    sobe = suave((t - SOB_LF) / max(0.05, SOB_W0 - SOB_LF)); v_ = min(1.0, max(0.0, (t - SOB_W0) / (SOB_W1 - SOB_W0)))
+    inc = (-R(18) * sobe * (1 - v_) + R(9) * v_) * vo                       # r4: frente sobe mais (peito passava a 5,9 do alvo de 7,2)
+    r["Pelve"] = r["Pelve"] + [(X, inc * 0.6)]; r["Coluna2"] = r["Coluna2"] + [(X, inc * 0.4)]; r["Coluna3"] = r["Coluna3"] + [(X, inc * 0.5)]
+    for kk in CABS: r["Pescoco%s1" % kk] = r["Pescoco%s1" % kk] + [(S[kk], R(8) * vo)]; r["Cabeca" + kk] = r["Cabeca" + kk] + [(S[kk], -R(4) * vo)]
+    r["Cauda1"] = r["Cauda1"] + [(X, R(12) * vo)]
+    empurra = janela(t, SOB_W0 - 0.16, SOB_W0 + 0.02, 0.10, 0.06)                   # traseiras empurram: garupa desce um pouco antes
+    z = Z_GAL + 0.30 * (1 - vo) * math.sin(2 * math.pi * (tg / T_GAL - 0.05)) + SOB_H * arco - 0.35 * empurra
+    return r, V((0, 0, z)), pes, ext
+CLIPES["InvestidaSobre"] = (c_sobre, DUR_SOB, False, V_GAL)
+DUR_IMP = 1.9
+EV_IMPACTO = {"contato_corpo": 0.0, "absorve": 0.12, "preparo": 0.18, "mordida_C": 0.46, "mordida_E": 0.52, "mordida_D": 0.58,
+              "solta": 0.86, "recuperacao": 1.0, "fim_em_repouso": DUR_IMP}
+def k_imp(t): return 1 - suave(t / 0.30)
+PERF_IMP = Perfil(lambda t: V_GAL * k_imp(t))
+ALC_IMP = {"C": -1.6, "E": -1.6, "D": 0.6}   # r3: medido por boca (abaixar o pescoco DESCE a boca, nao avanca); C e E sobem
+                                               # e recuam ate o plano da D: bocas a -13,0 / -13,0 / -12,9 e alturas 18,0 / 15,7 / 12,4                     # alcance de cada cabeca (ajustado para as 3 bocas chegarem a superficie)
+def c_impacto(t):
+    r = {}; pes = {}; ext = {"rot_pe": {}, "apoio": {}, "v": V_GAL * k_imp(t)}; k = k_imp(t)
+    for k_, fase in FASE_GALOPE.items():
+        p, uu = passo_var(t, fase, T_GAL, AP_GAL, ALT_GAL * k ** 0.7, lambda x: L_GAL * k_imp(x), PERF_IMP)
+        pes[k_] = p; rot_sola(ext, k_, uu if k > 0.02 else 0.0, 32); ext["apoio"][k_] = uu == 0
+    # ajuste: depois de parar, cada pata da um passo curto de volta ao lugar de repouso (sem deslizar em apoio)
+    for i_, k_ in enumerate(("MaoE", "PeD", "MaoD", "PeE")):
+        a_ = 0.95 + 0.14 * i_; u_ = suave((t - a_) / 0.22)
+        if t > a_:
+            pes[k_] = pes[k_] * (1 - u_) + V((0, 0, 0.7 * math.sin(math.pi * min(1.0, (t - a_) / 0.22))))
+            if 0 < (t - a_) < 0.22: ext["apoio"][k_] = False
+    corpo_galope(r, t / T_GAL, k)
+    ab = janela(t, 0.02, 0.95, 0.10, 0.50)                                         # absorcao do impacto nas dianteiras
+    r["Coluna3"] = r["Coluna3"] + [(X, -R(7) * ab)]; r["Coluna2"] = r["Coluna2"] + [(X, -R(2) * ab)]; r["Pelve"] = r["Pelve"] + [(X, R(4) * ab)]
+    for sd in "ED": r["Escapula" + sd] = r.get("Escapula" + sd, []) + [(X, R(9) * ab)]
+    for kk, at in (("C", 0.0), ("E", 0.06), ("D", 0.12)):
+        tc_ = EV_IMPACTO["mordida_" + kk]
+        prep = janela(t, 0.12 + at, tc_ - 0.02, 0.14, 0.08)                      # recolhe e abre
+        bote = suave((t - (tc_ - 0.10)) / 0.10) * (1 - suave((t - EV_IMPACTO["solta"] - at) / 0.30))
+        abre = suave((t - (0.18 + at)) / 0.16) * (1 - suave((t - (tc_ - 0.02)) / 0.06))
+        segura = janela(t, tc_, EV_IMPACTO["solta"] + at, 0.04, 0.08)
+        vib = R(2.2) * math.sin(2 * math.pi * 11 * (t + at)) * segura                # sacode segurando (peso)
+        alc = ALC_IMP[kk]
+        r["Pescoco%s1" % kk] = r["Pescoco%s1" % kk] + [(S[kk], R(12) * prep - R(16) * alc * bote)]
+        r["Pescoco%s2" % kk] = r.get("Pescoco%s2" % kk, []) + [(S[kk], R(5) * prep - R(6) * alc * bote)]
+        r["Cabeca" + kk] = r["Cabeca" + kk] + [(S[kk], -R(6) * prep + R(10) * bote + vib)]
+        r["Mandibula" + kk] = [(S[kk], -R(46) * abre - R(6) * segura)]
+    r["Cauda1"] = r["Cauda1"] + [(X, R(10) * ab)]
+    m = suave((t - 1.35) / 0.50)                                                     # entra no Repouso q0
+    rr, _, _, _ = c_repouso(0.0)
+    for nm, lst in rr.items(): r[nm] = r.get(nm, []) + [(e, a * m) for e, a in lst]
+    z = BASE_Z + (Z_GAL - BASE_Z) * k + 0.30 * k * math.sin(2 * math.pi * (t / T_GAL - 0.05)) - 0.75 * ab
+    return r, V((0, -0.45 * ab, z)), pes, ext
+CLIPES["InvestidaImpacto"] = (c_impacto, DUR_IMP, False, 0.0)
 # Rugido Infernal r4 (18/11, pedido "r4 do Rugido Infernal"): ATIVACAO separada das mordidas (o FuriaRugido aceito fica intacto).
 # Cada cabeca, uma por vez (C -> E -> D, sem sobrepor as aberturas): pescoco e focinho ERGUEM (sem bote para a frente), a
 # mandibula ABRE devagar, SUSTENTA aberta e FECHA com controle; depois a cabeca baixa para a postura de furia (quadro 0 do
@@ -701,7 +800,7 @@ V_PREV = {"Prev_MordidaC_Andar": V_AND, "Prev_MordidaE_Corrida": V_GAL, "Prev_Ga
 for nm_, (fn_, du_) in PREVIA.items(): CLIPES[nm_] = (fn_, du_, False, V_PREV[nm_])
 EVENTOS_L3 = {**{"Mordida" + kk: {"contato": 0.30, "fim": 0.8} for kk in CABS}, **{"Garra" + sd: {"contato": 0.32, "fim": 0.75} for sd in "ED"},
               "ChamasTriplices": EV_CHAMAS, "FuriaRugido": EV_RUGIDO, "FuriaLoop": EV_FURIA_LOOP, "FuriaSaida": {"fim": 0.8},
-              "Investida": EV_INVESTIDA, "InvestidaR3": EV_INVESTIDA_R3, "Prev_Furia_Andar": {"rugido": 0.0, "loop": 1.6, "saida": 3.6},
+              "Investida": EV_INVESTIDA, "InvestidaR3": EV_INVESTIDA_R3, "InvestidaSobre": EV_SOBRE, "InvestidaImpacto": EV_IMPACTO, "Prev_Furia_Andar": {"rugido": 0.0, "loop": 1.6, "saida": 3.6},
               "FuriaRugidoR4": EV_RUGIDO_R4, "FuriaRugidoR4Camada": EV_RUGIDO_R4,
               "BolaInfernal": EV_BOLA, "BolaInfernalR2": EV_BOLA2, "BolaInfernalR2Camada": EV_BOLA2, "Prev_FuriaR4": {"rugido": 0.0, "loop": DUR_RUG4, "saida": round(DUR_RUG4 + 2 * FURIA_T, 3)}}
 INFO_EVENTOS = {"ChamasTriplices": {"disparo_E": {"cabeca": "E", "osso_boca": "CabecaE", "mandibula": "MandibulaE"},
@@ -718,7 +817,7 @@ for kk in CABS:
     p_ = (BD["Cabeca" + kk].tail_local * 0.6 + BD["Mandibula" + kk].tail_local * 0.4)
     PONTO_BOCA[kk] = [round(c_, 4) for c_ in (BD["Cabeca" + kk].matrix_local.inverted() @ p_)]
 EVENTOS_CLIPE = {"Mordida": EV_MORD, **EVENTOS_LOTE2, **EVENTOS_L3}
-COM_ALTURA_PROPRIA = {"Andar", "Corrida", "Trote", "Partida", "Freada", "VirarE", "VirarD", "Salto", "Deitar", "Descanso", "Levantar", "Investida", "InvestidaR3"} | set(CAMADA) | set(PREVIA)
+COM_ALTURA_PROPRIA = {"Andar", "Corrida", "Trote", "Partida", "Freada", "VirarE", "VirarD", "Salto", "Deitar", "Descanso", "Levantar", "Investida", "InvestidaR3", "InvestidaSobre", "InvestidaImpacto"} | set(CAMADA) | set(PREVIA)
 QUAIS = ARGS[1].split(",") if len(ARGS) > 1 else list(CLIPES)
 
 # ------------------------------------------------------------------ amostragem -> FK -> acao + JSON + QA

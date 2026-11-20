@@ -710,3 +710,79 @@ Etapa de Blender. Desempenho e trajetória funcional continuam pendentes no Robl
 - Decisão do usuário; "Bola Infernal" era provisório.
 - Os arquivos e clipes mantêm os nomes técnicos `BolaInfernal*` / `fx_bola_infernal*` (renomear só na integração ao Studio, se for o caso).
 - Números APROVADOS 19/11 (ver `DOCS/criaturas/cerbero-sombrio.md`): 1,8× + explosão 12 studs 1,0×, queimadura 3 s, 30 studs/s, curva 130°/s, alcance 50, acerto 8, recarga 14 s, energia 35.
+
+## Teste em alvo — Investida r3 e Fúria r4 (19/11, pedido "teste em um alvo de criatura ou jogador") — AGUARDA REVISÃO
+- `aura/fx_teste_alvo.py` → `aura/fx_teste_alvo/`. Cabeçalho da r4b, Investida da r3 e bloco da Fúria r4b, sem alterá-los. Render leve: 2 threads, prioridade Ociosa, 8 amostras, pausa entre quadros.
+- **Investida contra jogador** (bloco de avatar R6 de ~5,5 studs, a 9 studs do focinho):
+  - impulso de 12 studs em 0,5 s (0,9 → 1,4 s) e contato em 1,23 s, com dano 1,0× = 17;
+  - alvo pequeno: o Cérbero ATRAVESSA, e o jogador é empurrado de lado e cai (visual; a física é do jogo);
+  - depois segue a corrida com o rastro de sombra.
+- **Fúria contra criatura de teste** (quadrúpede de blocos com a cabeça a 12,5 studs, na altura das bocas). Com um avatar de 5,5 studs as mordidas passavam por cima da cabeça dele.
+  - Rugido: a partir de 0,52 s o alvo fica cinza/apagado e anda 15% mais devagar (16 → 13,6 studs/s); cada rugido renova os 4 s, e o efeito vai até 5,9 s.
+  - 6 mordidas do FuriaLoop (3,2 a 6,45 s) de 20,4 cada (17 × 1,2), com barra ILUSTRATIVA de 200 → 77,6 PV.
+- **Achado de design:** o Cérbero morde na altura de ~12,5 studs. Contra um jogador a pé as mordidas precisam de hitbox mais baixa ou de uma variante de mordida para baixo. Decisão do usuário.
+
+## Investida r5 (19/11) — rastro novo e reação ao tamanho do alvo — APROVADA pelo usuário 20/11 ("Aprovo os dois")
+Pedido do usuário "Investida Sombria — rastro e reação ao tamanho do alvo". Tudo é SIMULAÇÃO VISUAL no Blender: deslocamento, colisão, parada e dano ficam no jogo (servidor) e nada disso foi testado no Roblox.
+
+### Clipes novos
+Em `rig/clipes_L3r7` (35 clipes; os 33 anteriores saem idênticos; InvestidaR3 intacta).
+
+- **`InvestidaSobre` (2,67 s, velocidade de prévia 22,3):** começa e termina no quadro 0 da Corrida e entra depois da InvestidaR3.
+  - Dianteiras decolam em 0,42 s, dobram logo e ficam no alto; a frente sobe primeiro (nariz −18°).
+  - Traseiras empurram em 0,67 s. Suspensão de 0,93 s com o corpo subindo 5 studs; o nariz desce no pouso.
+  - Traseiras pousam em 1,60 s e dianteiras em 1,82 s.
+  - QA: escorregão 0,008, patas z ≥ −0,002, folga entre cabeças 3,44.
+  - IK 0,058 com a pata dianteira dobrada no ar (não aparece).
+- **`InvestidaImpacto` (1,9 s):** termina no contato.
+  - Freia em 0,3 s com absorção nas dianteiras (peito afunda, escápulas comprimem e o corpo segue 0,45 stud por inércia).
+  - Preparo em 0,18 s. Mordidas C 0,46 · E 0,52 · D 0,58 s, segurando e sacudindo até 0,86 s.
+  - Passo de ajuste das 4 patas e Repouso q0 no fim.
+  - QA: IK 0,0009, escorregão 0,14, folga entre cabeças 2,91.
+
+### Medidas reais
+Métrica da prévia: cernelha = topo do dorso no meio do tronco (Coluna2), sem chamas; comprimento = bbox.
+
+| | Cernelha | Comprimento | Largura | Altura total |
+|---|---|---|---|---|
+| Cérbero | 13,72 | 24,15 (bbox) | 13,05 | 19,19 (bbox) |
+| Alvo com metade do porte | 6,86 (topo real 7,18) | 12,07 | 3,62 no caminho | — |
+| Alvo maior (1,4×) | 19,21 | 33,81 | 10,14 | — |
+
+### Resultados
+- **Passagem por cima:**
+  - pior folga corpo/alvo = **−0,18 stud**, no quadro 80: o pelo do peito raspa a borda de trás do alvo na decolagem;
+  - dianteiras decolam a 5,1 studs do alvo e traseiras pousam a 8,3 studs dele;
+  - golpe da passagem (flash) em 2,53 s.
+- **Parada no alvo maior:**
+  - bocas além da superfície: C 0,18 · E 0,03 · D 0,00 stud;
+  - alturas das bocas: C 18,05 · E 16,04 · D 13,16 (três pontos diferentes do flanco);
+  - o alvo balança de leve, sem ser empurrado.
+- **Problemas encontrados e corrigidos (rodadas):**
+  - rastro aparecendo à frente do Cérbero (a emissão não respeitava o nascimento);
+  - QA de escorregão falso (o "no_ar" juntava apoios de antes e depois do salto);
+  - traseira caindo de 4 studs no pouso;
+  - medida da cernelha errada (8,6);
+  - limite de "pata no chão" abaixo da altura do osso em repouso (0,57);
+  - janela entre apoios curta (4,8 → 11,1 → 17,1 studs, com a suspensão mais longa);
+  - canela traseira e antebraço dianteiro raspando o alvo (patamar de recolhimento, frente subindo antes, margem de pouso);
+  - bocas desiguais: abaixar o pescoço desce a boca, não avança. C e E sobem e recuam até o plano da D, medido boca a boca.
+
+### Rastro r5
+A faixa antiga presa ao corpo foi desligada.
+- Fita rente ao chão projetada no terreno por raio (+0,04 na normal), nascendo com o deslocamento real da prévia (UV v = instante de passagem).
+- Bordas irregulares que se desfazem por trecho em 3 s [A TESTAR], com veios de fogo ondulados no sentido da passagem (referência do usuário) e brasas discretas.
+- Línguas de fogo baixas em cada toque real das patas.
+- Terreno ondulado testado em `Rastro_terreno_*`.
+- **Custo estimado:**
+  - PC: ~30 segmentos vivos (Decal/Beam), brasas 20/s e ~4 línguas;
+  - celular: ~17 segmentos, brasas 8/s e línguas só nas dianteiras;
+  - raycast por segmento.
+
+### Pendências
+- Proposta de dano em `DOCS/criaturas/cerbero-sombrio.md` [PROPOSTA].
+- Reação a alvos entre metade e o tamanho do Cérbero (inclusive iguais) fica A DEFINIR pelo usuário.
+- Confirmar a métrica de tamanho (cernelha + comprimento).
+- A câmera de frente termina com o Cérbero muito perto.
+- Salto com 0,93 s no ar e 5 studs de subida [A TESTAR na física do Roblox].
+- Integração no Studio só com autorização (`DOCS/estado/studio-em-uso.md`).
