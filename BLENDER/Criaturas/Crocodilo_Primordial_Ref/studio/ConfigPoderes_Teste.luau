@@ -1,8 +1,10 @@
 -- ConfigPoderes_Teste (ModuleScript em ServerStorage.Crocodilo_Piloto) - VALORES PROVISORIOS SO DO PLACE DE TESTE.
--- [PROPOSTA] Nenhum destes numeros e regra do jogo: elemento, passiva, kit, dano, recarga e a regra do agarrao PvP do
--- Crocodilo Primordial continuam PENDENTES (decisao do criador). Agarrao e efeitos so valem para bonecos BonecoTeste.
+-- [PROPOSTA] Nenhum destes NUMEROS e regra do jogo (dano, recarga, alcances: provisorios). OFICIAL desde 20/11: elemento
+-- Agua, ativas Agarrao/Giro de Emboscada/Submersao/Cauda de Mare, passivas Escamas Grossas/Sentido de Vibracao e a
+-- regra do agarrao PvP (19/11). Agarrao e efeitos so valem para bonecos BonecoTeste.
 return {
 	SoBonecos = true,                       -- trava: alvo precisa ter o atributo BonecoTeste (nunca jogadores)
+	Elemento = "Agua",                      -- 20/11 KIT OFICIAL (usuario): elemento unico Agua; dano das 4 ativas e de Agua (visual natural, sem brilho)
 	Agarrao = {
 		alcance = 6.5,                      -- studs da PONTA DOS DENTES ate o centro do boneco no contato
 		ponta = 4.5,                        -- ponta dos dentes = 4,5 a frente do osso Mandibula (+Y do osso)
@@ -71,7 +73,8 @@ return {
 	},
 	GiroEmboscada = {                       -- P4 16/11 (ref. secao 4: Giro 2,0x a mordida 20, raio 12, derruba 1,5 s, +50% distraido; raso 1,2x)
 		janela = 1.5, mult = 2.0, mult_raso = 1.2, bonus_distraido = 1.5, dano_base = 20,
-		raio = 12, derruba = 3.0, distancia = 22, voo = 0.9, altura = 5, centro_frente = 6,   -- derruba 3,0 s (usuario 20/11; v6.2 dizia 1,5: curta para finalizar)
+		-- 20/11 EMBOSCADA SEM GIRO (usuario): bote saltando curto e baixo; mordida no pouso a `raio` da ponta do focinho
+		raio = 4.5, derruba = 3.0, distancia = 12, voo = 0.55, altura = 3, centro_frente = 15.5,   -- [PROPOSTA]; antes 12/22/0,9/5/6 (giro em area)
 	},
 	Submersao = {                           -- P4 16/11 (agua real; numeros de TESTE)
 		folga_topo = 4.0, folga_fundo = 1.0, -- topo do corpo abaixo da superficie / sola acima do fundo (P4b: usuario achou raso 1,5)
@@ -86,7 +89,10 @@ return {
 	},
 	Corpo = {pivo = 2.87, olhos = 5.0, topo = 5.74, cabeca = 16, ponta_bote = 13.8},   -- alturas acima da sola (medidas: Studio e malha no Blender)
 	Cauda = {raio = 11, empurrao = 9, dano = 20,   -- P4: dano 1,0x a mordida (ref. 4); acerto pela TRAJETORIA da cauda
-		largura = 3.0, empurrao_agua = 9, empurrao_terra = 5, onda_agua = 14, onda_terra = 8, proposto_graus = 360},
+		largura = 3.0, empurrao_agua = 9, empurrao_terra = 5, onda_agua = 20, onda_terra = 20,   -- r2 usuario 20/11: 'a onda deve chegar mais longe' (antes 14/8); r3 terra 10 -> 15 -> 20 ('na terra, alcance mais longe'; igual a agua)
+		 proposto_graus = 360,
+		-- 20/11 ONDA REAL (usuario): a onda alcanca, fere (Agua) e empurra; em terra e onda de lama menor [PROPOSTA de numeros]
+		onda_dur_agua = 1.2, onda_dur_terra = 1.1, onda_dano_agua = 12, onda_dano_terra = 8, onda_empurrao_agua = 7, onda_empurrao_terra = 4},
 	Escamas = {reducao = 0.15, vida = 950, recuo_terra = 0.8, recuo_agua = 2.0},   -- P4: passiva -15% dano fisico (ref. 4); recuo de TESTE
 	AlturaAgua = 4.3,                       -- placa de agua so visual (teste)
 }

@@ -1160,5 +1160,53 @@
    "para": "Repouso",
    "obs": "arremesso (usuario 20/11): arma e chicoteia de lado; par de encaixe; o jogo gira o corpo ~6 graus"
   }
+ },
+ "EmboscadaSaida": {
+  "duracao": 0.6,
+  "loop": false,
+  "quadros": 19,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0145,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": -0.073,
+  "sincronizacao": {
+   "eventos": {
+    "impulso": 0.33
+   },
+   "de": "Espreita/NadoParado",
+   "para": "EmboscadaVoo",
+   "obs": "Emboscada sem giro (usuario 20/11): sai reto, boca abrindo"
+  }
+ },
+ "EmboscadaVoo": {
+  "duracao": 0.5,
+  "loop": true,
+  "quadros": 15,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": -0.073,
+  "sincronizacao": {
+   "de": "EmboscadaSaida",
+   "para": "EmboscadaPouso",
+   "obs": "no ar: corpo reto, boca aberta (o jogo move o corpo em arco baixo)"
+  }
+ },
+ "EmboscadaPouso": {
+  "duracao": 1.0,
+  "loop": false,
+  "quadros": 31,
+  "velocidade_studs_s": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "ponta_pe_min_z": -0.496,
+  "sincronizacao": {
+   "eventos": {
+    "morde": 0.06
+   },
+   "de": "EmboscadaVoo",
+   "para": "Repouso",
+   "obs": "pouso com peso; a boca fecha de estalo (mordida) no impacto"
+  }
  }
 }

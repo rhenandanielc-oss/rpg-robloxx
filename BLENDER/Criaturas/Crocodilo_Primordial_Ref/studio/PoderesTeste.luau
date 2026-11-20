@@ -6,6 +6,13 @@
 local RS = game:GetService("RunService")
 local PASTA = game.ServerStorage.Crocodilo_Piloto
 local CFG = require(PASTA.ConfigPoderes_Teste)
+-- 20/11 KIT OFICIAL (usuario): elemento unico AGUA. Dano das 4 ativas = dano de Agua (marcado no alvo para o sistema de
+-- vantagem/fraqueza elemental, que ainda nao existe: so registra). Finalizacao e ataques basicos continuam fisicos.
+local function ferir(alvo, valor, poder)
+	local h = alvo and alvo:FindFirstChildOfClass("Humanoid"); if not h then return end
+	alvo:SetAttribute("UltimoDanoElemento", CFG.Elemento or "Fisico"); alvo:SetAttribute("UltimoDanoPoder", poder)
+	h:TakeDamage(valor)
+end
 local T = require(PASTA.TestePlayCrocodilo)
 local M = {log = {}}
 local modelo = workspace.Teste_Crocodilo.Crocodilo_Primordial
@@ -216,7 +223,7 @@ function M.cancelar(motivo)
 	moverPivo(BASE, dy > 0.05 and 0.4 or 0)               -- volta a altura normal sem salto
 	--                                   -- profundidade/posicao de teste voltam ao normal
 	est.poder = nil; est.fase = nil
-	modelo:SetAttribute("Submerso", false); modelo:SetAttribute("Movendo", false); modelo:SetAttribute("Giro", false); modelo:SetAttribute("CaudaVarre", nil)
+	modelo:SetAttribute("Submerso", false); modelo:SetAttribute("Movendo", false); modelo:SetAttribute("Giro", false); modelo:SetAttribute("NoAr", false); modelo:SetAttribute("CaudaVarre", nil)
 	olharPara(nil)                                        -- O2: devolve o olhar ao cliente
 	if modelo:IsDescendantOf(workspace) then T.tocar(est.naAgua and "Crocodilo_Espreita" or "Crocodilo_Repouso", 0.2) end
 	return motivo
@@ -579,7 +586,7 @@ function M.agarrao(alvo, cena, opcoes)
 		table.insert(est.cons, RS.Heartbeat:Connect(function(dt)
 			if est.gen ~= g or not est.alvo or est.fase ~= "segurando" then return end
 			if not alvoValido(est.alvo) then M.cancelar("alvo_removido_ou_derrotado"); return end
-			t += dt; est.alvo:FindFirstChildOfClass("Humanoid"):TakeDamage(CFG.Agarrao.dano_por_segundo * dt)
+			t += dt; ferir(est.alvo, CFG.Agarrao.dano_por_segundo * dt, "MordidaAgarrao")
 			if est.limite or est.pvpFim then return end           -- PvP: quem solta e o vigia do prazo (desde o contato)
 			-- r2: a sacudida do arremesso comeca `giro_dur` antes do fim, para soltar exatamente na sustentacao
 			local arr = est.pegada and (cena ~= "agua" or CFG.Arremesso.agua)
@@ -619,12 +626,12 @@ function M.agarrao(alvo, cena, opcoes)
 		local P = CFG.AgarraoPvP
 		local imune = alvo:GetAttribute("ImuneAgarraoAte")
 		if imune and agora() < imune then                       -- PvP: resistencia a repeticao (8 s depois de solto)
-			alvo:FindFirstChildOfClass("Humanoid"):TakeDamage(CFG.Agarrao.dano_contato)
+			ferir(alvo, CFG.Agarrao.dano_contato, "MordidaAgarrao")
 			log("PvP: %s IMUNE ao agarrao (faltam %.1f s): so a mordida, dano %d", alvo.Name, imune - agora(), CFG.Agarrao.dano_contato)
 			resultado = "imune"; return
 		end
 		if ehPvP(alvo) and alvo:GetAttribute("Porte") == "colossal" then   -- PvP colossal: morde um membro, nao prende
-			local h = alvo:FindFirstChildOfClass("Humanoid"); h:TakeDamage(CFG.Agarrao.dano_contato)
+			local h = alvo:FindFirstChildOfClass("Humanoid"); ferir(alvo, CFG.Agarrao.dano_contato, "MordidaAgarrao")
 			local dur = P.colossal_dur * forcaIdade() * fatorControle(alvo)
 			local ws0 = h.WalkSpeed; h.WalkSpeed = ws0 * (1 - P.colossal_lentidao)
 			alvo:SetAttribute("Lentidao", P.colossal_lentidao); alvo:SetAttribute("SemSaltoVoo", true)
@@ -641,7 +648,7 @@ function M.agarrao(alvo, cena, opcoes)
 			r.lateral and string.format(" | desvio lateral %.2f, vao %.2f, corrigiu %.2f", r.lateral, r.altura, r.andou or 0) or "")
 		if r.modo == "erro" then resultado = "erro_alcance"
 		elseif r.modo == "mordida" then
-			alvo:FindFirstChildOfClass("Humanoid"):TakeDamage(CFG.Agarrao.dano_contato)
+			ferir(alvo, CFG.Agarrao.dano_contato, "MordidaAgarrao")
 			log("SO MORDIDA: %s nao cabe na boca (dano %d, sem prender)", alvo.Name, CFG.Agarrao.dano_contato); resultado = "so_mordida"
 		else
 			if ehPvP(alvo) then
@@ -674,7 +681,7 @@ function M.agarrao(alvo, cena, opcoes)
 			est.alvo = alvo; alvo:SetAttribute("Agarrado", true)
 			if est.pvp then avisarAliados(alvo) end                -- 19/11: aparece "Soltar aliado" para os aliados
 			fixarPegada(g, alvo, r)
-			local h = alvo:FindFirstChildOfClass("Humanoid"); h:TakeDamage(CFG.Agarrao.dano_contato)
+			local h = alvo:FindFirstChildOfClass("Humanoid"); ferir(alvo, CFG.Agarrao.dano_contato, "MordidaAgarrao")
 			log("CONTATO: prendeu %s pela %s (espessura %.2f, abertura %.1f graus, d %.2f)", alvo.Name, r.nome, r.tU, r.alfa, r.dPega)
 			resultado = "acerto"
 		end
@@ -816,11 +823,14 @@ function M.submersao(meio)
 	return "iniciado"
 end
 
--- ================================================================ Giro Predatorio de Emboscada (P4, 16/11) [PROPOSTA]
--- Ref. secao 4 / 5.8: sai da agua GIRANDO e cai em terra, dano em area, derruba, silencioso. Janela: ate 1,5 s depois de
--- emergir da Submersao (dano cheio + bonus em alvo distraido); em agua rasa sem Submersao: dano 1,2x sem bonus; fora
--- disso: recusa. Clipes: GiroSaida (impulso) -> RolarDaMorte r2 em laco no ar -> GiroPouso (impacto). Servidor decide
--- janela, trajetoria, area, dano, derrubada e limpeza; o cliente so desenha (agua escorrendo, linhas, impacto).
+-- ================================================================ EMBOSCADA (antigo Giro de Emboscada) [OFICIAL 20/11]
+-- 20/11 usuario: "tire o giro, deixe somente emboscada, nao quero que o crocodilo gire" -> BOTE SALTANDO: explode para fora
+-- da agua com o corpo RETO e a boca aberta, salto curto e baixo, cai com peso e a boca fecha de estalo = MORDIDA em quem
+-- estiver na frente da boca (raio a partir da ponta do focinho); derruba pelo contrato de porte. Janela: ate 1,5 s depois
+-- de emergir da Submersao (dano cheio + bonus em alvo distraido); em agua rasa sem Submersao: 1,2x sem bonus; fora disso:
+-- recusa. Clipes: EmboscadaSaida (impulso) -> EmboscadaVoo (laco, no ar) -> EmboscadaPouso (morde). Servidor decide janela,
+-- trajetoria, mordida, dano (Agua), derrubada e limpeza; o cliente so desenha (agua explodindo, escorrendo, respingo).
+-- (chaves internas continuam "GiroEmboscada" na config e no contrato de porte, so por compatibilidade)
 local function chaoEm(pos)
 	local p = RaycastParams.new(); p.FilterType = Enum.RaycastFilterType.Exclude; p.IgnoreWater = true
 	p.FilterDescendantsInstances = {modelo, workspace.Teste_Crocodilo:FindFirstChild("Arena"), workspace.Teste_Crocodilo:FindFirstChild("Cavaleiro_Teste")}
@@ -837,30 +847,30 @@ function M.giroEmboscada()
 	elseif sup and (sup - fundo) < profMin() then modo, mult, bonus = "raso", G.mult_raso, 1.0
 	else
 		local motivo = sup and "fora_da_janela" or "fora_da_agua"
-		fx("recusa", cf0.Position, sup and "Giro: só até 1,5 s após emergir (ou no raso)" or "Giro: precisa sair da água")
-		log("GIRO RECUSADO: %s", motivo); return motivo
+		fx("recusa", cf0.Position, sup and "Emboscada: só até 1,5 s após emergir (ou no raso)" or "Emboscada: precisa sair da água")
+		log("EMBOSCADA RECUSADA: %s", motivo); return motivo
 	end
-	local g = iniciar("GiroEmboscada", true)
-	if not janela then est.t0 = os.clock(); M.log = {}; log("INICIO GiroEmboscada (raso)") end
+	local g = iniciar("Emboscada", true)
+	if not janela then est.t0 = os.clock(); M.log = {}; log("INICIO Emboscada (raso)") end
 	est.emergiuEm = nil
 	-- destino: a frente, pousando onde o chao (com a frente do corpo) estiver; nunca abaixo do chao
 	local dist = G.distancia; local alvoXZ = cf0.Position + Vector3.new(cf0.LookVector.X, 0, cf0.LookVector.Z).Unit * dist
 	local yPouso = math.max(chaoEm(alvoXZ), chaoEm(alvoXZ + cf0.LookVector * C_.cabeca * 0.6) - 0.6) + C_.pivo
 	local destino = naAltura(cf0.Rotation + alvoXZ, yPouso)
 	do local cen = destino.Position + destino.LookVector * G.centro_frente; olharPara(Vector3.new(cen.X, chaoEm(cen) + 1, cen.Z)) end   -- O2: olha o pouso
-	log("GIRO %s (x%.1f%s): de y %.2f ate (%.1f, %.2f, %.1f), %.0f studs", modo, mult, bonus > 1 and ", +50% em distraido" or "", cf0.Y, destino.X, destino.Y, destino.Z, dist)
+	log("EMBOSCADA %s (x%.1f%s): de y %.2f ate (%.1f, %.2f, %.1f), %.0f studs", modo, mult, bonus > 1 and ", +50% em distraido" or "", cf0.Y, destino.X, destino.Y, destino.Z, dist)
 	task.spawn(function()
 		-- antes: agua ondula e escurece, bolhas sobem (silencioso)
 		fx("giro_antes", Vector3.new(cf0.X, sup or cf0.Y, cf0.Z), cf0.LookVector)
-		local fs = T.tocar("Crocodilo_GiroSaida", 0.15)
+		local fs = T.tocar("Crocodilo_EmboscadaSaida", 0.15)          -- 20/11: sai RETO (sem giro), boca abrindo
 		local tImp = 0; local c1 = fs:GetMarkerReachedSignal("impulso"):Connect(function() tImp = os.clock() end)
 		local t0 = os.clock(); while est.gen == g and tImp == 0 and os.clock() - t0 < 1 do RS.Heartbeat:Wait() end
 		c1:Disconnect(); if est.gen ~= g then return end
-		-- voo girando: RolarDaMorte em laco (1 volta por voo), parabola ate o destino
-		modelo:SetAttribute("Giro", true); modelo:SetAttribute("Submerso", false)
+		-- 20/11 usuario: SEM GIRO. Voo reto (EmboscadaVoo: corpo reto, boca aberta), arco curto e baixo ate o destino
+		modelo:SetAttribute("NoAr", true); modelo:SetAttribute("Submerso", false)
+		fx("emb_saida", Vector3.new(cf0.X, sup or cf0.Y, cf0.Z) + cf0.LookVector * C_.cabeca * 0.5, cf0.LookVector, sup ~= nil)
 		BASE = destino                                        -- cancelado no ar = termina no pouso, nao volta para a agua
-		T.tocar("Crocodilo_RolarDaMorte", 0.08, 1.2 / G.voo)
-		fx("ondulacao", Vector3.new(cf0.X, sup or cf0.Y, cf0.Z), 1.2)
+		T.tocar("Crocodilo_EmboscadaVoo", 0.08)
 		local ini = modelo:GetPivot(); local t = 0
 		while est.gen == g and t < G.voo do
 			local dt = RS.Heartbeat:Wait(); if est.gen ~= g then return end; t = math.min(G.voo, t + dt)
@@ -871,7 +881,7 @@ function M.giroEmboscada()
 		if est.gen ~= g then return end
 		-- pouso com peso: impacto em area (servidor), derruba; o cliente mostra o impacto
 		BASE = destino; est.naAgua = medirAgua(destino.Position) ~= nil
-		local fp = T.tocar("Crocodilo_GiroPouso", 0.05)
+		local fp = T.tocar("Crocodilo_EmboscadaPouso", 0.05)   -- boca fecha de estalo no impacto (a mordida)
 		local cen = destino.Position + destino.LookVector * G.centro_frente
 		fx("giro_pouso", Vector3.new(cen.X, chaoEm(cen), cen.Z), G.raio, est.naAgua)
 		local acertos, derrubados = 0, {}
@@ -881,15 +891,15 @@ function M.giroEmboscada()
 				if d <= G.raio then
 					local b = a:GetAttribute("Distraido") and bonus or 1.0
 					local dano = G.dano_base * mult * b
-					a:FindFirstChildOfClass("Humanoid"):TakeDamage(dano); acertos += 1
-					log("IMPACTO: %s a %.1f da superficie -> dano %.0f%s", a.Name, d, dano, b > 1 and " (distraido +50%)" or "")
+					ferir(a, dano, "Emboscada"); acertos += 1
+					log("MORDIDA DA EMBOSCADA: %s a %.1f da superficie -> dano %.0f%s", a.Name, d, dano, b > 1 and " (distraido +50%)" or "")
 					local r = M.rolarControle(a, "GiroEmboscada")             -- 20/11: queda pelo contrato de porte (Caido/CaidoAte)
 					if r.efeito == "queda" then table.insert(derrubados, a) end
 				end
 			end
 		end
-		if acertos == 0 then log("IMPACTO: ninguem no raio %.0f", G.raio) end
-		task.delay(0.6, function() modelo:SetAttribute("Giro", false) end)
+		if acertos == 0 then log("EMBOSCADA: ninguem na mordida (raio %.1f a frente da boca)", G.raio) end
+		task.delay(0.6, function() modelo:SetAttribute("NoAr", false) end)
 		fp.Stopped:Wait()
 		if est.gen == g then M.cancelar("fim_giro_emboscada") end
 		-- 20/11: IA decide FINALIZAR / POUPAR / APROVEITAR cada alvo derrubado (uma decisao por queda)
@@ -899,6 +909,8 @@ function M.giroEmboscada()
 	end)
 	return "iniciado"
 end
+
+M.emboscada = M.giroEmboscada                                -- 20/11: nome oficial "Emboscada" (sem giro)
 
 -- ================================================================ Cauda de Mare (P4, 16/11) [PROPOSTA]
 -- Agua (CaudaDeMare, boiando) ou terra (CaudaDeMareTerra, patas plantadas). O ACERTO segue a TRAJETORIA REAL da cauda:
@@ -910,6 +922,54 @@ local function distSeg(p, a, b)
 	local ab = b - a; local t = ab.Magnitude > 1e-4 and math.clamp((p - a):Dot(ab) / ab:Dot(ab), 0, 1) or 0
 	return (p - (a + ab * t)).Magnitude
 end
+-- 20/11 ONDA REAL (usuario: "as ondas tem como objetivo causar dano e empurrar"; "Onda real que avanca"): no impacto da
+-- cauda sai uma onda em anel a partir da ponta da cauda; a FRENTE da onda cresce ate `onda_agua` (terra: onda de LAMA
+-- menor, `onda_terra`) em `onda_dur_*` s. Cada alvo que a frente alcanca (superficie do corpo) e atingido UMA vez: dano
+-- de Agua e empurrao para fora do centro, deslizando (nao teletransporta). Quem a cauda ja acertou direto nao leva a onda.
+local function empurrarSuave(a, delta, dur)
+	local raiz = a:FindFirstChild("HumanoidRootPart") or a.PrimaryPart
+	if raiz and not raiz.Anchored then                         -- com fisica: impulso horizontal + um pouco para cima
+		raiz.AssemblyLinearVelocity += delta / dur + Vector3.new(0, 6, 0); return
+	end
+	local ini = a:GetPivot(); local t = 0
+	task.spawn(function()
+		while t < dur and a.Parent do
+			t += RS.Heartbeat:Wait(); local u = math.min(1, t / dur); u = 1 - (1 - u) * (1 - u)   -- desacelera (agua freia)
+			if a:GetAttribute("Agarrado") then return end
+			a:PivotTo(ini + delta * u)
+		end
+	end)
+end
+local function ondaReal(c0, naAgua, jaAtingidos)
+	local K = CFG.Cauda
+	local R = naAgua and K.onda_agua or K.onda_terra
+	local dur = naAgua and K.onda_dur_agua or K.onda_dur_terra
+	local dano = naAgua and K.onda_dano_agua or K.onda_dano_terra
+	local emp = naAgua and K.onda_empurrao_agua or K.onda_empurrao_terra
+	fx("onda", c0, R, dur, naAgua)
+	log("ONDA %s: raio %.0f em %.2f s, dano %d, empurra %.0f", naAgua and "DE AGUA" or "DE LAMA", R, dur, dano, emp)
+	local t, n = 0, 0
+	local con; con = RS.Heartbeat:Connect(function(dt)
+		t += dt; local u = math.min(1, t / dur); local r = R * (1 - (1 - u) * (1 - u))   -- rapida no inicio, perde forca
+		for _, a in ipairs(workspace.Teste_Crocodilo.Arena:GetChildren()) do
+			if not jaAtingidos[a] and alvoValido(a) and not a:GetAttribute("Agarrado") then
+				local ca = centro(a)
+				if ca then
+					local d = contatoCorpo(a, Vector3.new(c0.X, ca.Y, c0.Z))
+					if d <= r then
+						jaAtingidos[a] = true; n += 1
+						local dir = (ca - c0) * Vector3.new(1, 0, 1); dir = dir.Magnitude > 0.05 and dir.Unit or Vector3.new(1, 0, 0)
+						local e = emp * (1 - 0.4 * u)                       -- quem e pego mais longe e empurrado menos
+						ferir(a, dano, "CaudaDeMare_Onda"); empurrarSuave(a, dir * e, 0.45)
+						log("ONDA alcancou %s a %.1f do centro (t=%.2f): dano %d, empurrado %.1f", a.Name, d, t, dano, e)
+					end
+				end
+			end
+		end
+		if u >= 1 then con:Disconnect(); log("ONDA terminou: %d atingido(s) pela onda", n) end
+	end)
+end
+
 function M.caudaDeMare()
 	local g = iniciar("CaudaDeMare"); if not g then return "ocupado" end
 	local K = CFG.Cauda
@@ -940,7 +1000,7 @@ function M.caudaDeMare()
 					local emp = naAgua and K.empurrao_agua or K.empurrao_terra
 					local dir = dirV.Magnitude > 0.01 and dirV.Unit or (c2 - Vector3.new(cf0.X, 0, cf0.Z)).Unit
 					a:PivotTo(a:GetPivot() + dir * emp)
-					a:FindFirstChildOfClass("Humanoid"):TakeDamage(K.dano)
+					ferir(a, K.dano, "CaudaDeMare")
 					log("ACERTO na trajetoria: %s, cauda a %.2f da superficie (t=%.2f), dano %d, empurrado %.0f", a.Name, d, tp, K.dano, emp)
 					M.rolarControle(a, "CaudaDeMare")
 				end
@@ -950,7 +1010,7 @@ function M.caudaDeMare()
 	table.insert(est.cons, f:GetMarkerReachedSignal("impacto_cauda"):Connect(function()
 		if est.gen ~= g then return end
 		local p = osso("Cauda7").TransformedWorldCFrame.Position
-		fx("cauda_impacto", Vector3.new(p.X, nivel, p.Z), naAgua and K.onda_agua or K.onda_terra, naAgua)
+		ondaReal(Vector3.new(p.X, nivel, p.Z), naAgua, atingidos)   -- 20/11: onda real (dano + empurrao), visual 3D no cliente
 	end))
 	table.insert(est.cons, f.Stopped:Connect(function()
 		if est.gen ~= g then return end

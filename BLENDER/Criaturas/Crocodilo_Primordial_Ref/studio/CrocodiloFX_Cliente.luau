@@ -1,7 +1,7 @@
 -- CrocodiloFX_Cliente (LocalScript em StarterPlayer.StarterPlayerScripts do place de TESTE RBX Crocodilo) - P4 16/11
 -- PREVIA DE TESTE dos efeitos do Crocodilo Primordial. So visual: o servidor (PoderesTeste) decide agua, alcance, alvo,
 -- energia, dano, estados e soltura; aqui so se desenha o que ele anuncia (RemoteEvent Crocodilo_FX e atributos no modelo).
--- Reacao FISICA da agua (ondulacao, rastro, bolhas) separada dos efeitos MAGICOS (linhas nas escamas, pulso). Tudo
+-- So reacao FISICA da agua e da lama (ondulacao, rastro, bolhas, respingos): elemento Agua, visual natural sem brilho (20/11). Tudo
 -- temporario, limpo ao fim/cancelamento. Orcamento (ref. 5.10): so ate 150 studs; poucas pecas; metade no celular.
 local RS = game:GetService("RunService"); local TS = game:GetService("TweenService")
 local UIS = game:GetService("UserInputService"); local Debris = game:GetService("Debris")
@@ -45,6 +45,21 @@ local function bolha(pos, sup)
 	TS:Create(b, TweenInfo.new(dur, Enum.EasingStyle.Linear), {Position = Vector3.new(pos.X + (math.random() - 0.5), sup, pos.Z + (math.random() - 0.5))}):Play()
 	task.delay(dur, function() if b.Parent then anel(Vector3.new(b.Position.X, sup, b.Position.Z), 0.2, 1.2, 0.6, 0.5, 3); b:Destroy() end end)
 end
+-- 20/11 KIT OFICIAL (usuario): elemento AGUA com visual NATURAL, SEM BRILHO. Respingo = gotas de agua de verdade jogadas
+-- para cima que caem pela gravidade (LightEmission 0, cor de agua turva do pantano); espuma = respingo claro e baixo.
+local function respingo(pos, n, forca, cor)
+	if not perto(pos) then return end
+	forca = forca or 1
+	local a = Instance.new("Attachment"); a.WorldPosition = pos; a.Parent = workspace.Terrain
+	local e = Instance.new("ParticleEmitter"); e.Name = "FX_Respingo"; e.Texture = "rbxasset://textures/particles/smoke_main.dds"
+	e.Color = ColorSequence.new(cor or Color3.fromRGB(196, 210, 200)); e.LightEmission = 0; e.LightInfluence = 1
+	e.Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0.25), NumberSequenceKeypoint.new(0.7, 0.5), NumberSequenceKeypoint.new(1, 1)})
+	e.Size = NumberSequence.new({NumberSequenceKeypoint.new(0, 0.6 * forca), NumberSequenceKeypoint.new(1, 1.4 * forca)})   -- r2: 0,25-0,6 sumia na tela
+	e.Lifetime = NumberRange.new(0.6, 1.0); e.Speed = NumberRange.new(10 * forca, 18 * forca); e.SpreadAngle = Vector2.new(35, 35)
+	e.EmissionDirection = Enum.NormalId.Top; e.Acceleration = Vector3.new(0, -workspace.Gravity * 0.35, 0); e.Drag = 0.6
+	e.Rotation = NumberRange.new(0, 360); e.Enabled = false; e.Parent = a
+	e:Emit(math.max(1, math.floor(n * ESCALA))); Debris:AddItem(a, 1.2)
+end
 -- aviso de recusa (raso / sem agua): texto curto sobre a cabeca por 1,8 s
 local function recusa(pos, texto)
 	local cab = osso("Cabeca"); if not cab then return end
@@ -78,9 +93,74 @@ RS.Heartbeat:Connect(function(dt)
 	end
 end)
 
--- ---------------------------------------------------------------- Giro de Emboscada (P4): previa de teste
--- antes: agua escurece em volta e poucas bolhas sobem (silencioso); no ar: agua escorrendo do corpo + linhas verde-escuras
--- discretas presas ao corpo (contorno continuo, previa da "capa" de linhas); pouso: anel de impacto no chao + po/lama.
+-- ---------------------------------------------------------------- ONDA 3D (20/11, usuario: "onda 3D + espuma")
+-- Parede de agua REAL em anel: segmentos 3D (vidro esverdeado do pantano; em terra, lama) que nascem abaixo da superficie,
+-- sobem rapido, avancam ate o raio e desabam para a frente, com crista de espuma branca e borrifos saindo da crista.
+-- Sem aneis desenhados e sem brilho (LightEmission 0). O raio/duracao vem do servidor (mesma frente que da o dano).
+local function onda3D(c0, R, dur, naAgua)
+	if not perto(c0) then return end
+	local N = CELULAR and 14 or 26
+	local corA = naAgua and Color3.fromRGB(104, 146, 140) or Color3.fromRGB(92, 72, 50)   -- r2: agua turva clara (o vidro sumia na agua)
+	local corE = naAgua and Color3.fromRGB(232, 238, 234) or Color3.fromRGB(128, 106, 78)
+	local hMax = naAgua and math.clamp(R * 0.22, 1.2, 4.6) or math.clamp(R * 0.14, 0.6, 1.6)   -- r2 usuario: 'a agua subir mais'
+	local transpA = naAgua and 0.35 or 0.02
+	local transpE = naAgua and 0.25 or 0.05
+	local segs = {}
+	for i = 1, N do
+		local a = Instance.new("Part"); a.Name = "FX_Onda"; a.Anchored = true; a.CanCollide = false; a.CanQuery = false; a.CanTouch = false
+		a.CastShadow = false; a.Material = naAgua and Enum.Material.SmoothPlastic or Enum.Material.Mud; a.Color = corA
+		a.Transparency = transpA; a.Reflectance = naAgua and 0.12 or 0; a.Size = Vector3.new(0.2, 0.2, 0.2); a.CFrame = CFrame.new(c0)
+		local e = Instance.new("Part"); e.Name = "FX_Espuma"; e.Anchored = true; e.CanCollide = false; e.CanQuery = false; e.CanTouch = false
+		e.CastShadow = false; e.Material = naAgua and Enum.Material.SmoothPlastic or Enum.Material.Mud; e.Color = corE
+		e.Transparency = transpE; e.Size = Vector3.new(0.2, 0.2, 0.2); e.CFrame = CFrame.new(c0)
+		a.Parent = pasta; e.Parent = pasta
+		local em
+		if i % (CELULAR and 4 or 3) == 0 then                                        -- borrifo da crista (gotas que caem)
+			em = Instance.new("ParticleEmitter"); em.Texture = "rbxasset://textures/particles/smoke_main.dds"; em.Color = ColorSequence.new(corE)
+			em.LightEmission = 0; em.LightInfluence = 1; em.Transparency = NumberSequence.new(0.3, 1)
+			em.Size = NumberSequence.new(naAgua and 0.35 or 0.25, naAgua and 0.9 or 0.5); em.Lifetime = NumberRange.new(0.35, 0.65)
+			em.Speed = NumberRange.new(3, 7); em.SpreadAngle = Vector2.new(30, 30); em.EmissionDirection = Enum.NormalId.Front
+			em.Acceleration = Vector3.new(0, -workspace.Gravity * 0.35, 0); em.Rate = (naAgua and 30 or 14) * ESCALA; em.Parent = e
+		end
+		segs[i] = {a, e, 2 * math.pi * (i - 0.5) / N, em}
+	end
+	local t = 0
+	local con; con = RS.RenderStepped:Connect(function(dt)
+		t += dt; local u = math.min(1, t / dur)
+		local r = 0.8 + (R - 0.8) * (1 - (1 - u) * (1 - u))                         -- mesma frente que o servidor usa
+		local sobe = math.sin(math.pi * math.min(1, u * 1.1)) ^ 0.7 * (1 - 0.3 * u)   -- sobe rapido, desaba no fim
+		local h = math.max(0.05, hMax * sobe)
+		local arco = 2 * math.pi * r / N * 1.14; local esp = 0.6 + 0.7 * (1 - u)
+		local inc = math.rad(18 + 32 * u)                                            -- a crista tomba para a frente
+		local fade = u > 0.7 and (u - 0.7) / 0.3 or 0
+		for _, sg in ipairs(segs) do
+			local dir = Vector3.new(math.cos(sg[3]), 0, math.sin(sg[3])); local base = c0 + dir * r - Vector3.new(0, 0.35, 0)
+			local cf = CFrame.lookAt(base, base + dir) * CFrame.Angles(-inc, 0, 0)
+			sg[1].Size = Vector3.new(arco, h, esp); sg[1].CFrame = cf * CFrame.new(0, h / 2, 0)
+			sg[1].Transparency = transpA + (1 - transpA) * fade
+			sg[2].Size = Vector3.new(arco * 1.02, 0.12 + 0.14 * (1 - u), esp * 0.55); sg[2].CFrame = cf * CFrame.new(0, h, -esp * 0.2)   -- r2: espuma fina so na crista
+			sg[2].Transparency = transpE + (1 - transpE) * fade
+			if sg[4] then sg[4].Enabled = u < 0.65 end
+		end
+		if u >= 1 then
+			con:Disconnect()
+			for _, sg in ipairs(segs) do sg[1]:Destroy(); sg[2]:Destroy() end
+		end
+	end)
+end
+local function lamaBaixa(pos, n, forca)                                              -- po/lama baixa (pouso em terra)
+	if not perto(pos) then return end
+	local a = Instance.new("Attachment"); a.WorldPosition = pos; a.Parent = workspace.Terrain
+	local e = Instance.new("ParticleEmitter"); e.Texture = "rbxasset://textures/particles/smoke_main.dds"; e.Color = ColorSequence.new(Color3.fromRGB(120, 104, 78))
+	e.LightEmission = 0; e.Transparency = NumberSequence.new(0.4, 1); e.Size = NumberSequence.new(1.5 * forca, 4 * forca); e.Lifetime = NumberRange.new(0.6, 1.0)
+	e.Speed = NumberRange.new(5 * forca, 10 * forca); e.SpreadAngle = Vector2.new(80, 10); e.Rotation = NumberRange.new(0, 360)
+	e.Acceleration = Vector3.new(0, -4, 0); e.Drag = 3; e.Enabled = false; e.Parent = a
+	e:Emit(math.floor(n * ESCALA)); Debris:AddItem(a, 1.3)
+end
+
+-- ---------------------------------------------------------------- EMBOSCADA (sem giro, 20/11)
+-- antes: agua escurece em volta e poucas bolhas sobem (silencioso); saida: a agua EXPLODE (respingo alto + onda pequena);
+-- no ar: agua escorrendo do corpo; pouso: na agua respingo + onda, em terra lama baixa. Nada brilha.
 local function discoEscuro(pos, raio, dur)
 	if not perto(pos) then return end
 	local p = Instance.new("Part"); p.Name = "FX_AguaEscura"; p.Anchored = true; p.CanCollide = false; p.CanQuery = false; p.CanTouch = false
@@ -90,57 +170,38 @@ local function discoEscuro(pos, raio, dur)
 	task.delay(dur * 0.5, function() if p.Parent then TS:Create(p, TweenInfo.new(dur * 0.5), {Transparency = 1}):Play() end end)
 	Debris:AddItem(p, dur + 0.1)
 end
-local giroFX = {}
-local function giroLigar(on)
-	for _, o in ipairs(giroFX) do if o.Parent then if o:IsA("ParticleEmitter") then o.Enabled = false; Debris:AddItem(o, 1.2) else TS:Create(o, TweenInfo.new(0.5), {OutlineTransparency = 1}):Play(); Debris:AddItem(o, 0.6) end end end
-	giroFX = {}
+local escorreFX = {}
+local function escorrer(on)                                                          -- agua escorrendo do corpo no ar
+	for _, o in ipairs(escorreFX) do if o.Parent then o.Enabled = false; Debris:AddItem(o, 1.2) end end
+	escorreFX = {}
 	if not on then return end
-	for _, n in ipairs({"Coluna1", "Coluna2", "Pelve", "Cauda3", "Pescoco"}) do               -- agua escorrendo (gotas que caem)
+	for _, n in ipairs({"Coluna1", "Coluna2", "Pelve", "Cauda3", "Pescoco", "Cabeca"}) do
 		local b = osso(n); if b then
 			local e = Instance.new("ParticleEmitter"); e.Name = "FX_Escorre"; e.Texture = "rbxasset://textures/particles/smoke_main.dds"
-			e.Color = ColorSequence.new(Color3.fromRGB(200, 214, 205)); e.LightEmission = 0.1; e.Transparency = NumberSequence.new(0.35, 1)
-			e.Size = NumberSequence.new({NumberSequenceKeypoint.new(0, 0.35), NumberSequenceKeypoint.new(1, 0.12)})
-			e.Lifetime = NumberRange.new(0.4, 0.7); e.Rate = 26 * ESCALA; e.Speed = NumberRange.new(1, 3); e.SpreadAngle = Vector2.new(180, 180)
-			e.Acceleration = Vector3.new(0, -60, 0); e.Drag = 1; e.Parent = b; table.insert(giroFX, e)
+			e.Color = ColorSequence.new(Color3.fromRGB(196, 210, 200)); e.LightEmission = 0; e.LightInfluence = 1; e.Transparency = NumberSequence.new(0.3, 1)
+			e.Size = NumberSequence.new({NumberSequenceKeypoint.new(0, 0.4), NumberSequenceKeypoint.new(1, 0.15)})
+			e.Lifetime = NumberRange.new(0.4, 0.7); e.Rate = 30 * ESCALA; e.Speed = NumberRange.new(1, 3); e.SpreadAngle = Vector2.new(180, 180)
+			e.Acceleration = Vector3.new(0, -60, 0); e.Drag = 1; e.Parent = b; table.insert(escorreFX, e)
 		end
 	end
-	local h = Instance.new("Highlight"); h.Name = "FX_LinhasEscamas"; h.Adornee = croc; h.FillTransparency = 1
-	h.OutlineColor = Color3.fromRGB(46, 104, 58); h.OutlineTransparency = 1; h.DepthMode = Enum.HighlightDepthMode.Occluded; h.Parent = pasta
-	TS:Create(h, TweenInfo.new(0.25), {OutlineTransparency = 0.45}):Play(); table.insert(giroFX, h)
 end
-croc:GetAttributeChangedSignal("Giro"):Connect(function() giroLigar(croc:GetAttribute("Giro") == true) end)
-local function giroAntes(pos, look)
-	discoEscuro(pos, 10, 1.0); ondulacao(pos, 0.7)
+croc:GetAttributeChangedSignal("NoAr"):Connect(function() escorrer(croc:GetAttribute("NoAr") == true) end)
+local function embAntes(pos)
+	discoEscuro(pos, 10, 1.0)
 	for k = 1, math.floor(6 * ESCALA) do task.delay(k * 0.06, function() bolha(pos + Vector3.new(math.random() * 6 - 3, -3 - math.random() * 2, math.random() * 6 - 3), pos.Y) end) end
 end
-local function giroPouso(pos, raio, naAgua)
-	if not perto(pos) then return end
-	if naAgua then ondulacao(pos, 1.6) end
-	for k = 0, 1 do                                                                   -- anel de impacto (lama) ate o raio
-		task.delay(k * 0.1, function()
-			local p = Instance.new("Part"); p.Name = "FX_Impacto"; p.Anchored = true; p.CanCollide = false; p.CanQuery = false; p.CanTouch = false
-			p.CastShadow = false; p.Transparency = 1; p.Size = Vector3.new(2, 0.05, 2); p.CFrame = CFrame.new(pos + Vector3.new(0, 0.08, 0))
-			local sg = Instance.new("SurfaceGui"); sg.Face = Enum.NormalId.Top; sg.SizingMode = Enum.SurfaceGuiSizingMode.PixelsPerStud; sg.PixelsPerStud = 24; sg.Parent = p
-			local f = Instance.new("Frame"); f.Size = UDim2.fromScale(1, 1); f.BackgroundTransparency = 1; f.Parent = sg
-			Instance.new("UICorner", f).CornerRadius = UDim.new(0.5, 0)
-			local st = Instance.new("UIStroke"); st.Color = Color3.fromRGB(110, 92, 62); st.Thickness = 10 - 4 * k; st.Transparency = 0.15; st.Parent = f
-			p.Parent = pasta
-			local ti = TweenInfo.new(0.55, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-			TS:Create(p, ti, {Size = Vector3.new(raio * 2, 0.05, raio * 2)}):Play(); TS:Create(st, TweenInfo.new(0.7), {Transparency = 1}):Play()
-			Debris:AddItem(p, 0.8)
-		end)
-	end
-	local a = Instance.new("Attachment"); a.WorldPosition = pos; a.Parent = workspace.Terrain                -- po/lama baixa
-	local e = Instance.new("ParticleEmitter"); e.Texture = "rbxasset://textures/particles/smoke_main.dds"; e.Color = ColorSequence.new(Color3.fromRGB(120, 104, 78))
-	e.Transparency = NumberSequence.new(0.4, 1); e.Size = NumberSequence.new(2, 5); e.Lifetime = NumberRange.new(0.6, 1.0); e.Speed = NumberRange.new(6, 12)
-	e.SpreadAngle = Vector2.new(80, 10); e.Rotation = NumberRange.new(0, 360); e.Acceleration = Vector3.new(0, -4, 0); e.Drag = 3; e.Enabled = false; e.Parent = a
-	e:Emit(math.floor(24 * ESCALA)); Debris:AddItem(a, 1.3)
+local function embSaida(pos, look, naAgua)
+	if not naAgua then return end
+	respingo(pos, 60, 1.8); onda3D(pos, 7, 0.8, true)
+end
+local function embPouso(pos, raio, naAgua)
+	if naAgua then respingo(pos, 44, 1.6); onda3D(pos, 6, 0.6, true)
+	else lamaBaixa(pos, 22, 1.0); onda3D(pos, 3.5, 0.45, false) end
 end
 
--- ---------------------------------------------------------------- Cauda de Mare e Escamas Grossas (P4): previa de teste
--- cauda: na AGUA a ponta da cauda deixa aneis na superficie enquanto varre e o impacto solta uma onda grande no nivel da
--- agua; em TERRA a ponta levanta lama baixa e o impacto e um anel de lama menor. Escamas: pulso curto verde-escuro nas
--- escamas no ponto do golpe (sem escudo permanente).
+-- ---------------------------------------------------------------- Cauda de Mare e Escamas Grossas
+-- cauda: durante a varrida a ponta da cauda levanta agua (ou lama) de verdade; no impacto o servidor manda a ONDA REAL
+-- (mesmo raio/duracao do dano): onda 3D + respingo alto no centro. Escamas: borrifo curto de agua no ponto do golpe.
 local caudaCon
 croc:GetAttributeChangedSignal("CaudaVarre"):Connect(function()
 	local modo = croc:GetAttribute("CaudaVarre")
@@ -148,39 +209,29 @@ croc:GetAttributeChangedSignal("CaudaVarre"):Connect(function()
 	if not modo then return end
 	local nivel = croc:GetAttribute("Nivel") or 0; local acc = 0
 	caudaCon = RS.Heartbeat:Connect(function(dt)
-		acc += dt; if acc < 0.05 / ESCALA then return end; acc = 0
+		acc += dt; if acc < 0.07 / ESCALA then return end; acc = 0
 		local b = osso("Cauda8"); if not b then return end
 		local p = b.TransformedWorldCFrame.Position
-		if modo == "agua" then anel(Vector3.new(p.X, nivel, p.Z), 0.6, 3.2, 0.9, 0.35, 4)
-		else anel(Vector3.new(p.X, nivel, p.Z), 0.4, 1.8, 0.6, 0.45, 3) end
+		if modo == "agua" then respingo(Vector3.new(p.X, nivel, p.Z), 5, 0.7)
+		else respingo(Vector3.new(p.X, nivel, p.Z), 3, 0.5, Color3.fromRGB(120, 100, 72)) end
 	end)
 end)
-local function caudaImpacto(pos, raio, naAgua)
-	if naAgua then
-		ondulacao(pos, 1.2); task.delay(0.12, function() anel(pos, 2, raio, 1.1, 0.1, 9) end)
-	else
-		anel(pos, 1, raio, 0.6, 0.2, 7)
-		local a = Instance.new("Attachment"); a.WorldPosition = pos; a.Parent = workspace.Terrain
-		local e = Instance.new("ParticleEmitter"); e.Texture = "rbxasset://textures/particles/smoke_main.dds"; e.Color = ColorSequence.new(Color3.fromRGB(120, 104, 78))
-		e.Transparency = NumberSequence.new(0.45, 1); e.Size = NumberSequence.new(1.5, 3.5); e.Lifetime = NumberRange.new(0.5, 0.8); e.Speed = NumberRange.new(4, 8)
-		e.SpreadAngle = Vector2.new(70, 10); e.Drag = 3; e.Enabled = false; e.Parent = a; e:Emit(math.floor(12 * ESCALA)); Debris:AddItem(a, 1.0)
-	end
+local function ondaCauda(pos, raio, dur, naAgua)
+	onda3D(pos, raio, dur, naAgua)
+	if naAgua then respingo(pos, 70, 2.3) else respingo(pos, 18, 0.9, Color3.fromRGB(110, 90, 64)); lamaBaixa(pos, 10, 0.7) end
 end
 local function escamasPulso(pos)
 	if not perto(pos) then return end
-	local p = Instance.new("Part"); p.Name = "FX_PulsoEscamas"; p.Shape = Enum.PartType.Ball; p.Anchored = true; p.CanCollide = false; p.CanQuery = false
-	p.CanTouch = false; p.CastShadow = false; p.Material = Enum.Material.ForceField; p.Color = Color3.fromRGB(46, 104, 58)
-	p.Size = Vector3.new(0.8, 0.8, 0.8); p.Position = pos; p.Transparency = 0.1; p.Parent = pasta
-	TS:Create(p, TweenInfo.new(0.28, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = Vector3.new(3.2, 3.2, 3.2), Transparency = 1}):Play()
-	Debris:AddItem(p, 0.35)
+	respingo(pos, 18, 0.8)                                                           -- borrifo da couraca molhada
 end
 
-ev.OnClientEvent:Connect(function(tipo, a, b, c)
+ev.OnClientEvent:Connect(function(tipo, a, b, c, d)
 	if tipo == "ondulacao" then ondulacao(a, b)
 	elseif tipo == "recusa" then recusa(a, b)
-	elseif tipo == "giro_antes" then giroAntes(a, b)
-	elseif tipo == "giro_pouso" then giroPouso(a, b, c)
-	elseif tipo == "cauda_impacto" then caudaImpacto(a, b, c)
+	elseif tipo == "giro_antes" then embAntes(a)
+	elseif tipo == "emb_saida" then embSaida(a, b, c)
+	elseif tipo == "giro_pouso" then embPouso(a, b, c)
+	elseif tipo == "onda" then ondaCauda(a, b, c, d)
 	elseif tipo == "escamas_pulso" then escamasPulso(a)
 	elseif tipo == "limpar" then pasta:ClearAllChildren()
 	end

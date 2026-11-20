@@ -964,6 +964,61 @@ def clipe_giro_pouso(t):
     soma(r, "Coluna1", X_, 2.5 * comp); soma(r, "Coluna2", X_, -2.0 * comp)
     pes = _pes_mix(pes_recolhidos(), {}, k, suave(t / 0.07))       # dedos abrem antes de tocar (nao furam o chao)
     return r, V((0, 0, -0.22 * comp)), pes
+# 20/11 EMBOSCADA SEM GIRO (usuario: "tire o giro, deixe somente emboscada, nao quero que o crocodilo gire"; "Bote
+# saltando"): explode para fora da agua com o CORPO RETO e a boca abrindo, salto curto e baixo (o jogo move o modelo),
+# patas da frente esticadas para a frente e traseiras para tras, cauda reta como leme; pouso com peso e a boca FECHA DE
+# ESTALO no impacto (a mordida). Substitui GiroSaida + RolarDaMorte + GiroPouso na Emboscada.
+def pes_salto():
+    """no ar: dianteiras esticadas para a frente (alcancando a presa), traseiras para tras (acabaram de empurrar)"""
+    return {k: ((V((0.25 * sx, -1.10, 1.05)) if par == "dian" else V((-0.10 * sx, 2.30, 0.95))), (55.0 if par == "dian" else 125.0))
+            for k, (par, sx, f_) in PATAS.items()}
+def _voo0(t=0.0):
+    r = {}
+    for i, nm in enumerate(CAUDA):                                       # cauda quase reta, leme com leve ondulacao
+        r[nm] = [(Z_, math.radians(3.0 * (i / 7) * math.sin(2 * math.pi * (t / 0.5) - i * 0.5))), (X_, math.radians(1.2 * (i / 7)))]
+    r["Raiz"] = [(X_, math.radians(-7.0))]                              # nariz um pouco para cima (subindo do salto)
+    soma(r, "Pescoco", X_, -5.0); soma_cab(r, X_, -3.0)
+    r["Mandibula"] = boca_frac(0.9)
+    return r
+def clipe_emboscada_saida(t):
+    """sai da agua (0,6 s): afunda o nariz e arma a cauda -> chicotada da cauda (impulso) com o nariz subindo -> corpo
+    reto, boca abrindo, patas indo para a pose de salto. Evento impulso no pico da chicotada (o jogo lanca o corpo)."""
+    r = {}; nado_corpo(r, t, 1.2, 4.0, 10.0, 0.0, 2.0)
+    arma = suave(t / 0.22) * (1 - suave((t - 0.22) / 0.10))
+    chic = math.sin(math.pi * max(0.0, min(1.0, (t - 0.18) / 0.30)))
+    for i, nm in enumerate(CAUDA):
+        k = i / 7
+        r[nm] = r.get(nm, []) + [(Z_, math.radians(-16.0 * arma * k + 30.0 * chic * (0.35 + 0.65 * k) * math.sin(math.pi * k + 0.5)))]
+    r["Raiz"] = [(X_, math.radians(8.0 * arma - 14.0 * chic))]
+    soma(r, "Pescoco", X_, 4.0 * arma - 6.0 * chic)
+    r["Mandibula"] = boca_frac(0.9 * suave((t - 0.25) / 0.25))
+    w = suave((t - 0.38) / 0.22)                                        # ultimos 0,22 s: entra na pose de voo (reta)
+    r = mix(r, _voo0(0.0), w)
+    pes = _pes_mix(pes_boiando(), pes_salto(), suave((t - 0.15) / 0.35))
+    return r, V((0, 0, -0.25 * arma)), pes
+def clipe_emboscada_voo(t):
+    """no ar (laco 0,5 s): corpo reto, boca aberta, patas de salto, cauda como leme"""
+    return _voo0(t), V((0, 0, 0)), pes_salto()
+def clipe_emboscada_pouso(t):
+    """pouso (1,0 s): boca FECHA DE ESTALO no impacto (mordida, evento morde 0,06), patas plantam, corpo comprime nas
+    patas e volta; cabeca e cauda batem depois do corpo; termina no quadro 0 do Repouso."""
+    k = suave(t / 0.14)
+    comp = kf(t, [(0, 0), (0.08, 1.0), (0.22, 0.75), (0.55, 0.1), (1.0, 0)])
+    r = mix(_voo0(0.0), REP0, suave(t / 0.30)); r.pop("Mandibula", None)
+    soma(r, "Pescoco", X_, 9.0 * kf(t, [(0, 0), (0.12, 1.0), (0.35, -0.3), (0.7, 0.0), (1.0, 0)]))
+    soma_cab(r, X_, 5.0 * kf(t, [(0, 0), (0.16, 1.0), (0.4, -0.2), (1.0, 0)]))
+    for i, nm in enumerate(CAUDA):
+        soma(r, nm, X_, 5.0 * (i / 7) * kf(t, [(0, 0), (0.10 + 0.04 * i / 7, 0), (0.22 + 0.06 * i / 7, 1.0), (0.6, 0.0), (1.0, 0)]))
+    soma(r, "Coluna1", X_, 2.5 * comp); soma(r, "Coluna2", X_, -2.0 * comp)
+    r["Mandibula"] = boca_frac(kf(t, [(0, 0.9), (0.06, 0.0), (0.30, 0.05), (1.0, 0.0)]))     # estalo da mordida
+    pes = _pes_mix(pes_salto(), {}, k, suave(t / 0.07))
+    return r, V((0, 0, -0.22 * comp)), pes
+CLIPES["EmboscadaSaida"] = (boca_acompanha(clipe_emboscada_saida), 0.6, False, 0.0)
+CLIPES["EmboscadaVoo"] = (boca_acompanha(clipe_emboscada_voo), 0.5, True, 0.0)
+CLIPES["EmboscadaPouso"] = (boca_acompanha(clipe_emboscada_pouso), 1.0, False, 0.0)
+EXTRA["EmboscadaSaida"] = {"eventos": {"impulso": 0.33}, "de": "Espreita/NadoParado", "para": "EmboscadaVoo", "obs": "Emboscada sem giro (usuario 20/11): sai reto, boca abrindo"}
+EXTRA["EmboscadaVoo"] = {"de": "EmboscadaSaida", "para": "EmboscadaPouso", "obs": "no ar: corpo reto, boca aberta (o jogo move o corpo em arco baixo)"}
+EXTRA["EmboscadaPouso"] = {"eventos": {"morde": 0.06}, "de": "EmboscadaVoo", "para": "Repouso", "obs": "pouso com peso; a boca fecha de estalo (mordida) no impacto"}
 CLIPES["GiroSaida"] = (boca_acompanha(clipe_giro_saida), 0.6, False, 0.0)
 CLIPES["GiroPouso"] = (boca_acompanha(clipe_giro_pouso), 1.0, False, 0.0)
 EXTRA["GiroSaida"] = {"eventos": {"impulso": 0.33}, "de": "Espreita/NadoParado", "para": "RolarDaMorte (laco, no ar)", "obs": "PROTOTIPO Giro de Emboscada: voo e rotacao do jogo"}

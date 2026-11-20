@@ -34,10 +34,100 @@ Papel ecológico em relação aos vizinhos:
 
 ## 2. Elemento e habilidades
 
+### Kit oficial — **[OFICIAL — decisão do usuário 20/11/2026]**
+- **Elemento único: ÁGUA.**
+  - Pela matriz oficial (RPG_02 §3), é forte contra Terra e Sombra e fraco contra Natureza e Luz.
+- **Ativas (4):**
+  1. Mordida de Agarrão;
+  2. Giro de Emboscada;
+  3. Submersão;
+  4. Cauda de Maré.
+  - A **Mordida esmagadora** é a finalização própria do crocodilo e fica **fora dos slots**, como os ataques básicos.
+- **Passivas (2):** Escamas Grossas e Sentido de Vibração.
+- **Visual do elemento:** **natural, sem brilho**: água e lama de verdade (respingos, ondas, espuma, gotas), sem energia mágica brilhante.
+- **Números:** continuam **PROVISÓRIOS**, para balancear depois.
+- O que cada poder já faz está descrito no protótipo, abaixo e na seção 5.
+- **[OFICIAL — decisão do usuário 20/11/2026, depois do vídeo do kit Água]**
+  - **"Giro de Emboscada" passa a ser só "Emboscada", sem giro** ("não quero que o crocodilo gire"). É um **bote saltando**: o crocodilo explode para fora da água com o corpo reto e a boca aberta, faz um salto curto e baixo para a frente, cai com peso e morde/derruba quem estiver na frente.
+  - **Cauda de Maré com onda real:** o golpe da cauda levanta uma onda que se espalha pela água; quem ela alcança leva dano e é empurrado para fora. Quem a cauda toca direto leva o golpe cheio.
+  - **Em terra**, a Cauda de Maré mantém a mesma mecânica com uma **onda de lama**: menor, mais curta, com dano e empurrão menores.
+  - **Visual:** **onda 3D** (parede de água que cresce e avança) com **crista de espuma**, borrifos e gotas caindo; sem anéis desenhados e sem brilho.
+  - Números: PROVISÓRIOS.
+  - **20/11 — implementado no piloto e testado em Play. Aguarda avaliação.**
+    - **Clipes novos** (`anim_crocodilo.py`):
+      - `EmboscadaSaida` (0,6 s, evento impulso 0,33): sai reto e abre a boca;
+      - `EmboscadaVoo` (laço de 0,5 s): corpo reto, boca aberta, dianteiras para a frente e traseiras para trás;
+      - `EmboscadaPouso` (1,0 s, evento morde 0,07): a boca fecha de estalo e as patas plantam.
+      - QA: IK ≤ 0,015. A pata chega 0,5 abaixo do chão no pouso, contra 0,29 no antigo.
+      - Substituem GiroSaida, RolarDaMorte em laço e GiroPouso.
+    - **Servidor** (`PoderesTeste`):
+      - `M.emboscada` (o `giroEmboscada` continua como nome interno);
+      - salto de 12, altura 3, voo de 0,55 s;
+      - mordida no pouso a até 4,5 da superfície do corpo, num ponto 15,5 à frente do pivô (a ponta do focinho);
+      - dano de Água; derruba pelo contrato de porte.
+      - O atributo de efeito `Giro` virou `NoAr`.
+    - **Onda real** (`ondaReal`):
+      - a frente da onda cresce de 0,8 até o raio (água 14 em 0,9 s; lama 8 em 0,6 s);
+      - cada alvo alcançado é atingido uma vez, com dano de Água (água 12, lama 8);
+      - o alvo é empurrado para fora deslizando por 0,45 s (água 7, lama 4, menos para quem é pego mais longe);
+      - quem a cauda acerta direto não leva a onda.
+      - Números provisórios, em `Cauda.onda_*`.
+    - **Cliente** (`CrocodiloFX_Cliente`):
+      - `onda3D`: anel de 26 segmentos 3D (14 no celular), de água turva semitransparente (em terra, lama), que sobe, avança e tomba para a frente, com espuma fina na crista e borrifos que caem. Usa o mesmo raio e a mesma duração do servidor.
+      - Emboscada: a água explode na saída (respingo + onda pequena); no pouso, respingo + onda na água, ou lama em terra.
+      - A ponta da cauda levanta água ou lama durante a varrida.
+      - Saíram os anéis desenhados da Cauda e da Emboscada. Nada brilha.
+    - **Testes (Play):**
+      - **Cauda na água:** a onda alcançou os alvos a 7,1 e 9,2 do centro (dano 12; empurrados 6,1 e 5,8); os alvos a mais de 14 não foram atingidos.
+      - **Cauda em terra:** a onda de lama alcançou um alvo a 7,4 (dano 8; empurrado 2,8).
+      - **Emboscada no raso:**
+        - `NoAr` liga e desliga;
+        - mordida de 24 na presa da frente, que caiu por 3,45 s; a presa a 9 de lado não foi atingida;
+        - inclinação lateral depois do pouso: 0,0° (sem giro).
+    - **Evidências:** vídeo `review/emboscada_onda_2011/Crocodilo_Emboscada_OndaReal.mp4` e prancha dos clipes `review/kit_agua_2011/prancha_emboscada_blender.jpg`.
+    - **No place:** backup `ServerStorage.Crocodilo_ANTES_EmboscadaOnda`; place local salvo.
+    - **r2 (usuário 20/11: "a onda deve chegar mais longe, e a água subir mais"):**
+      - alcance: água 14 → **20** (1,2 s); lama 8 → **10** (0,7 s);
+      - altura da parede de água até ~4,4 (antes ~2,4); lama até 1,4;
+      - respingo do centro maior.
+      - Teste: a onda alcançou alvos a 7,1, 9,2, **17,5 e 19,8** (dano 12; empurrados 6,4 → 4,5); os alvos mais longe não foram atingidos. Lama: 7,4 e 8,9.
+      - Vídeo `review/onda_r2_2011/Crocodilo_Onda_r2.mp4`. Aguarda avaliação.
+    - **r3 (usuário 20/11: "na terra, alcance mais longe"):**
+      - onda de lama 10 → **15** (0,9 s); dano e empurrão iguais (8 e 4).
+      - Teste: alcançou alvos a 7,4, 8,9 e **13,6** (empurrados 3,5 → 2,9); os alvos mais longe não foram atingidos.
+      - Vídeo `review/onda_r3_2011/Crocodilo_OndaLama_r3.mp4`. Aguarda avaliação.
+    - **r4 (usuário 20/11: "aumente o alcance da cauda de maré em terra"; escolheu "onda de lama até 20"):**
+      - lama 15 → **20** (1,1 s), igual ao alcance na água; dano e empurrão continuam menores que os da água (8 e 4).
+      - Teste (2 rodadas): alcançou alvos a 7,4–8,9 e 14,6 (empurrados 3,7 → 3,2); o alvo a ~20,6 da superfície e os mais longe não foram atingidos.
+      - Vídeo `review/onda_r4_2011/Crocodilo_OndaLama_20.mp4`, de perto e de cima. **APROVADO pelo usuário em 20/11** ("Aprovar"). É a versão final da onda: água 20, lama 20.
+    - **Limitação:** a onda é um anel de peças 3D, sem deformar a água do terreno. Na água funda o crocodilo fica quase todo submerso e aparece pouco na tomada.
+- **20/11 — aplicado no piloto (Crocodilo-testes). Testado em Play. Aguarda avaliação.**
+  - **Config:** `ConfigPoderes_Teste.Elemento = "Agua"`.
+  - **Dano marcado como Água** por `ferir()` no `PoderesTeste`: grava `UltimoDanoElemento = "Agua"` e `UltimoDanoPoder` no alvo e depois aplica o dano.
+    - Vale para a Mordida de Agarrão, o Giro de Emboscada e a Cauda de Maré.
+    - A Submersão não causa dano; o bote dela é a Mordida de Agarrão.
+    - A finalização continua física.
+    - O sistema de vantagem e fraqueza entre elementos ainda não existe no jogo, então a marca só registra.
+  - **Efeitos visuais** (`CrocodiloFX_Cliente`), sem brilho:
+    - saiu o contorno verde (Highlight) do corpo no Giro;
+    - saiu a esfera verde de campo de força das Escamas;
+    - as gotas escorrendo ficaram sem emissão de luz (`LightEmission` 0).
+  - **Novo `respingo()`:** gotas de água que sobem e caem pela gravidade, iluminadas pelo sol, sem emissão.
+    - Aparece ao sair da água no Giro, no pouso na água, no impacto da Cauda na água e no golpe que as Escamas reduzem (borrifo curto).
+  - **Testes:**
+    - agarrão: `Agua` / `MordidaAgarrao`, vida 78;
+    - cauda em terra: `Agua` / `CaudaDeMare`, dano 20;
+    - cauda na água: funciona;
+    - giro no raso: `Agua` / `GiroEmboscada`, dano 24;
+    - Escamas: dano 20 → 17, com 3 respingos no cliente.
+  - **Vídeo:** `review/kit_agua_2011/Crocodilo_KitAgua_Natural.mp4`.
+  - **No place:** backup `ServerStorage.Crocodilo_ANTES_KitAgua`; place local salvo.
+  - **Achado fora desta tarefa:** na emboscada da Submersão, o bote no boneco do canal errou por altura ("fora do vão 3,87"): a boca submersa fica abaixo do alvo na superfície. A pegada real ainda não sobe a cabeça até o alvo na água. A corrigir numa próxima etapa.
+
 ### Elemento
 - **[OFICIAL — 30/10/2026]** Cada criatura tem **um único elemento natural**. Não há 2º/3º elemento, alternância nem fusão elemental no sistema atual.
-- **[PENDENTE]** O elemento único do Crocodilo Primordial **ainda não foi escolhido**.
-  - A lista da Etapa 15.1 "Água, Terra, Natureza" (nasce com uma e desbloqueia até mais duas) é histórico superado. Não presumir nenhuma das três.
+- **[OFICIAL — usuário 20/11/2026]** O elemento único do Crocodilo Primordial é **Água** (ver "Kit oficial" acima).
+  - A lista da Etapa 15.1 "Água, Terra, Natureza" (nasce com uma e desbloqueia até mais duas) é histórico superado.
 
 ### Habilidades
 - **[OFICIAL — 30/10/2026]** Cada criatura tem no mínimo **1 passiva + 3 ativas**; nomes, efeitos e quantidades são aprovados criatura por criatura. Ataques básicos físicos não ocupam slots.
