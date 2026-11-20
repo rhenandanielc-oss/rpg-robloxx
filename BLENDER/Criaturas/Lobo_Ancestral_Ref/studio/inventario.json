@@ -1102,5 +1102,195 @@
   "velocidade": 3.024,
   "bytes": 10020,
   "md5_json": "bdc3aaecfbd6ddf32580cdf4a0d7b72d"
+ },
+ "Hab_MordidaFlanco": {
+  "fonte": "habilidades/clipes_fin/LoboAncestral_Hab_MordidaFlanco.json",
+  "lote": "finalizacao r2 (flanco)",
+  "quadros": 79,
+  "fps": 30,
+  "duracao": 2.6,
+  "loop": false,
+  "marcadores": [
+   {
+    "nome": "Antecipacao",
+    "t": 0.3
+   },
+   {
+    "nome": "Contato",
+    "t": 0.5
+   },
+   {
+    "nome": "Sacudida",
+    "t": 0.62
+   },
+   {
+    "nome": "Solta",
+    "t": 1.85
+   },
+   {
+    "nome": "Fim",
+    "t": 2.6
+   }
+  ],
+  "velocidade": 0.0,
+  "bytes": 15963,
+  "md5_json": "090d4c7228e7dfd726b58e664b6bf538"
+ },
+ "QuedaLadoE": {
+  "fonte": "habilidades/clipes_queda/LoboAncestral_QuedaLadoE.json",
+  "lote": "queda lateral r4 patas abertas",
+  "quadros": 34,
+  "fps": 30,
+  "duracao": 1.1,
+  "loop": false,
+  "marcadores": [
+   {
+    "nome": "Desequilibrio",
+    "t": 0.18
+   },
+   {
+    "nome": "Contato",
+    "t": 0.78
+   },
+   {
+    "nome": "Caido",
+    "t": 1.1
+   }
+  ],
+  "velocidade": 0.0,
+  "bytes": 10049,
+  "md5_json": "242faa1b7749cb9dd6cb876858298727"
+ },
+ "CaidoLadoE": {
+  "fonte": "habilidades/clipes_queda/LoboAncestral_CaidoLadoE.json",
+  "lote": "queda lateral r4 patas abertas",
+  "quadros": 120,
+  "fps": 30,
+  "duracao": 4.0,
+  "loop": true,
+  "marcadores": [],
+  "velocidade": 0.0,
+  "bytes": 13000,
+  "md5_json": "9cc51c451ec3340b7460e35be2649ae1"
+ },
+ "LevantarLadoE": {
+  "fonte": "habilidades/clipes_queda/LoboAncestral_LevantarLadoE.json",
+  "lote": "queda lateral r4 patas abertas",
+  "quadros": 58,
+  "fps": 30,
+  "duracao": 1.9,
+  "loop": false,
+  "marcadores": [
+   {
+    "nome": "PatasSob",
+    "t": 0.45
+   },
+   {
+    "nome": "DePeito",
+    "t": 1.25
+   },
+   {
+    "nome": "EmPe",
+    "t": 1.9
+   }
+  ],
+  "velocidade": 0.0,
+  "bytes": 16984,
+  "md5_json": "bbf451a3db59d42b484e044c1f70c297"
+ },
+ "QuedaLadoD": {
+  "fonte": "habilidades/clipes_queda/LoboAncestral_QuedaLadoD.json",
+  "lote": "queda lateral r4 patas abertas",
+  "quadros": 34,
+  "fps": 30,
+  "duracao": 1.1,
+  "loop": false,
+  "marcadores": [
+   {
+    "nome": "Desequilibrio",
+    "t": 0.18
+   },
+   {
+    "nome": "Contato",
+    "t": 0.78
+   },
+   {
+    "nome": "Caido",
+    "t": 1.1
+   }
+  ],
+  "velocidade": 0.0,
+  "bytes": 10062,
+  "md5_json": "298de42a92254a3d8facb3f0957dcd5f"
+ },
+ "CaidoLadoD": {
+  "fonte": "habilidades/clipes_queda/LoboAncestral_CaidoLadoD.json",
+  "lote": "queda lateral r4 patas abertas",
+  "quadros": 120,
+  "fps": 30,
+  "duracao": 4.0,
+  "loop": true,
+  "marcadores": [],
+  "velocidade": 0.0,
+  "bytes": 12996,
+  "md5_json": "66d1bc1b274b9d2c79948a8b18b69a39"
+ },
+ "LevantarLadoD": {
+  "fonte": "habilidades/clipes_queda/LoboAncestral_LevantarLadoD.json",
+  "lote": "queda lateral r4 patas abertas",
+  "quadros": 58,
+  "fps": 30,
+  "duracao": 1.9,
+  "loop": false,
+  "marcadores": [
+   {
+    "nome": "PatasSob",
+    "t": 0.45
+   },
+   {
+    "nome": "DePeito",
+    "t": 1.25
+   },
+   {
+    "nome": "EmPe",
+    "t": 1.9
+   }
+  ],
+  "velocidade": 0.0,
+  "bytes": 16987,
+  "md5_json": "b7dffd15503dd85e6317a110dfb04d9d"
+ },
+ "Hab_MordidaFlancoLado": {
+  "fonte": "habilidades/clipes_queda/LoboAncestral_Hab_MordidaFlancoLado.json",
+  "lote": "queda lateral r3",
+  "quadros": 79,
+  "fps": 30,
+  "duracao": 2.6,
+  "loop": false,
+  "marcadores": [
+   {
+    "nome": "Antecipacao",
+    "t": 0.3
+   },
+   {
+    "nome": "Contato",
+    "t": 0.5
+   },
+   {
+    "nome": "Sacudida",
+    "t": 0.62
+   },
+   {
+    "nome": "Solta",
+    "t": 1.85
+   },
+   {
+    "nome": "Fim",
+    "t": 2.6
+   }
+  ],
+  "velocidade": 0.0,
+  "bytes": 15421,
+  "md5_json": "c673f464c366b24f15e16c0b12f987a1"
  }
 }

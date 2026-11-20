@@ -1,0 +1,37 @@
+00:02.140  blend            | Read blend: "C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Lobo_Ancestral_Ref\rig18\Lobo_Ancestral_Anim_Queda.blend"
+00:04.171  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Lobo_Ancestral_Ref\review\fin_lateral_r1\Hab_MordidaFlancoLado_D_cima_0000.png'
+00:04.218  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Lobo_Ancestral_Ref\review\fin_lateral_r1\Hab_MordidaFlancoLado_D_cima_0300.png'
+00:04.250  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Lobo_Ancestral_Ref\review\fin_lateral_r1\Hab_MordidaFlancoLado_D_cima_0500.png'
+00:04.296  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Lobo_Ancestral_Ref\review\fin_lateral_r1\Hab_MordidaFlancoLado_D_cima_1000.png'
+00:04.343  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Lobo_Ancestral_Ref\review\fin_lateral_r1\Hab_MordidaFlancoLado_D_cima_1550.png'
+00:04.375  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Lobo_Ancestral_Ref\review\fin_lateral_r1\Hab_MordidaFlancoLado_D_cima_2600.png'
+00:04.421  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Lobo_Ancestral_Ref\review\fin_lateral_r1\Hab_MordidaFlancoLado_D_perto_lado_0000.png'
+00:04.453  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Lobo_Ancestral_Ref\review\fin_lateral_r1\Hab_MordidaFlancoLado_D_perto_lado_0300.png'
+00:04.500  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Lobo_Ancestral_Ref\review\fin_lateral_r1\Hab_MordidaFlancoLado_D_perto_lado_0500.png'
+00:04.531  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Lobo_Ancestral_Ref\review\fin_lateral_r1\Hab_MordidaFlancoLado_D_perto_lado_1000.png'
+00:04.578  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Lobo_Ancestral_Ref\review\fin_lateral_r1\Hab_MordidaFlancoLado_D_perto_lado_1550.png'
+00:04.609  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Lobo_Ancestral_Ref\review\fin_lateral_r1\Hab_MordidaFlancoLado_D_perto_lado_2600.png'
+00:04.656  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Lobo_Ancestral_Ref\review\fin_lateral_r1\Hab_MordidaFlancoLado_D_perto_outro_0000.png'
+00:04.703  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Lobo_Ancestral_Ref\review\fin_lateral_r1\Hab_MordidaFlancoLado_D_perto_outro_0300.png'
+00:04.734  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Lobo_Ancestral_Ref\review\fin_lateral_r1\Hab_MordidaFlancoLado_D_perto_outro_0500.png'
+00:04.765  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Lobo_Ancestral_Ref\review\fin_lateral_r1\Hab_MordidaFlancoLado_D_perto_outro_1000.png'
+00:04.812  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Lobo_Ancestral_Ref\review\fin_lateral_r1\Hab_MordidaFlancoLado_D_perto_outro_1550.png'
+00:04.843  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Lobo_Ancestral_Ref\review\fin_lateral_r1\Hab_MordidaFlancoLado_D_perto_outro_2600.png'
+00:04.906  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Lobo_Ancestral_Ref\review\fin_lateral_r1\Hab_MordidaFlancoLado_D_rasante_0000.png'
+00:04.937  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Lobo_Ancestral_Ref\review\fin_lateral_r1\Hab_MordidaFlancoLado_D_rasante_0300.png'
+00:04.984  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Lobo_Ancestral_Ref\review\fin_lateral_r1\Hab_MordidaFlancoLado_D_rasante_0500.png'
+00:05.015  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Lobo_Ancestral_Ref\review\fin_lateral_r1\Hab_MordidaFlancoLado_D_rasante_1000.png'
+00:05.046  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Lobo_Ancestral_Ref\review\fin_lateral_r1\Hab_MordidaFlancoLado_D_rasante_1550.png'
+00:05.093  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Lobo_Ancestral_Ref\review\fin_lateral_r1\Hab_MordidaFlancoLado_D_rasante_2600.png'
+BlenderMCP addon registered
+
+Wiggle Bones registered
+ALVO giro 90; barriga z 0.93-2.17; focinho no contato z 1.74
+QA {"clipe": "Hab_MordidaFlancoLado", "lado": "D", "barriga_z": [0.93, 2.17], "boca_contato_z": 1.74, "boca_tronco_segurando": [0.142, 0.342], "ao_longo_tronco": [0.49, 0.54], "boca_pernas_min": 0.167, "boca_deriva_max": 0.258, "patas_deriva_max": {"MaoE": 0.0, "MaoD": 0.0, "MetatarsoE": 0.0, "MetatarsoD": 0.0}, "antes_contato": [[0.0, 3.468], [0.2, 1.425], [0.3, 0.361], [0.4, 0.312]]}
+CENA boca (0.0, -5.73, 1.74) alvo meio (0.0, -7.51, 1.68)
+QA_OK
+BlenderMCP addon unregistered
+Wiggle Bones unregistered
+Blender 5.2.2 LTS (hash d13f752e3b9c built 2026-09-15 01:37:04)
+
+Blender quit

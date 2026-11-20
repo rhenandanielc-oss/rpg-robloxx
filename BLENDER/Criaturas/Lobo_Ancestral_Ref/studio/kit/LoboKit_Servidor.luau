@@ -24,18 +24,173 @@ local function log(s) table.insert(K.log, string.format("%.2f %s", os.clock(), s
 local function logc(cat, L, s) log(string.format("[%s] %s: %s", cat, L and L.modelo.Name or "-", s)) end
 
 -- ------------------------------------------------------------------ alvos e geometria
+local aplicarDano                                  -- r8: definida mais abaixo (contrato de dano)
 local function alvosPasta() return AREA:FindFirstChild("Alvos") end
+-- r8 (18/11, "contrato de criatura", so arquivos do Lobo): alvo nao precisa mais estar na pasta de teste. Vale:
+--   (a) Model com Humanoid vivo; (b) Model com atributo Criatura = true (convencao ja usada pelo Lobo Artico) ou
+--   GuardiaoNinho (guardioes do jogo), com Vida > 0 e sem Incapacitado. As protecoes (dono, aliado, zona segura, PvP,
+--   mesmo dono) continuam em protegido(). O Lobo tambem EXPOE o contrato (Criatura, Vida/VidaMax, ReceberDano).
+local function ehCriatura(m) return m:GetAttribute("Criatura") == true or m:GetAttribute("GuardiaoNinho") == true end
 local function alvoValido(m)
-	if typeof(m) ~= "Instance" or not m:IsA("Model") then return false end
-	local pa = alvosPasta(); if not pa or not m:IsDescendantOf(pa) then return false end
-	local h = m:FindFirstChildOfClass("Humanoid"); local r = m.PrimaryPart or m:FindFirstChild("HumanoidRootPart")
-	return h ~= nil and h.Health > 0 and r ~= nil
+	if typeof(m) ~= "Instance" or not m:IsA("Model") or not m:IsDescendantOf(workspace) then return false end
+	local h = m:FindFirstChildOfClass("Humanoid")
+	if h then return h.Health > 0 and (m.PrimaryPart or m:FindFirstChild("HumanoidRootPart")) ~= nil end
+	if ehCriatura(m) then
+		if m:GetAttribute("Incapacitado") or m:GetAttribute("Estado") == "Morto" then return false end
+		return (m:GetAttribute("Vida") or 1) > 0 and m:FindFirstChildWhichIsA("BasePart", true) ~= nil
+	end
+	return false
 end
-local function centro(m) local r = m.PrimaryPart or m:FindFirstChild("HumanoidRootPart"); return r and r.Position end
+local function centro(m) local r = m.PrimaryPart or m:FindFirstChild("HumanoidRootPart"); return r and r.Position or (m:IsA("Model") and m:GetPivot().Position) end
+-- sobe de uma parte ate o Model do alvo (personagem, criatura ou guardiao)
+local function modeloAlvo(inst)
+	local m = inst and inst:FindFirstAncestorOfClass("Model")
+	while m do
+		if m:FindFirstChildOfClass("Humanoid") or ehCriatura(m) then return m end
+		m = m:FindFirstAncestorOfClass("Model")
+	end
+end
+-- candidatos perto do lobo (partes num raio -> modelos alvo unicos); a pasta Alvos do ensaio continua valendo
+local function candidatos(L, raio)
+	local op = OverlapParams.new(); op.FilterType = Enum.RaycastFilterType.Exclude; op.FilterDescendantsInstances = {L.modelo}
+	local vistos, lista = {}, {}
+	for _, pt in ipairs(workspace:GetPartBoundsInRadius(L.modelo:GetPivot().Position, raio, op)) do
+		local m = modeloAlvo(pt)
+		if m and not vistos[m] then vistos[m] = true; table.insert(lista, m) end
+	end
+	local pa = alvosPasta()
+	for _, a in ipairs(pa and pa:GetChildren() or {}) do if not vistos[a] then vistos[a] = true; table.insert(lista, a) end end
+	return lista
+end
 -- r5 (18/11, auditoria de compatibilidade): alcance e contato medidos ate a SUPERFICIE do corpo do alvo (ponto mais proximo
 -- das partes visiveis), nao ao centro. Antes: Mordida/Garra 0 em corpos grandes, Salto pousava dentro e o Instinto perdia
 -- colossais. Devolve o ponto e a distancia HORIZONTAL ate ele.
+-- 20/11 HITBOX DE CONTATO: corpo = capsulas nos ossos (acompanham a animacao, sem cauda/pelos); golpes medidos da BOCA/PATA.
+local HB = CFG.Hitbox
+local cacheCorpo = setmetatable({}, {__mode = "k"})
+local function ignorarOsso(n) for _, k in ipairs(HB.ignorarOssos) do if n:find(k) then return true end end return false end
+local function corpoDe(m)
+	local c = cacheCorpo[m]
+	if c ~= nil then return c or nil end
+	local ossos, segs = {}, {}
+	for _, d in ipairs(m:GetDescendants()) do if d:IsA("Bone") then ossos[d.Name] = d end end
+	local esc = (m.GetScale and m:GetScale()) or 1
+	if ossos.Peito and ossos.Pelve and ossos.Cabeca and ossos.Mandibula then          -- quadrupede no padrao do Lobo
+		for _, sg in ipairs(HB.capsulasLobo) do
+			local a, b = ossos[sg[1]], ossos[sg[2]]
+			if a and b then table.insert(segs, {a, b, sg[3] * esc}) end
+		end
+	elseif next(ossos) then                                                             -- outra criatura com ossos: osso -> pai
+		local _, sz = m:GetBoundingBox(); local r = math.min(sz.X, sz.Y, sz.Z) * HB.raioGenerico
+		for _, b in pairs(ossos) do
+			local pai = b.Parent
+			if pai and pai:IsA("Bone") and not ignorarOsso(b.Name) and not ignorarOsso(pai.Name) then table.insert(segs, {pai, b, r}) end
+		end
+	end
+	if #segs == 0 then cacheCorpo[m] = false; return nil end
+	cacheCorpo[m] = segs; return segs
+end
+local function pontoSeg(p, a, b) local ab = b - a; local t = math.clamp((p - a):Dot(ab) / math.max(ab:Dot(ab), 1e-6), 0, 1); return a + ab * t end
+-- distancia 3D de um ponto a SUPERFICIE do corpo (capsulas); nil se o alvo nao tem ossos
+local function distCorpo(alvo, p)
+	local segs = corpoDe(alvo); if not segs then return nil end
+	local md, mq = math.huge, nil
+	for _, sg in ipairs(segs) do
+		local q = pontoSeg(p, sg[1].TransformedWorldCFrame.Position, sg[2].TransformedWorldCFrame.Position)
+		local d = (p - q).Magnitude - sg[3]
+		if d < md then md, mq = d, q end
+	end
+	return md, mq
+end
+K.distCorpo = distCorpo
+local function ossoDe(m, nome) local x = m:FindFirstChild(nome, true); return x and x:IsA("Bone") and x or nil end
+-- ponta do focinho do lobo (Mandibula + HB.boca na direcao pescoco -> mandibula) e patas dianteiras
+local function boca(L)
+	local mj, pc = ossoDe(L.modelo, "Mandibula"), ossoDe(L.modelo, "Pescoco1")
+	if not (mj and pc) then local piv = L.modelo:GetPivot(); return piv.Position + piv.LookVector * 6.3 + Vector3.new(0, 6.3, 0) end
+	local a, b = pc.TransformedWorldCFrame.Position, mj.TransformedWorldCFrame.Position
+	return b + (b - a).Unit * HB.boca * ((L.modelo.GetScale and L.modelo:GetScale()) or 1)
+end
+local function patas(L)
+	local r = {}
+	for _, n in ipairs({"MaoD", "MaoE"}) do local o = ossoDe(L.modelo, n); if o then table.insert(r, o.TransformedWorldCFrame.Position) end end
+	return r
+end
+K.boca = boca
+K.patas = patas
+-- contato de um golpe: menor distancia entre os pontos de ataque e o corpo; sem ossos no alvo = caixa das partes (como antes)
+local function contato(alvo, pontos)
+	local md = math.huge
+	for _, p in ipairs(pontos) do
+		local d = distCorpo(alvo, p)
+		if d == nil then                                                                   -- fallback: superficie das partes visiveis
+			for _, pt in ipairs(alvo:GetDescendants()) do
+				if pt:IsA("BasePart") and pt.Transparency < 1 then
+					local l = pt.CFrame:PointToObjectSpace(p); local h = pt.Size / 2
+					local q = pt.CFrame:PointToWorldSpace(Vector3.new(math.clamp(l.X, -h.X, h.X), math.clamp(l.Y, -h.Y, h.Y), math.clamp(l.Z, -h.Z, h.Z)))
+					d = math.min(d or math.huge, (p - q).Magnitude)
+				end
+			end
+		end
+		if d and d < md then md = d end
+	end
+	return md
+end
+K.contato = contato
+-- r3 20/11: lado da BARRIGA do caido (onde estao as patas), perpendicular ao eixo Peito-Pelve: +1/-1 em nrm, mais a medida
+function K.ladoBarriga(alvo)
+	local pe, pv = alvo:FindFirstChild("Peito", true), alvo:FindFirstChild("Pelve", true)
+	if not (pe and pv and pe:IsA("Bone") and pv:IsA("Bone")) then return nil end
+	local P1, P2 = pe.TransformedWorldCFrame.Position, pv.TransformedWorldCFrame.Position
+	local e = Vector3.new(P1.X - P2.X, 0, P1.Z - P2.Z); if e.Magnitude < 1e-3 then return nil end
+	e = e.Unit; local nrm = Vector3.new(-e.Z, 0, e.X); local meio = (P1 + P2) / 2
+	local soma, n = Vector3.zero, 0
+	for _, nm in ipairs({"MaoE", "MaoD", "PeE", "PeD"}) do local o = alvo:FindFirstChild(nm, true); if o and o:IsA("Bone") then soma += o.TransformedWorldCFrame.Position; n += 1 end end
+	local lp = 0
+	if n > 0 then local d = soma / n - meio; lp = Vector3.new(d.X, 0, d.Z):Dot(nrm) end
+	return (lp < 0) and -1 or 1, lp, nrm, P1, P2
+end
+-- r3 20/11: capsula do TRONCO para a mordida. Em pe/deitado sobre o peito: Pelve-Peito com raio 1,3 x escala. Deitado DE LADO
+-- (atributo CaidoLado): a coluna fica na borda de cima e a barriga para o lado das patas, entao a capsula vai para o centro
+-- real do tronco (ladoDesloc) com a meia largura medida (ladoRaio), as duas como fracao do comprimento Peito-Pelve.
+function K.troncoAlvo(alvo)
+	local E = CFG.Controle.estilo
+	local pe, pv = alvo:FindFirstChild("Peito", true), alvo:FindFirstChild("Pelve", true)
+	if not (pe and pv and pe:IsA("Bone") and pv:IsA("Bone")) then return nil end
+	local P1, P2 = pe.TransformedWorldCFrame.Position, pv.TransformedWorldCFrame.Position
+	if alvo:GetAttribute("CaidoLado") then
+		local s, _, nrm = K.ladoBarriga(alvo)
+		if s then
+			local len = (P1 - P2).Magnitude; local off = nrm * (s * E.ladoDesloc * len)
+			return P1 + off, P2 + off, E.ladoRaio * len, nrm * s
+		end
+	end
+	return P1, P2, E.raioTronco * ((alvo.GetScale and alvo:GetScale()) or 1), nil
+end
+-- 20/11 r2: distancia a superficie do TRONCO (barriga/flanco = capsula Pelve-Peito); outras criaturas: o corpo todo
+function K.distTronco(alvo, p)
+	local P1, P2, raio = K.troncoAlvo(alvo)
+	if P1 then return (p - pontoSeg(p, P2, P1)).Magnitude - raio end
+	return contato(alvo, {p})
+end
 local function pontoProximo(alvo, de)
+	-- 20/11: com ossos, superficie das capsulas (horizontal, como antes); sem ossos, caixa das partes
+	local segs = corpoDe(alvo)
+	if segs then
+		local mq, md = nil, math.huge
+		for _, sg in ipairs(segs) do
+			local a, b = sg[1].TransformedWorldCFrame.Position, sg[2].TransformedWorldCFrame.Position
+			local a2, b2 = Vector3.new(a.X, de.Y, a.Z), Vector3.new(b.X, de.Y, b.Z)
+			local q = pontoSeg(de, a2, b2)
+			local d = math.max(0, (Vector3.new(de.X, 0, de.Z) - Vector3.new(q.X, 0, q.Z)).Magnitude - sg[3])
+			if d < md then
+				local dir = Vector3.new(de.X - q.X, 0, de.Z - q.Z); dir = dir.Magnitude > 1e-3 and dir.Unit or Vector3.zero
+				local qy = pontoSeg(de, a, b).Y
+				md, mq = d, Vector3.new(q.X, qy, q.Z) + dir * sg[3]
+			end
+		end
+		return mq, md
+	end
 	local melhor, md = nil, math.huge
 	for _, p in ipairs(alvo:GetDescendants()) do
 		if p:IsA("BasePart") and p.Transparency < 1 then
@@ -64,12 +219,17 @@ local function emZonaSegura(pos)
 end
 local function protegido(L, m)
 	local dono = L and L.dono and L.dono.UserId
+	if L and m == L.modelo then return "proprio lobo" end
+	if dono and m:GetAttribute("DonoUserId") == dono then return "mesmo dono" end   -- r8: criaturas do mesmo jogador
 	local plr = Players:GetPlayerFromCharacter(m)
 	if plr then
 		if dono and plr.UserId == dono then return "dono" end
 		if workspace:GetAttribute("PvPAtivo") ~= true then return "PvP desligado" end
 	end
 	if dono and m:GetAttribute("AliadoDe") == dono then return "aliado" end
+	-- 19/11: criatura de OUTRO jogador so e alvo do lobo de um dono com PvP ligado (lobo selvagem segue podendo atacar: PvE)
+	local donoAlvo = m:GetAttribute("DonoUserId")
+	if dono and donoAlvo and donoAlvo ~= 0 and donoAlvo ~= dono and workspace:GetAttribute("PvPAtivo") ~= true then return "PvP desligado (criatura de outro jogador)" end
 	local c = centro(m); if c and emZonaSegura(c) then return "zona segura" end
 	return nil
 end
@@ -93,8 +253,12 @@ end
 -- um alvo em movimento e para a IA medir quem se APROXIMA (sem confundir com o proprio movimento do lobo).
 K.velAlvos = {}
 RS.Heartbeat:Connect(function(dt)
-	local pa = alvosPasta(); if not pa or dt <= 0 then return end
-	for _, a in ipairs(pa:GetChildren()) do
+	if dt <= 0 then return end
+	local pa = alvosPasta(); local lista = pa and pa:GetChildren() or {}
+	for _, L in pairs(K.lobos) do for a in pairs(L.percebidos or {}) do table.insert(lista, a) end end   -- r8
+	local feitos = {}                                   -- 19/11: alvo na pasta E percebido entrava 2x por quadro (2a passada = vel 0)
+	for _, a in ipairs(lista) do
+		if feitos[a] then continue end; feitos[a] = true
 		local r = a:IsA("Model") and (a.PrimaryPart or a:FindFirstChild("HumanoidRootPart"))
 		if r then
 			local e = K.velAlvos[a] or {p = r.Position, v = Vector3.zero}; K.velAlvos[a] = e
@@ -128,6 +292,14 @@ local function registrar(modelo, dono)
 	local L = {modelo = modelo, dono = dono, C = LA.preparar(modelo), mods = {}, recargas = {}, estado = "Livre",
 		energia = CFG.Energia.max, vida = CFG.Vida, ativo = true, tarefas = {}, noite = false, rastros = {}, percebidos = {}}
 	modelo:SetAttribute("DonoUserId", dono and dono.UserId or 0)
+	-- r8: contrato de criatura (mesmo do Lobo Artico): Criatura, Vida/VidaMax e ReceberDano(valor, elemento, fonte)
+	modelo:SetAttribute("Criatura", true); modelo:SetAttribute("VidaMax", CFG.Vida); modelo:SetAttribute("Vida", CFG.Vida)
+	local fn = modelo:FindFirstChild("ReceberDano") or Instance.new("BindableFunction"); fn.Name = "ReceberDano"; fn.Parent = modelo
+	fn.OnInvoke = function(valor, elemento, fonte)
+		if type(valor) ~= "number" or valor <= 0 then return 0, "invalido" end
+		local res = K.receberDano(L, valor, fonte)
+		return res == "acertou" and valor or 0, res
+	end
 	K.lobos[modelo] = L
 	recalcular(L)
 	if noiteGlobalRef and noiteGlobalRef() then setMod(L, "CacadorNoturno", {vel = CFG.CacadorNoturno.velocidade, esq = CFG.CacadorNoturno.esquiva, dano = CFG.CacadorNoturno.danoFisico}); modelo:SetAttribute("Noite", true) end
@@ -138,6 +310,8 @@ local function registrar(modelo, dono)
 end
 function K.remover(L, motivo)
 	if not L.ativo then return end
+	if K.limparFinalizacao then pcall(K.limparFinalizacao, L, "lobo removido") end
+	if K.limparControle then K.limparControle(L.modelo) end
 	L.ativo = false; L.estado = "Removido"
 	for _, t in ipairs(L.tarefas) do pcall(task.cancel, t) end
 	L.mods = {}; pcall(recalcular, L)
@@ -145,7 +319,9 @@ function K.remover(L, motivo)
 	log("lobo encerrado: " .. motivo)
 end
 function K.morrer(L)
+	if K.limparFinalizacao then K.limparFinalizacao(L, "lobo morreu") end
 	L.vida = 0; L.estado = "Morto"; L.mods = {}; recalcular(L)
+	L.modelo:SetAttribute("Caido", nil); L.modelo:SetAttribute("CaidoAte", nil)
 	for _, t in ipairs(L.tarefas) do pcall(task.cancel, t) end; L.tarefas = {}
 	L.C.pararTudo(0.1); L.C.acao("Impacto", 0.05)
 	L.modelo:SetAttribute("Estado", "Morto"); log("lobo morto")
@@ -154,8 +330,13 @@ end
 function K.receberDano(L, dano, origem)
 	if not vivo(L) then return "morto" end
 	if origem then L.atacadoPor = {alvo = origem, ate = os.clock() + 6} end     -- a IA trata como ameaca (se perceber o atacante)
-	if math.random() < L.esquiva then log("esquivou"); return "esquivou" end
-	L.vida -= dano; if L.vida <= 0 then K.morrer(L) end
+	if L.estado ~= "Caido" and L.estado ~= "Levantando" and math.random() < L.esquiva then   -- 19/11: caido nao esquiva
+		log("esquivou"); logc("ESQUIVA", L, "passiva (sorteio) contra " .. (origem and origem.Name or "?"))
+		if K.esquivaDesloc then task.spawn(K.esquivaDesloc, L, origem, "passiva") end   -- 19/11: reacao visivel (sem mudar o resultado)
+		return "esquivou"
+	end
+	L.vida -= dano; L.modelo:SetAttribute("Vida", math.max(0, L.vida)); if L.vida <= 0 then K.morrer(L) end
+	logc("HABILIDADE", L, string.format("recebeu %.1f de %s (vida %.0f)", dano, origem and origem.Name or "?", math.max(0, L.vida)))
 	return "acertou"
 end
 local function tarefa(L, f) local t = task.spawn(f); table.insert(L.tarefas, t); return t end
@@ -216,9 +397,9 @@ end
 -- FireClient, nunca a todos. K.percepcaoSemDono = false reproduz o comportamento antigo (teste A/B pelo gancho).
 K.percepcaoSemDono = true
 local function perceber(L, veg)
-	local pa = alvosPasta(); local vistos = {}
+	local vistos = {}
 	local piv = L.modelo:GetPivot().Position
-	for _, a in ipairs(pa and pa:GetChildren() or {}) do
+	for _, a in ipairs(candidatos(L, IC.raio + 40)) do                 -- r8: qualquer criatura/personagem perto (nao so a pasta)
 		if alvoPermitido(L, a) then                                        -- r6: protegidos nao sao percebidos/revelados
 			local c = centro(a); local _, dist = pontoProximo(a, piv)          -- r5: raio ate a superficie
 			if dist <= IC.raio and visaoInstinto(L, a, veg) then
@@ -304,6 +485,7 @@ local function podeUsar(L, nome, c)
 	if not vivo(L) then return false, "lobo inativo" end
 	if L.estado ~= "Livre" then return false, "ocupado (" .. L.estado .. ")" end
 	if L.basicoAte and os.clock() < L.basicoAte then return false, "ocupado (golpe andando)" end   -- r7
+	if L.dashando then return false, "esquivando" end                                                 -- 19/11
 	local r = L.recargas[nome]; if r and os.clock() < r then return false, string.format("recarga %.1fs", r - os.clock()) end
 	if c.energia and L.energia < c.energia then return false, "energia" end
 	return true
@@ -321,22 +503,410 @@ local function marcar(L, alvo)
 	if novo then logc("HABILIDADE", L, "presa marcada: " .. alvo.Name) end
 	if novo and L.dono then EVENTO:FireClient(L.dono, "Marca", L.modelo, alvo, IC.marcaSeg); logc("INDICADOR", L, "marca da presa so ao dono " .. L.dono.Name) end
 end
+-- 19/11 (IA estrategica): o golpe em curso fica publico no atributo EmAtaque (mesma convencao do combate dos dragoes),
+-- para outras IAs (inclusive outro lobo) poderem esquivar/recuar. Limpo no fim do golpe.
+local function anunciar(L, nome) L.modelo:SetAttribute("EmAtaque", nome) end
+local function encerrar(L, nome) if L.modelo:GetAttribute("EmAtaque") == nome then L.modelo:SetAttribute("EmAtaque", nil) end end
 local function presaMarcada(L, alvo) return L.presa ~= nil and L.presa.alvo == alvo and os.clock() < L.presa.ate end
+-- r8: aplicacao do dano pelo CONTRATO. Ordem: (1) Nucleo do jogo (N.ferir), se existir no place - resistencias, guardioes,
+-- reacao e UltimoCombate ficam com ele; (2) Humanoid; (3) ReceberDano do proprio alvo (esquiva/resistencias dele);
+-- (4) guardiao/criatura so com Vida: desconta Vida (guardiao: so lobo COM dono, como no Nucleo; avisa IA_Eventos).
+local Nucleo = nil
+pcall(function()
+	local cd = game:GetService("ServerScriptService"):FindFirstChild("Combate_Dragao")
+	local mod = cd and cd:FindFirstChild("Nucleo")
+	if mod and mod:IsA("ModuleScript") then Nucleo = require(mod) end
+end)
+aplicarDano = function(L, alvo, d, tipo)
+	local agora = workspace:GetServerTimeNow()
+	if Nucleo and Nucleo.ferir then
+		local ok = Nucleo.ferir(L.modelo, alvo, d, nil, tipo, "moderado")
+		return ok and d or 0, "Nucleo.ferir"
+	end
+	local h = alvo:FindFirstChildOfClass("Humanoid")
+	local aplicado, via = 0, "?"
+	if h then h:TakeDamage(d); aplicado, via = d, "Humanoid"
+	else
+		local fn = alvo:FindFirstChild("ReceberDano")
+		if fn and fn:IsA("BindableFunction") then
+			local ok, v = pcall(function() return fn:Invoke(d, nil, L.modelo) end)
+			aplicado, via = (ok and type(v) == "number") and v or 0, "ReceberDano do alvo"
+		elseif alvo:GetAttribute("GuardiaoNinho") then
+			via = "Vida do guardiao (sem Nucleo no place)"
+			if L.dono then
+				local v = math.max(0, (alvo:GetAttribute("Vida") or alvo:GetAttribute("VidaMax") or 600) - d)
+				alvo:SetAttribute("Vida", v); alvo:SetAttribute("UltimoDano", agora); aplicado = d
+				local ev = game:GetService("ServerStorage"):FindFirstChild("IA_Eventos")
+				if ev and ev:FindFirstChild("GuardiaoAtacado") then ev.GuardiaoAtacado:Fire(alvo, (L.dono and L.dono.Character) or L.modelo) end
+				if v <= 0 then alvo:SetAttribute("Incapacitado", true); alvo:SetAttribute("Derrotado", agora) end
+			else via ..= ": lobo sem dono nao fere guardiao (regra do Nucleo)" end
+		elseif alvo:GetAttribute("Criatura") then
+			local v = math.max(0, (alvo:GetAttribute("Vida") or 0) - d); alvo:SetAttribute("Vida", v); aplicado, via = d, "Vida da criatura"
+		end
+	end
+	if aplicado > 0 then L.modelo:SetAttribute("UltimoCombate", agora); alvo:SetAttribute("UltimoCombate", agora) end
+	return aplicado, via
+end
 local function causarDano(L, alvo, base, tipo)
 	local pr = protegido(L, alvo)                                          -- r6: ultima barreira (ex.: alvo entrou na zona no voo)
 	if pr then logc("PROTECAO", L, tipo .. " sem dano em " .. alvo.Name .. " (" .. pr .. ")"); return 0 end
-	local h = alvo:FindFirstChildOfClass("Humanoid"); if not h then return 0 end
 	local mult = L.danoMult
 	local marcada = presaMarcada(L, alvo)
 	if marcada then mult += IC.marcaDano end                                   -- aditivo com noite/kit (teto do dano do kit nao muda)
 	local d = base * mult
-	h:TakeDamage(d); logc("HABILIDADE", L, string.format("%s acertou %s: %.1f (x%.2f%s)", tipo, alvo.Name, d, mult, marcada and ", presa marcada" or ""))
-	K.ultimoDano = {tipo = tipo, alvo = alvo.Name, dano = d, mult = mult, marcada = marcada}
+	local aplicado, via = aplicarDano(L, alvo, d, tipo)
+	logc("HABILIDADE", L, string.format("%s acertou %s: %.1f (x%.2f%s) via %s -> aplicado %.1f", tipo, alvo.Name, d, mult, marcada and ", presa marcada" or "", via, aplicado))
+	K.ultimoDano = {tipo = tipo, alvo = alvo.Name, dano = d, aplicado = aplicado, via = via, mult = mult, marcada = marcada}
 	marcar(L, alvo)
-	return d
+	-- 19/11: controle por porte SO depois de acerto valido com dano (uma rolagem por golpe, no servidor)
+	if aplicado > 0 and K.rolarControle and alvo.Parent and (alvo:GetAttribute("Vida") or 1) > 0 and alvo:GetAttribute("Estado") ~= "Morto" then
+		local ok, R = pcall(K.rolarControle, L, alvo, tipo, aplicado, false, K.forcarControle)
+		if not ok then logc("CONTROLE", L, "erro: " .. tostring(R))
+		elseif R and R.porteA then
+			logc("CONTROLE", L, string.format("%s -> %s: porte %s(%.1f %s, F%.0f) x %s(%.1f %s, F%.0f) rel %+d | chances queda %.0f%% manca %.0f%% lento %.0f%% | %s%s",
+				tipo, alvo.Name, R.porteA.nome, R.porteA.medida, R.porteA.idade, R.porteA.forca, R.porteB.nome, R.porteB.medida, R.porteB.idade, R.porteB.forca, R.rel,
+				R.cQ * 100, R.cM * 100, R.cL * 100, R.efeito, R.motivo and (" (" .. R.motivo .. ")") or ""))
+		end
+		K.ultimoControle = R
+	end
+	return aplicado
 end
 -- espera ate o tempo t do clipe (pelo relogio do servidor); cancela se o lobo deixar de existir
 local function ate(L, t0, t) while vivo(L) and os.clock() - t0 < t do RS.Heartbeat:Wait() end return vivo(L) end
+
+-- ------------------------------------------------------------------ CONTROLE POR PORTE, QUEDA E FINALIZACAO (19/11) [PROPOSTA]
+-- Contrato geral das domesticaveis (prototipo no Lobo; as outras especies adotam nos chats delas):
+--   ALVO expoe: PorteOmbro ou PorteComprimento (studs, adulto), Idade, Forca (indice §0c), Domesticavel = true, DonoUserId
+--   (0 = selvagem), ImuneDerrubada / ImuneLentidao (opcionais).
+--   ESTADOS TEMPORARIOS (atributos no alvo, decididos so no servidor, so depois de acerto com dano > 0):
+--     LentidaoControle (0..0,6) + LentidaoAte; Mancando = true + LentidaoAte; Caido = true + CaidoAte (Vida > 0).
+--     Caido NUNCA usa Incapacitado (os sistemas atuais deixam de mirar quem esta Incapacitado).
+--   DESFECHO (so por finalizacao anunciada com contato real): selvagem -> Vida 0 + Estado "Morto" (sem loot/respawn aqui);
+--     criatura de jogador -> RetiradaDeCombate + Incapacitado (vai ao refugio; integracao pendente); humano -> nunca.
+local CT = CFG.Controle
+K.ultimoStun, K.drCtrl = {}, {}
+local function classePorte(m)
+	local L2 = K.lobos[m]
+	local ombro, comp, idade, forca
+	if L2 then   -- lobo do kit: porte oficial; atributos so para os testes de porte simulado (registrado no log)
+		ombro, idade, forca = m:GetAttribute("PorteOmbro") or CT.porte.ombro, m:GetAttribute("Idade") or CT.porte.idade, m:GetAttribute("Forca") or CT.porte.forca
+	else ombro, comp, idade, forca = m:GetAttribute("PorteOmbro"), m:GetAttribute("PorteComprimento"), m:GetAttribute("Idade") or "Adulto", m:GetAttribute("Forca") end
+	local medida, fonte = ombro, "ombro"
+	if not medida and comp then medida, fonte = comp / 2.5, "comprimento/2,5" end
+	if not medida then local _, sz = m:GetBoundingBox(); medida, fonte = sz.Y * 0.65, "estimado pela caixa" end
+	medida *= (CT.tamanhoIdade[idade] or 1)
+	local nome, idx = "colossal", 4
+	for i, c in ipairs(CT.classes) do if medida < c[2] then nome, idx = c[1], i; break end end
+	forca = (forca or 20) * (CT.forcaIdade[idade] or 1)
+	return {nome = nome, idx = idx, medida = medida, fonte = fonte, forca = forca, idade = idade}
+end
+K.classePorte = classePorte
+local function deJogador(m) return (m:GetAttribute("DonoUserId") or 0) ~= 0 end
+local function ehDomesticavel(m) return K.lobos[m] ~= nil or m:GetAttribute("Domesticavel") == true or m:GetAttribute("GuardiaoNinho") ~= nil end
+local function agoraS() return workspace:GetServerTimeNow() end
+-- aplica (ou so simula) o controle depois de um acerto valido; devolve o resultado para log/medicao
+function K.rolarControle(L, alvo, tipo, aplicado, simular, forcar)
+	local g = CT.golpes[tipo]
+	if not g or not alvo or not alvo.Parent then return {efeito = "nenhum", motivo = "golpe sem controle"} end
+	if Players:GetPlayerFromCharacter(alvo) then return {efeito = "nenhum", motivo = "humano: regra so de criatura"} end
+	if not ehDomesticavel(alvo) then return {efeito = "nenhum", motivo = "nao e domesticavel (fauna de recurso/outro)"} end
+	if not simular and (aplicado or 0) <= 0 then return {efeito = "nenhum", motivo = "sem dano valido (esquiva/protecao)"} end
+	local pa, pb = classePorte(L.modelo), classePorte(alvo)
+	local rel = math.clamp(pa.idx - pb.idx, -3, 3)
+	local fP = CT.porteRelativo[rel] or 1
+	local fF = math.clamp(pa.forca / math.max(pb.forca, 1), CT.forcaMinMax[1], CT.forcaMinMax[2])
+	local k = g.impacto * fP * fF
+	local cQ = (g.impacto >= CT.queda.impactoMin and not alvo:GetAttribute("ImuneDerrubada")) and CT.queda.chance * k or 0
+	local cM = (g.impacto >= CT.manca.impactoMin and not alvo:GetAttribute("ImuneLentidao")) and CT.manca.chance * k or 0
+	local cL = (not alvo:GetAttribute("ImuneLentidao")) and CT.lento.chance * k or 0
+	local R = {porteA = pa, porteB = pb, rel = rel, fP = fP, fF = fF, cQ = cQ, cM = cM, cL = cL, efeito = "nenhum"}
+	local t = agoraS()
+	local pvp = deJogador(alvo) and L.dono ~= nil         -- PvP = criatura de jogador atacada por criatura de outro jogador (selvagem = PvE)
+	local dr = K.drCtrl[alvo]
+	if pvp and dr and t > dr.ate + CT.pvp.janela then dr = nil; K.drCtrl[alvo] = nil end
+	local u = math.random()
+	local efeito
+	if forcar then efeito = forcar
+	elseif u < cQ then efeito = "queda" elseif u < cQ + cM then efeito = "manca" elseif u < cQ + cM + cL then efeito = "lento" end
+	if not efeito then R.motivo = string.format("sorteio %.2f acima das chances", u); return R end
+	-- regras oficiais: >= 4 s entre atordoamentos (queda); PvP: duracao curta, resistencia a repeticao, imunidade temporaria
+	-- r2: os 4 s contam a partir de quando o alvo TERMINA de levantar (de pe), nao do inicio da queda: sem derrubada em cadeia
+	if efeito == "queda" and K.ultimoStun[alvo] and t < K.ultimoStun[alvo] + CT.queda.intervaloMin then
+		R.motivo = string.format("queda negada: de pe ha %.1f s (< %d s)", math.max(0, t - K.ultimoStun[alvo]), CT.queda.intervaloMin); efeito = "manca"
+	end
+	if pvp and dr and dr.imuneAte and t < dr.imuneAte then R.efeito = "nenhum"; R.motivo = "imune a controle (PvP, repeticao)"; return R end
+	local base = (efeito == "queda" and CT.queda.dur) or (efeito == "manca" and CT.manca.dur) or CT.lento.dur
+	local dur = base * (CT.duracaoPorte[pb.nome] or 1)
+	if efeito == "queda" and CT.queda.extraEnfraquecido then                      -- r2: enfraquecido (Vida <= limite de finalizar) levanta mais devagar
+		local vF = (alvo:GetAttribute("Vida") or 1) / math.max(alvo:GetAttribute("VidaMax") or 1, 1)
+		if vF <= CT.finalizar.vidaAlvoMax then dur += CT.queda.extraEnfraquecido * (CT.duracaoPorte[pb.nome] or 1); R.enfraquecido = true end
+	end
+	if pvp then dur *= CT.pvp.fatorDur * (0.5 ^ (dr and dr.n or 0)) end
+	R.efeito, R.dur = efeito, dur
+	R.fracao = (efeito == "manca" and CT.manca.fracao) or (efeito == "lento" and CT.lento.fracao) or nil
+	if simular then return R end
+	if pvp then
+		dr = dr or {n = 0, ate = 0}; dr.n += 1; dr.ate = t
+		if dr.n >= CT.pvp.maxSeguidos then dr.imuneAte = t + dur + CT.pvp.imuneSeg end
+		K.drCtrl[alvo] = dr
+	end
+	K.aplicarEstado(L, alvo, efeito, dur, R.fracao)
+	return R
+end
+-- estados temporarios: no lobo do kit mexem no estado/velocidade; em outro modelo so os atributos do contrato
+-- r3 20/11: escolhe o lado em que o caido tomba. Preferido: cair para LONGE do atacante (barriga voltada para ele). Confere,
+-- na escala do alvo, se ha espaco para as pernas (lado da barriga) e para as costas (lado oposto) - paredes e outros corpos
+-- por raio horizontal, chao/desnivel por raio para baixo. Nenhum lado livre: o de mais espaco, e o log registra a limitacao.
+local function espacoLado(alvo, piv, dir, s)
+	local QL = CT.queda.lateral
+	local rp = RaycastParams.new(); rp.FilterType = Enum.RaycastFilterType.Exclude
+	local ign = {alvo}; for _, pl in ipairs(Players:GetPlayers()) do if pl.Character then table.insert(ign, pl.Character) end end
+	rp.FilterDescendantsInstances = ign
+	local o = piv.Position + Vector3.new(0, QL.alturaSonda * s, 0)
+	local perna, costas = QL.pernas * s, QL.costas * s
+	local h1 = workspace:Raycast(o, dir * perna, rp); local h2 = workspace:Raycast(o, -dir * costas, rp)
+	local livreP = h1 and (h1.Position - o).Magnitude or perna
+	local livreC = h2 and (h2.Position - o).Magnitude or costas
+	local motivo = nil
+	if h1 then motivo = "pernas batem em " .. h1.Instance.Name elseif h2 then motivo = "costas batem em " .. h2.Instance.Name end
+	if not motivo then
+		for _, ponta in ipairs({o + dir * perna * 0.8, o - dir * costas * 0.8}) do
+			local hc = workspace:Raycast(ponta, Vector3.new(0, -(QL.alturaSonda * s + QL.desnivelMax * s + 1), 0), rp)
+			if not hc then motivo = "sem chao"; break end
+			if math.abs(hc.Position.Y - piv.Position.Y) > QL.desnivelMax * s then motivo = string.format("desnivel %.1f", hc.Position.Y - piv.Position.Y); break end
+		end
+	end
+	return motivo, livreP / perna + livreC / costas
+end
+function K.escolherLadoQueda(L, alvo)
+	local QL = CT.queda.lateral
+	local piv = alvo:GetPivot(); local s = (alvo.GetScale and alvo:GetScale()) or 1
+	local pA = L.modelo:GetPivot().Position
+	local dir = Vector3.new(piv.Position.X - pA.X, 0, piv.Position.Z - pA.Z)
+	local rv = Vector3.new(piv.RightVector.X, 0, piv.RightVector.Z).Unit
+	local function barriga(lado) return rv * QL.barrigaE * (lado == "E" and 1 or -1) end
+	-- barriga voltada para o atacante: o lado cuja barriga aponta contra o golpe (dir vai do atacante para o alvo)
+	local pref = (dir.Magnitude < 0.1 or barriga("E"):Dot(-dir.Unit) >= 0) and "E" or "D"
+	local outro = (pref == "E") and "D" or "E"
+	local res = {}
+	for _, lado in ipairs({pref, outro}) do
+		local m, folga = espacoLado(alvo, piv, barriga(lado), s)
+		res[lado] = {m = m, folga = folga}
+		if not m then return lado, (lado == pref) and "barriga para o atacante" or ("outro lado: " .. tostring(res[pref].m)) end
+	end
+	local lado = (res.E.folga >= res.D.folga) and "E" or "D"
+	return lado, string.format("LIMITACAO: nenhum lado livre (E: %s; D: %s) - usa o de mais espaco", tostring(res.E.m), tostring(res.D.m))
+end
+function K.aplicarEstado(L, alvo, efeito, dur, fracao)
+	local t = agoraS()
+	local L2 = K.lobos[alvo]
+	if efeito == "queda" then
+		local QL = CT.queda.lateral
+		local ladoQ, porqueQ = "E", "-"
+		-- r3: ja caido de lado (nova queda antes de levantar): mantem o lado e so prolonga, sem repetir o tombo
+		local jaCaido = L2 and L2.estado == "Caido" and alvo:GetAttribute("CaidoLado")
+		if jaCaido then ladoQ, porqueQ = jaCaido, "ja estava caido"
+		elseif L2 then ladoQ, porqueQ = K.escolherLadoQueda(L, alvo) end
+		local okC, cl = pcall(LA.clipe, QL.clipeLevantar .. ladoQ)
+		local tLev = (L2 and okC and cl and cl.quadros) and (cl.quadros / cl.fps / CT.queda.levantarVel) or (L2 and 1.6 or 0)
+		K.ultimoStun[alvo] = t + dur + tLev                                       -- fim do levantar (de pe)
+		alvo:SetAttribute("Caido", true); alvo:SetAttribute("CaidoAte", t + dur)
+		if L2 and vivo(L2) then
+			K.limparFinalizacao(L2, "derrubado durante a finalizacao")
+			-- interrompe tudo o que estava em curso (habilidade, golpe andando, esquiva): sem dano atrasado de quem caiu
+			for _, tk in ipairs(L2.tarefas) do pcall(task.cancel, tk) end; L2.tarefas = {}
+			L2.modelo:SetAttribute("EmAtaque", nil); L2.dashando = false
+			if L2.ia then L2.ia.mov = nil; L2.ia.andando = false end
+			pcall(function() if K.IA2 and K.IA2.pararMov and L2.ia then K.IA2.pararMov(L2, L2.ia, QL.clipeCaido .. ladoQ) end end)
+			L2.estado = "Caido"; L2.basicoAte = nil
+			-- r3 20/11: tombo LATERAL proprio (QuedaLado) -> laco de lado respirando (CaidoLado); nada de Deitado (descanso)
+			local fq = nil
+			if jaCaido then logc("CONTROLE", L2, string.format("continua caido de lado %s (nova queda so prolonga)", ladoQ))
+			else
+				alvo:SetAttribute("CaidoLado", ladoQ)
+				L2.C.pararTudo(0.1); fq = L2.C.acao(QL.clipeQueda .. ladoQ, 0.08)
+				logc("CONTROLE", L2, string.format("tomba de lado %s (%s)", ladoQ, porqueQ))
+			end
+			L2.quedaId = (L2.quedaId or 0) + 1; local id = L2.quedaId
+			task.delay(math.max(0.2, ((fq and fq.Length > 0) and fq.Length or 1.1) - 0.12), function()
+				if L2.estado == "Caido" and L2.quedaId == id then L2.C.base(QL.clipeCaido .. ladoQ, 0.12) end
+			end)
+			task.delay(dur, function() K.levantar(L2, id) end)
+		else
+			task.delay(dur, function() if alvo.Parent and (alvo:GetAttribute("CaidoAte") or 0) <= agoraS() + 0.05 then alvo:SetAttribute("Caido", nil) end end)
+		end
+	else
+		local fr = math.min(fracao or 0, CT.tetoLentidao)
+		alvo:SetAttribute("LentidaoControle", fr); alvo:SetAttribute("LentidaoAte", t + dur)
+		if efeito == "manca" then alvo:SetAttribute("Mancando", true) end
+		if L2 then setMod(L2, "Controle", {vel = -fr}) end
+		task.delay(dur, function()
+			if not alvo.Parent or (alvo:GetAttribute("LentidaoAte") or 0) > agoraS() + 0.05 then return end
+			alvo:SetAttribute("LentidaoControle", nil); alvo:SetAttribute("LentidaoAte", nil); alvo:SetAttribute("Mancando", nil)
+			if L2 and L2.mods.Controle then setMod(L2, "Controle", nil) end
+		end)
+	end
+	logc("CONTROLE", L, string.format("%s em %s por %.1f s%s", efeito, alvo.Name, dur, fracao and string.format(" (lentidao %.0f%%)", math.min(fracao, CT.tetoLentidao) * 100) or ""))
+	EVENTO:FireAllClients("Controle", alvo, efeito, dur)
+end
+function K.prolongarQueda(alvo, ate)
+	if not (alvo and alvo.Parent) or ate <= (alvo:GetAttribute("CaidoAte") or 0) then return end
+	alvo:SetAttribute("Caido", true); alvo:SetAttribute("CaidoAte", ate)
+	if K.ultimoStun[alvo] then K.ultimoStun[alvo] = math.max(K.ultimoStun[alvo], ate + 1.6) end
+	local L2 = K.lobos[alvo]
+	if L2 and L2.estado == "Caido" then
+		L2.quedaId = (L2.quedaId or 0) + 1; local id = L2.quedaId
+		task.delay(ate - agoraS(), function() K.levantar(L2, id) end)
+	elseif not L2 then
+		task.delay(ate - agoraS(), function() if alvo.Parent and (alvo:GetAttribute("CaidoAte") or 0) <= agoraS() + 0.05 then alvo:SetAttribute("Caido", nil) end end)
+	end
+end
+function K.levantar(L2, id)
+	if not vivo(L2) or L2.estado ~= "Caido" or (id and L2.quedaId ~= id) then return end
+	L2.estado = "Levantando"
+	local lado = L2.modelo:GetAttribute("CaidoLado") or "E"
+	local f = L2.C.acao(CT.queda.lateral.clipeLevantar .. lado, 0.15, CT.queda.levantarVel)   -- r3: levanta pelo lado em que caiu
+	logc("CONTROLE", L2, "levanta (queda terminou)")
+	-- r3: duracao pelo clipe (quadros/fps); a faixa recem-carregada tem Length 0 e o levantar "terminava" na hora
+	local okL, clL = pcall(LA.clipe, CT.queda.lateral.clipeLevantar .. lado)
+	local durL = (okL and clL and clL.quadros) and (clL.quadros / clL.fps) or ((f and f.Length > 0) and f.Length or 1.9)
+	task.delay(durL / CT.queda.levantarVel, function()
+		if L2.estado == "Levantando" and vivo(L2) then
+			L2.estado = "Livre"; L2.C.base("Repouso", 0.2)
+			L2.modelo:SetAttribute("Caido", nil); L2.modelo:SetAttribute("CaidoAte", nil); L2.modelo:SetAttribute("CaidoLado", nil)
+		end
+	end)
+end
+-- desfecho de criatura caida (so via finalizacao valida)
+local function desfecho(L, alvo)
+	local L2 = K.lobos[alvo]
+	if deJogador(alvo) then
+		alvo:SetAttribute("RetiradaDeCombate", true); alvo:SetAttribute("Incapacitado", true); alvo:SetAttribute("Caido", nil)
+		if L2 then L2.estado = "Retirado"; for _, tk in ipairs(L2.tarefas) do pcall(task.cancel, tk) end; L2.tarefas = {} end
+		logc("CONTROLE", L, alvo.Name .. ": criatura de jogador RETIRADA da luta (refugio: integracao pendente; sem morte permanente)")
+		return "retirada"
+	end
+	if L2 then
+		L2.vida = 0; L2.estado = "Morto"; L2.mods = {}; recalcular(L2)
+		for _, tk in ipairs(L2.tarefas) do pcall(task.cancel, tk) end; L2.tarefas = {}
+		L2.C.base(CT.queda.lateral.clipeCaido .. (alvo:GetAttribute("CaidoLado") or "E"), 0.2, 0)   -- r3: fica de lado, parado (sem respirar)
+	end
+	alvo:SetAttribute("Vida", 0); alvo:SetAttribute("Estado", "Morto"); alvo:SetAttribute("Incapacitado", true); alvo:SetAttribute("Caido", nil)
+	logc("CONTROLE", L, alvo.Name .. ": selvagem finalizado (prototipo: sem loot/respawn)")
+	return "morte"
+end
+-- FINALIZACAO anunciada: valida, anuncia (rosnado), confere de novo no contato; qualquer condicao falhando = cancela sem dano
+function K.finalizar(L, alvo, motivo, encaixe)
+	local F = CT.finalizar
+	local function pode(fase)
+		if not vivo(L) then return false, "lobo fora de acao" end
+		if not (alvo and alvo.Parent) then return false, "alvo removido" end
+		if Players:GetPlayerFromCharacter(alvo) then return false, "humano nao e finalizavel" end
+		if not alvo:GetAttribute("Caido") or (alvo:GetAttribute("CaidoAte") or 0) <= agoraS() then return false, "alvo levantou" end
+		local pr = protegido(L, alvo); if pr then return false, "alvo protegido (" .. pr .. ")" end
+		-- r2: histerese. O inicio exige alcance/cone normais; durante anuncio e bote ha folga (+1 stud, +30 graus), senao o ponto
+		-- mais proximo do corpo que esta caindo troca de lado e cancelava no mesmo quadro do anuncio (ensaio 19/11)
+		local folgaA, folgaC = 0, 0
+		if fase ~= "inicio" then folgaA, folgaC = 1.0, 30 end
+		local piv = L.modelo:GetPivot(); local sp, ds = pontoProximo(alvo, piv.Position)
+		if ds > F.alcance + folgaA then return false, string.format("fora do alcance (%.1f)", ds) end
+		local d = Vector3.new(sp.X - piv.Position.X, 0, sp.Z - piv.Position.Z)
+		local semCone = encaixe ~= nil and (fase == "inicio" or fase == "anuncio")   -- r2: com encaixe, o cone vale depois do giro
+		if not semCone and d.Magnitude > 0.1 and math.deg(math.acos(math.clamp(d.Unit:Dot(piv.LookVector), -1, 1))) > F.cone / 2 + folgaC then return false, "alvo fora do cone" end
+		if not linhaDeVisao(L, alvo) then return false, "sem linha de visao" end
+		return true
+	end
+	if L.estado ~= "Livre" then return false, "ocupado (" .. tostring(L.estado) .. ")" end
+	if L.virando then return false, "girando no lugar" end                    -- r3: o giro aplica 90 graus no fim e virava o lobo de costas
+	local ok, por = pode("inicio"); if not ok then logc("CONTROLE", L, "finalizacao recusada: " .. por); return false, por end
+	L.estado = "Finalizando"; L.finalizando = alvo; anunciar(L, "Finalizacao"); alvo:SetAttribute("FinalizacaoDe", L.modelo.Name)
+	L.C.acao(F.clipeAnuncio, 0.1)
+	logc("CONTROLE", L, string.format("FINALIZACAO anunciada em %s (%s)", alvo.Name, motivo or "-"))
+	EVENTO:FireAllClients("Finalizacao", L.modelo, alvo, F.anuncio)
+	tarefa(L, function()
+		local function cancelar(p)
+			logc("CONTROLE", L, "finalizacao CANCELADA: " .. p .. " (sem dano)")
+			if alvo.Parent then alvo:SetAttribute("FinalizacaoDe", nil); alvo:SetAttribute("MordidoPor", nil) end
+			L.finalizando = nil
+			encerrar(L, "Finalizacao"); if vivo(L) and L.estado == "Finalizando" then L.estado = "Livre"; L.C.base("Repouso", 0.2) end
+			K.ultimaFinalizacao = {resultado = "cancelada", motivo = p, lobo = L.modelo.Name, alvo = alvo.Name}
+		end
+		local t0 = os.clock()
+		local pivE0 = L.modelo:GetPivot()
+		if encaixe then                                                           -- encaixe so pequeno (nada de deslizar longe)
+			local dE = Vector3.new(encaixe.X - pivE0.X, 0, encaixe.Z - pivE0.Z).Magnitude
+			local _, yA = pivE0:ToOrientation(); local _, yB = encaixe:ToOrientation()
+			local dG = math.abs(math.deg((yB - yA + math.pi) % (2 * math.pi) - math.pi))
+			if dE > CT.estilo.ajusteMax or dG > CT.estilo.giroMax then encaixe = nil; logc("CONTROLE", L, string.format("encaixe grande demais (%.1f studs, %.0f graus): sem encaixe", dE, dG))
+			else encaixe = CFrame.new(Vector3.new(encaixe.X, pivE0.Y, encaixe.Z)) * CFrame.fromOrientation(0, yB, 0) end
+		end
+		while os.clock() - t0 < F.anuncio do
+			RS.Heartbeat:Wait()
+			if L.estado ~= "Finalizando" then return cancelar("lobo interrompido") end
+			local ok2, p2 = pode("anuncio"); if not ok2 then return cancelar(p2) end
+			if encaixe then                                                       -- r2: assenta ao lado do flanco durante o rosnado
+				local u = math.clamp((os.clock() - t0) / F.anuncio, 0, 1)
+				L.modelo:PivotTo(pivE0:Lerp(encaixe, 1 - (1 - u) ^ 2))
+			end
+		end
+		-- 20/11 r2 FINALIZACAO DO LOBO: mordida no FLANCO/barriga do caido + sacudidas da PROPRIA cabeca (Hab_MordidaFlanco).
+		-- O alvo NAO e puxado nem girado; a boca precisa encostar no tronco no Contato e continuar encostada ate soltar.
+		local E = CT.estilo
+		local clipeF = alvo:GetAttribute("CaidoLado") and E.clipeLado or E.clipe   -- r3: alvo de lado = boca na barriga lateral
+		local cl = LA.clipe(clipeF); local tC, tS = 0.5, 1.85
+		for _, mk in ipairs(cl.marcadores) do if mk.nome == "Contato" then tC = mk.t elseif mk.nome == "Solta" then tS = mk.t end end
+		local fl = L.C.acao(clipeF, 0.12)
+		local function soltar() if alvo.Parent then alvo:SetAttribute("MordidoPor", nil) end; if fl then pcall(function() fl:Stop(0.25) end) end end
+		local t1 = os.clock()
+		while os.clock() - t1 < tC do
+			RS.Heartbeat:Wait()
+			if L.estado ~= "Finalizando" then soltar(); return cancelar("lobo interrompido no bote") end
+			local okB, pB = pode("bote"); if not okB then soltar(); return cancelar(pB .. " (no bote)") end
+		end
+		local d0 = K.distTronco(alvo, boca(L))
+		if d0 > E.contato then soltar(); return cancelar(string.format("boca a %.2f da barriga no contato (sem encaixe)", d0)) end
+		K.prolongarQueda(alvo, agoraS() + (tS - tC) + 0.8)                      -- segura a queda enquanto morde
+		alvo:SetAttribute("MordidoPor", L.modelo.Name)
+		EVENTO:FireAllClients("MordidaFlanco", L.modelo, alvo, tS - tC)
+		local pivA0 = alvo:GetPivot()
+		logc("CONTROLE", L, string.format("FINALIZACAO: mordeu o flanco de %s (boca a %.2f da barriga); sacode a cabeca", alvo.Name, d0))
+		local vida0, dmin, dmax = L.vida, d0, d0
+		while os.clock() - t1 < tS do
+			RS.Heartbeat:Wait()
+			if L.estado ~= "Finalizando" then soltar(); return cancelar("lobo interrompido durante a mordida") end
+			if L.vida < vida0 - E.cancelaDano then soltar(); return cancelar("lobo ferido: soltou a mordida") end
+			local okS, pS = pode("segurar"); if not okS then soltar(); return cancelar(pS .. " (durante a mordida)") end
+			local d = K.distTronco(alvo, boca(L)); dmin = math.min(dmin, d); dmax = math.max(dmax, d)
+			if d > E.contatoSegurar then soltar(); return cancelar(string.format("perdeu o contato com a barriga (%.2f)", d)) end
+		end
+		local moveu = (alvo:GetPivot().Position - pivA0.Position).Magnitude
+		K.ultimaMordidaFlanco = {dmin = dmin, dmax = dmax, alvoMoveu = moveu}
+		logc("CONTROLE", L, string.format("segurou %.1f s: boca->barriga %.2f a %.2f; corpo do alvo moveu %.2f", tS - tC, dmin, dmax, moveu))
+		if alvo.Parent then alvo:SetAttribute("MordidoPor", nil) end
+		local r = desfecho(L, alvo)
+		if alvo.Parent then alvo:SetAttribute("FinalizacaoDe", nil) end
+		L.finalizando = nil
+		K.ultimaFinalizacao = {resultado = r, lobo = L.modelo.Name, alvo = alvo.Name, estilo = E.nome}
+		ate(L, t1, cl.quadros / cl.fps)
+		encerrar(L, "Finalizacao")
+		if vivo(L) and L.estado == "Finalizando" then L.estado = "Livre"; L.C.base("Repouso", 0.2) end
+	end)
+	return true
+end
+-- limpeza: lobo removido/morto nao deixa estado preso em ninguem
+-- limpeza: finalizacao interrompida por fora (lobo derrubado, morto ou removido) nao deixa atributo preso no alvo
+function K.limparFinalizacao(L, motivo)
+	local a = L.finalizando; if not a then return end
+	L.finalizando = nil
+	if a.Parent then a:SetAttribute("FinalizacaoDe", nil); a:SetAttribute("MordidoPor", nil) end
+	if L.modelo.Parent then encerrar(L, "Finalizacao") end
+	logc("CONTROLE", L, "finalizacao CANCELADA: " .. motivo .. " (sem dano)")
+	K.ultimaFinalizacao = {resultado = "cancelada", motivo = motivo, lobo = L.modelo.Name, alvo = a.Name}
+end
+function K.limparControle(m)
+	K.ultimoStun[m] = nil; K.drCtrl[m] = nil
+end
+
 
 -- ------------------------------------------------------------------ basicos (fora dos slots)
 local function basico(L, nome)
@@ -346,7 +916,7 @@ local function basico(L, nome)
 	-- Usa o clipe PARCIAL (cabeca/pescoco; Garra + pata dianteira D) por cima da marcha e o estado continua "Livre"
 	-- (o seguir/IA seguem andando); L.basicoAte impede outra habilidade ate o fim do golpe. Parado = clipe inteiro, como antes.
 	local andando = ((L.seguindo and not L.parado and not L.virando) or (L.ia and L.ia.andando)) and true or false   -- r7b: so em movimento real
-	gastar(L, nome, c)
+	gastar(L, nome, c); anunciar(L, nome)
 	local clip = andando and (c.clipe .. "_Andando") or c.clipe
 	local cl = LA.clipe(clip); local tC
 	for _, mk in ipairs(cl.marcadores) do if mk.nome == c.marcador then tC = mk.t end end
@@ -356,17 +926,23 @@ local function basico(L, nome)
 	tarefa(L, function()
 		local t0 = os.clock()
 		if not ate(L, t0, tC or 0.5) then return end
-		local piv = L.modelo:GetPivot(); local melhor, md = nil, math.huge
-		for _, a in ipairs(alvosPasta() and alvosPasta():GetChildren() or {}) do
+		-- 20/11: acerta so com CONTATO real: boca (Mordida) ou patas dianteiras (Garra) ate HB.contato da superficie do corpo
+		local pontos = (nome == "Garra") and patas(L) or {boca(L)}
+		local lim = (nome == "Garra") and HB.contatoGarra or HB.contatoMordida
+		local melhor, md = nil, math.huge
+		for _, a in ipairs(candidatos(L, c.alcance + 25)) do            -- r8
 			if alvoPermitido(L, a) then
-				local sp, ds = pontoProximo(a, piv.Position)                       -- r5: ate a superficie do corpo
-				local d = sp - piv.Position; local dh = Vector3.new(d.X, 0, d.Z)
-				local ang = dh.Magnitude > 0.1 and math.deg(math.acos(math.clamp(dh.Unit:Dot(piv.LookVector), -1, 1))) or 0
-				if ds <= c.alcance + 0.5 and ang <= c.cone / 2 and ds < md and linhaDeVisao(L, a) then melhor, md = a, ds end
+				local dc = contato(a, pontos)
+				if dc <= lim and dc < md and linhaDeVisao(L, a) then melhor, md = a, dc end
 			end
 		end
-		if melhor then causarDano(L, melhor, c.dano, nome) else logc("HABILIDADE", L, nome .. " sem alvo") end
-		ate(L, t0, cl.quadros / cl.fps); if vivo(L) and not andando then L.estado = "Livre" end
+		if melhor then causarDano(L, melhor, c.dano, nome); logc("HITBOX", L, string.format("%s contato %.2f (limite %.1f)", nome, md, lim))
+		else
+			local mais, dm = nil, math.huge
+			for _, a in ipairs(candidatos(L, 12)) do if alvoPermitido(L, a) then local dc = contato(a, pontos); if dc < dm then mais, dm = a, dc end end end
+			logc("HABILIDADE", L, nome .. " sem alvo" .. (mais and string.format(" (%s a %.2f do %s; limite %.1f)", mais.Name, dm, nome == "Garra" and "golpe da pata" or "focinho", lim) or ""))
+		end
+		ate(L, t0, cl.quadros / cl.fps); encerrar(L, nome); if vivo(L) and not andando then L.estado = "Livre" end
 	end)
 	return true
 end
@@ -418,6 +994,7 @@ local function salto(L, dados)
 	if not vivo(L) then return false, "lobo inativo" end
 	if L.estado ~= "Livre" then return false, "ocupado (" .. L.estado .. ")" end
 	if L.basicoAte and os.clock() < L.basicoAte then return false, "ocupado (golpe andando)" end   -- r7
+	if L.dashando then return false, "esquivando" end                                                 -- 19/11
 	if not cadeia then
 		local r = L.recargas.SaltoPredatorio; if r and os.clock() < r then return false, string.format("recarga %.1fs", r - os.clock()) end
 	end
@@ -468,7 +1045,7 @@ local function salto(L, dados)
 	L.energia -= custo
 	if cadeia then L.saltoCadeiaAte = nil else L.recargas.SaltoPredatorio = os.clock() + SP.recarga end
 	L.modelo:SetAttribute("Recarga_SaltoPredatorio", L.recargas.SaltoPredatorio)
-	L.estado = "SaltoPredatorio"
+	L.estado = "SaltoPredatorio"; if alvo then anunciar(L, "SaltoPredatorio") end
 	if alvo then marcar(L, alvo) end
 	L.modelo:PivotTo(CFrame.lookAt(p0.Position, p0.Position + dir))
 	local faixa = L.C.acao(SP.clipe, 0.06)
@@ -520,20 +1097,112 @@ local function salto(L, dados)
 		local fim = L.modelo:GetPivot().Position
 		if not parou then L.modelo:PivotTo(CFrame.lookAt(destino, destino + dir) * CFrame.Angles(inclin or 0, 0, 0)); fim = destino end   -- acompanha o declive
 		local acertou, dano = false, 0
-		local dAlvo = alvo and alvoValido(alvo) and select(2, pontoProximo(alvo, fim)) or nil   -- r5: pouso -> superficie
-		if alvo and not parou and dAlvo and dAlvo <= SP.raioAcertoSuperficie then
+		-- 20/11: acerto so com CONTATO da boca/patas no corpo do alvo ao pousar (antes: 8,5 studs da anca ate a caixa)
+		local pts = patas(L); table.insert(pts, boca(L))
+		local dAlvo = alvo and alvoValido(alvo) and contato(alvo, pts) or nil
+		if alvo and not parou and dAlvo and dAlvo <= HB.contatoSalto then
 			dano = causarDano(L, alvo, CFG.Basico.Mordida.dano * SP.multDano, "SaltoPredatorio"); acertou = true
-		elseif alvo then logc("HABILIDADE", L, "salto sem acerto" .. (parou and " (obstaculo)" or string.format(" (superficie a %.1f do pouso; raio %.1f)", dAlvo or -1, SP.raioAcertoSuperficie)))
+		elseif alvo then logc("HABILIDADE", L, "salto sem acerto" .. (parou and " (obstaculo)" or string.format(" (boca/patas a %.2f do corpo; limite %.1f)", dAlvo or -1, HB.contatoSalto)))
 		else logc("HABILIDADE", L, "salto de mobilidade pousou" .. (parou and " (obstaculo)" or "")) end
 		EVENTO:FireAllClients("SaltoPouso", L.modelo, {acertou = acertou, parou = parou ~= nil, cadeia = cadeia or false, pos = fim})
 		K.ultimoSalto = {dist = (Vector3.new(fim.X, 0, fim.Z) - Vector3.new(p0.Position.X, 0, p0.Position.Z)).Magnitude, alvo = alvo ~= nil,
 			cadeia = cadeia, custo = custo, tempoVoo = os.clock() - t0 - SP.decolagem, apice = hMax, desnivel = fim.Y - p0.Position.Y,
 			parou = parou ~= nil, acertou = acertou, dano = dano, dAlvo = dAlvo, recuo = recuo, energia = L.energia, pouso = fim,
 			planejado = destino, antecipou = anteci.Magnitude, inclinacao = math.deg(inclin or 0), recarga = L.recargas.SaltoPredatorio and (L.recargas.SaltoPredatorio - os.clock()) or 0}
-		ate(L, t0, SP.golpe + SP.planeio + 0.49); if vivo(L) then L.estado = "Livre" end
+		ate(L, t0, SP.golpe + SP.planeio + 0.49); encerrar(L, "SaltoPredatorio"); if vivo(L) then L.estado = "Livre" end
 		if not cadeia and vivo(L) then L.saltoCadeiaAte = os.clock() + SP.cadeiaJanela end   -- abre a janela do 2o salto
 	end)
 	return true
+end
+
+-- ------------------------------------------------------------------ ESQUIVA VISIVEL (19/11) [PROPOSTA]
+-- Pedido do usuario: quando uma esquiva REALMENTE ocorre (ativa da IA ou passiva sorteada no dano), o lobo da um pequeno
+-- "teleporte" lateral muito rapido; o cliente mostra silhueta residual na saida e faixas verdes de ar no trajeto.
+-- O SERVIDOR decide e valida: trajeto (paredes), chao nas patas de tras e da frente (borda/desnivel), corpo de outra
+-- criatura no destino, zona segura e territorio (lobo com IA). Prefere o lado para onde o atacante NAO olha (sai do cone).
+-- Nenhum lado seguro = reacao curta no lugar (registrada). Sem invulnerabilidade, sem bonus: a passiva mantem o sorteio e o
+-- dano atuais (so ganha a reacao); a ativa (IA) sai de fato da linha do golpe. Intervalo minimo evita deslocamento duplo.
+local EV = CFG.EsquivaVisual
+function K.esquivaDesloc(L, origem, tipo)
+	if not vivo(L) then return false, "inativo" end
+	if L.estado == "Caido" or L.estado == "Levantando" or L.estado == "Finalizando" then return false, "caido/levantando" end
+	local agora = os.clock()
+	local piv = L.modelo:GetPivot(); local pos = piv.Position
+	local fr = Vector3.new(piv.LookVector.X, 0, piv.LookVector.Z).Unit
+	local function reagir(motivo)
+		logc("ESQUIVA", L, string.format("%s: deslocamento bloqueado (%s) -> reacao no lugar", tipo, motivo))
+		EVENTO:FireAllClients("Esquiva", L.modelo, pos, pos, 0, motivo)
+		return false, motivo
+	end
+	if L.dashAte and agora < L.dashAte then return reagir("deslocamento recente") end
+	if L.estado ~= "Livre" then return reagir("em habilidade " .. tostring(L.estado)) end
+	local ref = (typeof(origem) == "Instance" and origem.Parent and centro(origem)) or (pos - fr * 5)
+	local linha = Vector3.new(pos.X - ref.X, 0, pos.Z - ref.Z); if linha.Magnitude < 0.1 then linha = -fr end; linha = linha.Unit
+	local lados = {Vector3.new(-linha.Z, 0, linha.X), Vector3.new(linha.Z, 0, -linha.X)}
+	if typeof(origem) == "Instance" and origem.Parent then
+		local lk = origem:GetPivot().LookVector
+		if lados[1]:Dot(lk) > lados[2]:Dot(lk) then lados[1], lados[2] = lados[2], lados[1] end
+	end
+	local y0 = chaoY(L, pos); local off = y0 and (pos.Y - y0) or 0
+	local rp = RaycastParams.new(); rp.FilterType = Enum.RaycastFilterType.Exclude; rp.RespectCanCollide = true
+	local ign = {L.modelo}; for _, pl in ipairs(Players:GetPlayers()) do if pl.Character then table.insert(ign, pl.Character) end end
+	rp.FilterDescendantsInstances = ign
+	local op = OverlapParams.new(); op.FilterType = Enum.RaycastFilterType.Exclude; op.FilterDescendantsInstances = {L.modelo}
+	-- 19/11: candidatos em ordem: laterais (preferido, oposto), diagonais AFASTANDO do atacante e laterais curtas.
+	-- Em arena aberta quase sempre ha saida; parede/borda/corpo/zona/territorio continuam recusando cada candidato.
+	local cands = {}
+	for _, d in ipairs(lados) do table.insert(cands, {d = d, dist = EV.dist, nome = "lateral"}) end
+	for _, d in ipairs(lados) do table.insert(cands, {d = (d + linha * EV.diagonal).Unit, dist = EV.dist, nome = "diagonal"}) end
+	for _, d in ipairs(lados) do table.insert(cands, {d = d, dist = EV.distCurta, nome = "lateral curta"}) end
+	local motivos = {}
+	for i, cnd in ipairs(cands) do
+		local d = cnd.d
+		local dest = pos + d * cnd.dist
+		local por = nil
+		for _, f in ipairs({0.5, 2.2, 5.0}) do                                    -- traseira, meio e frente do corpo
+			for _, h in ipairs({1.2, 3.5}) do
+				local hit = workspace:Raycast(pos + fr * f + Vector3.new(0, h, 0), d * (cnd.dist + EV.largura / 2), rp)
+				if hit and not por then por = "parede " .. hit.Instance.Name end
+			end
+		end
+		local yT, yF = chaoY(L, dest + fr * 0.5), chaoY(L, dest + fr * 5.3)
+		if not por and (not yT or not yF) then por = "sem chao (borda)" end
+		if not por and y0 and (math.abs(yT - y0) > EV.desnivel or math.abs(yF - y0) > EV.desnivel) then por = string.format("desnivel %.1f", math.max(math.abs(yT - y0), math.abs(yF - y0))) end
+		if not por then
+			local cx = dest + fr * 2.2 + Vector3.new(0, 3, 0)
+			for _, pt in ipairs(workspace:GetPartBoundsInBox(CFrame.lookAt(cx, cx + fr), Vector3.new(EV.largura, 4, EV.comprimento), op)) do
+				local mm = modeloAlvo(pt)
+				if mm and mm ~= L.modelo then por = "corpo de " .. mm.Name; break end
+			end
+		end
+		if not por and emZonaSegura(dest) then por = "zona segura" end
+		if not por and L.ia and L.ia.posto then
+			local g = CFG.IA_Guardiao
+			if Vector3.new(dest.X - L.ia.posto.X, 0, dest.Z - L.ia.posto.Z).Magnitude > g.coleira + g.raioAmeaca then por = "fora do territorio" end
+		end
+		if not por then
+			L.dashAte = agora + EV.intervalo; L.dashando = true
+			local yd = (yT or y0 or pos.Y) + off
+			local para = CFrame.lookAt(Vector3.new(dest.X, yd, dest.Z), Vector3.new(dest.X, yd, dest.Z) + fr)
+			EVENTO:FireAllClients("Esquiva", L.modelo, pos, para.Position, EV.dur, nil)
+			logc("ESQUIVA", L, string.format("%s: deslocou %.1f (%s %s) em %.2f s%s", tipo, cnd.dist, cnd.nome, (i % 2 == 1) and "preferido" or "oposto",
+				EV.dur, #motivos > 0 and (" (recusados antes: " .. table.concat(motivos, " / ") .. ")") or ""))
+			K.ultimaEsquiva = {tipo = tipo, de = pos, para = para.Position, lado = i, t = agora}
+			tarefa(L, function()
+				local t0 = os.clock(); local de = L.modelo:GetPivot()
+				while vivo(L) do
+					local u = math.clamp((os.clock() - t0) / EV.dur, 0, 1); local s = 1 - (1 - u) ^ 3   -- quase instantaneo
+					L.modelo:PivotTo(de:Lerp(para, s))
+					if u >= 1 then break end
+					RS.Heartbeat:Wait()
+				end
+				L.dashando = false
+			end)
+			return true
+		end
+		table.insert(motivos, por)
+	end
+	return reagir(table.concat(motivos, " / "))
 end
 
 -- ------------------------------------------------------------------ ATIVA 2: Uivo Ancestral (so o proprio lobo)
@@ -573,7 +1242,7 @@ local function investida(L, dir)
 	if typeof(dir) ~= "Vector3" then return false, "direcao invalida" end
 	dir = Vector3.new(dir.X, 0, dir.Z); if dir.Magnitude < 0.1 then return false, "direcao invalida" end
 	dir = dir.Unit
-	gastar(L, "Investida", IV); L.estado = "Investida"
+	gastar(L, "Investida", IV); L.estado = "Investida"; anunciar(L, "Investida")
 	local p0 = L.modelo:GetPivot().Position
 	L.modelo:PivotTo(CFrame.lookAt(p0, p0 + dir))
 	L.C.acao(IV.clipe, 0.06)
@@ -592,13 +1261,25 @@ local function investida(L, dir)
 				-- obstaculo: caixa da largura do lobo a frente do peito (alvos validos contam como acerto, nao como parede)
 				local cf = CFrame.lookAt(pos + Vector3.new(0, 3.5, 0), pos + Vector3.new(0, 3.5, 0) + dir)
 				local hit = workspace:Blockcast(cf, Vector3.new(IV.largura, 4, 1), dir * (passo.Magnitude + 6.5), fp)
-				local alvo = hit and hit.Instance:FindFirstAncestorOfClass("Model")
-				if hit and alvo and alvoValido(alvo) and not protegido(L, alvo) then   -- r6: protegido conta como obstaculo (sem dano)
-					if not acertou[alvo] and hit.Distance <= 6.5 + IV.alcanceMordida then
-						acertou[alvo] = true; causarDano(L, alvo, CFG.Basico.Mordida.dano * IV.multDano, "Investida")
-						parado = true; fimTipo, fimPos = "alvo", hit.Position; logc("HABILIDADE", L, "investida parou no primeiro alvo")
-						EVENTO:FireAllClients("InvestidaFim", L.modelo, "alvo", hit.Position)
+				local alvo = hit and modeloAlvo(hit.Instance)                   -- r8
+				-- 20/11: criaturas/personagens saem do blockcast (a caixa da malha parava a investida de longe); o acerto e
+				-- pela BOCA no corpo real; corpo encostado (peito) ou alvo protegido param sem dano
+				local bc = boca(L)
+				for _, a in ipairs(candidatos(L, 16)) do
+					if not acertou[a] and alvoValido(a) then
+						local dcB = contato(a, {bc})
+						if not protegido(L, a) and dcB <= HB.contatoMordida then
+							acertou[a] = true; causarDano(L, a, CFG.Basico.Mordida.dano * IV.multDano, "Investida")
+							parado = true; fimTipo, fimPos = "alvo", bc; logc("HITBOX", L, string.format("investida mordeu %s (contato %.2f)", a.Name, dcB))
+							EVENTO:FireAllClients("InvestidaFim", L.modelo, "alvo", bc); break
+						elseif dcB <= HB.contatoMordida or contato(a, {pos + Vector3.new(0, 4.5, 0) + dir * 2}) <= HB.corpoInvestida then
+							parado = true; fimTipo, fimPos = "corpo", bc; logc("HABILIDADE", L, "investida parou encostada em " .. a.Name .. (protegido(L, a) and " (protegido, sem dano)" or " (sem mordida)"))
+							EVENTO:FireAllClients("InvestidaFim", L.modelo, "obstaculo", bc); break
+						end
 					end
+				end
+				if parado then
+				elseif hit and alvo then                                        -- criatura: tratada acima, nao e parede
 				elseif hit and hit.Distance < passo.Magnitude + 6.0 then   -- focinho fica ~6 studs a frente do pivo
 					parado = true; fimTipo, fimPos = "obstaculo", hit.Position; logc("HABILIDADE", L, "investida parou em obstaculo: " .. hit.Instance.Name)
 					EVENTO:FireAllClients("InvestidaFim", L.modelo, "obstaculo", hit.Position)
@@ -607,7 +1288,7 @@ local function investida(L, dir)
 			end
 			RS.Heartbeat:Wait()
 		end
-		if vivo(L) then L.estado = "Livre" end
+		encerrar(L, "Investida"); if vivo(L) then L.estado = "Livre" end
 		local n = 0 for _ in pairs(acertou) do n += 1 end
 		K.ultimaInvestida = {dist = (L.modelo:GetPivot().Position - p0).Magnitude, acertos = n, fim = fimTipo}
 		if fimTipo == "nada" then EVENTO:FireAllClients("InvestidaFim", L.modelo, "nada", L.modelo:GetPivot().Position) end
@@ -667,7 +1348,7 @@ task.spawn(function()
 	while true do
 		local dt = task.wait(IA.intervalo)
 		for _, L in pairs(K.lobos) do
-			if vivo(L) and L.ia then
+			if vivo(L) and L.ia and not L.ia.v2 then          -- 19/11: lobos com a IA estrategica (LoboIA) ficam com ela
 				local I = L.ia
 				local agora = os.clock()
 				local piv = L.modelo:GetPivot().Position
@@ -772,7 +1453,7 @@ local function virarNoLugar(L, sinal)
 end
 RS.Heartbeat:Connect(function(dt)
 	for _, L in pairs(K.lobos) do
-		if vivo(L) and L.estado == "Livre" and L.dono and L.dono.Character and L.dono.Character.PrimaryPart and not L.parado and not L.virando then
+		if vivo(L) and L.estado == "Livre" and L.dono and L.dono.Character and L.dono.Character.PrimaryPart and not L.parado and not L.virando and not L.dashando then
 			local piv = L.modelo:GetPivot(); local alvo = L.dono.Character.PrimaryPart.Position
 			local d = Vector3.new(alvo.X - piv.Position.X, 0, alvo.Z - piv.Position.Z)
 			local dist = d.Magnitude
@@ -808,6 +1489,36 @@ RS.Heartbeat:Connect(function(dt)
 		end
 	end
 end)
+
+-- ------------------------------------------------------------------ IA ESTRATEGICA (modulo LoboIA, 19/11) [PROPOSTA]
+-- Percepcao/plano/locomocao no modulo; EXECUCAO pelas mesmas ACOES do jogador (acaoIA): validacoes iguais.
+local function filtroMov(L, extra)
+	local p = RaycastParams.new(); p.FilterType = Enum.RaycastFilterType.Exclude; p.RespectCanCollide = true
+	local lista = {}
+	for _, x in pairs(K.lobos) do table.insert(lista, x.modelo) end
+	for _, pl in ipairs(Players:GetPlayers()) do if pl.Character then table.insert(lista, pl.Character) end end
+	for _, x in ipairs(extra or {}) do table.insert(lista, x) end
+	p.FilterDescendantsInstances = lista; return p
+end
+local IA2 = nil
+do
+	local mod = script:FindFirstChild("LoboIA")
+	if mod then
+		local ok, r = pcall(require, mod)
+		if ok then
+			IA2 = r.iniciar({CFG = CFG, lobos = K.lobos, logc = logc, vivo = vivo, alvoValido = alvoValido, alvoPermitido = alvoPermitido,
+				protegido = protegido, pontoProximo = pontoProximo, centro = centro, linhaDeVisao = linhaDeVisao,
+				visao = function(L, a) return visaoInstinto(L, a, partesVegetacao()) end, velAlvo = velAlvo, chaoY = chaoY,
+				filtroMov = filtroMov, misturarCurva = misturarCurva, pararCurvas = pararCurvas, virarNoLugar = virarNoLugar,
+				esquivaDesloc = function(L, origem, tipo) return K.esquivaDesloc(L, origem, tipo) end,
+				classePorte = function(m) return K.classePorte(m) end, finalizar = function(L, alvo, motivo, enc) return K.finalizar(L, alvo, motivo, enc) end,
+				distTronco = function(alvo, p) return K.distTronco(alvo, p) end, troncoAlvo = function(alvo) return K.troncoAlvo(alvo) end,
+				boca = function(L) return K.boca(L) end, contato = function(alvo, pts) return K.contato(alvo, pts) end, patas = function(L) return K.patas(L) end,
+				acao = function(L, n, d, motivo) return acaoIA(L, n, d, motivo) end})
+			K.IA2 = IA2; log("LoboIA (IA estrategica) carregada")
+		else log("LoboIA falhou: " .. tostring(r)) end
+	end
+end
 
 -- lobo do teste: dono = primeiro jogador que entrar
 local function iniciar(jogador)
@@ -849,6 +1560,32 @@ if RS:IsStudio() then
 		elseif cmd == "clonarIA" then                                                       -- guardiao de TESTE sem dono, com IA de defesa
 			local L0 = umLobo(); local m2 = L0.modelo:Clone(); m2.Name = b or "Lobo_Guardiao"; m2.Parent = AREA; m2:PivotTo(a)
 			local L2 = registrar(m2, nil); L2.ia = {posto = a.Position, estado = "Calmo", dists = {}}; logc("IA", L2, "guardiao de teste criado (sem dono)"); return m2
+		elseif cmd == "clonarIA2" then                                                      -- 19/11: lobo sem dono com a IA ESTRATEGICA
+			if not IA2 then return nil end
+			local L0 = umLobo(); local m2 = L0.modelo:Clone(); m2.Name = b or "Lobo_IA"; m2.Parent = AREA; m2:PivotTo(a)
+			for _, k in ipairs({"EmAtaque", "PlanoIA", "UltimoCombate", "Caido", "CaidoAte", "LentidaoControle", "LentidaoAte", "Mancando",
+				"RetiradaDeCombate", "Incapacitado", "Estado", "FinalizacaoDe", "PorteOmbro", "Idade", "Forca", "DecisaoQueda", "Estrangulado", "MordidoPor"}) do m2:SetAttribute(k, nil) end
+			local L2 = registrar(m2, nil); IA2.ligar(L2, a.Position); return m2
+		elseif cmd == "esquiva" then local L = umLobo(a); return K.esquivaDesloc(L, b, c or "teste")       -- 19/11: dispara a esquiva visivel (teste)
+		elseif cmd == "vel" then local e = K.velAlvos[a]; return e and e.v or "sem registro"
+		elseif cmd == "iaInfo" then local L = umLobo(a); return (L and IA2) and IA2.info(L) or {}
+		elseif cmd == "setVida" then local L = umLobo(b); L.vida = a; L.modelo:SetAttribute("Vida", a); return true
+		elseif cmd == "setEnergia" then local L = umLobo(b); L.energia = a; return true
+		-- 19/11 controle por porte / queda / finalizacao (testes)
+		elseif cmd == "porte" then local r = K.classePorte(a); return r
+		elseif cmd == "forcarControle" then K.forcarControle = a; return true                 -- "queda"/"manca"/"lento"/nil
+		elseif cmd == "simControle" then                                                       -- frequencia por porte sem aplicar (N sorteios)
+			local L = umLobo(c); local n = {queda = 0, manca = 0, lento = 0, nenhum = 0}; local R
+			for _ = 1, (b and b.n or 1000) do R = K.rolarControle(L, a, b and b.tipo or "Mordida", 1, true); n[R.efeito] = (n[R.efeito] or 0) + 1 end
+			return {n = n, dur = R and R.dur, porteA = R and R.porteA and R.porteA.nome, porteB = R and R.porteB and R.porteB.nome, rel = R and R.rel, motivo = R and R.motivo}
+		elseif cmd == "derrubar" then local L = umLobo(c); K.ultimoStun[a] = nil; K.aplicarEstado(L, a, b or "queda", K.rolarControle(L, a, "Investida", 1, true, b or "queda").dur); return true
+		elseif cmd == "finalizar" then local L = umLobo(b); return K.finalizar(L, a, c or "teste")
+		elseif cmd == "ultimaMordidaFlanco" then return K.ultimaMordidaFlanco
+		elseif cmd == "ultimaFinalizacao" then return K.ultimaFinalizacao
+		elseif cmd == "hitbox" then local L = umLobo(b); local pt = patas(L)
+			return {boca = K.contato(a, {boca(L)}), patas = K.contato(a, pt), pivoSuperficie = select(2, pontoProximo(a, L.modelo:GetPivot().Position))}
+		elseif cmd == "ultimoControle" then local R = K.ultimoControle; return R and {efeito = R.efeito, dur = R.dur, rel = R.rel, motivo = R.motivo} or nil
+		elseif cmd == "estadoLobo" then local L = umLobo(a); return L and {estado = L.estado, vida = L.vida, vel = L.velMult, caido = L.modelo:GetAttribute("Caido"), lent = L.modelo:GetAttribute("LentidaoControle")} or nil
 		elseif cmd == "clonarSemDono" then                                                  -- lobo sem dono e SEM IA (so percepcao)
 			local L0 = umLobo(); local m2 = L0.modelo:Clone(); m2.Name = b or "Lobo_SemDono"; m2.Parent = AREA; m2:PivotTo(a); registrar(m2, nil); return m2
 		elseif cmd == "percebidos" then local L = umLobo(a); local r = {} if not L then return r end

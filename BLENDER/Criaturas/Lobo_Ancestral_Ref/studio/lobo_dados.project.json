@@ -163,6 +163,30 @@
    "AndarCurvaD": {
     "$path": "dados/AndarCurvaD.txt"
    },
+   "Hab_MordidaFlanco": {
+    "$path": "dados/Hab_MordidaFlanco.txt"
+   },
+   "QuedaLadoE": {
+    "$path": "dados/QuedaLadoE.txt"
+   },
+   "CaidoLadoE": {
+    "$path": "dados/CaidoLadoE.txt"
+   },
+   "LevantarLadoE": {
+    "$path": "dados/LevantarLadoE.txt"
+   },
+   "QuedaLadoD": {
+    "$path": "dados/QuedaLadoD.txt"
+   },
+   "CaidoLadoD": {
+    "$path": "dados/CaidoLadoD.txt"
+   },
+   "LevantarLadoD": {
+    "$path": "dados/LevantarLadoD.txt"
+   },
+   "Hab_MordidaFlancoLado": {
+    "$path": "dados/Hab_MordidaFlancoLado.txt"
+   },
    "Perfil_Hab_Investida": {
     "$path": "dados/Perfil_Hab_Investida.txt"
    }

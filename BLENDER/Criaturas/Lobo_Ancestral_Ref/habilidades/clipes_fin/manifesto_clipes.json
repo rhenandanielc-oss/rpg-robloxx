@@ -1,0 +1,240 @@
+{
+ "Hab_MordidaFlanco": {
+  "duracao_s": 2.6,
+  "loop": false,
+  "quadros": 79,
+  "velocidade_studs_s": 0.0,
+  "marcadores": {
+   "Antecipacao": 0.3,
+   "Contato": 0.5,
+   "Sacudida": 0.62,
+   "Solta": 1.85,
+   "Fim": 2.6
+  },
+  "rotacao_raiz_graus": 0.0,
+  "erro_ik_max": 0.0003,
+  "desliza_pe_max_studs_s": 0.0,
+  "dedo_min_z": 0.1,
+  "malha_min_z_fora_das_patas": 0.099,
+  "onde": [
+   -1.41,
+   -4.06,
+   0.1
+  ],
+  "patas_dist_min": 1.9,
+  "erro_ik_por_pe": {
+   "MaoE": 0.0,
+   "MaoD": 0.0,
+   "MetatarsoE": 0.0,
+   "MetatarsoD": 0.0
+  },
+  "alinhamento": {
+   "tronco_x_meio": {
+    "min": -0.014,
+    "max": 0.015,
+    "media": -0.0
+   },
+   "tronco_x_media": {
+    "min": -0.017,
+    "max": 0.018,
+    "media": -0.0
+   },
+   "apoio_dian_x_centro": {
+    "min": -0.0,
+    "max": 0.0,
+    "media": -0.0
+   },
+   "apoio_tras_x_centro": {
+    "min": -0.0,
+    "max": 0.0,
+    "media": 0.0
+   },
+   "apoio_dian_dy": {
+    "min": -0.0,
+    "max": 0.0,
+    "media": 0.0
+   },
+   "apoio_tras_dy": {
+    "min": -0.0,
+    "max": 0.0,
+    "media": -0.0
+   },
+   "ombros_dz": {
+    "min": -0.055,
+    "max": 0.057,
+    "media": -0.001
+   },
+   "quadris_dz": {
+    "min": -0.017,
+    "max": 0.017,
+    "media": -0.0
+   },
+   "ombros_x_centro": {
+    "min": -0.104,
+    "max": 0.107,
+    "media": -0.002
+   },
+   "quadris_x_centro": {
+    "min": -0.0,
+    "max": 0.0,
+    "media": -0.0
+   }
+  }
+ },
+ "Mordida": {
+  "duracao_s": 1.0,
+  "loop": false,
+  "quadros": 31,
+  "velocidade_studs_s": 0.0,
+  "marcadores": {
+   "Antecipacao": 0.26,
+   "Contato": 0.48,
+   "Recuperacao": 0.62
+  },
+  "rotacao_raiz_graus": 0.0,
+  "erro_ik_max": 0.0,
+  "desliza_pe_max_studs_s": 0.0,
+  "dedo_min_z": 0.1,
+  "malha_min_z_fora_das_patas": 0.132,
+  "onde": [
+   1.07,
+   -3.58,
+   0.13
+  ],
+  "patas_dist_min": 1.9,
+  "erro_ik_por_pe": {
+   "MaoE": 0.0,
+   "MaoD": 0.0,
+   "MetatarsoE": 0.0,
+   "MetatarsoD": 0.0
+  },
+  "alinhamento": {
+   "tronco_x_meio": {
+    "min": 0.0,
+    "max": 0.0,
+    "media": 0.0
+   },
+   "tronco_x_media": {
+    "min": 0.0,
+    "max": 0.0,
+    "media": 0.0
+   },
+   "apoio_dian_x_centro": {
+    "min": -0.0,
+    "max": 0.0,
+    "media": 0.0
+   },
+   "apoio_tras_x_centro": {
+    "min": -0.0,
+    "max": 0.0,
+    "media": 0.0
+   },
+   "apoio_dian_dy": {
+    "min": -0.0,
+    "max": 0.0,
+    "media": 0.0
+   },
+   "apoio_tras_dy": {
+    "min": -0.0,
+    "max": 0.0,
+    "media": -0.0
+   },
+   "ombros_dz": {
+    "min": 0.0,
+    "max": 0.0,
+    "media": 0.0
+   },
+   "quadris_dz": {
+    "min": -0.0,
+    "max": 0.0,
+    "media": 0.0
+   },
+   "ombros_x_centro": {
+    "min": 0.0,
+    "max": 0.0,
+    "media": 0.0
+   },
+   "quadris_x_centro": {
+    "min": 0.0,
+    "max": 0.0,
+    "media": 0.0
+   }
+  }
+ },
+ "Deitado": {
+  "duracao_s": 4.0,
+  "loop": true,
+  "quadros": 120,
+  "velocidade_studs_s": 0.0,
+  "marcadores": {},
+  "rotacao_raiz_graus": 0.0,
+  "erro_ik_max": 0.0001,
+  "desliza_pe_max_studs_s": 0.0,
+  "dedo_min_z": 0.21,
+  "malha_min_z_fora_das_patas": -0.392,
+  "onde": [
+   -0.54,
+   2.54,
+   -0.39
+  ],
+  "patas_dist_min": 2.8,
+  "erro_ik_por_pe": {
+   "MaoE": 0.0,
+   "MaoD": 0.0,
+   "MetatarsoE": 0.0,
+   "MetatarsoD": 0.0
+  },
+  "alinhamento": {
+   "tronco_x_meio": {
+    "min": 0.0,
+    "max": 0.0,
+    "media": 0.0
+   },
+   "tronco_x_media": {
+    "min": -0.0,
+    "max": -0.0,
+    "media": -0.0
+   },
+   "apoio_dian_x_centro": {
+    "min": -0.0,
+    "max": 0.0,
+    "media": -0.0
+   },
+   "apoio_tras_x_centro": {
+    "min": -0.0,
+    "max": -0.0,
+    "media": -0.0
+   },
+   "apoio_dian_dy": {
+    "min": -0.0,
+    "max": 0.0,
+    "media": -0.0
+   },
+   "apoio_tras_dy": {
+    "min": 0.0,
+    "max": 0.0,
+    "media": 0.0
+   },
+   "ombros_dz": {
+    "min": 0.0,
+    "max": 0.0,
+    "media": 0.0
+   },
+   "quadris_dz": {
+    "min": -0.0,
+    "max": -0.0,
+    "media": -0.0
+   },
+   "ombros_x_centro": {
+    "min": 0.0,
+    "max": 0.0,
+    "media": 0.0
+   },
+   "quadris_x_centro": {
+    "min": 0.0,
+    "max": 0.0,
+    "media": 0.0
+   }
+  }
+ }
+}

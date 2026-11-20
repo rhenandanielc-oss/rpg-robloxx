@@ -951,6 +951,10 @@ if os.environ.get("LOBO_VIDA"):                      # comportamentos de vida (1
         exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "comportamento", "clipes_vida_l2.py"), encoding="utf-8").read(), globals())
 if os.environ.get("LOBO_KIT"):                       # kit de habilidades (10/11): Hab_* (habilidades/clipes_kit.py)
     exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "habilidades", "clipes_kit.py"), encoding="utf-8").read(), globals())
+if os.environ.get("LOBO_FINAL"):                     # 20/11: finalizacao propria do Lobo (habilidades/clipes_finalizacao.py)
+    exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "habilidades", "clipes_finalizacao.py"), encoding="utf-8").read(), globals())
+if os.environ.get("LOBO_QUEDA"):                     # 20/11: queda LATERAL propria (habilidades/clipes_queda_lateral.py)
+    exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "habilidades", "clipes_queda_lateral.py"), encoding="utf-8").read(), globals())
 QUAIS = A[1].split(",") if len(A) > 1 else list(CLIPES)
 ROT_RAIZ = {"VirarE": 90.0, "VirarD": -90.0}
 
@@ -985,7 +989,7 @@ for nome in QUAIS:
     fn, dur, loop, vel_, marc = CLIPES[nome]
     # poses de chao paradas: a cauda ja repousa (sem passo de malha, que a erguia como pluma); TRANSICOES: o passo de
     # malha volta com limite -0,15, so para a cauda nao varar o chao no meio do movimento (v17a: ate -0,97)
-    TRANSICAO = nome in ("Sentar", "LevantarSentado", "Deitar", "LevantarDeitado", "Despertar", "Adormecer")
+    TRANSICAO = nome in ("Sentar", "LevantarSentado", "Deitar", "LevantarDeitado", "Despertar", "Adormecer") or nome in globals().get("TRANSICAO_EXTRA", ())
     CAUDA_MALHA = (nome not in CAUDA_NO_CHAO) or TRANSICAO
     CAUDA_LIMITE = -0.15 if TRANSICAO else 0.04
     nq = int(round(dur * FPS)) + (0 if loop else 1)

@@ -1739,6 +1739,7 @@ Pedido do usuário depois do vídeo do Studio: "ao virar deve ser mais natural, 
   - **Sem teste:** noite, várias cópias e celular.
 
 ## 6aw. Auditoria de compatibilidade com o mundo + ensaios controlados (18/11/2026; Testes-loboancestral; nada foi alterado no place; aguardando avaliação) → `DOCS/criaturas/lobo-ancestral-compatibilidade.md`
+- **Atualizações:** r5 alcance até a superfície (v35), r6 proteções (v36), r7 ataque andando (v37), **r8 contrato de criatura + duelo Lobo × Lobo (v38; §12 do relatório; Nucleo compartilhado não alterado, proposta pendente)**.
 - **Leituras:** auditoria somente leitura das outras criaturas (o que existe de fato), dos sistemas de combate de `src/`, da v6.2 e dos .docx oficiais de 30/10.
 - **Conflito registrado sem alterar:** elemento único oficial × Natureza+Ar na v6.2 (o elemento do Lobo está PENDENTE no oficial).
 - **Nenhuma criatura real no place:** ensaios em Play com alvos temporários ágil, tank e colossal, criados e removidos só no Play. Scripts do Lobo inalterados (checksum).
@@ -1756,3 +1757,13 @@ Pedido do usuário depois do vídeo do Studio: "ao virar deve ser mais natural, 
 1. **(15/11) Avaliar o import e o protótipo do kit no Testes-loboancestral (§6am)**: aparência no Studio, números [PROPOSTA], efeitos.
 2. **Studio:** montaria funcional do lobo, sons, iluminação de bioma, teste em celular e multiplayer (cada um só com autorização).
 3. **Depois:** sons próprios, IA do lobo selvagem e integração no place principal (só combinando com o usuário).
+
+## 6ax. IA estratégica (protótipo, 19/11/2026; Testes-loboancestral v47; aguardando avaliação) → `DOCS/criaturas/lobo-ancestral-ia.md`
+- Módulo `studio/kit/LoboIA.luau`: percepção/ameaça → plano (Calmo, Alerta, Investigar, Perseguir, Pressionar, Flanquear, Esquivar, Recuar, Recuperar, Desistir) → locomoção pelos clipes → execução pelas mesmas ações do jogador. Ensaios 1–9 com réplicas (sem criatura real); números [A TESTAR].
+- 19/11: duelo mais móvel + esquiva visível (place v55) → seção "Duelo mais móvel + esquiva visível" em `DOCS/criaturas/lobo-ancestral-ia.md`.
+- 19/11: refino de ritmo/posicionamento r6 (place v64) → seção "Refino de ritmo e posicionamento" em `DOCS/criaturas/lobo-ancestral-ia.md`.
+- 19/11: correção de precisão/posição r7 (place v66) → seção "Correção de precisão e posição: r7" em `DOCS/criaturas/lobo-ancestral-ia.md`.
+- 19/11: golpes por porte, queda e decisão de finalizar (place v75) → seção "Golpes por porte, queda e decisão de finalizar" em `DOCS/criaturas/lobo-ancestral-ia.md`; contrato e plano de adoção em `BLENDER/Criaturas/Lobo_Ancestral_Ref/studio/kit/CONTRATO-CONTROLE-PORTE.md`.
+- 20/11: hitbox de contato + finalização do Lobo (puxar, morder, estrangular), place v81 → seção "Hitbox de contato e finalização própria do Lobo" em `DOCS/criaturas/lobo-ancestral-ia.md`.
+- 20/11: finalização corrigida — mordida no flanco/barriga com clipe próprio `Hab_MordidaFlanco` (place v91) → seção "Finalização corrigida: mordida no flanco" em `DOCS/criaturas/lobo-ancestral-ia.md`.
+- 20/11: queda lateral — o derrubado tomba de lado (clipes próprios QuedaLado/CaidoLado/LevantarLado E/D e Hab_MordidaFlancoLado; place v99, aguardando avaliação) → seção "Queda lateral para a finalização" em `DOCS/criaturas/lobo-ancestral-ia.md`.

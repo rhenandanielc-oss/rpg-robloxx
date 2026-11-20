@@ -531,6 +531,60 @@ local function rajada(m, dir)
 	end
 end
 
+-- 19/11 ESQUIVA VISIVEL [PROPOSTA]: o servidor ja deslocou (ou recusou) o lobo; aqui so a leitura visual.
+--  * silhueta residual na SAIDA: copia local do lobo na pose do instante (ossos copiados), material ForceField verde,
+--    some em ~0,35 s (nao cobre o lobo real; fica onde ele estava);
+--  * faixas verdes de ar no TRAJETO: fitas presas ao corpo (mesmo vento aprovado) que desenham o caminho e somem rapido;
+--  * deslocamento recusado (parede/borda/corpo/zona): reacao curta no lugar (rajada curta em volta, sem silhueta).
+local SILH_VIDA, FAIXA_VIDA = 0.35, 0.3
+local function silhueta(m, cf)
+	local ok, copia = pcall(function()
+		local arq = m.Archivable; m.Archivable = true; local c = m:Clone(); m.Archivable = arq; return c
+	end)
+	if not ok or not copia then return end
+	local orig, cop = m:GetDescendants(), copia:GetDescendants()
+	for i, d in ipairs(cop) do
+		local o = orig[i]
+		if d:IsA("Bone") and o and o:IsA("Bone") then pcall(function() d.Transform = o.Transform end) end
+	end
+	for _, d in ipairs(cop) do
+		if d:IsA("Script") or d:IsA("LocalScript") or d:IsA("ModuleScript") or d:IsA("AnimationController") or d:IsA("Highlight")
+			or d:IsA("Light") or d:IsA("Trail") or d:IsA("Beam") or d:IsA("ParticleEmitter") or d:IsA("SurfaceAppearance") or d:IsA("BindableFunction") then d:Destroy()
+		elseif d:IsA("BasePart") then
+			d.Anchored = true; d.CanCollide = false; d.CanQuery = false; d.CanTouch = false; d.CastShadow = false
+			if d:IsA("MeshPart") and d.Transparency < 1 then d.Material = Enum.Material.ForceField; d.Color = VENTO; d.Transparency = 0.15
+			else d.Transparency = 1 end
+		end
+	end
+	copia.Name = "SilhuetaEsquiva"; copia:PivotTo(cf); copia.Parent = workspace.CurrentCamera
+	local t0 = os.clock()
+	local con; con = RunService.RenderStepped:Connect(function()
+		local u = (os.clock() - t0) / SILH_VIDA
+		if u >= 1 or not copia.Parent then con:Disconnect(); copia:Destroy(); return end
+		for _, d in ipairs(copia:GetDescendants()) do if d:IsA("MeshPart") and d.Material == Enum.Material.ForceField then d.Transparency = 0.15 + 0.85 * sm(u) end end
+	end)
+end
+local function fxEsquiva(m, de, para, dur, bloqueio)
+	if not (m and m.Parent) or not perto(m) then return end
+	if bloqueio then
+		-- reacao no lugar: duas rajadas curtas rentes ao corpo (le como "esquivou, mas sem espaco")
+		for i = 1, 2 do
+			local s = (i == 1) and 1 or -1
+			fita(m, 0.3, 0.22, 0.4, 0.25, function(t) local u = t / 0.3; local a = s * u * math.pi * 1.1
+				return Vector3.new(math.cos(a) * 2.6, 2.2 + i * 0.9, -2.2 + math.sin(a) * 5.2), 1 - sm((u - 0.6) / 0.4) end)
+		end
+		return
+	end
+	silhueta(m, CFrame.lookAt(de, de + m:GetPivot().LookVector * Vector3.new(1, 0, 1)))
+	-- faixas no trajeto: pontos fixos do corpo (frente = -Z do RootPart); o proprio deslocamento desenha a faixa
+	local n = CELULAR and 2 or 4
+	local pontos = {Vector3.new(0, 3.6, -0.6), Vector3.new(0, 2.4, -3.0), Vector3.new(0, 4.3, -4.6), Vector3.new(0, 1.5, -1.8)}
+	for i = 1, n do
+		local p = pontos[i]
+		fita(m, (dur or 0.12) + 0.05, 0.3, 0.35, FAIXA_VIDA, function() return p, 1 end)
+	end
+end
+
 local uivoClipe = {}                                             -- lobos cujo Uivo ja veio pelo UivoInicio (evita efeito dobrado)
 EVENTO.OnClientEvent:Connect(function(tipo, m, a, b, c, d)
 	if tipo == "Resposta" then ultima = string.format("%s: %s %s", tostring(a), b and "ok" or "recusado", c or "")
@@ -545,5 +599,6 @@ EVENTO.OnClientEvent:Connect(function(tipo, m, a, b, c, d)
 	elseif tipo == "SaltoPouso" then fxSaltoPouso(m, a or {})
 	elseif tipo == "Investida" then fxInvestida(m)
 	elseif tipo == "InvestidaFim" then fxInvestidaFim(m, a, b)
+	elseif tipo == "Esquiva" then fxEsquiva(m, a, b, c, d)
 	elseif tipo == "Noite" then ultima = a and "Cacador Noturno ativo (noite)" or "Cacador Noturno inativo (dia)" end
 end)

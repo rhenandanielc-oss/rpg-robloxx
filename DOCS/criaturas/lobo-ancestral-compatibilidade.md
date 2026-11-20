@@ -248,6 +248,41 @@ Sem tocar em `src/` nem em scripts compartilhados. A ligação com `N.ferir`, al
   - PvP real e multiplayer não testados (um só jogador; o kit continua aceitando só a pasta Alvos).
 - **Evidências:** `studio/review/Lobo_r7_ataque_andando.mp4`, `r7_ataque_andando_prancha.jpg`, `r7_lobo_referencia_x_studio.jpg`.
 
+## 12. r8: contrato de criatura no kit (18/11/2026; place v38)
+- **Pedido:** "Prossiga" no passo de ligar o kit ao sistema de dano. Feito só no kit do Lobo; `src/` e o Nucleo **não** foram tocados.
+- **Contrato adotado:** é a mesma convenção do Lobo Ártico.
+  - No modelo: atributo `Criatura = true`, `Vida`/`VidaMax` e uma BindableFunction `ReceberDano(valor, elemento, fonte)`.
+- **O que mudou em `LoboKit_Servidor.luau` (57708 bytes, checksum 240065038; backup `LoboKit_Servidor_r7_antes_contrato`):**
+  - **O Lobo registra o contrato** (Vida 400 [PROPOSTA]). `ReceberDano` passa por esquiva/resistências e grava `Vida`.
+  - **Alvos:** além da pasta Alvos, aceita no workspace modelos com Humanoid vivo, `Criatura` ou `GuardiaoNinho` com Vida > 0. Ignora `Incapacitado`/`Morto`.
+  - **Proteções:** passam a incluir o próprio Lobo e qualquer criatura do mesmo dono (`DonoUserId`).
+  - **`aplicarDano` segue esta ordem**, e o log informa por qual via o dano entrou:
+    1. `Nucleo.ferir`, se `ServerScriptService.Combate_Dragao.Nucleo` existir;
+    2. Humanoid;
+    3. `ReceberDano` do alvo;
+    4. guardião por `Vida` (só com dono; grava UltimoDano, IA_Eventos e Incapacitado em 0);
+    5. `Vida` de criatura.
+  - Grava `UltimoCombate` no alvo.
+- **Testes em Play** (réplicas temporárias, removidas no fim; nenhuma criatura real neste place):
+
+| Caso | Resultado | Valores |
+|---|---|---|
+| Contrato no Lobo do dono | **funciona** | Criatura=true, Vida 400/400, ReceberDano presente |
+| Réplica de guardião fora da pasta Alvos | **funciona** | Mordida 600→590; Salto 590→576,8 (via Vida do guardião; não há Nucleo no place) |
+| Réplica de criatura com ReceberDano próprio (resistência 50%) | **funciona** | Mordida 10→5 (300→295); Investida 13,2→6,6 (295→288,4) |
+| Salto em clone do Lobo do mesmo dono | **bloqueado (correto)** | "alvo protegido (mesmo dono)" |
+| **Duelo Lobo × Lobo**, 24,1 s (Lobo do dono guiado pelo gancho × Lobo guardião, IA de teste, sem dono) | **funciona** | dano nos dois sentidos via ReceberDano, com esquivas ("aplicado 0.0"); o do dono terminou com 247/400 (3 acertos, 2 recebidos), o guardião com 347,2/400 (12 acertos, 11 recebidos). A diferença vem do guia simples do teste e não mede equilíbrio |
+
+- **O que não foi testado:**
+  - o caminho `Nucleo.ferir`, porque não há Nucleo neste place;
+  - criaturas reais de outros places;
+  - PvP entre jogadores, multiplayer e celular.
+- **Proposta para o Nucleo compartilhado [PROPOSTA; precisa de aprovação do usuário e do dono do combate; não aplicada]:**
+  1. Em `N.ferir`: quando o alvo tiver `Criatura` + `ReceberDano`, chamar `ReceberDano(valor, elemento, atacante)` em vez de só procurar Humanoid. Assim o Lobo, o Lobo Ártico e outras criaturas com contrato recebem dano dos dragões.
+  2. Em `alvosValidos` e nas listas de ameaça da IA: incluir modelos com `Criatura` (sem dono ou com `PvPAtivo`), mantendo as regras de dono, `AliadoDe` e ZonaSegura.
+  3. Teste de falha depois da mudança: criatura sem `ReceberDano`, `Invoke` com erro, alvo morto e dono saindo do jogo.
+- **Evidências:** `studio/review/Lobo_r8_duelo_lobos.mp4`, `r8_duelo_lobos_prancha.jpg`, `r8_lobo_referencia_x_studio.jpg`.
+
 ## Evidências (`BLENDER/Criaturas/Lobo_Ancestral_Ref/studio/review/`)
 - `Lobo_Compatibilidade_ensaios.mp4` (21 s, Play, tempo real):
   - colossal: Mordida, Salto e Investida;

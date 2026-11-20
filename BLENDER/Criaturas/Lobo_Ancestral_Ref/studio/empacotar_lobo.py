@@ -38,6 +38,11 @@ for pasta, lote, nomes in [("comportamento/clipes_l1", "vida L1", ["Beber", "Com
 # 16/11 (aprovado pelo usuario): virar andando + VirarE/D r2 (patas giram junto) + pelo do rosnado/latido sem dividir
 for n in ["AndarCurvaE", "AndarCurvaD", "VirarE", "VirarD"]: FONTES[n] = ("marcha/clipes_curvas32", "curvas v32")
 for n in ["RosnadoAmeaca", "LatidoAviso"]: FONTES[n] = ("comportamento/clipes_l4_r2", "vida L4 r2 (pelo)")
+# 20/11: finalizacao propria do Lobo (mordida no flanco + sacudidas da cabeca), habilidades/clipes_finalizacao.py r2
+FONTES["Hab_MordidaFlanco"] = ("habilidades/clipes_fin", "finalizacao r2 (flanco)")
+# 20/11 r3: queda LATERAL propria (QuedaLado/CaidoLado/LevantarLado E/D) + mordida no flanco do alvo deitado de lado
+for n in ["QuedaLadoE", "CaidoLadoE", "LevantarLadoE", "QuedaLadoD", "CaidoLadoD", "LevantarLadoD", "Hab_MordidaFlancoLado"]:
+    FONTES[n] = ("habilidades/clipes_queda", "queda lateral r4 patas abertas" if n != "Hab_MordidaFlancoLado" else "queda lateral r3")
 if __name__ == "__main__":
     os.makedirs(os.path.join(AQUI, "dados"), exist_ok=True)
     inv = {}; arvore = {"$className": "Folder"}
