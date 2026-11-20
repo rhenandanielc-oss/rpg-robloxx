@@ -286,10 +286,14 @@ local function pegarEm(g, alvo, agua, maxCorr, alvoR, sim)
 	local t = 0; while t < 0.3 do t += RS.Heartbeat:Wait(); if est.gen ~= g then return {modo = "erro", motivo = "cancelado"} end end
 	local dEst = sim and sim.dPega or 4.8; local andou = 0; local p0 = modelo:GetPivot().Position
 	local pR = alvoR.p
+	local subiu = 0                                             -- 20/11: na agua o corpo tambem SOBE ate a presa (bote vindo do fundo)
 	for volta = 1, 2 do
 		for _ = 1, 15 do                                        -- leva o centro do vao (abertura maxima) ate a regiao
 			local Mp = E.pontoBoca(E.boca(modelo), dEst, E.ALFA_MAX); local hz = (pR - Mp) * Vector3.new(1, 0, 1)
-			if hz.Magnitude < 0.03 then break end
+			local dy = 0
+			if agua then dy = math.clamp((pR - Mp).Y, -1.0, CFG.Agarrao.subir_agua - subiu); dy = math.clamp(dy, -1.0, 1.2) end   -- passos curtos (sem salto)
+			if hz.Magnitude < 0.03 and math.abs(dy) < 0.03 then break end
+			if dy ~= 0 then subiu += dy; BASE = modelo:GetPivot() + Vector3.new(0, dy, 0); modelo:PivotTo(BASE); est.yBote = BASE.Y end
 			local liq = ((modelo:GetPivot().Position + hz - p0) * Vector3.new(1, 0, 1)).Magnitude   -- deslocamento liquido do corpo
 			if liq > maxCorr then
 				return {modo = "erro", motivo = string.format("fora de alcance: o corpo precisaria se ajustar %.2f (max %.1f)", liq, maxCorr), p = pR, nome = alvoR.nome, pose = pose}
@@ -305,7 +309,7 @@ local function pegarEm(g, alvo, agua, maxCorr, alvoR, sim)
 	end
 	local b = E.boca(modelo)
 	local r = E.avaliar(alvo, pR, b, CFG.Agarrao.cravar)        -- medida no referencial REAL da boca (pose tocada); r2: dentes cravados
-	r.p, r.nome, r.pose, r.baseSeg, r.baseEsm, r.andou = pR, alvoR.nome, pose, baseSeg, baseEsm, andou
+	r.p, r.nome, r.pose, r.baseSeg, r.baseEsm, r.andou, r.subiu = pR, alvoR.nome, pose, baseSeg, baseEsm, andou, subiu
 	local dv = pR - E.pontoBoca(b, r.dPega or dEst, E.ALFA_MAX)
 	r.lateral, r.altura, r.prof = dv:Dot(b.R), dv:Dot(b.U), dv:Dot(b.F)
 	if math.abs(r.lateral) > E.TOL.lateral or math.abs(r.altura) > E.TOL.contato then
@@ -645,7 +649,7 @@ function M.agarrao(alvo, cena, opcoes)
 		pegando = false; M.ultimaPegada = r
 		if est.gen ~= g then return end
 		log("PEGADA %s: regiao %s, pose %s; %s%s", string.upper(r.modo), tostring(r.nome), tostring(r.pose), r.motivo or "",
-			r.lateral and string.format(" | desvio lateral %.2f, vao %.2f, corrigiu %.2f", r.lateral, r.altura, r.andou or 0) or "")
+			r.lateral and string.format(" | desvio lateral %.2f, vao %.2f, corrigiu %.2f, subiu %.2f", r.lateral, r.altura, r.andou or 0, r.subiu or 0) or "")
 		if r.modo == "erro" then resultado = "erro_alcance"
 		elseif r.modo == "mordida" then
 			ferir(alvo, CFG.Agarrao.dano_contato, "MordidaAgarrao")
@@ -1384,7 +1388,7 @@ function M.finalizar(a, forcar)
 		local r = pegar(g, a, est.naAgua, CFG.Agarrao.corrigir_final, F.ossosAlvo); M.ultimaPegada = r
 		if est.gen ~= g then return end
 		log("PEGADA %s (finalizacao): regiao %s, pose %s; %s%s", string.upper(r.modo), tostring(r.nome), tostring(r.pose), r.motivo or "",
-			r.lateral and string.format(" | desvio lateral %.2f, vao %.2f, corrigiu %.2f", r.lateral, r.altura, r.andou or 0) or "")
+			r.lateral and string.format(" | desvio lateral %.2f, vao %.2f, corrigiu %.2f, subiu %.2f", r.lateral, r.altura, r.andou or 0, r.subiu or 0) or "")
 		if r.modo == "erro" then cancelar(r.motivo or "erro"); return end
 		if not valida() then return end
 		if r.modo == "mordida" then                                -- nao cabe: so a mordida de contato, sem esmagar

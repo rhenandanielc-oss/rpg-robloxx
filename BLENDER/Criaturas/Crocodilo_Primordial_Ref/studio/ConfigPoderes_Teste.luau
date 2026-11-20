@@ -11,6 +11,7 @@ return {
 		sustentacao = 3.5,                  -- s segurando antes de soltar (usuario 16/11: 3,5 s por enquanto)
 		dano_contato = 10, dano_por_segundo = 4,
 		altura_lado = 1.9,                  -- 20/11 encaixe: regiao a ate 1,9 do chao = MORDIDA DE LADO (cabeca baixa e girada); acima = boca normal
+		subir_agua = 5.0,                   -- 20/11: na agua o corpo pode SUBIR ate 5 para a boca alcancar a presa na superficie (bote vindo do fundo)
 		corrigir_agarrao = 1.5, corrigir_final = 3.0,   -- quanto o corpo do croc pode se ajustar para centralizar a boca na regiao (studs)
 		revalidar = 0.5,                    -- s entre revalidacoes da pegada (espessura x vao) enquanto segura
 		cravar = 0.4,                       -- 20/11 r2 usuario: dentes cravam ~0,4 studs no corpo (arcadas fecham alem da espessura)

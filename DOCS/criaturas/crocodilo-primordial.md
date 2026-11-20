@@ -123,6 +123,13 @@ Papel ecológico em relação aos vizinhos:
   - **Vídeo:** `review/kit_agua_2011/Crocodilo_KitAgua_Natural.mp4`.
   - **No place:** backup `ServerStorage.Crocodilo_ANTES_KitAgua`; place local salvo.
   - **Achado fora desta tarefa:** na emboscada da Submersão, o bote no boneco do canal errou por altura ("fora do vão 3,87"): a boca submersa fica abaixo do alvo na superfície. A pegada real ainda não sobe a cabeça até o alvo na água. A corrigir numa próxima etapa.
+  - **20/11 — CORRIGIDO (usuário: "Sim, corrigir"). Testado em Play. APROVADO pelo usuário em 20/11 ("Aprovar e commitar").**
+    - Na pegada na água, o corpo agora também **sobe** até a presa, não só se ajusta na horizontal. São passos curtos (≤1,2 por quadro), até `Agarrao.subir_agua` = 5. Isso fica em `pegarEm` e só vale na água; em terra nada muda.
+    - **Testes (Submersão → emboscada):**
+      - Boneco do canal: o desvio vertical caiu de 3,87 para 0,03–0,10, com o corpo subindo 3,7–4,1. O boneco é grosso demais (5,5 > vão 1,52), então leva **só a mordida** (dano 10), como manda a regra.
+      - Presa pequena boiando (espessura 1,13): **presa pela cabeça**. O corpo subiu 4,0, os dentes cravaram 0,39, ficou presa por 3,51 s e foi solta pelo marcador.
+    - **Sem vídeo:** a tomada ficou tapada por um poste da arena e a captura caiu para ~8 qps. A evidência são os registros acima.
+    - **No place:** backup `ServerStorage.Crocodilo_ANTES_BoteAgua`; place local salvo.
 
 ### Elemento
 - **[OFICIAL — 30/10/2026]** Cada criatura tem **um único elemento natural**. Não há 2º/3º elemento, alternância nem fusão elemental no sistema atual.
