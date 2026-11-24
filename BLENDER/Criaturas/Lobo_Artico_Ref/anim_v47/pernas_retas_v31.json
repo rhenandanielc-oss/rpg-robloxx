@@ -1,0 +1,64 @@
+{
+ "acoes": {
+  "Andar": {
+   "erro_ik_max": 5e-07,
+   "desvio_ponta_dedos_max": 1.1e-06,
+   "quadros": 37
+  },
+  "AndarParaTrote": {
+   "erro_ik_max": 4e-07,
+   "desvio_ponta_dedos_max": 1.2e-06,
+   "quadros": 71
+  },
+  "Arrancada": {
+   "erro_ik_max": 5e-07,
+   "desvio_ponta_dedos_max": 1e-06,
+   "quadros": 76
+  },
+  "Corrida": {
+   "erro_ik_max": 5e-07,
+   "desvio_ponta_dedos_max": 1.3e-06,
+   "quadros": 15
+  },
+  "CorridaParaTrote": {
+   "erro_ik_max": 5e-07,
+   "desvio_ponta_dedos_max": 1e-06,
+   "quadros": 63
+  },
+  "Frenagem": {
+   "erro_ik_max": 5e-07,
+   "desvio_ponta_dedos_max": 1e-06,
+   "quadros": 49
+  },
+  "Repouso": {
+   "erro_ik_max": 6e-07,
+   "desvio_ponta_dedos_max": 1.1e-06,
+   "quadros": 241
+  },
+  "Trote": {
+   "erro_ik_max": 4e-07,
+   "desvio_ponta_dedos_max": 1e-06,
+   "quadros": 19
+  },
+  "TroteParaAndar": {
+   "erro_ik_max": 5e-07,
+   "desvio_ponta_dedos_max": 1e-06,
+   "quadros": 76
+  },
+  "TroteParaCorrida": {
+   "erro_ik_max": 5e-07,
+   "desvio_ponta_dedos_max": 1e-06,
+   "quadros": 64
+  },
+  "VirarDireita": {
+   "erro_ik_max": 4e-07,
+   "desvio_ponta_dedos_max": 1e-06,
+   "quadros": 93
+  },
+  "VirarEsquerda": {
+   "erro_ik_max": 4e-07,
+   "desvio_ponta_dedos_max": 1e-06,
+   "quadros": 93
+  }
+ }
+}

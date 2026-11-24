@@ -1,0 +1,142 @@
+[
+ {
+  "cenario": "alvo parado a 20",
+  "versao": "r1e",
+  "escala": 1.0,
+  "tempo_dentro_do_corpo_s": 6.97,
+  "max_penetracao_lateral": 1.3,
+  "pedidos_mordida": 20,
+  "acertos": 3,
+  "primeiro_acerto_s": 2.33
+ },
+ {
+  "cenario": "alvo parado a 20",
+  "versao": "r2",
+  "escala": 1.0,
+  "tempo_dentro_do_corpo_s": 0.0,
+  "max_penetracao_lateral": 0.0,
+  "pedidos_mordida": 20,
+  "acertos": 20,
+  "primeiro_acerto_s": 2.33
+ },
+ {
+  "cenario": "alvo andando de lado",
+  "versao": "r1e",
+  "escala": 1.0,
+  "tempo_dentro_do_corpo_s": 0.0,
+  "max_penetracao_lateral": 0.0,
+  "pedidos_mordida": 19,
+  "acertos": 19,
+  "primeiro_acerto_s": 2.0
+ },
+ {
+  "cenario": "alvo andando de lado",
+  "versao": "r2",
+  "escala": 1.0,
+  "tempo_dentro_do_corpo_s": 0.0,
+  "max_penetracao_lateral": 0.0,
+  "pedidos_mordida": 17,
+  "acertos": 13,
+  "primeiro_acerto_s": 1.7
+ },
+ {
+  "cenario": "alvo foge correndo (16/s)",
+  "versao": "r1e",
+  "escala": 1.0,
+  "tempo_dentro_do_corpo_s": 0.47,
+  "max_penetracao_lateral": 1.3,
+  "pedidos_mordida": 2,
+  "acertos": 2,
+  "primeiro_acerto_s": 1.4
+ },
+ {
+  "cenario": "alvo foge correndo (16/s)",
+  "versao": "r2",
+  "escala": 1.0,
+  "tempo_dentro_do_corpo_s": 0.0,
+  "max_penetracao_lateral": 0.0,
+  "pedidos_mordida": 2,
+  "acertos": 2,
+  "primeiro_acerto_s": 1.4
+ },
+ {
+  "cenario": "alvo recuando devagar",
+  "versao": "r1e",
+  "escala": 1.0,
+  "tempo_dentro_do_corpo_s": 6.83,
+  "max_penetracao_lateral": 1.3,
+  "pedidos_mordida": 21,
+  "acertos": 12,
+  "primeiro_acerto_s": 1.7
+ },
+ {
+  "cenario": "alvo recuando devagar",
+  "versao": "r2",
+  "escala": 1.0,
+  "tempo_dentro_do_corpo_s": 0.0,
+  "max_penetracao_lateral": 0.0,
+  "pedidos_mordida": 15,
+  "acertos": 15,
+  "primeiro_acerto_s": 3.57
+ },
+ {
+  "cenario": "alvo colado sob o tronco",
+  "versao": "r1e",
+  "escala": 1.0,
+  "tempo_dentro_do_corpo_s": 3.77,
+  "max_penetracao_lateral": 1.3,
+  "pedidos_mordida": 24,
+  "acertos": 3,
+  "primeiro_acerto_s": 0.23
+ },
+ {
+  "cenario": "alvo colado sob o tronco",
+  "versao": "r2",
+  "escala": 1.0,
+  "tempo_dentro_do_corpo_s": 0.97,
+  "max_penetracao_lateral": 0.96,
+  "pedidos_mordida": 1,
+  "acertos": 1,
+  "primeiro_acerto_s": 8.03
+ },
+ {
+  "cenario": "alvo atras do lobo a 4",
+  "versao": "r1e",
+  "escala": 1.0,
+  "tempo_dentro_do_corpo_s": 2.27,
+  "max_penetracao_lateral": 0.93,
+  "pedidos_mordida": 24,
+  "acertos": 2,
+  "primeiro_acerto_s": 5.07
+ },
+ {
+  "cenario": "alvo atras do lobo a 4",
+  "versao": "r2",
+  "escala": 1.0,
+  "tempo_dentro_do_corpo_s": 0.0,
+  "max_penetracao_lateral": 0.0,
+  "pedidos_mordida": 2,
+  "acertos": 2,
+  "primeiro_acerto_s": 12.53
+ },
+ {
+  "cenario": "alvo parado a 20 (Pre-adulto 0,85)",
+  "versao": "r1e",
+  "escala": 0.85,
+  "tempo_dentro_do_corpo_s": 3.47,
+  "max_penetracao_lateral": 1.1,
+  "pedidos_mordida": 20,
+  "acertos": 6,
+  "primeiro_acerto_s": 2.33
+ },
+ {
+  "cenario": "alvo parado a 20 (Pre-adulto 0,85)",
+  "versao": "r2",
+  "escala": 0.85,
+  "tempo_dentro_do_corpo_s": 0.0,
+  "max_penetracao_lateral": 0.0,
+  "pedidos_mordida": 20,
+  "acertos": 19,
+  "primeiro_acerto_s": 2.63
+ }
+]

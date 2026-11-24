@@ -1,0 +1,368 @@
+{
+ "versao": "v43 r5 (garras); mordidas = r4",
+ "acoes": {
+  "Mordida1": {
+   "quadros": 15,
+   "parcial": true,
+   "ossos": [
+    "Pescoco1",
+    "Pescoco2",
+    "Cabeca",
+    "Mandibula",
+    "Orelha_E",
+    "Orelha_D",
+    "Palpebra_Sup_E",
+    "Palpebra_Inf_E",
+    "Palpebra_Sup_D",
+    "Palpebra_Inf_D"
+   ],
+   "marcadores_s": {
+    "Contato": 0.2
+   }
+  },
+  "Mordida2": {
+   "quadros": 15,
+   "parcial": true,
+   "ossos": [
+    "Pescoco1",
+    "Pescoco2",
+    "Cabeca",
+    "Mandibula",
+    "Orelha_E",
+    "Orelha_D",
+    "Palpebra_Sup_E",
+    "Palpebra_Inf_E",
+    "Palpebra_Sup_D",
+    "Palpebra_Inf_D"
+   ],
+   "marcadores_s": {
+    "Contato": 0.2
+   }
+  },
+  "GarraE": {
+   "quadros": 15,
+   "parcial": true,
+   "ossos": [
+    "Pescoco1",
+    "Pescoco2",
+    "Cabeca",
+    "Mandibula",
+    "Orelha_E",
+    "Orelha_D",
+    "Palpebra_Sup_E",
+    "Palpebra_Inf_E",
+    "Palpebra_Sup_D",
+    "Palpebra_Inf_D",
+    "Umero_E",
+    "Antebraco_E",
+    "Metacarpo_E",
+    "Dedos_E"
+   ],
+   "marcadores_s": {
+    "Contato": 0.233
+   }
+  },
+  "GarraD": {
+   "quadros": 15,
+   "parcial": true,
+   "ossos": [
+    "Pescoco1",
+    "Pescoco2",
+    "Cabeca",
+    "Mandibula",
+    "Orelha_E",
+    "Orelha_D",
+    "Palpebra_Sup_E",
+    "Palpebra_Inf_E",
+    "Palpebra_Sup_D",
+    "Palpebra_Inf_D",
+    "Umero_D",
+    "Antebraco_D",
+    "Metacarpo_D",
+    "Dedos_D"
+   ],
+   "marcadores_s": {
+    "Contato": 0.233
+   }
+  },
+  "Mordida1_Corrida": {
+   "quadros": 15,
+   "parcial": true,
+   "variante": "Corrida (servidor escolhe pela marcha)",
+   "ossos": [
+    "Pescoco1",
+    "Pescoco2",
+    "Cabeca",
+    "Mandibula",
+    "Orelha_E",
+    "Orelha_D",
+    "Palpebra_Sup_E",
+    "Palpebra_Inf_E",
+    "Palpebra_Sup_D",
+    "Palpebra_Inf_D"
+   ],
+   "marcadores_s": {
+    "Contato": 0.2
+   }
+  },
+  "Mordida2_Corrida": {
+   "quadros": 15,
+   "parcial": true,
+   "variante": "Corrida (servidor escolhe pela marcha)",
+   "ossos": [
+    "Pescoco1",
+    "Pescoco2",
+    "Cabeca",
+    "Mandibula",
+    "Orelha_E",
+    "Orelha_D",
+    "Palpebra_Sup_E",
+    "Palpebra_Inf_E",
+    "Palpebra_Sup_D",
+    "Palpebra_Inf_D"
+   ],
+   "marcadores_s": {
+    "Contato": 0.2
+   }
+  },
+  "Piscar": {
+   "quadros": 8,
+   "parcial": true,
+   "ossos": [
+    "Palpebra_Sup_E",
+    "Palpebra_Inf_E",
+    "Palpebra_Sup_D",
+    "Palpebra_Inf_D"
+   ],
+   "marcadores_s": {}
+  },
+  "GarraE_Andar": {
+   "quadros": 15,
+   "parcial": true,
+   "ossos": [
+    "Pescoco1",
+    "Pescoco2",
+    "Cabeca",
+    "Mandibula",
+    "Orelha_E",
+    "Orelha_D",
+    "Palpebra_Sup_E",
+    "Palpebra_Inf_E",
+    "Palpebra_Sup_D",
+    "Palpebra_Inf_D",
+    "Umero_E",
+    "Antebraco_E",
+    "Metacarpo_E",
+    "Dedos_E"
+   ],
+   "marcadores_s": {
+    "Contato": 0.233
+   },
+   "sincronizado": {
+    "marcha": "Andar",
+    "quadro_descolamento": 32,
+    "quadros_ciclo": 36,
+    "inicio_s": 1.067,
+    "pouso_q": 13
+   }
+  },
+  "GarraD_Andar": {
+   "quadros": 15,
+   "parcial": true,
+   "ossos": [
+    "Pescoco1",
+    "Pescoco2",
+    "Cabeca",
+    "Mandibula",
+    "Orelha_E",
+    "Orelha_D",
+    "Palpebra_Sup_E",
+    "Palpebra_Inf_E",
+    "Palpebra_Sup_D",
+    "Palpebra_Inf_D",
+    "Umero_D",
+    "Antebraco_D",
+    "Metacarpo_D",
+    "Dedos_D"
+   ],
+   "marcadores_s": {
+    "Contato": 0.233
+   },
+   "sincronizado": {
+    "marcha": "Andar",
+    "quadro_descolamento": 14,
+    "quadros_ciclo": 36,
+    "inicio_s": 0.467,
+    "pouso_q": 13
+   }
+  },
+  "GarraE_Trote": {
+   "quadros": 15,
+   "parcial": true,
+   "ossos": [
+    "Pescoco1",
+    "Pescoco2",
+    "Cabeca",
+    "Mandibula",
+    "Orelha_E",
+    "Orelha_D",
+    "Palpebra_Sup_E",
+    "Palpebra_Inf_E",
+    "Palpebra_Sup_D",
+    "Palpebra_Inf_D",
+    "Umero_E",
+    "Antebraco_E",
+    "Metacarpo_E",
+    "Dedos_E"
+   ],
+   "marcadores_s": {
+    "Contato": 0.233
+   },
+   "sincronizado": {
+    "marcha": "Trote",
+    "quadro_descolamento": 8,
+    "quadros_ciclo": 18,
+    "inicio_s": 0.267,
+    "pouso_q": 10
+   }
+  },
+  "GarraD_Trote": {
+   "quadros": 15,
+   "parcial": true,
+   "ossos": [
+    "Pescoco1",
+    "Pescoco2",
+    "Cabeca",
+    "Mandibula",
+    "Orelha_E",
+    "Orelha_D",
+    "Palpebra_Sup_E",
+    "Palpebra_Inf_E",
+    "Palpebra_Sup_D",
+    "Palpebra_Inf_D",
+    "Umero_D",
+    "Antebraco_D",
+    "Metacarpo_D",
+    "Dedos_D"
+   ],
+   "marcadores_s": {
+    "Contato": 0.233
+   },
+   "sincronizado": {
+    "marcha": "Trote",
+    "quadro_descolamento": 17,
+    "quadros_ciclo": 18,
+    "inicio_s": 0.567,
+    "pouso_q": 10
+   }
+  },
+  "GarraE_Corrida": {
+   "quadros": 15,
+   "parcial": true,
+   "ossos": [
+    "Pescoco1",
+    "Pescoco2",
+    "Cabeca",
+    "Mandibula",
+    "Orelha_E",
+    "Orelha_D",
+    "Palpebra_Sup_E",
+    "Palpebra_Inf_E",
+    "Palpebra_Sup_D",
+    "Palpebra_Inf_D",
+    "Umero_E",
+    "Antebraco_E",
+    "Metacarpo_E",
+    "Dedos_E"
+   ],
+   "marcadores_s": {
+    "Contato": 0.233
+   },
+   "sincronizado": {
+    "marcha": "Corrida",
+    "quadro_descolamento": 10,
+    "quadros_ciclo": 14,
+    "inicio_s": 0.333,
+    "pouso_q": 10
+   }
+  },
+  "GarraD_Corrida": {
+   "quadros": 15,
+   "parcial": true,
+   "ossos": [
+    "Pescoco1",
+    "Pescoco2",
+    "Cabeca",
+    "Mandibula",
+    "Orelha_E",
+    "Orelha_D",
+    "Palpebra_Sup_E",
+    "Palpebra_Inf_E",
+    "Palpebra_Sup_D",
+    "Palpebra_Inf_D",
+    "Umero_D",
+    "Antebraco_D",
+    "Metacarpo_D",
+    "Dedos_D"
+   ],
+   "marcadores_s": {
+    "Contato": 0.233
+   },
+   "sincronizado": {
+    "marcha": "Corrida",
+    "quadro_descolamento": 9,
+    "quadros_ciclo": 14,
+    "inicio_s": 0.3,
+    "pouso_q": 9
+   }
+  }
+ },
+ "nota": "clipes PARCIAIS; marcadores iguais a r3 (servidor nao muda)",
+ "erro_focinho_max": 0.632,
+ "erro_ik_pata_max": 0.0,
+ "sincronizacao_r5b": {
+  "GarraE_Andar": {
+   "marcha": "Andar",
+   "quadro_descolamento": 32,
+   "quadros_ciclo": 36,
+   "inicio_s": 1.067,
+   "pouso_q": 13
+  },
+  "GarraD_Andar": {
+   "marcha": "Andar",
+   "quadro_descolamento": 14,
+   "quadros_ciclo": 36,
+   "inicio_s": 0.467,
+   "pouso_q": 13
+  },
+  "GarraE_Trote": {
+   "marcha": "Trote",
+   "quadro_descolamento": 8,
+   "quadros_ciclo": 18,
+   "inicio_s": 0.267,
+   "pouso_q": 10
+  },
+  "GarraD_Trote": {
+   "marcha": "Trote",
+   "quadro_descolamento": 17,
+   "quadros_ciclo": 18,
+   "inicio_s": 0.567,
+   "pouso_q": 10
+  },
+  "GarraE_Corrida": {
+   "marcha": "Corrida",
+   "quadro_descolamento": 10,
+   "quadros_ciclo": 14,
+   "inicio_s": 0.333,
+   "pouso_q": 10
+  },
+  "GarraD_Corrida": {
+   "marcha": "Corrida",
+   "quadro_descolamento": 9,
+   "quadros_ciclo": 14,
+   "inicio_s": 0.3,
+   "pouso_q": 9
+  }
+ },
+ "erro_ik_garra_r5_max": 0.0
+}

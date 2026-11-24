@@ -1,0 +1,207 @@
+[
+ {
+  "cenario": "1 aproximacao lenta ate 30 e para",
+  "niveis": [
+   "7.5s Calmo->Atencao (intruso a vista)",
+   "12.0s Atencao->Ameaca (aviso)"
+  ],
+  "final": "Ameaca",
+  "aviso_antes_da_defesa_s": null,
+  "dF_min_antes_defesa": 15.3,
+  "dentro_corpo_s": 0.0,
+  "acertos": 0,
+  "dano_fora_alcance": 0,
+  "mudancas": 2,
+  "aglomerou_s": 0.0
+ },
+ {
+  "cenario": "2 para na zona de aviso (25) 30 s",
+  "niveis": [
+   "3.0s Calmo->Atencao (intruso a vista)",
+   "6.6s Atencao->Ameaca (aviso)"
+  ],
+  "final": "Ameaca",
+  "aviso_antes_da_defesa_s": null,
+  "dF_min_antes_defesa": 11.1,
+  "dentro_corpo_s": 0.0,
+  "acertos": 0,
+  "dano_fora_alcance": 0,
+  "mudancas": 2,
+  "aglomerou_s": 0.0
+ },
+ {
+  "cenario": "3 recua antes do ataque",
+  "niveis": [
+   "3.0s Calmo->Atencao (intruso a vista)",
+   "6.6s Atencao->Ameaca (aviso)",
+   "18.6s Ameaca->Atencao (recuou: acalma)",
+   "22.8s Atencao->Calmo (recuou: acalma)"
+  ],
+  "final": "Calmo",
+  "aviso_antes_da_defesa_s": null,
+  "dF_min_antes_defesa": 10.1,
+  "dentro_corpo_s": 0.0,
+  "acertos": 0,
+  "dano_fora_alcance": 0,
+  "mudancas": 4,
+  "aglomerou_s": 0.0
+ },
+ {
+  "cenario": "4 insiste depois do aviso",
+  "niveis": [
+   "4.2s Calmo->Atencao (intruso a vista)",
+   "8.7s Atencao->Ameaca (aviso)",
+   "12.3s Ameaca->Defesa (insistiu)"
+  ],
+  "final": "Defesa",
+  "aviso_antes_da_defesa_s": 3.6,
+  "dF_min_antes_defesa": 8.3,
+  "dentro_corpo_s": 1.5,
+  "acertos": 72,
+  "dano_fora_alcance": 0,
+  "mudancas": 3,
+  "aglomerou_s": 0.0
+ },
+ {
+  "cenario": "5 agressao direta (dano validado) a 40",
+  "niveis": [
+   "0.0s Calmo->Atencao (intruso a vista)",
+   "3.0s Atencao->Defesa (dano)"
+  ],
+  "final": "Defesa",
+  "aviso_antes_da_defesa_s": null,
+  "dF_min_antes_defesa": 29.8,
+  "dentro_corpo_s": 0.0,
+  "acertos": 111,
+  "dano_fora_alcance": 0,
+  "mudancas": 2,
+  "aglomerou_s": 0.0
+ },
+ {
+  "cenario": "6 coleta do ovo",
+  "niveis": [
+   "1.2s Calmo->Atencao (intruso a vista)",
+   "2.7s Atencao->Ameaca (aviso)",
+   "4.8s Ameaca->Defesa (encostou)"
+  ],
+  "final": "Defesa",
+  "aviso_antes_da_defesa_s": 2.1,
+  "dF_min_antes_defesa": -0.4,
+  "dentro_corpo_s": 5.1,
+  "acertos": 52,
+  "dano_fora_alcance": 0,
+  "mudancas": 3,
+  "aglomerou_s": 0.0
+ },
+ {
+  "cenario": "7 dois jogadores: so B agride",
+  "niveis": [
+   "0.0s Calmo->Atencao (intruso a vista)",
+   "1.2s Atencao->Ameaca (aviso)",
+   "4.0s Ameaca->Defesa (dano)"
+  ],
+  "final": "Defesa",
+  "aviso_antes_da_defesa_s": 3.0,
+  "dF_min_antes_defesa": 15.2,
+  "dentro_corpo_s": 0.0,
+  "acertos": 108,
+  "dano_fora_alcance": 0,
+  "mudancas": 3,
+  "aglomerou_s": 0.0
+ },
+ {
+  "cenario": "8 parede: intruso a 22 sem visao",
+  "niveis": [],
+  "final": "Calmo",
+  "aviso_antes_da_defesa_s": null,
+  "dF_min_antes_defesa": 11.8,
+  "dentro_corpo_s": 0.0,
+  "acertos": 0,
+  "dano_fora_alcance": 0,
+  "mudancas": 0,
+  "aglomerou_s": 0.0
+ },
+ {
+  "cenario": "9 alvo morre durante a defesa",
+  "niveis": [
+   "0.0s Calmo->Ameaca (aviso)",
+   "1.0s Ameaca->Defesa (dano)",
+   "8.1s Defesa->Atencao (alvo morto/desconectado/expirou)",
+   "12.3s Atencao->Calmo (sem intruso: acalma)"
+  ],
+  "final": "Calmo",
+  "aviso_antes_da_defesa_s": 1.2,
+  "dF_min_antes_defesa": 4.8,
+  "dentro_corpo_s": 0.0,
+  "acertos": 29,
+  "dano_fora_alcance": 0,
+  "mudancas": 4,
+  "aglomerou_s": 0.0
+ },
+ {
+  "cenario": "10 alvo desconecta",
+  "niveis": [
+   "0.0s Calmo->Ameaca (aviso)",
+   "1.0s Ameaca->Defesa (dano)",
+   "8.1s Defesa->Atencao (alvo morto/desconectado/expirou)",
+   "12.3s Atencao->Calmo (sem intruso: acalma)"
+  ],
+  "final": "Calmo",
+  "aviso_antes_da_defesa_s": 1.2,
+  "dF_min_antes_defesa": 4.8,
+  "dentro_corpo_s": 0.0,
+  "acertos": 27,
+  "dano_fora_alcance": 0,
+  "mudancas": 4,
+  "aglomerou_s": 0.0
+ },
+ {
+  "cenario": "11 sai do territorio e volta a rotina",
+  "niveis": [
+   "0.0s Calmo->Ameaca (aviso)",
+   "1.0s Ameaca->Defesa (dano)",
+   "14.1s Defesa->Atencao (saiu do territorio)",
+   "15.3s Atencao->Ameaca (aviso)",
+   "21.3s Ameaca->Atencao (sem intruso: acalma)",
+   "25.5s Atencao->Calmo (sem intruso: acalma)"
+  ],
+  "final": "Calmo",
+  "aviso_antes_da_defesa_s": 1.2,
+  "dF_min_antes_defesa": 4.8,
+  "dentro_corpo_s": 0.0,
+  "acertos": 4,
+  "dano_fora_alcance": 0,
+  "mudancas": 6,
+  "aglomerou_s": 5.97
+ },
+ {
+  "cenario": "12 alvo circulando perto do ovo (r 10, 6/s) apos dano",
+  "niveis": [
+   "0.0s Calmo->Ameaca (aviso)",
+   "0.5s Ameaca->Defesa (dano)"
+  ],
+  "final": "Defesa",
+  "aviso_antes_da_defesa_s": 0.6,
+  "dF_min_antes_defesa": 1.3,
+  "dentro_corpo_s": 0.0,
+  "acertos": 85,
+  "dano_fora_alcance": 0,
+  "mudancas": 2,
+  "aglomerou_s": 0.0
+ },
+ {
+  "cenario": "13 colado no lobo sem aviso previo (aparece a 3)",
+  "niveis": [
+   "0.0s Calmo->Ameaca (aviso)",
+   "2.1s Ameaca->Defesa (encostou)"
+  ],
+  "final": "Defesa",
+  "aviso_antes_da_defesa_s": 2.1,
+  "dF_min_antes_defesa": 1.8,
+  "dentro_corpo_s": 0.0,
+  "acertos": 86,
+  "dano_fora_alcance": 0,
+  "mudancas": 2,
+  "aglomerou_s": 0.0
+ }
+]

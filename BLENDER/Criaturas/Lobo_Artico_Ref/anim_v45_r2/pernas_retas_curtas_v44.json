@@ -1,0 +1,14 @@
+{
+ "acoes": {
+  "VirarCurtoDireita": {
+   "erro_ik_max": 4e-07,
+   "desvio_ponta_dedos_max": 1e-06,
+   "quadros": 47
+  },
+  "VirarCurtoEsquerda": {
+   "erro_ik_max": 4e-07,
+   "desvio_ponta_dedos_max": 1e-06,
+   "quadros": 47
+  }
+ }
+}

@@ -1,3 +1,4 @@
+-- r7 19/11: IA_Uivo para o lobo selvagem. Copia da r6: Uivo_Servidor_r6.server.luau.
 -- Uivo_Servidor (Script, Workspace.Teste_LoboArtico) - poder UIVO BOREAL do Lobo Artico (r4, 16/11/2026).
 -- ENSAIO no place Teste-animacoes; AUTORIDADE DO SERVIDOR. Nada fora de Workspace.Teste_LoboArtico e tocado (a lentidao
 -- so marca/atrasa modelos inimigos que estejam a 20 studs do lobo no ensaio).
@@ -202,6 +203,9 @@ end)
 -- pedido vindo do Controle_Servidor (jogador que assumiu o lobo; o controlador ja freou ate parar)
 local pedir = pasta:FindFirstChild("Pedir_Uivo") or Instance.new("BindableEvent")
 pedir.Name = "Pedir_Uivo"; pedir.Parent = pasta
+-- r7 (19/11, IA selvagem): pedido da IA do proprio lobo (so lobo Selvagem)
+local pedirIA = pasta:FindFirstChild("IA_Uivo") or Instance.new("BindableEvent"); pedirIA.Name = "IA_Uivo"; pedirIA.Parent = pasta
+pedirIA.Event:Connect(function() if lobo:GetAttribute("Selvagem") then uivar("ia") end end)
 pedir.Event:Connect(function(userId)
 	if lobo:GetAttribute("Controlador") ~= userId then return recusar("nao e o controlador") end
 	uivar("controle " .. tostring(userId))
@@ -243,7 +247,7 @@ task.spawn(function()
 	end
 end)
 
-pasta:SetAttribute("Uivo_Versao", "Boreal r6 18/11 (idades: energia, regen, teto, bloqueio) | r5 16/11 (bonus somados no Kit, lentidao generica, energia compartilhada)")
+pasta:SetAttribute("Uivo_Versao", "Boreal r7 19/11 (pedido da IA selvagem) | r6 18/11 (idades: energia, regen, teto, bloqueio) | r5 16/11 (bonus somados no Kit, lentidao generica, energia compartilhada)")
 -- so ensaio: permite zerar/ajustar energia pelo servidor para testar a recusa
 local definir = pasta:FindFirstChild("Ensaio_DefinirEnergia") or Instance.new("BindableEvent")
 definir.Name = "Ensaio_DefinirEnergia"; definir.Parent = pasta

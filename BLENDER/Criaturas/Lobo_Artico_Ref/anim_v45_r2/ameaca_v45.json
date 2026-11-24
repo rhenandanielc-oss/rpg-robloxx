@@ -1,0 +1,179 @@
+{
+ "poses": {
+  "rosnar": {
+   "parametros": {
+    "pitch_graus": 2.0,
+    "desce_quadril": -0.06,
+    "y_quadril": -0.18,
+    "rolos": {},
+    "pata_D_x": 0.0,
+    "pata_D_y": 0.0,
+    "pata_T_x": 0.0,
+    "pata_T_y": 0.0,
+    "pescoco_graus": 16.0,
+    "pescoco_divisao": [
+     0.5,
+     0.5
+    ],
+    "cabeca_graus": 14.0,
+    "cabeca_rolo": 0.0,
+    "boca_graus": 12.0,
+    "orelhas_graus": 10.0,
+    "cauda_lado": 0.0,
+    "cauda_ergue": 30.0
+   }
+  },
+  "investida": {
+   "parametros": {
+    "pitch_graus": 6.0,
+    "desce_quadril": 0.12,
+    "y_quadril": -0.5,
+    "rolos": {},
+    "pata_D_x": 0.0,
+    "pata_D_y": 0.0,
+    "pata_T_x": 0.0,
+    "pata_T_y": 0.0,
+    "pescoco_graus": 22.0,
+    "pescoco_divisao": [
+     0.5,
+     0.5
+    ],
+    "cabeca_graus": 6.0,
+    "cabeca_rolo": 0.0,
+    "boca_graus": 24.0,
+    "orelhas_graus": 6.0,
+    "cauda_lado": 0.0,
+    "cauda_ergue": 34.0
+   }
+  }
+ },
+ "acoes": {
+  "AmeacaEntrar": {
+   "quadros": 15,
+   "erro_ik": 0.0,
+   "plantas": {
+    "DE": [
+     [
+      0,
+      15
+     ]
+    ],
+    "DD": [
+     [
+      0,
+      15
+     ]
+    ],
+    "TE": [
+     [
+      0,
+      15
+     ]
+    ],
+    "TD": [
+     [
+      0,
+      15
+     ]
+    ]
+   },
+   "marcadores_s": {
+    "Rosnando": 0.4
+   }
+  },
+  "Ameaca": {
+   "quadros": 90,
+   "erro_ik": 0.0,
+   "plantas": {
+    "DE": [
+     [
+      0,
+      90
+     ]
+    ],
+    "DD": [
+     [
+      0,
+      90
+     ]
+    ],
+    "TE": [
+     [
+      0,
+      90
+     ]
+    ],
+    "TD": [
+     [
+      0,
+      90
+     ]
+    ]
+   },
+   "laco": true
+  },
+  "AmeacaSair": {
+   "quadros": 18,
+   "erro_ik": 0.0,
+   "plantas": {
+    "DE": [
+     [
+      0,
+      18
+     ]
+    ],
+    "DD": [
+     [
+      0,
+      18
+     ]
+    ],
+    "TE": [
+     [
+      0,
+      18
+     ]
+    ],
+    "TD": [
+     [
+      0,
+      18
+     ]
+    ]
+   }
+  },
+  "InvestidaAviso": {
+   "quadros": 30,
+   "erro_ik": 0.0,
+   "plantas": {
+    "DE": [
+     [
+      0,
+      30
+     ]
+    ],
+    "DD": [
+     [
+      0,
+      30
+     ]
+    ],
+    "TE": [
+     [
+      0,
+      30
+     ]
+    ],
+    "TD": [
+     [
+      0,
+      30
+     ]
+    ]
+   },
+   "marcadores_s": {
+    "Pico": 0.3
+   }
+  }
+ }
+}

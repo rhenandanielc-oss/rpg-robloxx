@@ -1,0 +1,220 @@
+{
+ "poses": {
+  "preparar": {
+   "desce_quadril": 0.95,
+   "y_quadril": 0.35,
+   "pitch": 5.0,
+   "pescoco": [
+    8.0,
+    6.0
+   ],
+   "cabeca": 16.742060630464724,
+   "boca": 0.0,
+   "orelhas": -28.0,
+   "cauda": [
+    8.0,
+    6.0,
+    0.0
+   ]
+  },
+  "voo": {
+   "desce_quadril": 0.0,
+   "y_quadril": 0.0,
+   "pitch": -3.0,
+   "pescoco": [
+    16.0,
+    10.0
+   ],
+   "cabeca": 14.742060630464724,
+   "boca": 0.0,
+   "orelhas": -34.0,
+   "cauda": [
+    34.0,
+    14.0,
+    8.0
+   ],
+   "pernas": {
+    "Umero_E": -72,
+    "Antebraco_E": -14,
+    "Metacarpo_E": 30,
+    "Dedos_E": 18,
+    "Umero_D": -68,
+    "Antebraco_D": -16,
+    "Metacarpo_D": 30,
+    "Dedos_D": 18,
+    "Coxa_E": 50,
+    "Tibia_E": 28,
+    "Metatarso_E": 18,
+    "DedosPe_E": 12,
+    "Coxa_D": 54,
+    "Tibia_D": 26,
+    "Metatarso_D": 18,
+    "DedosPe_D": 12
+   }
+  },
+  "pouso": {
+   "desce_quadril": 1.15,
+   "y_quadril": 0.1,
+   "pitch": 7.0,
+   "pescoco": [
+    10.0,
+    6.0
+   ],
+   "cabeca": 18.742060630464724,
+   "boca": 4.0,
+   "orelhas": -24.0,
+   "cauda": [
+    12.0,
+    6.0,
+    0.0
+   ]
+  },
+  "onda": {
+   "desce_quadril": 0.55,
+   "y_quadril": -0.35,
+   "pitch": 9.0,
+   "pescoco": [
+    16.0,
+    10.0
+   ],
+   "cabeca": 22.742060630464724,
+   "boca": 24.0,
+   "orelhas": -36.0,
+   "cauda": [
+    22.0,
+    8.0,
+    0.0
+   ]
+  }
+ },
+ "cabeca_repouso_graus": 12.74,
+ "acoes": {
+  "CometaPreparar": {
+   "quadros": 8,
+   "erro_ik": 0.0,
+   "plantas": {
+    "DE": [
+     [
+      0,
+      8
+     ]
+    ],
+    "DD": [
+     [
+      0,
+      8
+     ]
+    ],
+    "TE": [
+     [
+      0,
+      8
+     ]
+    ],
+    "TD": [
+     [
+      0,
+      8
+     ]
+    ]
+   },
+   "marcadores_s": {
+    "Salto": 0.27
+   }
+  },
+  "CometaVoo": {
+   "quadros": 24,
+   "erro_ik": 0.0,
+   "plantas": {},
+   "laco": true
+  },
+  "CometaPouso": {
+   "quadros": 24,
+   "erro_ik": 0.0,
+   "plantas": {
+    "DE": [
+     [
+      0,
+      24
+     ]
+    ],
+    "DD": [
+     [
+      0,
+      24
+     ]
+    ],
+    "TE": [
+     [
+      0,
+      24
+     ]
+    ],
+    "TD": [
+     [
+      0,
+      24
+     ]
+    ]
+   },
+   "marcadores_s": {
+    "Impacto": 0.0,
+    "Repouso": 0.8
+   }
+  },
+  "AvalancheCorrida": {
+   "quadros": 14,
+   "erro_ik": 0.0,
+   "plantas": {},
+   "laco": true
+  },
+  "AvalancheOnda": {
+   "quadros": 30,
+   "erro_ik": 0.0,
+   "plantas": {
+    "DE": [
+     [
+      0,
+      30
+     ]
+    ],
+    "DD": [
+     [
+      0,
+      30
+     ]
+    ],
+    "TE": [
+     [
+      0,
+      30
+     ]
+    ],
+    "TD": [
+     [
+      0,
+      30
+     ]
+    ]
+   },
+   "marcadores_s": {
+    "Onda": 0.2,
+    "Repouso": 1.0
+   }
+  }
+ },
+ "avalanche_corrida_camadas": {
+  "pescoco": [
+   12.0,
+   8.0
+  ],
+  "cabeca": 6.0,
+  "boca": 7.0,
+  "orelhas": -36.0,
+  "cauda": [
+   26.0,
+   10.0,
+   4.0
+  ]
+ }
+}

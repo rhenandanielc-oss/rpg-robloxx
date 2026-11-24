@@ -1,0 +1,194 @@
+{
+ "parametros": {
+  "A_MIN": 0.35,
+  "P_MIN": 6.0,
+  "CAIXA": [
+   [
+    -0.95,
+    0.2
+   ],
+   [
+    -0.35,
+    0.95
+   ],
+   [
+    2.4,
+    3.1
+   ]
+  ],
+  "R_REM": {
+   "LOW": 0.28,
+   "LOD1": 0.55,
+   "LOD2": 0.9
+  },
+  "ITER": 8,
+  "TOL_GIRO": 0.15,
+  "FAT_LT": {
+   "LOW": 1.0,
+   "LOD1": 1.0,
+   "LOD2": 1.0
+  }
+ },
+ "LOW": {
+  "Lt": 0.1398,
+  "remendo_antes": {
+   "faces": 130,
+   "agulhas(>0.35,>6)": 14,
+   "proporcao>4": 29,
+   "proporcao_max": 29.3,
+   "aresta_max": 0.657,
+   "angulo_min_graus": 2.5
+  },
+  "remendo_depois": {
+   "faces": 154,
+   "agulhas(>0.35,>6)": 0,
+   "proporcao>4": 1,
+   "proporcao_max": 5.5,
+   "aresta_max": 0.372,
+   "angulo_min_graus": 15.3,
+   "ruins_restantes_(prop>4)": [
+    [
+     5.5,
+     2
+    ]
+   ]
+  },
+  "area_antes": 1.5289,
+  "area_depois": 1.3235,
+  "tris_corpo_antes": 19932,
+  "divisoes": 125,
+  "colapsos": 107,
+  "giros": 55,
+  "limpeza": 12,
+  "desvio_sup_original_para_nova_max": 0.0756,
+  "desvio_medio": 0.009,
+  "desvio_vertices_novos_para_original_max": 0.0013,
+  "vertices_borda_fixos": 36,
+  "uv": {
+   "faces_invertidas_no_uv": 0,
+   "densidade_px_por_stud": 20.3,
+   "densidade_corpo_deste_LOD": 20.3,
+   "retangulo_atlas_px": [
+    802,
+    992,
+    43,
+    30
+   ],
+   "ilha_px": [
+    37.9,
+    24.6
+   ],
+   "estiramento_max_sv": 1.63,
+   "estiramento_mediano": 1.084,
+   "texels_transferidos": 2359,
+   "texels_sem_origem_com_normal_compativel": 0
+  },
+  "tris_corpo_depois": 19956,
+  "cartoes_reposicionados_repesados": 5,
+  "cartoes_translacao_max": 0.0151
+ },
+ "LOD1": {
+  "Lt": 0.2425,
+  "remendo_antes": {
+   "faces": 47,
+   "agulhas(>0.35,>6)": 1,
+   "proporcao>4": 4,
+   "proporcao_max": 6.5,
+   "aresta_max": 0.687,
+   "angulo_min_graus": 10.4
+  },
+  "remendo_depois": {
+   "faces": 41,
+   "agulhas(>0.35,>6)": 0,
+   "proporcao>4": 0,
+   "proporcao_max": 2.7,
+   "aresta_max": 0.558,
+   "angulo_min_graus": 31.9,
+   "ruins_restantes_(prop>4)": []
+  },
+  "area_antes": 1.1109,
+  "area_depois": 1.0006,
+  "tris_corpo_antes": 6613,
+  "divisoes": 18,
+  "colapsos": 18,
+  "giros": 12,
+  "limpeza": 3,
+  "desvio_sup_original_para_nova_max": 0.08,
+  "desvio_medio": 0.0139,
+  "desvio_vertices_novos_para_original_max": 0.0,
+  "vertices_borda_fixos": 21,
+  "uv": {
+   "faces_invertidas_no_uv": 0,
+   "densidade_px_por_stud": 17.1,
+   "densidade_corpo_deste_LOD": 17.1,
+   "retangulo_atlas_px": [
+    400,
+    41,
+    31,
+    23
+   ],
+   "ilha_px": [
+    25.3,
+    17.4
+   ],
+   "estiramento_max_sv": 1.21,
+   "estiramento_mediano": 1.085,
+   "texels_transferidos": 926,
+   "texels_sem_origem_com_normal_compativel": 0
+  },
+  "tris_corpo_depois": 6607,
+  "cartoes_reposicionados_repesados": 1,
+  "cartoes_translacao_max": 0.0
+ },
+ "LOD2": {
+  "Lt": 0.4657,
+  "remendo_antes": {
+   "faces": 23,
+   "agulhas(>0.35,>6)": 1,
+   "proporcao>4": 1,
+   "proporcao_max": 8.9,
+   "aresta_max": 0.837,
+   "angulo_min_graus": 11.3
+  },
+  "remendo_depois": {
+   "faces": 27,
+   "agulhas(>0.35,>6)": 0,
+   "proporcao>4": 0,
+   "proporcao_max": 3.5,
+   "aresta_max": 0.82,
+   "angulo_min_graus": 24.8,
+   "ruins_restantes_(prop>4)": []
+  },
+  "area_antes": 2.0717,
+  "area_depois": 2.0493,
+  "tris_corpo_antes": 2042,
+  "divisoes": 9,
+  "colapsos": 7,
+  "giros": 1,
+  "limpeza": 0,
+  "desvio_sup_original_para_nova_max": 0.0615,
+  "desvio_medio": 0.0111,
+  "desvio_vertices_novos_para_original_max": 0.0,
+  "vertices_borda_fixos": 17,
+  "uv": {
+   "faces_invertidas_no_uv": 0,
+   "densidade_px_por_stud": 14.0,
+   "densidade_corpo_deste_LOD": 14.0,
+   "retangulo_atlas_px": [
+    582,
+    167,
+    35,
+    26
+   ],
+   "ilha_px": [
+    29.8,
+    20.3
+   ],
+   "estiramento_max_sv": 1.37,
+   "estiramento_mediano": 1.112,
+   "texels_transferidos": 941,
+   "texels_sem_origem_com_normal_compativel": 0
+  },
+  "tris_corpo_depois": 2046
+ }
+}

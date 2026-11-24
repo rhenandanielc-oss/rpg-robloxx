@@ -1,3 +1,5 @@
+-- r15 20/11: ReceberDano(valor, elemento, origem?) + IA_DanoRecebido (autoria validada do dano para a IA selvagem). Copia da r14: Kit_Servidor_r14.
+-- r14 19/11: lobo selvagem (IA_Acao; jogador e alvo so para o selvagem; alcateia nao se ataca). Copia da r13c: Kit_Servidor_r13c.
 -- r13 18/11: idades (Idade_Servidor) + impacto da mordida. Copia da r12: Kit_Servidor_r12.server.luau.
 -- Kit_Servidor (Script, Workspace.Teste_LoboArtico) - KIT COMPLETO do Lobo Artico / "Lobo Glacial" (16/11/2026).
 -- Usuario: "Prossiga com os poderes, seguindo o documento de poderes, ja faca todos os poderes de uma vez."
@@ -175,7 +177,13 @@ local function ehInimigo(m)
 	if not m or m == lobo or not m:IsDescendantOf(workspace) then return false end
 	local j = Players:GetPlayerFromCharacter(m)
 	if j and (j.UserId == dono() or j.UserId == lobo:GetAttribute("DonoUserId")) then return false end
-	if j then return false end                                       -- PvP [A CONFIRMAR]: jogadores fora no ensaio
+	if j then                                                        -- PvP [A CONFIRMAR]: jogadores fora no ensaio
+		-- r14: lobo SELVAGEM defende a toca: jogador vivo e alvo (o lobo de ensaio continua sem PvP)
+		local hj = m:FindFirstChildOfClass("Humanoid")
+		return lobo:GetAttribute("Selvagem") == true and hj ~= nil and hj.Health > 0
+	end
+	local alc = m:GetAttribute("Alcateia")                                -- r14: lobos da mesma alcateia nao se atacam
+	if alc and alc == lobo:GetAttribute("Alcateia") then return false end
 	local hum = m:FindFirstChildOfClass("Humanoid")
 	return (hum and hum.Health > 0) or (m:GetAttribute("Criatura") == true and (m:GetAttribute("Vida") or 1) > 0)
 end
@@ -215,12 +223,34 @@ local function lentidao(m, v, d) if evLent then evLent:Fire(m, v, d) end end
 
 -- dano recebido pelo lobo: esquiva (chance) -> Pelagem Polar (-20% gelo) ---------------------------------------------
 local fnDano = pasta:FindFirstChild("ReceberDano") or Instance.new("BindableFunction"); fnDano.Name = "ReceberDano"; fnDano.Parent = pasta
-fnDano.OnInvoke = function(valor, elemento)
+-- r15 20/11: terceiro argumento OPCIONAL `origem` (Player, personagem ou modelo de criatura com atributo DonoUserId).
+-- Validada aqui (jogador conectado, vivo e a ate 120 studs); o resultado vai para a IA selvagem pelo BindableEvent
+-- IA_DanoRecebido(valorAplicado, userIdOuNil, posicaoDaOrigemOuNil). Sem origem valida = dano sem autoria.
+local evDanoIA = pasta:FindFirstChild("IA_DanoRecebido") or Instance.new("BindableEvent"); evDanoIA.Name = "IA_DanoRecebido"; evDanoIA.Parent = pasta
+local function autoria(origem)
+	if typeof(origem) ~= "Instance" then return nil, nil end
+	local j = origem:IsA("Player") and origem or nil
+	local m = origem:IsA("Model") and origem or origem:FindFirstAncestorOfClass("Model")
+	if not j and m then
+		j = Players:GetPlayerFromCharacter(m)
+		local uid = not j and m:GetAttribute("DonoUserId")
+		if uid then j = Players:GetPlayerByUserId(uid) end
+	end
+	if not j or j.Parent ~= Players then return nil, nil end
+	local c = j.Character; local h = c and c:FindFirstChildOfClass("Humanoid"); local r = c and c:FindFirstChild("HumanoidRootPart")
+	if not (h and r and h.Health > 0) then return nil, nil end
+	local p = (m and m ~= c and m.PrimaryPart and m:GetPivot().Position) or r.Position
+	if (p - lobo:GetPivot().Position).Magnitude > 120 then return nil, p end
+	return j.UserId, p
+end
+fnDano.OnInvoke = function(valor, elemento, origem)
 	if type(valor) ~= "number" or valor <= 0 then return 0, "invalido" end
 	local sortear = pasta:FindFirstChild("SortearEsquiva")
 	if sortear and sortear:Invoke() then fx:FireAllClients("esquiva", lobo); return 0, "esquivou" end
 	local v = valor
 	if elemento == "Gelo" then v *= (1 - CFG.pelagem.resistGelo); fx:FireAllClients("gelo_desviado", lobo) end
+	local uid, pOrigem = autoria(origem)
+	evDanoIA:Fire(v, uid, pOrigem)                               -- r15: antes de mudar a Vida (a IA ve o evento primeiro)
 	lobo:SetAttribute("Vida", math.max(0, (lobo:GetAttribute("Vida") or CFG.vida) - v))
 	return v, "acertou"
 end
@@ -511,7 +541,10 @@ local function basico()
 		local focinho = pv.Position + fr * (CFG.focinho * esc())
 		local melhor, dm = nil, math.huge
 		local alc = B.alcance * esc()
+		-- r15: o lobo SELVAGEM so morde o alvo que a IA travou (jogador inocente ao lado do agressor nao e mordido)
+		local soTravado = lobo:GetAttribute("Selvagem") and travado and travado.Parent and travado or nil
 		for _, m in ipairs(inimigosEm(focinho, alc + 4)) do
+			if soTravado and m ~= soTravado then continue end
 			local d = plano(posDe(m) - focinho)
 			local ang = math.abs(math.deg(angulo(fr, plano(posDe(m) - pv.Position).Unit)))
 			if d.Magnitude <= alc + 1.5 and ang <= B.cone / 2 and d.Magnitude < dm then melhor, dm = m, d.Magnitude end
@@ -554,4 +587,17 @@ rede.OnServerEvent:Connect(function(j, acao, a1, a2)
 	end
 end)
 Players.PlayerRemoving:Connect(function(j) if j.UserId == dono() then travado = nil end end)
-pasta:SetAttribute("Kit_Versao", "r13c 19/11 (Avalanche: passada na escala da idade) | r13b 19/11 (inimigo nao e obstaculo no Cometa/Avalanche; idades: dano, teto de esquiva, alcance e ativas liberadas; impacto e som da mordida) | r12 17/11 (ataque basico so mordidas, sem garras; garras sincronizadas por marcha v43r5, sem piscar no golpe; piscar + ataque basico andando + Cometa r7 segue o alvo, Avalanche, Instinto Boreal, Pelagem Polar)")
+-- r14: acoes pedidas pela IA do proprio lobo selvagem (servidor -> servidor; mesmas regras de recarga/energia/alcance)
+local evIA = pasta:FindFirstChild("IA_Acao") or Instance.new("BindableEvent"); evIA.Name = "IA_Acao"; evIA.Parent = pasta
+evIA.Event:Connect(function(acao, alvo)
+	if not lobo:GetAttribute("Selvagem") then return end
+	local m = typeof(alvo) == "Instance" and modeloAlvo(alvo) or nil
+	if m and alvoValido(m) then
+		travado = m
+		local d = plano(posDe(m) - lobo:GetPivot().Position); if d.Magnitude > 1e-3 then dirCliente, dirT = d.Unit, os.clock() end
+	end
+	if acao == "basico" then basico()
+	elseif acao == "cometa" then task.spawn(cometa)
+	elseif acao == "avalanche" then task.spawn(avalanche) end
+end)
+pasta:SetAttribute("Kit_Versao", "r15 20/11 (autoria do dano: IA_DanoRecebido) | r14 19/11 (ganchos da IA selvagem) | r13c 19/11 (Avalanche: passada na escala da idade) | r13b 19/11 (inimigo nao e obstaculo no Cometa/Avalanche; idades: dano, teto de esquiva, alcance e ativas liberadas; impacto e som da mordida) | r12 17/11 (ataque basico so mordidas, sem garras; garras sincronizadas por marcha v43r5, sem piscar no golpe; piscar + ataque basico andando + Cometa r7 segue o alvo, Avalanche, Instinto Boreal, Pelagem Polar)")

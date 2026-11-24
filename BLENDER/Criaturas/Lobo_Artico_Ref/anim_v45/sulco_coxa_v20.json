@@ -1,0 +1,25 @@
+{
+ "parametros": {
+  "D_SULCO": 0.6,
+  "MAX_D": 0.3,
+  "PASSADAS": 24
+ },
+ "LOW": {
+  "vertices_alisados": 232,
+  "borda_do_corte": 45,
+  "maior_deslocamento": 0.3,
+  "cartoes_transladados": 51
+ },
+ "LOD1": {
+  "vertices_alisados": 96,
+  "borda_do_corte": 38,
+  "maior_deslocamento": 0.3,
+  "cartoes_transladados": 36
+ },
+ "LOD2": {
+  "vertices_alisados": 41,
+  "borda_do_corte": 19,
+  "maior_deslocamento": 0.3,
+  "cartoes_transladados": 0
+ }
+}

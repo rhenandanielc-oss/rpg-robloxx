@@ -1,0 +1,74 @@
+{
+ "AndarCurvaDireita": {
+  "quadros": 37,
+  "laco": true,
+  "rot_max_graus": 0.0,
+  "ponta_dedos_max": 0.000258
+ },
+ "AndarCurvaEsquerda": {
+  "quadros": 37,
+  "laco": true,
+  "rot_max_graus": 0.0,
+  "ponta_dedos_max": 0.000223
+ },
+ "AndarCurvaFechadaDireita": {
+  "quadros": 37,
+  "laco": true,
+  "rot_max_graus": 0.0,
+  "ponta_dedos_max": 0.000191
+ },
+ "AndarCurvaFechadaEsquerda": {
+  "quadros": 37,
+  "laco": true,
+  "rot_max_graus": 0.0,
+  "ponta_dedos_max": 0.000197
+ },
+ "AndarParaCurvaDireita": {
+  "quadros": 73,
+  "laco": false,
+  "rot_max_graus": 0.0,
+  "ponta_dedos_max": 0.0003
+ },
+ "AndarParaCurvaEsquerda": {
+  "quadros": 73,
+  "laco": false,
+  "rot_max_graus": 0.0,
+  "ponta_dedos_max": 0.00025
+ },
+ "CurvaParaAndarDireita": {
+  "quadros": 73,
+  "laco": false,
+  "rot_max_graus": 0.0,
+  "ponta_dedos_max": 0.000266
+ },
+ "CurvaParaAndarEsquerda": {
+  "quadros": 73,
+  "laco": false,
+  "rot_max_graus": 0.0,
+  "ponta_dedos_max": 0.000236
+ },
+ "CurvaParaFechadaDireita": {
+  "quadros": 73,
+  "laco": false,
+  "rot_max_graus": 0.0,
+  "ponta_dedos_max": 0.000267
+ },
+ "CurvaParaFechadaEsquerda": {
+  "quadros": 73,
+  "laco": false,
+  "rot_max_graus": 0.0,
+  "ponta_dedos_max": 0.000256
+ },
+ "FechadaParaCurvaDireita": {
+  "quadros": 73,
+  "laco": false,
+  "rot_max_graus": 0.0,
+  "ponta_dedos_max": 0.000258
+ },
+ "FechadaParaCurvaEsquerda": {
+  "quadros": 73,
+  "laco": false,
+  "rot_max_graus": 0.0,
+  "ponta_dedos_max": 0.000223
+ }
+}

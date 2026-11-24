@@ -1,0 +1,389 @@
+{
+ "poses": {
+  "farejar": {
+   "parametros": {
+    "pitch_graus": 13,
+    "desce_quadril": 0.15,
+    "y_quadril": 0.0,
+    "focinho_z": 0.35,
+    "cabeca_graus": 55,
+    "pescoco_divisao": [
+     0.6,
+     0.4
+    ],
+    "boca_graus": 0.0,
+    "pata_D_x": 0.0,
+    "pata_D_y": 0.0,
+    "pata_T_x": 0.0,
+    "pata_T_y": 0.0,
+    "orelhas_graus": 12.0
+   },
+   "pescoco_graus": 64.0
+  },
+  "comer": {
+   "parametros": {
+    "pitch_graus": 16,
+    "desce_quadril": 0.3,
+    "y_quadril": 0.0,
+    "focinho_z": 0.15,
+    "cabeca_graus": 66,
+    "pescoco_divisao": [
+     0.6,
+     0.4
+    ],
+    "boca_graus": 16.0,
+    "pata_D_x": 0.25,
+    "pata_D_y": -0.35,
+    "pata_T_x": 0.0,
+    "pata_T_y": 0.0,
+    "orelhas_graus": -6.0
+   },
+   "pescoco_graus": 46.2
+  },
+  "beber": {
+   "parametros": {
+    "pitch_graus": 17,
+    "desce_quadril": 0.3,
+    "y_quadril": 0.2,
+    "focinho_z": 0.08,
+    "cabeca_graus": 40,
+    "pescoco_divisao": [
+     0.6,
+     0.4
+    ],
+    "boca_graus": 8.0,
+    "pata_D_x": 0.15,
+    "pata_D_y": -0.4,
+    "pata_T_x": 0.0,
+    "pata_T_y": 0.0,
+    "orelhas_graus": 0.0
+   },
+   "pescoco_graus": 60.9
+  }
+ },
+ "acoes": {
+  "Farejar": {
+   "quadros": 30,
+   "erro_ik": 0.0,
+   "plantas": {
+    "DE": [
+     [
+      0,
+      30
+     ]
+    ],
+    "DD": [
+     [
+      0,
+      30
+     ]
+    ],
+    "TE": [
+     [
+      0,
+      30
+     ]
+    ],
+    "TD": [
+     [
+      0,
+      30
+     ]
+    ]
+   },
+   "marcadores_s": {
+    "FocinhoNoChao": 1.0
+   }
+  },
+  "Farejando": {
+   "quadros": 120,
+   "erro_ik": 0.0,
+   "plantas": {
+    "DE": [
+     [
+      0,
+      120
+     ]
+    ],
+    "DD": [
+     [
+      0,
+      120
+     ]
+    ],
+    "TE": [
+     [
+      0,
+      120
+     ]
+    ],
+    "TD": [
+     [
+      0,
+      120
+     ]
+    ]
+   },
+   "laco": true
+  },
+  "PararFarejar": {
+   "quadros": 30,
+   "erro_ik": 0.0,
+   "plantas": {
+    "DE": [
+     [
+      0,
+      30
+     ]
+    ],
+    "DD": [
+     [
+      0,
+      30
+     ]
+    ],
+    "TE": [
+     [
+      0,
+      30
+     ]
+    ],
+    "TD": [
+     [
+      0,
+      30
+     ]
+    ]
+   },
+   "marcadores_s": {
+    "CabecaErguida": 0.9
+   }
+  },
+  "Comer": {
+   "quadros": 45,
+   "erro_ik": 0.0,
+   "plantas": {
+    "DE": [
+     [
+      0,
+      8
+     ],
+     [
+      22,
+      45
+     ]
+    ],
+    "DD": [
+     [
+      0,
+      14
+     ],
+     [
+      28,
+      45
+     ]
+    ],
+    "TE": [
+     [
+      0,
+      45
+     ]
+    ],
+    "TD": [
+     [
+      0,
+      45
+     ]
+    ]
+   },
+   "marcadores_s": {
+    "BocaNoAlimento": 1.47
+   }
+  },
+  "Comendo": {
+   "quadros": 150,
+   "erro_ik": 0.0,
+   "plantas": {
+    "DE": [
+     [
+      0,
+      150
+     ]
+    ],
+    "DD": [
+     [
+      0,
+      150
+     ]
+    ],
+    "TE": [
+     [
+      0,
+      150
+     ]
+    ],
+    "TD": [
+     [
+      0,
+      150
+     ]
+    ]
+   },
+   "laco": true
+  },
+  "PararComer": {
+   "quadros": 45,
+   "erro_ik": 0.0,
+   "plantas": {
+    "DE": [
+     [
+      0,
+      18
+     ],
+     [
+      32,
+      45
+     ]
+    ],
+    "DD": [
+     [
+      0,
+      24
+     ],
+     [
+      38,
+      45
+     ]
+    ],
+    "TE": [
+     [
+      0,
+      45
+     ]
+    ],
+    "TD": [
+     [
+      0,
+      45
+     ]
+    ]
+   },
+   "marcadores_s": {
+    "DePe": 1.3
+   }
+  },
+  "Beber": {
+   "quadros": 54,
+   "erro_ik": 0.0,
+   "plantas": {
+    "DE": [
+     [
+      0,
+      8
+     ],
+     [
+      24,
+      54
+     ]
+    ],
+    "DD": [
+     [
+      0,
+      16
+     ],
+     [
+      32,
+      54
+     ]
+    ],
+    "TE": [
+     [
+      0,
+      54
+     ]
+    ],
+    "TD": [
+     [
+      0,
+      54
+     ]
+    ]
+   },
+   "marcadores_s": {
+    "FocinhoNaAgua": 1.8
+   }
+  },
+  "Bebendo": {
+   "quadros": 90,
+   "erro_ik": 0.0,
+   "plantas": {
+    "DE": [
+     [
+      0,
+      90
+     ]
+    ],
+    "DD": [
+     [
+      0,
+      90
+     ]
+    ],
+    "TE": [
+     [
+      0,
+      90
+     ]
+    ],
+    "TD": [
+     [
+      0,
+      90
+     ]
+    ]
+   },
+   "laco": true
+  },
+  "PararBeber": {
+   "quadros": 54,
+   "erro_ik": 0.0,
+   "plantas": {
+    "DE": [
+     [
+      0,
+      22
+     ],
+     [
+      38,
+      54
+     ]
+    ],
+    "DD": [
+     [
+      0,
+      28
+     ],
+     [
+      44,
+      54
+     ]
+    ],
+    "TE": [
+     [
+      0,
+      54
+     ]
+    ],
+    "TD": [
+     [
+      0,
+      54
+     ]
+    ]
+   },
+   "marcadores_s": {
+    "DePe": 1.6
+   }
+  }
+ }
+}

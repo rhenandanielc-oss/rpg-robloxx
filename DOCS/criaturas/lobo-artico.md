@@ -4218,3 +4218,267 @@ Pendente: aprovação visual → export/reimport (GLB por LOD) → JSON → KFS 
   - substituir o modelo antigo da Biblioteca;
   - pôr o lobo no habitat da Tundra, IA selvagem ou spawn;
   - publicar as animações como Animation (a KeyframeSequence só toca no Studio).
+
+### 8.78 Alcateias selvagens na Tundra: IA, ovo na toca e spawn no habitat (19/11/2026)
+**Pedido:** "Faça o push e prossiga com a ida, ninhos, spawn no habitat, IA selvagem" + "o lobo já tem cavernas para esconder seus ovos e dormir lá".
+- **Ovo e sono:** o ovo fica escondido na toca (Abrigo_Filhotes) e a alcateia dorme no Descanso_Toca.
+- **Tamanho da alcateia:** o usuário não respondeu. Usei 3 por alcateia [PROPOSTA], fácil de mudar em `CFG.membros`.
+
+**Base do levantamento (só leitura):**
+- Regras OFICIAIS de ovo (urso-silvestre.md:64-67):
+  - o ovo reaparece em 30–60 min;
+  - acha-se por pistas, nunca por coordenada;
+  - o primeiro a terminar a coleta leva;
+  - guardião adulto selvagem não é capturável.
+- O tamanho da alcateia e a lore de mamífero nascer de ovo continuam [PENDENTE].
+- O habitat do M5.1 já tinha, por alcateia: toca (entrada, descanso, abrigo dos filhotes), 2 zonas de caça, rota de patrulha, arena e território.
+
+**Implementação (fontes em `BLENDER/Criaturas/Lobo_Artico_Ref/studio/`):**
+- `Controle_Servidor` r6b (cópia r5):
+  - `IA_Mover` (a IA manda a mesma intenção do jogador: direção + marcha) e `IA_PedirUivo`;
+  - lobo `Selvagem` não pode ser assumido;
+  - sem chão à frente, gira no lugar em direção à intenção (antes travava de frente para a parede da toca).
+- `Kit_Servidor` r14 (cópia r13c):
+  - `IA_Acao` (básico/Cometa/Avalanche com as mesmas regras);
+  - o lobo **selvagem** trata jogador vivo como alvo; o lobo de ensaio continua sem PvP;
+  - lobos da mesma `Alcateia` não se atacam.
+- `Uivo_Servidor` r7 (cópia r6): `IA_Uivo`.
+- `selvagem/IA_LoboArtico.server.luau` r1e (um por lobo):
+  - **rotinas** Dormir (Deitar → Dormindo no Descanso, peso 3× à noite), Patrulhar (1 de cada 4 pontos da rota), Caçar (Farejar nas zonas) e Guardar (perto do ovo; Sacudir/Farejar);
+  - **defesa:** jogador a até 40 do ovo, ou que bate no lobo, vira alvo de toda a alcateia (atributo na pasta da alcateia). O Líder uiva como aviso (Uivo Boreal com os bônus) e os outros perseguem mordendo andando. Desistem fora da coleira de 75 do ovo;
+  - **nocaute** com vida 0: deita 60 s e se recupera (não morre, não é capturável) [PROPOSTA];
+  - **dormente** sem jogador a até 600 (tick de 2 s);
+  - **toca:** a toca é estreita demais para o Pathfinding no tamanho do lobo (NoPath com raio 2–3 em todas). Na 1ª vez o lobo calcula a "cadeia da toca" com um agente pequeno (raio 1, altura 3): Entrada → Descanso, mais o trecho até o Abrigo em pontos de 6 studs. Dentro da toca segue a cadeia; fora, o Pathfinding normal;
+  - **destrava:** parado 3 s → próximo ponto e recalcula; 3 falhas → troca de rotina.
+- `selvagem/IA_LoboArtico_Servidor.server.luau` r2 (ServerScriptService):
+  - cria `Workspace.Criaturas_IA.Lobos_Articos.<Alcateia>` com 3 lobos (Líder Adulto, Guardião Pré-adulto, Membro Adulto) clonados de `ServerStorage.LoboArtico_Selvagem_Modelo` (lobo + 5 scripts de servidor + `Uivo_Cliente`), na câmara de Descanso;
+  - **ovo** em cada toca: forma provisória, segurar 4 s a 10 studs. Ao começar a pegar, a alcateia ataca o jogador. A coleta é validada no servidor (trava antes de esperar), grava `ColetadoPor`/`ColetadoEm` e dispara `ServerStorage.IA_LoboArtico_Eventos.OvoColetado(jogador, alcateia)`. Nenhum item é entregue. Reaparece em 30–60 min (`ReaparecerTesteSeg` só para teste);
+  - desliga com `workspace:SetAttribute("IA_LoboArtico_Ativa", false)`.
+
+**Testes em Play no rpg_roblox (curtos):**
+
+| Caso | Resultado |
+|---|---|
+| Spawn | 3 lobos + ovo na Floresta; dormentes com o jogador longe |
+| Pathfinding r1 | NoPath dentro da toca → lobos presos (r1b/r1c/r1d/r1e corrigiram) |
+| Rotina r1e | Líder e Membro saem pela cadeia e patrulham (~3 studs/s); Guardião chega ao abrigo do ovo; Membro dorme no Descanso |
+| Defesa (jogador a 30 do ovo) | os 3 em Defender; Líder uivou de longe e voltou correndo; Guardião e Membro morderam (vida 100 → 11 em ~15 s) |
+| Ovo | segurar 4 s pelo cliente → `ColetadoPor` gravado, ovo escondido, alcateia marcou o jogador; reapareceu no tempo de teste (20 s) com o prompt ligado |
+| 3 alcateias | Maciço (cadeia 171 pontos) e Campos (40) com ovo e lobos se movendo (guardar/patrulhar/caçar) |
+
+**Pendências:**
+- **Modelo:** modelo do ovo do lobo; tamanho da alcateia e quantos ninhos por jogador [PENDENTE/PROPOSTA].
+- **Números:**
+  - dano dos lobos em jogador: o Pré-adulto morde 8 e o Adulto 10. Pode ser letal em grupo; ajustar com o usuário.
+- **Integração:**
+  - o item do ovo depende do inventário (só evento);
+  - publicar as animações como Animation para o jogo publicado.
+- **Revisão visual:** não fiz captura das alcateias (só números); falta um vídeo de revisão.
+
+**Vídeo da IA (pedido "Quero o vídeo da IA funcionando"):** `review/rpg_ia/video_ia_alcateias.mp4` (~71 s; Play curto no rpg_roblox, captura a 10 q/s). Cenas:
+- Líder saindo da toca e patrulhando;
+- Guardião dormindo no Descanso;
+- defesa com o jogador a 27 do ovo.
+
+**Achados na gravação:**
+- **Lobo dentro do jogador:** o lobo entra no corpo do jogador ao morder, em vez de parar na frente. A IA manda andar até o alvo e o lobo não tem colisão. Corrigir: parar a ~3–4 studs do focinho e girar para o alvo.
+- **Regeneração cobrindo as mordidas:** com vida 600, a regeneração padrão do Roblox (1%/s) quase cobre as mordidas de um só lobo.
+- **Distância de alerta:** a 41 studs do ovo a alcateia não reage (raio de alerta 40), como configurado.
+
+### 8.79 IA selvagem: diagnóstico, correção local r2c e plano de comportamento (19/11/2026)
+**Pedido:** "Lobo Ártico — corrigir a IA e aproximar o comportamento de lobos reais". Revisão e correção LOCAL; sem Studio e sem commit.
+- **Documento completo:** `DOCS/criaturas/lobo-artico-ia-plano.md` (diagnóstico, regras, matriz, testes, decisões).
+- **Os 10 achados:** confirmados na r1e, com linhas citadas. A sobreposição foi confirmada direto nos quadros `review/rpg_ia/defesa/`.
+- **Regras (RPG_01 §8, versão 22/10):** os `_ATUALIZADO.docx` não estão em Downloads.
+  - **Conflitos:** ovo nas 3 tocas sempre ("nem todo grupo possui ninho"; quantidade conforme jogadores) e ovo voltando na mesma toca ("distantes da localização anterior").
+  - **A confirmar:** Pré-adulto como Guardião.
+- **[CÓDIGO LOCAL] `IA_LoboArtico` r2c** (cópia r1e):
+  - contato medido do focinho, com histerese; para e se orienta no contato; aproxima/acompanha;
+  - reposiciona quando o alvo fica sob o tronco;
+  - repulsão entre membros;
+  - status `chegou`/`andando`/`falhou` (NoPath só com Spherecast livre; 3 travamentos = falha, não chegada);
+  - Blockcast do corpo da idade limitando a cadeia da toca;
+  - token de geração nas poses; Uivo sem travar a IA.
+- **[CÓDIGO LOCAL] `Controle_Servidor` r7** (cópia r6b): `IA_Olhar` (orienta sem andar).
+- **Testes locais:**
+  - `selvagem/conferir_blocos_luau.py`: blocos OK em 7 scripts;
+  - `selvagem/simular_contato_r2.py` (modelo 2D, não é o Roblox): sem corpo atravessado em 6 de 7 cenários (o glued começa dentro e sai em 0,97 s). Acertos com alvo parado: 3 → 20; com o Pré-adulto: 6 → 19.
+- **Não feito:**
+  - instalação e Play no rpg_roblox (precisa de autorização);
+  - filmagens reais com minutagem verificada;
+  - comparação visual (esta entrega não muda visual).
+
+### 8.80 Teste da IA r2 no rpg_roblox (20/11/2026)
+- Autorizado ("Autorizo o teste").
+- **Instalado:** IA r2j + Controle r7 no modelo selvagem e no lobo de ensaio, com backup `ServerStorage.LoboArtico_Backups.Antes_IA_r2c_20_11`.
+- **Contato frontal em Play:** 0 s de sobreposição e 38 acertos em 25 s (r2d).
+- **Revisões feitas no teste:** r2d–r2i. Os detalhes, a geometria real da toca e o aceite estão em `DOCS/criaturas/lobo-artico-ia-plano.md` §8.
+- **Pendências:**
+  - alvo circulando (giro de confronto ausente);
+  - toca baixa para o Adulto (teto 5,7–6,1; decisão do usuário);
+  - achado 4.
+- **Vídeo:** `review/rpg_ia_r2/video_diagnostico_r2.mp4`. Sem commit.
+
+### 8.81 IA r3 local: ameaça antes do ataque (20/11/2026)
+- **Pedido:** o lobo chegava perto demais e atacava direto.
+- **Feito, só local** (nada no Studio, sem commit):
+  - IA r3 com os níveis Calmo, Atenção, Ameaça, Defesa e Desengajar;
+  - coordenador por alcateia;
+  - visão com memória;
+  - autoria do dano;
+  - postos entre o intruso e a toca, a 11×Escala do focinho;
+  - Kit r15: `ReceberDano` com origem validada e `IA_DanoRecebido`; o selvagem só morde o alvo travado;
+  - spawner r3: a coleta grava UserId.
+- **Simulação local:** com 13 cenários, aviso de ≥ 2 s antes de atacar por aproximação, e recuar encerra o confronto.
+- **Falta:** os clipes Alerta/Ameaça/Giro/Recuar (contrato) e o Play.
+- **Detalhes:** `DOCS/criaturas/lobo-artico-ia-plano.md` §9.
+
+### 8.82 Teste da IA r3 no rpg_roblox (20/11/2026)
+- Autorizado ("Autorizo o teste").
+- **Instalado:** IA r3i, Kit r15 (só no modelo selvagem) e spawner r3, com backup `ServerStorage.LoboArtico_Backups.Antes_IA_r3_20_11`.
+- **Revisões feitas no Play:** r3b–r3i.
+- **Resultado:**
+  - quem vê o aviso, para e recua não é atacado;
+  - quem insiste recebe 6,4 s de aviso antes da mordida (contato 1,1–2,9);
+  - coleta e dano validado: defesa imediata;
+  - dano sem autoria: só investigar;
+  - morte, saída e todos longe: volta a Calmo sozinha.
+- **Vídeos:** `review/rpg_ia_r3/video_r3_limpo.mp4` e `video_r3_diagnostico.mp4`.
+- **Falta:** clipes de ameaça e recuo, teto da toca, decisão sobre a boca da toca como zona crítica. Sem commit.
+
+### 8.83 Lobo solitário + viradas naturais (20/11/2026, local)
+- **Decisão do usuário:** lobo sozinho. Interpretação: 1 lobo por território/toca (3 no total).
+- **Feito, só local** (sem Studio, sem commit):
+  - IA r4: papel Solitário, coordena e adverte sozinho;
+  - spawner r4: idempotente; excedentes vão para backup;
+  - Controle r8: zona morta, giro preciso no contato, viradas com passos;
+  - clipes VirarCurtoEsquerda/Direita (45°, 1,53 s) em cópia `anim_v44b`: deslize 0,017 stud, emenda com o Repouso exata.
+- **Vídeos:** `review/v44_viradas_curtas/`.
+- **Falta:**
+  - cabeça acompanhando no cliente;
+  - giro rápido para alvo circulando;
+  - teste em Play (spawn, defesa e giro).
+- **Detalhes:** plano §10.
+
+### 8.84 Lobo solitário + viradas no rpg_roblox (20/11/2026)
+- Autorizado ("Pode montar e testar").
+- **Instalado:**
+  - IA r4 e Controle r8b, só no modelo selvagem;
+  - spawner r4;
+  - clipes VirarCurto e `Movimento_LoboArtico` v44;
+  - backup em `Antes_r4_20_11`.
+- **Play:**
+  - 1 lobo Solitário por território, idempotente; a migração de um grupo de 3 guarda 2 no backup;
+  - defesa sozinho preservada: aviso, recuo e mordida (80 de dano em 10 s);
+  - viradas sempre com passos (0° sem clipe), sem tremor.
+- **Vídeos:** `review/rpg_r4/`.
+- **Falta:** giro rápido para alvo circulando e cabeça no cliente. Sem commit. Detalhes no plano §10.3.
+
+### 8.85 Ameaça visível e sonora (20/11/2026)
+- **Decisões do usuário:**
+  - rosnar com os ossos atuais;
+  - rosnado + latido;
+  - investida de aviso a ~10 studs e ataque se o jogador ficar ~2 s.
+- **Clipes** (anim_v45 r2, sem tremor da boca, aprovados): `AmeacaEntrar`, `Ameaca`, `AmeacaSair`, `InvestidaAviso`.
+- **No rpg_roblox:** IA r5 + clipes + sons Pro Sound Effects; backup `Antes_r5_20_11`.
+- **Play:** rosna, late quando o jogador avança, investida a 9,1 e defesa 3,2 s depois se ele ficar.
+- **Vídeo:** `review/rpg_r5/` (sem som). Sem commit. Detalhes no plano §11.
+
+### 8.86 Ameaça mais agressiva (20/11/2026)
+- **Decisões do usuário:**
+  - postura mais feroz;
+  - carga mais forte;
+  - ataque mais cedo;
+  - som mais raivoso;
+  - dano igual.
+- **No rpg_roblox:** IA r6d + clipes r3; backup `Antes_r6_20_11`.
+- **Play:**
+  - carga correndo de até 12 studs e bote a 4–8 do jogador;
+  - quem recua não é atacado;
+  - quem fica é atacado ~2,4 s depois do bote.
+- **Vídeo:** `review/rpg_r6/`. Sem commit.
+
+### 8.87 Giro sem shift lock + patas no chão (20/11/2026)
+- **Causa:** poses da IA (Action, corpo inteiro) tocando durante viradas e passos congelavam as pernas; o pivô girava sem chão à frente; o corpo não inclinava com o terreno.
+- **Correção instalada:**
+  - IA r7 (poses param quando o lobo anda ou vira);
+  - Controle r9 (sem giro de pivô; inclinação com o terreno; IK das patas parado), também no lobo de ensaio;
+  - backup `Antes_r7_20_11`.
+- **Play:** 0 quadros com pose congelando as pernas em 24 s de ameaça girando.
+- **Vídeo:** `review/rpg_r9/`. Sistema geral para jogadores e outras criaturas: sessão `pes-no-chao`. Sem commit.
+
+### 8.88 Árvores sólidas na Tundra + lobo contornando troncos (20/11/2026)
+- **Causa:** as malhas das árvores da Tundra não tinham colisão nem eram detectáveis.
+- **Correção:**
+  - 2.572 colisores invisíveis nos troncos (copa atravessável; reversível);
+  - Controle r10e: o lobo enxerga e contorna troncos por um ponto de passagem ao lado, com passos normais;
+  - backup `Antes_r10_20_11`.
+- **Play:** encosto 0, sem piscar, atravessa o bosque; o jogador também para no tronco.
+- **Vídeo:** `review/rpg_r10/`. Sem commit.
+
+### 8.89 Andar em curva com passos (20/11/2026, local em cópia)
+- **Causa do "giro no eixo":** andando, o Controle r10e gira o pivô sobre o Andar reto. As patas apoiadas escorregam 0,6–1,0 stud por apoio a 30°/s e até 2,0 a 60°/s. Parado, as viradas giram com o pivô quase fixo.
+- **Feito (anim_v46c, 16 clipes na fase do Andar):**
+  - laços AndarCurva (30°/s) e AndarCurvaFechada (45°/s);
+  - transições de 2 ciclos entre reto, curva e fechada;
+  - correções CurvaBreve (18°) e CurvaCurta (36°).
+  - O Andar aprovado é "dobrado": patas apoiadas fixas no mundo; corpo abaixa, inclina, a coluna e a cabeça entram na curva e a cauda compensa; giro em volta do meio do corpo.
+- **Auditoria mundial nos 3 LODs:**
+  - deslize 0,007–0,049 (antes: 0,47–1,52);
+  - aceleração igual à do Andar;
+  - sem cruzamento;
+  - reimportação do JSON idêntica.
+- **Controlador:** proposta r11 em cópia, não instalada. O pivô segue a curva do clipe e a escolha é feita por ciclo.
+- **Vídeos:** `review/v46_curvas/`.
+- **Falta:**
+  - partida parada com passos;
+  - teste em Play (exige autorização);
+  - filmagem real de referência.
+- Sem commit. Detalhes no plano §14.
+
+### 8.90 Curvas andando no rpg_roblox (23/11/2026)
+- **Instalado:**
+  - 16 clipes de curva;
+  - `Movimento` v46b;
+  - Controle **r11c** (selvagem + ensaio);
+  - backup em `Antes_r11_20_11`.
+- **Play:**
+  - curva de 90° em arco, sem giro no lugar;
+  - zigue-zague com curvas curtas;
+  - desvio de tronco por curva;
+  - IA ameaça e defende normalmente;
+  - deslize na curva igual ao do Andar reto.
+- **Corrigido no teste:**
+  - r11b: tronco na linha piscava Parado/Andar;
+  - r11c: em Defender, a curva afastava o lobo.
+- **Falta:**
+  - virada rápida de combate com passos (em Defender a 1ª mordida demorou 8,6 s);
+  - partida parada sem virar no lugar.
+- **Vídeo:** `review/rpg_r11/`. Sem commit. Plano §14.9.
+
+### 8.91 Virada de combate (24/11/2026, local em cópia)
+- **Decisões do usuário:**
+  - pivô nas traseiras;
+  - 90° em cerca de 1,0 s;
+  - só em ameaça e defesa;
+  - mordida emenda.
+- **Clipes:** VirarCombate90 (1,0 s) e VirarCombate180 (1,6 s), esquerda e direita, em `anim_v47b`.
+- **Auditoria:**
+  - deslize ≤0,017 nos 3 LODs;
+  - emendas lisas;
+  - reimportação do JSON idêntica.
+- **Controlador:** proposta r11d em cópia (usa essas viradas só em Ameaçar/Defender acima de 45°).
+- **Vídeo:** `review/v47_combate/`.
+- **Falta:** Studio e Play (autorização). Sem commit. Plano §15.
+
+### 8.92 Virada de combate no rpg_roblox (24/11/2026)
+- **Instalado:**
+  - 6 viradas de combate (45° 0,63 s; 90° 1,0 s; 180° 1,6 s);
+  - `Movimento` v47;
+  - Controle **r11e**;
+  - backup em `Antes_r11d_24_11`.
+- **Defesa no túnel:** 1ª mordida 0,2–0,5 s depois de entrar em Defender (antes 8,6 s), sem viradas calmas e sem giro do pivô parado.
+- **Falta:**
+  - mira da IA a partir da cabeça (vai e volta com o jogador colado);
+  - suavização menor em combate.
+- **Vídeo:** `review/rpg_r11/`. Sem commit. Plano §15.1.
