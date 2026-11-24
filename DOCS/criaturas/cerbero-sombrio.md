@@ -195,3 +195,30 @@ Base de comparação: Chamas Tríplices v6.2 (3 × 0,6× = 1,8× total, queimadu
   - Só a cor muda; os números continuam iguais.
   - A cor é decidida no lançamento [PROPOSTA].
   - Prévia em `aura/fx_furia_roxo.py` (sem alterar os aprovados). Ainda não testado no Roblox.
+- **20/11 — Studio, 1ª ida (modelo + animações):**
+  - Place local `Cerbero-testes.rbxl` (backup antes).
+  - GLB importado: 38 ossos, 13 × 20,6 × 24,1 studs. Convenção `giro180y` medida (≤ 0,002 stud).
+  - 34 clipes montados e tocados em Play, com duração e pose iguais às do Blender. Vídeos em `BLENDER/Criaturas/Cerbero_Sombrio_Ref/studio/video_2011/`. Aguarda revisão.
+  - Aura, VFX, poderes, IA e celular ainda não foram feitos no Roblox.
+- **20/11 — Studio, aura A3:**
+  - 49 chamas (ParticleEmitters nos ossos, 4/s) + pele com línguas de fogo (r2: máscara de emissão + cor) + script do cliente (pulso de 1,8 s, celular com metade das chamas, LOD por distância).
+  - Testada em Play de dia e à noite; vídeo em `studio/video_2011/`. Aguarda revisão.
+  - A r1 da pele (região inteira acesa) foi reprovada no próprio teste.
+  - Celular e FPS com várias criaturas: não medidos.
+- **20/11 — aura r3 no Studio** (pedido: menos "pintura", mais fogo, "porém não tanto"):
+  - pele com a cor original e brilho de brasa discreto;
+  - chamas maiores e acima das placas;
+  - 8 emissores de brasas;
+  - ~195 partículas no PC.
+  - Aguarda revisão.
+- **20/11 — aura r4 no Studio** (pedido: brilho mais intenso): chamas e brasas mais brilhantes, sem estourar em branco; pele 2,4. Aguarda revisão.
+- **20/11 — aura r5 no Studio** (pedido: corpo não alaranjado, só o fogo): pele natural sem brilho; só as 49 chamas + 8 brasas. Aguarda revisão.
+- **20/11 — aura r6 no Studio** (pedido: mais fogo): 61 chamas (6/s, 30% maiores) + 8 brasas; pele natural; ~330 partículas no PC (acima da meta, por pedido); FPS 59,8 no Studio com uma criatura. Aguarda revisão.
+- **20/11 — Aura A4 (Blender)**, pedido de fogo mais realista e impactante:
+  - 120 pontos de fogo pelo corpo (240 línguas com ciclo próprio: nascem, crescem, dividem e somem);
+  - inclinação com atraso na corrida;
+  - luz local; pele sem pintura (decisão r5);
+  - Fúria violeta.
+  - Evidências em `BLENDER/Criaturas/Cerbero_Sombrio_Ref/aura/A4/`. Aguarda revisão; nada no Roblox.
+- **20/11 — A4 r4 (dorso sem fileira de espinhos: menos chamas na crista, altura/inclinação variadas) APROVADA pelo usuário.** Vídeos refeitos em modo ultraleve (r3 guardada em `aura/A4/r3_antes_dorso/`). Ainda só Blender; Studio continua com a aura r6.
+- **23/11 — A4 no Studio (Cerbero-testes):** 90 chamas + 8 brasas, inclinação pela velocidade, Fúria violeta pelo atributo `Furia`, sem luzes; testado em Play (≈290 partículas). r3 (chamas presas ao corpo) APROVADA 24/11; celular não testado.

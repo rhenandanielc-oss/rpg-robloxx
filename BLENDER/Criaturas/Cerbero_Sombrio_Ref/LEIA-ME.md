@@ -836,3 +836,191 @@ A faixa antiga presa ao corpo foi desligada.
   - Correção: `M_Marca` entrou na troca. Os vídeos do Sol foram refeitos.
   - A versão anterior está em `fx_furia_roxo/r1_marca_laranja/`. A comparação está em `fx_furia_roxo/marca_antes_depois.png`.
   - Rastro e vento quente ficaram como estão (o usuário não pediu ajuste). A regra "cor decidida no lançamento" continua [PROPOSTA].
+
+## Studio — 1ª ida (20/11, autorizada: "quero levar ao Studio") — modelo + animações; AGUARDA REVISÃO do vídeo
+- **Place:** `Documents/RPG_Roblox/BACKUPS/Cerbero-testes.rbxl` (local), confirmado pelo usuário. Antes de mexer: cópia `Cerbero-testes_ANTES_import_2026-11-20.rbxl`. Place SALVO no fim.
+- **Limpeza (reversível):**
+  - 6 dragões do Workspace e 4 pastas de animação do ReplicatedStorage (~3,4 M instâncias) foram para `ServerStorage.Dragoes_Fora_do_Teste`. Cada um guarda o atributo `OrigemPai`.
+  - 12 scripts dos dragões foram desligados, com o atributo `DesligadoPeloTesteCerbero`.
+  - Os backups antigos do ServerStorage (~1,1 M) continuam lá, sem mudança. O Play rodou sem travar.
+- **Import 3D (usuário):** `rig/export/CR_Cerbero_Sombrio_Rig.glb` → `Workspace.Teste_Cerbero.Cerbero_Sombrio` (posição 0, 0, 60; Raiz no chão; partes ancoradas).
+  - Peças: RootPart + 3 MeshParts (Cabeças e Corpo com SurfaceAppearance; Bocas sem SurfaceAppearance, como no GLB) + AnimationController.
+  - 38 ossos; caixa 13,05 × 20,63 × 24,13 studs (igual ao Blender).
+- **Convenção dos ossos MEDIDA:** `giro180y`, com 6 poses e 45 pontos (cabeça do osso em relação à Raiz).
+  - 44 pontos com erro ≤ 0,002 stud. A exceção (0,45) é a MordidaE comparada sozinha: é um clipe de camada e não leva o pescoço.
+  - Sem conversão, o erro chega a ~16 studs.
+  - Atributo `Convencao = giro180y` gravado no modelo.
+  - Frente do modelo no RootPart = −Z.
+- **Pacote:** `studio/Cerbero_Piloto.rbxmx` (usuário: Insert from File) = 34 clipes de `rig/clipes_L3r7` + 25 listas de eventos + `AdaptadorCerbero` (cópia do adaptador do Crocodilo, só nomes trocados).
+  - Gerado por `studio/gerar_rbxmx_cerbero.py` + `studio/empacotar_clipes_cerbero.py`; os eventos vêm do `manifesto_clipes.json`.
+- **KFS:** 34 em `ServerStorage.Cerbero_Piloto.Animacoes`, com prioridades:
+  - Movement: Repouso, Andar, Trote, Corrida, Descanso;
+  - Action2: camadas (MordidaC/E/D, GarraE/D, BolaInfernalR2Camada, FuriaRugidoR4Camada);
+  - Action: o resto.
+  - Eventos viraram KeyframeMarkers.
+- **Play (sem publicar; AnimationClipProvider):** `TestePlayCerbero.verificar` tocou os 34 clipes.
+  - Duração igual à esperada em todos.
+  - Pose tocada × esperada: posição 0,0000; ângulo ≤ 0,21° (≤ 2,05° nas investidas, que são rápidas: interpolação na amostra).
+  - Mordidas C/E/D tocadas em camada SOBRE o Andar (atacar em movimento).
+- **Vídeos:**
+  - `studio/video_2011/Cerbero_Studio_parte1_locomocao_mordidas_furia.mp4` (Repouso, Andar, Trote, Corrida, 3 mordidas andando, Alerta, Fúria r4);
+  - `..._parte2_sol_investida_descanso.mp4` (Sol Infernal, Investida impacto e por cima, Deitar, Descanso, Levantar);
+  - `prancha_studio.png`.
+  - A câmera fixa precisou de BindToRenderStep, porque o plugin devolvia o tipo de câmera para Custom.
+- **Fora desta etapa (próximas):** aura A3, VFX dos poderes (Sol Infernal, Investida, Fúria roxa), Vigília, controle/montaria e IA. Também falta medir FPS com a aura.
+- **Celular:** não testado. Animações publicadas: não (só ids temporários do Studio).
+
+## Studio — aura de fogo A3 (20/11, autorizada: "Aprovo, seguir p/ aura") — AGUARDA REVISÃO do vídeo
+- **Decisões do usuário (20/11):**
+  - 49 chamas com taxa 4/s no PC (~157 partículas vivas); no celular, metade;
+  - pele com máscara de emissão + cor de fogo;
+  - pulso único nas 3 cabeças (separar as cabeças fica para depois).
+- **Chamas:**
+  - 49 Bones-âncora `AuraA3_NN_<zona>` sob os ossos do `aura_A3.json`; posições do Blender convertidas para o modelo como (−x, z, y) a partir da Raiz.
+  - Cada âncora tem um ParticleEmitter "Chama":
+    - textura `rbxasset://textures/particles/fire_main.dds`;
+    - cor amarelo → laranja → vermelho → brasa;
+    - LightEmission 0,75; Brightness 1,3;
+    - vida 0,6–0,9 s, sobe com aceleração ~1,6× a altura da chama;
+    - LockedToPart falso (inclina para trás ao andar);
+    - atributo `TaxaPC`.
+  - r1 estourava em branco na juba (sobreposição aditiva) → cor mais saturada e brilho menor.
+  - As chamas do dorso ficam em boa parte sob as placas da armadura (como na A3, por causa da sela).
+- **Pele:**
+  - `aura/assar_aura_roblox.py` gera `T_Cerbero_{Corpo,Cabecas}_{Cor_Fogo,EmissivaMascara}.png` por rasterização das UVs com numpy (o bake do Cycles recusava o objeto em modo de fundo).
+  - **r1** (`aura/roblox_A3/r1_cheia/`): acendia a região de fogo inteira → no Studio o corpo ficou laranja (cor) ou com um véu marrom (só máscara). REPROVADA pelo teste.
+  - **r2:** línguas de fogo por ruído 3D na posição do vértice em studs (contínuo nas costuras), esticadas na vertical; placas da armadura atenuadas; tinta só nas línguas.
+    - Prévia × A3: `aura/roblox_A3/previa_r2_x_A3.png` (`aura/previa_textura_roblox.py`).
+- **Envio das texturas:** o plugin não lê IDs do Asset Manager, e o envio pela Open Cloud foi bloqueado pela proteção de permissões. Solução igual aos outros animais:
+  - um GLB "portador" (`aura/glb_texturas_A3.py` → `roblox_A3/Cerbero_Texturas_A3_r2.glb`, 4 quadrados), importado pelo usuário com o Import 3D;
+  - os IDs foram lidos dos MeshParts e os quadrados apagados.
+  - IDs r2: Corpo cor `84850549410429`, máscara `104676656601430`; Cabeças cor `104169233442387`, máscara `112800307865115` (gravados como atributos na SurfaceAppearance, junto com `ColorMapOriginal`).
+  - As imagens r1 e as do Bulk Import ficaram sem uso na conta do usuário.
+- **Cliente:** `studio/AuraCerbero_Cliente.luau` (LocalScript em StarterPlayerScripts):
+  - EmissiveStrength com pulso de 1,8 s + cintilação, 2,2–3,1 (medido em Play);
+  - celular: 25 chamas;
+  - LOD: acima de 90 studs, taxa pela metade; acima de 160, chamas desligadas.
+  - Correção: com StreamingEnabled o Model chegava antes das peças e o registro ficava vazio → o script registra de novo enquanto faltar peça; o modelo ganhou `ModelStreamingMode = Atomic`.
+- **Play:**
+  - FPS do cliente 15,0 no Studio (o Studio deste PC roda ~15 fps; não é medição de jogo) com 49 emissores;
+  - vídeo `studio/video_2011/Cerbero_Studio_aura_A3_dia_noite.mp4` (Repouso, Andar, Corrida, Fúria r4, depois noite) + `prancha_aura_studio.png`.
+  - A noite foi só no Play (ClockTime 0,5); o place continua com 14,5.
+- **Pendências:**
+  - as chamas aparecem pouco à luz do dia (o brilho da pele domina);
+  - celular: não testado (só a regra no script);
+  - FPS real com várias criaturas: não medido;
+  - as 3 cabeças pulsam juntas.
+- **r3 (20/11) — pedido do usuário: "parecem mais pintura no corpo do que uma aura, quero mais fogo. Porém não tanto"** — AGUARDA REVISÃO
+  - Backup do modelo r2: `ServerStorage.Cerbero_ANTES_AuraR3_2026-11-20`.
+  - **Pele:** volta à cor ORIGINAL do pelo (a tinta laranja da r2 sai da ColorMap; o atributo `AuraA3_Cor` continua guardado). A máscara r2 fica só como brasa discreta: EmissiveStrength 1,6 ± 0,7 (pulso) ± 0,3 (cintilação), tinta (255,100,25).
+  - **Chamas:**
+    - tamanho ×1,4, Brightness 1,4, LightEmission 0,55;
+    - com 2,2 e 0,9 estouravam em branco com o Bloom do place;
+    - chamas do dorso e dos ombros subiram 1,4 stud para sair de baixo das placas.
+  - **Brasas:** 8 emissores "Brasa" (`sparkles_main`, 4/s, vida 0,9–1,5 s) nos ossos Coluna1–3, Pelve, Pescoços C/E/D1 e Cauda2.
+  - **Orçamento estimado:** ~157 + ~38 ≈ 195 partículas no PC; no celular, metade. O cliente agora trata "Brasa" como "Chama" (celular/LOD).
+  - **Vídeo:** `studio/video_2011/Cerbero_Studio_aura_A3_r3_dia_noite.mp4` + `prancha_aura_r3_studio.png`.
+  - Celular e FPS com várias criaturas: não medidos.
+- **r4 (20/11) — pedido do usuário: "quero um brilho mais intenso"** — AGUARDA REVISÃO
+  - **Chamas:** Brightness 2,6, LightEmission 0,8; a cor começa em laranja (255,150,40) em vez de amarelo-claro, para não estourar em branco com o Bloom.
+  - **Brasas:** Brightness 5.
+  - **Pele:** EmissiveStrength 2,4 ± 1,0 (pulso) ± 0,4.
+  - **Vídeo:** `studio/video_2011/Cerbero_Studio_aura_A3_r4_dia_noite.mp4` + `prancha_aura_r4_studio.png`.
+  - **Nota do teste:** se o script do cliente for desligado com a câmera longe, as chamas ficam desligadas pelo LOD. É só um artefato do ensaio.
+- **r5 (20/11) — pedido do usuário: "não quero seu corpo alaranjado, somente o fogo"** — AGUARDA REVISÃO
+  - **Pele:** cor ORIGINAL, sem máscara de emissão (EmissiveMaskContent vazio) e EmissiveStrength 0.
+  - **Script do cliente:** BASE/AMPL/CINT = 0 (o pulso não acende mais a pele); continua cuidando do celular e do LOD das chamas e brasas.
+  - **Fogo:** as 49 chamas e as 8 brasas da r4 continuam iguais.
+  - As texturas assadas (r1/r2) e os IDs ficam guardados (atributos `AuraA3_Cor`/`AuraA3_Mascara`), sem uso.
+  - **Evidência:** `studio/video_2011/aura_r5_dia.jpg`, `aura_r5_noite.jpg` (Play).
+- **r6 (20/11) — pedido do usuário: "mais fogo"** — AGUARDA REVISÃO
+  - **Chamas existentes:** taxa 4 → 6/s, tamanho ×1,3 (atributo `Escala_r6`).
+  - **12 chamas novas** (`AuraExtra_NN_<osso>`, cópias da Chama r4): linha das costas e lados (Coluna1–3), quadril (Pelve) e base da cauda (Cauda1), acima do pelo e das placas.
+  - **Total:** 61 chamas + 8 brasas = 69 emissores; estimativa ~330 partículas vivas no PC (acima da meta ~150 da §5.10, por pedido do usuário); celular metade (LOD do cliente).
+  - **Pele:** continua natural, sem brilho (r5).
+  - **FPS do cliente no Studio:** 59,8 com 69 emissores (uma criatura; Studio, não é medição de jogo).
+  - **Evidência:** `studio/video_2011/aura_r6_dia.jpg`, `aura_r6_noite.jpg`, `Cerbero_Studio_aura_r6_dia_noite.mp4`.
+
+## Aura de FOGO A4 (20/11, Blender) — pedido "fogo mais realista, brilhante e impactante" — APROVADA 20/11 (dorso r4 + vídeos); Roblox pendente
+- **Base:** cópia de revisão de `aura/CR_Cerbero_Fogo_A3.blend`; a A3 aceita, o rig, os clipes e o Studio ficaram intactos.
+- **Arquivos:**
+  - script `aura/fogo_A4.py` → `aura/A4/CR_Cerbero_Fogo_A4.blend` + `aura/A4/aura_A4.json`;
+  - render `aura/render_A4.py`, o mesmo script para a A3 e a A4: luz noite/dia, vistas 34/lado/frente/cab, modo `ultra`.
+- **Leitura do pedido junto com a decisão anterior do usuário (r5: "corpo não alaranjado, somente o fogo"):**
+  - a pintura da pele da A3 ficou ×0,03 (quase nula); o pelo continua escuro e visível entre as chamas;
+  - a integração vem de 9 luzes pontuais locais presas aos ossos, com cintilação.
+- **Distribuição:**
+  - 120 pontos amostrados na superfície, pelo peso `fogo` da A3 × manchas de intensidade (ruído de baixa frequência);
+  - distância mínima entre bases de 1,15 stud (0,9 nas pernas);
+  - rosto limpo (só atrás dos olhos), sem chamas em mãos, pés e mandíbulas;
+  - por zona: juba 46, dorso 20, pernas 16, peito 10, quadril 10, cauda 10, ombros 8.
+  - Cada ponto tem a língua principal e uma "filha" (divisão), presas ao osso de maior peso: são 240 línguas.
+- **Ciclo de vida no shader** (fase e período próprios, 0,75–1,35 s):
+  - nasce, cresce e divide;
+  - a base sobe um pouco no fim e a língua some;
+  - a cada ciclo muda de posição lateral e de altura (ruído por ciclo), sem repetição sincronizada.
+- **Movimento:**
+  - turbulência e balanço largo, com pontas curvas e estrias;
+  - correndo: inclinação para trás e estiramento pela propriedade de cena `inclina`, com a metade traseira atrasada 0,25 s (`inclina_atraso`).
+- **Brilho:**
+  - núcleo amarelo só no centro do terço de baixo; laranja vivo; vermelho na base;
+  - força de emissão 5,5 × calor^1,2 (a A3 tinha 2,4);
+  - view Standard.
+- **Fúria:** a propriedade `violeta` troca a rampa das chamas e a cor das luzes, com o mesmo movimento.
+- **Rodadas no Blender:**
+  - r1: gotas de vela, duras;
+  - r2: fiapos fracos demais;
+  - r3: meio-termo; base firme (sobe 0,32 em vez de 0,62); pele ×0,03.
+- **Evidências** (`aura/A4/`), renderizadas em modo ULTRALEVE porque o lote normal travou o PC do usuário:
+  - pranchas: `prancha_ref_A3_A4_34.png` (referência × A3 × A4, noite e dia, mesma luz e câmera), `prancha_A3_A4_vistas_noite.png` (perfil, frente, cabeças, corrida) e `prancha_A4_furia.png`;
+  - vídeos em `videos/` (15 qps, velocidade normal, 3 s): `A4_Repouso_noite_{34,cab}`, `A4_Corrida_noite_{34,cab}` e `A4_Repouso_furia_noite_34`;
+  - quadros soltos em `comparacao/`; os q20/q81 e as vistas de dia além da 34 vieram do lote normal interrompido, em resolução maior.
+- **Estimativa para o Roblox** [A TESTAR]:
+  - PC: 120 emissores a 3/s, vida 0,9 s → ~324 partículas, mais 1 PointLight por criatura (não 9);
+  - celular: 60 emissores a 2/s → ~96 partículas, sem luz;
+  - a língua "filha" vira variação de tamanho e rotação da mesma partícula.
+- **Pendências e limites:**
+  - no perfil, as chamas do dorso ainda formam uma fileira parecida com espinhos; falta quebrar mais o espaçamento na linha das costas;
+  - os núcleos da juba chegam perto do branco à noite;
+  - os flancos e as pernas ainda têm pouca chama, comparados com a referência;
+  - vídeos curtos (3 s) por causa do modo ultraleve;
+  - desempenho real só medindo no Roblox (o Studio está com a aura r6, não com a A4).
+- **A4 r4 (20/11) — pedido do usuário: "ajustar o dorso"** — APROVADA pelo usuário 20/11 ("Aprovo a r4")
+  - **Mudanças no `fogo_A4.py`:**
+    - peso 0,30 na crista das costas (normal para cima) → menos chamas em fila no topo, mais nos lados e flancos;
+    - distância mínima sorteada de 1,1 a 2,0 stud;
+    - alturas sorteadas ×0,6/0,85/1,0/1,25;
+    - largura ×0,85–1,3;
+    - cada chama do dorso pende para um lado;
+    - a língua "filha" sai para qualquer lado.
+  - A r3 está guardada em `aura/A4/r3_antes_dorso/` (script e quadros).
+  - Como a semente aleatória mudou, os pontos das outras zonas também foram sorteados de novo, com as mesmas contagens.
+  - **Evidência:** `aura/A4/prancha_dorso_r3_r4.png` (antes × depois: perfil, 3/4 e corrida, noite, mesma câmera); quadros em `aura/A4/r4_dorso/`; render ultraleve.
+  - **Resultado:** a fileira de espinhos sumiu; o fogo do dorso agora tem alturas e inclinações variadas e chega aos flancos.
+  - **Resto:** uma língua fina e vermelha aparece solta acima do dorso em um quadro (fim de ciclo, quando a base sobe). Os vídeos da A4 ainda são da r3.
+  - **Vídeos r4 (20/11):** refeitos em `aura/A4/videos/` (5 vídeos, 3 s, 15 qps), os da r3 guardados em `aura/A4/r3_antes_dorso/videos/`. Render no modo `lento` (pedido do usuário: o mais leve possível): 1 thread, 1 núcleo, prioridade ociosa, 4 s de pausa por quadro, um vídeo por vez (`so=<clipe>:<vista>`). **APROVADOS pelo usuário 20/11.**
+
+## Aura A4 no Studio (Cerbero-testes.rbxl) — 20/11 a 23/11 — r3 APROVADA pelo usuário 24/11
+- **Decisões do usuário:** cerca de 90 chamas; inclinar pela velocidade; sem luzes; Fúria por atributo com teste.
+- **Backups:** `ServerStorage.Cerbero_ANTES_A4_2026-11-20` (modelo r6) e `ServerStorage.AuraCerbero_Cliente_r6_2026-11-20` (script). Arquivo r6 em `studio/r6_antes_A4/`.
+- **Chamas:** `studio/criar_aura_A4.luau` com os dados de `studio/aura_A4_sitios.lua`.
+  - São 90 sítios da A4, escolhidos por zona para cobrir bem cada uma: juba 34, ombro 6, peito 8, dorso 15, quadril 8, cauda 7, perna 12. Cada chama é um ParticleEmitter "Chama" num Bone `AuraA4_NN_<zona>` filho do osso.
+  - Textura `fire_main` com VelocityParallel e Squash negativo, para línguas finas. Cor: núcleo claro, depois laranja e vermelho. Brilho 2,4. Taxa 4/s.
+  - Dorso e quadril com inclinação própria de ±22°. As 8 brasas foram mantidas.
+  - **r2 (vista no Play):** chamas do corpo afastadas 1 stud do osso, porque sumiam dentro da malha; peito, ombro e perna ×1,4. Subir o ZOffset foi rejeitado: as chamas do outro lado apareciam através do corpo, com cara de pintura.
+- **Script `AuraCerbero_Cliente` (A4):**
+  - inclina as chamas para trás pela velocidade horizontal (atraso de 0,25 s, cheio a 30 studs/s, atualização a 15 Hz);
+  - atributo `Furia` deixa chamas e brasas violeta;
+  - celular com metade das chamas; LOD 90/160 studs; pele sem brilho.
+- **Teste em Play (23/11):**
+  - 98 emissores ligados, cerca de 290 partículas vivas (estimativa por taxa × vida);
+  - Fúria violeta OK;
+  - corrida a 26 studs/s com o fogo inclinado para trás OK;
+  - sem erros do script da aura no console.
+  - Evidências em `studio/video_2011/A4/` (`prancha_A4_studio.jpg`, `A4_corrida_studio_bruto.mp4`).
+  - Celular e FPS não medidos. A foto da r6 na prancha não tem a mesma câmera.
+- **Place local salvo** depois da r2.
+- **r3 (23/11) — pedido do usuário: "o fogo não acompanha o corpo, fica para trás conforme o animal corre":**
+  - Causa: as partículas ficavam soltas no mundo, então a criatura corria e deixava o fogo para trás; a inclinação forte (0,8) piorava.
+  - Correção: chamas e brasas presas ao corpo (`LockedToPart = true`); inclinação reduzida para 0,35.
+  - Play: corrida a 26 studs/s com o fogo acompanhando o corpo e pendendo de leve para trás. Vídeo `studio/video_2011/A4/A4r3_corrida_presa.mp4`. Place local salvo.

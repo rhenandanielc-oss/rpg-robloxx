@@ -1,0 +1,1352 @@
+[
+{
+"nome": "ChamaA4_186",
+"zona": "juba",
+"osso": "PescocoD2",
+"base": [
+2.27,
+-8.022,
+15.729
+],
+"altura": 8.35,
+"largura": 1.9,
+"periodo_s": 0.84,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_144",
+"zona": "juba",
+"osso": "PescocoE2",
+"base": [
+-5.676,
+-8.013,
+16.565
+],
+"altura": 5.91,
+"largura": 2.13,
+"periodo_s": 1.03,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_110",
+"zona": "juba",
+"osso": "PescocoC1",
+"base": [
+-0.8,
+-3.586,
+15.179
+],
+"altura": 5.71,
+"largura": 2.29,
+"periodo_s": 1.15,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_178",
+"zona": "juba",
+"osso": "PescocoC2",
+"base": [
+-1.314,
+-9.119,
+18.876
+],
+"altura": 7.91,
+"largura": 2.66,
+"periodo_s": 0.76,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_138",
+"zona": "juba",
+"osso": "PescocoC1",
+"base": [
+-1.259,
+-7.987,
+12.879
+],
+"altura": 6.99,
+"largura": 2.37,
+"periodo_s": 1.05,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_152",
+"zona": "juba",
+"osso": "PescocoD1",
+"base": [
+3.24,
+-5.871,
+12.893
+],
+"altura": 4.26,
+"largura": 2.37,
+"periodo_s": 0.82,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_194",
+"zona": "juba",
+"osso": "PescocoE1",
+"base": [
+-4.022,
+-5.295,
+15.416
+],
+"altura": 5.54,
+"largura": 2.59,
+"periodo_s": 0.92,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_162",
+"zona": "juba",
+"osso": "PescocoC2",
+"base": [
+-0.535,
+-6.076,
+17.709
+],
+"altura": 6.36,
+"largura": 2.78,
+"periodo_s": 0.95,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_176",
+"zona": "juba",
+"osso": "PescocoE2",
+"base": [
+-3.026,
+-9.278,
+15.092
+],
+"altura": 5.58,
+"largura": 2.31,
+"periodo_s": 1.21,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_136",
+"zona": "juba",
+"osso": "PescocoD2",
+"base": [
+4.914,
+-6.746,
+15.22
+],
+"altura": 7.2,
+"largura": 2.25,
+"periodo_s": 1.24,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_154",
+"zona": "juba",
+"osso": "PescocoD1",
+"base": [
+2.54,
+-5.047,
+15.598
+],
+"altura": 7.18,
+"largura": 2.65,
+"periodo_s": 1.1,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_150",
+"zona": "juba",
+"osso": "PescocoD1",
+"base": [
+1.23,
+-7.642,
+11.507
+],
+"altura": 6.37,
+"largura": 2.77,
+"periodo_s": 0.76,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_168",
+"zona": "juba",
+"osso": "PescocoE2",
+"base": [
+-4.193,
+-8.049,
+13.444
+],
+"altura": 8.08,
+"largura": 2.52,
+"periodo_s": 1.31,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_196",
+"zona": "juba",
+"osso": "PescocoC2",
+"base": [
+-0.39,
+-8.827,
+14.667
+],
+"altura": 5.21,
+"largura": 2.7,
+"periodo_s": 0.81,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_174",
+"zona": "juba",
+"osso": "PescocoE2",
+"base": [
+-3.131,
+-8.936,
+17.147
+],
+"altura": 6.8,
+"largura": 2.1,
+"periodo_s": 0.97,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_146",
+"zona": "juba",
+"osso": "PescocoC2",
+"base": [
+0.872,
+-8.292,
+17.154
+],
+"altura": 5.33,
+"largura": 2.43,
+"periodo_s": 0.97,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_134",
+"zona": "juba",
+"osso": "PescocoD1",
+"base": [
+1.747,
+-7.955,
+13.403
+],
+"altura": 7.2,
+"largura": 1.91,
+"periodo_s": 0.87,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_148",
+"zona": "juba",
+"osso": "PescocoC1",
+"base": [
+0.58,
+-5.706,
+16.196
+],
+"altura": 7.96,
+"largura": 2.39,
+"periodo_s": 1.23,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_170",
+"zona": "juba",
+"osso": "PescocoC1",
+"base": [
+-1.624,
+-5.044,
+15.653
+],
+"altura": 5.82,
+"largura": 2.49,
+"periodo_s": 1.32,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_156",
+"zona": "juba",
+"osso": "PescocoD2",
+"base": [
+4.256,
+-6.55,
+16.761
+],
+"altura": 6.82,
+"largura": 2.55,
+"periodo_s": 1.05,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_166",
+"zona": "juba",
+"osso": "PescocoC2",
+"base": [
+0.339,
+-9.012,
+18.648
+],
+"altura": 6.55,
+"largura": 2.16,
+"periodo_s": 1.04,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_182",
+"zona": "juba",
+"osso": "PescocoD2",
+"base": [
+2.223,
+-6.379,
+16.519
+],
+"altura": 5.84,
+"largura": 2.79,
+"periodo_s": 0.75,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_180",
+"zona": "juba",
+"osso": "PescocoC2",
+"base": [
+-1.972,
+-7.822,
+17.429
+],
+"altura": 7.29,
+"largura": 2.64,
+"periodo_s": 0.94,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_142",
+"zona": "juba",
+"osso": "PescocoE2",
+"base": [
+-5.538,
+-7.839,
+14.335
+],
+"altura": 6.89,
+"largura": 2.16,
+"periodo_s": 0.75,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_124",
+"zona": "juba",
+"osso": "PescocoE2",
+"base": [
+-4.074,
+-7.659,
+16.821
+],
+"altura": 7.2,
+"largura": 2.29,
+"periodo_s": 1.16,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_126",
+"zona": "juba",
+"osso": "PescocoC2",
+"base": [
+-0.721,
+-7.709,
+18.607
+],
+"altura": 6.95,
+"largura": 2.29,
+"periodo_s": 0.9,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_158",
+"zona": "juba",
+"osso": "PescocoE1",
+"base": [
+-1.73,
+-7.465,
+14.246
+],
+"altura": 5.22,
+"largura": 2.03,
+"periodo_s": 1.05,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_128",
+"zona": "juba",
+"osso": "PescocoE2",
+"base": [
+-3.411,
+-6.342,
+16.387
+],
+"altura": 4.67,
+"largura": 2.26,
+"periodo_s": 0.85,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_188",
+"zona": "juba",
+"osso": "PescocoD2",
+"base": [
+2.984,
+-9.112,
+14.967
+],
+"altura": 7.95,
+"largura": 2.25,
+"periodo_s": 1.32,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_114",
+"zona": "juba",
+"osso": "PescocoD2",
+"base": [
+3.451,
+-8.747,
+16.321
+],
+"altura": 7.24,
+"largura": 2.14,
+"periodo_s": 1.03,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_132",
+"zona": "juba",
+"osso": "PescocoD2",
+"base": [
+2.995,
+-7.944,
+13.973
+],
+"altura": 5.36,
+"largura": 2.39,
+"periodo_s": 1.02,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_108",
+"zona": "juba",
+"osso": "PescocoD2",
+"base": [
+3.675,
+-5.768,
+15.472
+],
+"altura": 4.89,
+"largura": 1.91,
+"periodo_s": 1.2,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_164",
+"zona": "juba",
+"osso": "PescocoE1",
+"base": [
+-2.793,
+-8.193,
+14.108
+],
+"altura": 6.21,
+"largura": 2.3,
+"periodo_s": 1.12,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_120",
+"zona": "juba",
+"osso": "PescocoE1",
+"base": [
+-4.562,
+-5.984,
+14.537
+],
+"altura": 6.81,
+"largura": 2.48,
+"periodo_s": 1.0,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_102",
+"zona": "ombro",
+"osso": "EscapulaE",
+"base": [
+-3.961,
+-4.578,
+14.379
+],
+"altura": 4.08,
+"largura": 1.59,
+"periodo_s": 0.84,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_106",
+"zona": "ombro",
+"osso": "EscapulaD",
+"base": [
+1.059,
+-1.832,
+13.842
+],
+"altura": 2.9,
+"largura": 1.58,
+"periodo_s": 0.75,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_100",
+"zona": "ombro",
+"osso": "EscapulaE",
+"base": [
+-4.332,
+-7.039,
+10.903
+],
+"altura": 3.18,
+"largura": 1.66,
+"periodo_s": 0.91,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_096",
+"zona": "ombro",
+"osso": "EscapulaE",
+"base": [
+-5.543,
+-4.062,
+10.616
+],
+"altura": 3.45,
+"largura": 1.52,
+"periodo_s": 1.13,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_094",
+"zona": "ombro",
+"osso": "EscapulaE",
+"base": [
+-2.47,
+-3.124,
+14.93
+],
+"altura": 3.8,
+"largura": 1.77,
+"periodo_s": 0.82,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_104",
+"zona": "ombro",
+"osso": "EscapulaE",
+"base": [
+-4.592,
+-3.775,
+11.991
+],
+"altura": 3.04,
+"largura": 1.89,
+"periodo_s": 1.05,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_000",
+"zona": "peito",
+"osso": "Coluna3",
+"base": [
+0.558,
+-7.463,
+9.59
+],
+"altura": 3.93,
+"largura": 1.66,
+"periodo_s": 0.81,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_018",
+"zona": "peito",
+"osso": "Coluna3",
+"base": [
+0.237,
+-4.77,
+7.783
+],
+"altura": 3.09,
+"largura": 1.73,
+"periodo_s": 0.9,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_004",
+"zona": "peito",
+"osso": "Coluna3",
+"base": [
+-2.31,
+-7.445,
+9.97
+],
+"altura": 2.38,
+"largura": 1.69,
+"periodo_s": 0.85,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_014",
+"zona": "peito",
+"osso": "Coluna3",
+"base": [
+-0.285,
+-8.113,
+12.075
+],
+"altura": 3.36,
+"largura": 1.64,
+"periodo_s": 1.24,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_008",
+"zona": "peito",
+"osso": "Coluna3",
+"base": [
+-1.354,
+-7.588,
+11.121
+],
+"altura": 3.66,
+"largura": 1.77,
+"periodo_s": 0.76,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_012",
+"zona": "peito",
+"osso": "Coluna3",
+"base": [
+-0.721,
+-7.165,
+8.923
+],
+"altura": 3.3,
+"largura": 1.56,
+"periodo_s": 1.24,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_010",
+"zona": "peito",
+"osso": "Coluna3",
+"base": [
+-0.615,
+-7.687,
+10.12
+],
+"altura": 3.35,
+"largura": 1.78,
+"periodo_s": 1.32,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_006",
+"zona": "peito",
+"osso": "Coluna3",
+"base": [
+-0.681,
+-5.526,
+7.819
+],
+"altura": 2.58,
+"largura": 1.46,
+"periodo_s": 1.04,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_070",
+"zona": "dorso",
+"osso": "Coluna1",
+"base": [
+-2.904,
+3.468,
+11.708
+],
+"altura": 6.72,
+"largura": 2.0,
+"periodo_s": 0.8,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_072",
+"zona": "dorso",
+"osso": "Coluna2",
+"base": [
+-0.22,
+-4.684,
+7.24
+],
+"altura": 2.86,
+"largura": 1.68,
+"periodo_s": 1.26,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_058",
+"zona": "dorso",
+"osso": "Coluna2",
+"base": [
+0.862,
+-1.074,
+13.602
+],
+"altura": 3.84,
+"largura": 2.23,
+"periodo_s": 1.21,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_088",
+"zona": "dorso",
+"osso": "Coluna1",
+"base": [
+-1.222,
+0.904,
+7.758
+],
+"altura": 1.48,
+"largura": 2.58,
+"periodo_s": 0.95,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_062",
+"zona": "dorso",
+"osso": "Coluna2",
+"base": [
+-3.121,
+-1.389,
+12.006
+],
+"altura": 2.3,
+"largura": 1.55,
+"periodo_s": 1.07,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_054",
+"zona": "dorso",
+"osso": "Coluna1",
+"base": [
+2.2,
+1.602,
+10.265
+],
+"altura": 2.0,
+"largura": 1.79,
+"periodo_s": 1.23,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_090",
+"zona": "dorso",
+"osso": "Coluna1",
+"base": [
+0.365,
+4.319,
+12.445
+],
+"altura": 4.95,
+"largura": 1.61,
+"periodo_s": 1.23,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_068",
+"zona": "dorso",
+"osso": "Coluna2",
+"base": [
+2.4,
+-1.619,
+10.098
+],
+"altura": 3.48,
+"largura": 2.06,
+"periodo_s": 0.9,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_084",
+"zona": "dorso",
+"osso": "Coluna2",
+"base": [
+-2.515,
+-1.481,
+7.667
+],
+"altura": 3.12,
+"largura": 1.54,
+"periodo_s": 1.09,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_052",
+"zona": "dorso",
+"osso": "Coluna1",
+"base": [
+-0.363,
+1.983,
+12.927
+],
+"altura": 2.87,
+"largura": 2.01,
+"periodo_s": 1.29,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_078",
+"zona": "dorso",
+"osso": "Coluna2",
+"base": [
+-0.659,
+-2.628,
+6.453
+],
+"altura": 3.42,
+"largura": 2.26,
+"periodo_s": 1.07,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_080",
+"zona": "dorso",
+"osso": "Coluna2",
+"base": [
+-2.315,
+-3.651,
+7.477
+],
+"altura": 3.0,
+"largura": 1.89,
+"periodo_s": 0.87,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_064",
+"zona": "dorso",
+"osso": "Coluna1",
+"base": [
+-3.052,
+0.209,
+10.535
+],
+"altura": 2.22,
+"largura": 1.86,
+"periodo_s": 1.18,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_066",
+"zona": "dorso",
+"osso": "Coluna1",
+"base": [
+-3.812,
+2.439,
+10.472
+],
+"altura": 3.82,
+"largura": 1.8,
+"periodo_s": 0.82,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_082",
+"zona": "dorso",
+"osso": "Coluna2",
+"base": [
+-0.79,
+-0.902,
+6.502
+],
+"altura": 5.69,
+"largura": 1.98,
+"periodo_s": 1.11,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_224",
+"zona": "quadril",
+"osso": "Pelve",
+"base": [
+-0.834,
+5.67,
+12.0
+],
+"altura": 3.56,
+"largura": 1.82,
+"periodo_s": 0.91,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_236",
+"zona": "quadril",
+"osso": "Pelve",
+"base": [
+0.136,
+7.025,
+9.874
+],
+"altura": 2.94,
+"largura": 1.92,
+"periodo_s": 1.02,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_228",
+"zona": "quadril",
+"osso": "Pelve",
+"base": [
+1.166,
+5.15,
+11.311
+],
+"altura": 3.42,
+"largura": 1.9,
+"periodo_s": 0.97,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_230",
+"zona": "quadril",
+"osso": "Pelve",
+"base": [
+-1.521,
+5.952,
+9.919
+],
+"altura": 3.38,
+"largura": 1.49,
+"periodo_s": 1.01,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_238",
+"zona": "quadril",
+"osso": "Pelve",
+"base": [
+-1.35,
+4.515,
+12.04
+],
+"altura": 2.67,
+"largura": 1.76,
+"periodo_s": 1.32,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_226",
+"zona": "quadril",
+"osso": "Pelve",
+"base": [
+-0.457,
+6.636,
+11.475
+],
+"altura": 3.04,
+"largura": 1.65,
+"periodo_s": 1.28,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_232",
+"zona": "quadril",
+"osso": "Pelve",
+"base": [
+-0.074,
+4.953,
+12.164
+],
+"altura": 3.46,
+"largura": 1.51,
+"periodo_s": 0.87,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_234",
+"zona": "quadril",
+"osso": "Pelve",
+"base": [
+0.953,
+5.791,
+10.563
+],
+"altura": 2.57,
+"largura": 1.67,
+"periodo_s": 1.12,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_208",
+"zona": "cauda",
+"osso": "Cauda1",
+"base": [
+-0.371,
+9.186,
+9.147
+],
+"altura": 4.95,
+"largura": 1.53,
+"periodo_s": 1.15,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_216",
+"zona": "cauda",
+"osso": "Cauda3",
+"base": [
+-0.495,
+11.606,
+9.532
+],
+"altura": 4.48,
+"largura": 1.41,
+"periodo_s": 1.11,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_206",
+"zona": "cauda",
+"osso": "Cauda1",
+"base": [
+0.126,
+7.335,
+9.731
+],
+"altura": 4.75,
+"largura": 1.7,
+"periodo_s": 1.23,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_204",
+"zona": "cauda",
+"osso": "Cauda3",
+"base": [
+-1.3,
+10.667,
+8.214
+],
+"altura": 4.35,
+"largura": 1.57,
+"periodo_s": 0.88,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_212",
+"zona": "cauda",
+"osso": "Cauda2",
+"base": [
+-0.242,
+9.634,
+7.411
+],
+"altura": 3.64,
+"largura": 1.31,
+"periodo_s": 0.97,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_210",
+"zona": "cauda",
+"osso": "Cauda1",
+"base": [
+-1.382,
+8.074,
+8.842
+],
+"altura": 3.5,
+"largura": 1.71,
+"periodo_s": 1.22,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_200",
+"zona": "cauda",
+"osso": "Cauda3",
+"base": [
+-0.032,
+10.709,
+8.621
+],
+"altura": 3.67,
+"largura": 1.8,
+"periodo_s": 1.06,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_024",
+"zona": "perna",
+"osso": "BracoD",
+"base": [
+3.351,
+-5.527,
+7.937
+],
+"altura": 2.55,
+"largura": 0.91,
+"periodo_s": 0.83,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_026",
+"zona": "perna",
+"osso": "CanelaE",
+"base": [
+-3.966,
+5.595,
+5.683
+],
+"altura": 2.06,
+"largura": 1.09,
+"periodo_s": 1.12,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_050",
+"zona": "perna",
+"osso": "BracoE",
+"base": [
+-5.138,
+-3.782,
+7.346
+],
+"altura": 2.26,
+"largura": 0.93,
+"periodo_s": 1.33,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_040",
+"zona": "perna",
+"osso": "CoxaD",
+"base": [
+1.937,
+4.517,
+11.218
+],
+"altura": 1.39,
+"largura": 1.03,
+"periodo_s": 1.06,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_036",
+"zona": "perna",
+"osso": "CanelaD",
+"base": [
+2.866,
+7.025,
+4.455
+],
+"altura": 2.4,
+"largura": 0.91,
+"periodo_s": 0.91,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_032",
+"zona": "perna",
+"osso": "CoxaE",
+"base": [
+-2.778,
+5.417,
+10.419
+],
+"altura": 1.64,
+"largura": 0.92,
+"periodo_s": 1.04,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_042",
+"zona": "perna",
+"osso": "CoxaE",
+"base": [
+-3.835,
+2.529,
+9.286
+],
+"altura": 2.22,
+"largura": 0.8,
+"periodo_s": 0.79,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_022",
+"zona": "perna",
+"osso": "BracoE",
+"base": [
+-5.088,
+-5.739,
+9.621
+],
+"altura": 2.11,
+"largura": 0.82,
+"periodo_s": 0.98,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_044",
+"zona": "perna",
+"osso": "CoxaD",
+"base": [
+2.767,
+3.757,
+9.195
+],
+"altura": 1.67,
+"largura": 1.0,
+"periodo_s": 1.18,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_046",
+"zona": "perna",
+"osso": "BracoE",
+"base": [
+-4.387,
+-5.683,
+6.842
+],
+"altura": 2.32,
+"largura": 0.8,
+"periodo_s": 0.99,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_030",
+"zona": "perna",
+"osso": "BracoD",
+"base": [
+3.395,
+-3.738,
+8.885
+],
+"altura": 2.41,
+"largura": 1.06,
+"periodo_s": 1.22,
+"filho": false,
+"tem_filha": true
+},
+{
+"nome": "ChamaA4_048",
+"zona": "perna",
+"osso": "CoxaD",
+"base": [
+1.68,
+5.554,
+9.966
+],
+"altura": 2.12,
+"largura": 1.17,
+"periodo_s": 1.05,
+"filho": false,
+"tem_filha": true
+}
+]
