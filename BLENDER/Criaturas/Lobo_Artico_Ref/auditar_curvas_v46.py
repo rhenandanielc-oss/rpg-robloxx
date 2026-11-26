@@ -13,7 +13,10 @@ from mathutils import Vector as V, Matrix
 import linha_curvas_v46 as LC
 a = sys.argv[sys.argv.index("--") + 1:]; OUT = os.path.abspath(a[0]); L = a[1]
 CEN = a[2].split(",") if len(a) > 2 and not a[2].startswith("--") else LC.CENARIOS; ANTES = "--antes" in a; PES = "--pes" in a; SEQ = "--seq" in a
-if SEQ: VJB = json.load(open(os.path.join(os.path.dirname(bpy.data.filepath), "curvas_v46b.json")))["acoes"]; CEN = [c for c in CEN if c in LC.SEQ_B]
+if SEQ:
+    VJB = json.load(open(os.path.join(os.path.dirname(bpy.data.filepath), "curvas_v46b.json")))["acoes"]; CEN = [c for c in CEN if c in LC.SEQ_B]
+    _pp = os.path.join(os.path.dirname(bpy.data.filepath), "partida_v48.json")
+    if os.path.exists(_pp): VJB.update(json.load(open(_pp))["acoes"])
 SRC = os.path.dirname(bpy.data.filepath); PIV = json.load(open(os.path.join(SRC, "rig_pivos.json")))
 ARM = bpy.data.objects["LoboArtico_Rig"]; P = ARM.pose.bones; sc = bpy.context.scene
 REST = {b.name: b.matrix_local.copy() for b in ARM.data.bones}

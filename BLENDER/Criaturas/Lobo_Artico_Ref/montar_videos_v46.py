@@ -7,6 +7,7 @@ from PIL import Image, ImageDraw, ImageFont
 Q, OUT = sys.argv[1], sys.argv[2]; os.makedirs(OUT, exist_ok=True)
 FF = r"C:\Users\Rhenan\AppData\Local\Microsoft\WinGet\Packages\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\ffmpeg-9.0.2-full_build\bin\ffmpeg.exe"
 F1 = ImageFont.truetype(r"C:\Windows\Fonts\arialbd.ttf", 17); F2 = ImageFont.truetype(r"C:\Windows\Fonts\arial.ttf", 15)
+ROT_ANTES = "ANTES  r10e  clipe reto + pivo girando"; ROT_DEPOIS = "DEPOIS  v46b  curva com passos"; NOTA_ANTES = "   (antes: mesmo giro aplicado ao pivo com o Andar reto)"
 NOME_V = {"topo": "vista superior (camera fixa)", "c34": "tres-quartos (camera fixa)", "perfil_E": "perfil esquerdo (segue)", "perfil_D": "perfil direito (segue)",
           "frente": "frente (segue)", "tras": "traseira (segue)", "close_E": "close patas esq (segue)", "close_D": "close patas dir (segue)"}
 def quadros(pre, cen, v):
@@ -27,7 +28,7 @@ def montar(nome, titulo, cen, linhas_painel, lento=False):
             ims = []
             for p, v in row:
                 im = Image.open(fontes[(p, v)][i]).convert("RGB")
-                rotular(im, ("ANTES  r10e  clipe reto + pivo girando" if p == "ANTES" else "DEPOIS  v46b  curva com passos") + "  |  " + NOME_V[v],
+                rotular(im, (ROT_ANTES if p == "ANTES" else ROT_DEPOIS) + "  |  " + NOME_V[v],
                         (255, 170, 90) if p == "ANTES" else (140, 230, 140)); ims.append(im)
             W = sum(x.width for x in ims); H = max(x.height for x in ims); r = Image.new("RGB", (W, H)); x0 = 0
             for x in ims: r.paste(x, (x0, 0)); x0 += x.width
@@ -37,7 +38,7 @@ def montar(nome, titulo, cen, linhas_painel, lento=False):
         d = ImageDraw.Draw(fr); d.text((8, 6), titulo + ("   [lento 0,5x]" if lento else ""), font=F1, fill=(235, 235, 235))
         if LJ and i < len(LJ):
             e = LJ[i]; t = "clipe %s q%d   omega %.0f graus/s   rumo %.0f graus   t %.2f s" % (e["clipe"], e["qc"], e["omega"], e["psi"], i * 2 / 30)
-            if LA and i < len(LA) and any(p == "ANTES" for row in linhas_painel for p, _ in row): t += "   (antes: mesmo giro aplicado ao pivo com o Andar reto)"
+            if LA and i < len(LA) and any(p == "ANTES" for row in linhas_painel for p, _ in row): t += NOTA_ANTES
             d.text((8, H - 24), t, font=F2, fill=(200, 210, 220))
         for _ in range(2 if lento else 1):
             fr.save(os.path.join(tmp, "f%05d.png" % k)); k += 1

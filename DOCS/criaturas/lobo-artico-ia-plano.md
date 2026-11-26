@@ -1243,3 +1243,85 @@ Sem commit.
 - **Não testados:** idades, celular e dois jogadores.
 
 Place não salvo por mim. Sem commit.
+
+## 16. Rodada "todas as etapas" (26/11/2026, usuário: "prossiga com todas as etapas")
+
+As decisões que dependem do usuário ficaram **pendentes, sem mexer**; a pergunta foi interrompida e o usuário disse "Prossiga":
+- ampliar o túnel da toca (mexe no mapa);
+- baixar um vídeo real de lobo (download precisa de autorização);
+- publicar as animações e salvar o place (conta do usuário).
+
+O resto foi feito, local primeiro e depois no rpg_roblox, com reserva e backup.
+
+### 16.1 Mira da IA a partir do peito + suavização em combate
+- **IA r7b** (`posMira()` = pivô + frente × 3,6 × Escala): as 7 orientações para o intruso medem do peito (cópia `IA_LoboArtico_r7`).
+- **Controle r11f:** a suavização da direção cai para 0,15 s em combate (antes 0,4 s).
+- **Play (túnel):** 1ª mordida 1,2 s depois de entrar em Defender; 11 mordidas; só 2 viradas de combate, ainda na ameaça a 40 studs; nenhum vai e volta com o jogador colado; 0° girados com o pivô parado.
+
+### 16.2 Partida e parada do Andar com passos (anim_v48, `gerar_partida_v48.py`)
+
+Clipes:
+- **PartidaAndar:** v 0→3 em 1,2 s, 2 ciclos.
+- **PartidaCurvaEsquerda/Direita:** também ω 0→30, emendando no laço AndarCurva.
+- **ParadaAndar:** segue 0,4 s na mesma velocidade, freia em 1,2 s, as patas pousam no lugar do Repouso; 3 ciclos.
+
+Método das curvas (Andar dobrado, patas fixas no mundo), agora com velocidade variável:
+- a pata que, no Andar, está no ar no instante zero dá o 1º passo saindo do Repouso com velocidade zero;
+- as outras ficam plantadas até a 1ª saída do cronograma depois de 0,1 s;
+- o pé troca de pose (Repouso↔Andar) em 0,2 s;
+- no apoio é preservado o rolamento do pé do Andar (prender o MCP fazia os dedos escorregarem 0,15);
+- no ar, a pata segue o caminho do Andar mais um desvio interpolado (o caminho reto no mundo não batia com a emenda: braço 24–32°).
+
+**Auditoria nos 3 LODs** (sequências Repouso → Partida → Andar/curva → Parada → Repouso):
+
+| Medida | Resultado |
+|---|---|
+| Deslize, retas | 0 fases acima de 0,03 (pior 0,030) |
+| Deslize, com curva | só as fases da curva (≤0,040, como o laço já aprovado) |
+| Afundamento | ≤0,032 |
+| Aceleração máxima | igual à do Andar (0,41 / 0,31 / 0,25) |
+| Emendas | idênticas com Repouso e Andar; 1,7° na saída da partida em curva |
+| Erro de alcance | ≤0,03 |
+| Reimportação do JSON | ≤0,0003 |
+
+**Controlador r12:** fora de combate, pedindo andar:
+- desvio menor que 25° → PartidaAndar;
+- desvio maior → PartidaCurva E/D, mesmo acima de 60° (antes: virada no lugar).
+
+Andando reto ou em curva curta sem direção, termina o ciclo e faz a ParadaAndar; dentro de uma curva larga ou em combate, para como antes.
+
+**Play:**
+
+| Cenário | Sequência | Observação |
+|---|---|---|
+| Reto | PartidaAndar → Andar → ParadaAndar (0,1 s após o pedido) → Repouso | — |
+| Alvo a 90° | PartidaCurvaEsquerda → laço → CurvaParaAndar → CurvaBreve (correção) → ParadaAndar | rumo final 90° |
+| Filhote (0,4) e Ancião (1,1) | o mesmo, na escala | — |
+
+Nos três: 0° girados com o pivô parado e 0 bloqueios. Na patrulha, o lobo selvagem já usa a partida em curva.
+
+**Vídeos:**
+- `review/v48_partida/video_v48_partida_parada.mp4` (antes × depois);
+- `review/rpg_r12/video_r12_play.mp4`.
+
+### 16.3 Cabeça acompanhando o alvo (`Cabeca_Cliente` r1, Script RunContext=Client)
+- Gira Pescoço1/Pescoço2/Cabeça em volta do eixo vertical na direção de `OlharAlvo`: até 45°, divididos 30/30/40%, suavizado em 0,18 s.
+- Só com a câmera a menos de 80 studs; volta ao normal sem alvo. Visual apenas.
+- O Controle r12 apaga `OlharAlvo` quando a IA para de pedir a orientação.
+- **Play:** alvo a 30° de cada lado com o corpo parado; a cabeça acompanha (vídeo, 0–6 s).
+
+### 16.4 Testes
+- **Idades:** Filhote e Ancião, na partida, curva e parada, sem bloqueio.
+- **Desempenho:** servidor 17,4–17,9 ms por quadro; cliente `RenderCPUFrameTime` médio 14,8 ms (máximo 25,6) no ensaio, com o Studio do Crocodilo em Play ao mesmo tempo.
+- **Celular:** não medido em aparelho real.
+- **Poderes × troncos** (leitura do `Kit_Servidor`, sem Play): o Cometa e a Avalanche usam raios que agora batem no `Colisor_Tronco`; param no tronco em vez de atravessar a árvore, e a linha de visão do alvo também é bloqueada. Não foi testado com jogador controlando.
+- **Dois jogadores:** não testado.
+
+### 16.5 Pendências
+- **Decisões do usuário:** toca (ampliar ou não), vídeo real (baixar ou não) e publicação (guia em `DOCS/criaturas/lobo-artico-publicar-animacoes.md`).
+- **Ainda não feitos:**
+  - trote e corrida em curva com passos;
+  - alvo circulando muito rápido;
+  - partida e parada saindo do trote.
+
+Sem commit.

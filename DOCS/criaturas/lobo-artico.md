@@ -4482,3 +4482,22 @@ Pendente: aprovação visual → export/reimport (GLB por LOD) → JSON → KFS 
   - mira da IA a partir da cabeça (vai e volta com o jogador colado);
   - suavização menor em combate.
 - **Vídeo:** `review/rpg_r11/`. Sem commit. Plano §15.1.
+
+### 8.93 Mira do peito, partida/parada com passos e cabeça no cliente (26/11/2026)
+- **Instalado no rpg_roblox:**
+  - Controle r12;
+  - IA r7b;
+  - `Movimento` v48;
+  - `Cabeca_Cliente` r1;
+  - 4 clipes (PartidaAndar, PartidaCurva E/D, ParadaAndar);
+  - backup em `Antes_r12_26_11`.
+- **Play:**
+  - parte e para com passos (inclusive partindo já em curva, sem virar no lugar);
+  - Filhote e Ancião ok;
+  - defesa com 1ª mordida em 1,2 s, sem vai e volta;
+  - cabeça acompanha o alvo.
+- **Auditoria:** deslize das retas ≤0,030 e aceleração igual à do Andar.
+- **Vídeos:** `review/v48_partida/` e `review/rpg_r12/`.
+- **Guia de publicação:** `lobo-artico-publicar-animacoes.md`.
+- **Pendentes (usuário):** toca, vídeo real e publicação.
+- Sem commit. Plano §16.

@@ -1,3 +1,5 @@
+-- r12 26/11: partida e parada do Andar com passos (PartidaAndar, PartidaCurva E/D, ParadaAndar). Copia: Controle_Servidor_r11f.
+-- r11f 26/11: suavizacao da direcao 0,15 s em combate (0,4 s dividia um desvio de 85 em duas viradas de 45). Copia: Controle_Servidor_r11e.
 -- r11e 24/11: combate escolhe a virada mais proxima (45/90/180; +VirarCombate45 0,63 s), nao repete virada logo em seguida e,
 --   andando em combate, so curva breve ou reto (curva larga passava ao lado do alvo). Copia: Controle_Servidor_r11d.
 -- r11d 24/11: virada de COMBATE (pivo nas traseiras) em Ameacar/Defender acima de 45 graus. Copia: Controle_Servidor_r11c.
@@ -195,6 +197,14 @@ local function viradaCombate(a)                       -- r11e: a virada MAIS PRO
 	if g > math.rad(67.5) then return a > 0 and "VirarCombate90Esquerda" or "VirarCombate90Direita" end
 	return a > 0 and "VirarCombate45Esquerda" or "VirarCombate45Direita"
 end
+-- r12 (26/11): PARTIDA e PARADA do Andar com passos (anim_v48). Fora de combate, pedindo andar: parado -> PartidaAndar (desvio < 25)
+-- ou PartidaCurva E/D (emenda no laco AndarCurva, sem virar no lugar); andando sem direcao -> termina o ciclo reto e faz a ParadaAndar
+-- (o fade antigo escorregava as patas ate 0,79). Sem os clipes, comportamento da r11f.
+local TEM_PARTIDA = true
+for _, n in ipairs({"PartidaAndar", "PartidaCurvaEsquerda", "PartidaCurvaDireita", "ParadaAndar"}) do
+	if not (lib:FindFirstChild("LoboArtico_" .. n) and Mov.Curvas[n]) then TEM_PARTIDA = false end
+end
+if TEM_PARTIDA then for _, n in ipairs({"PartidaAndar", "PartidaCurvaEsquerda", "PartidaCurvaDireita", "ParadaAndar"}) do faixa(n) end end
 local function giroPara(a, preciso)                 -- r8: clipe de giro para o desvio a (rad); nil = zona morta/espera; "LEGADO" = sem clipe curto
 	local apos = os.clock() - fimGiro < CFG.posGiroSeg
 	local zm = preciso and (apos and CFG.zonaPrecisaApos or CFG.zonaPrecisa) or (apos and CFG.zonaMortaApos or CFG.zonaMorta)
@@ -385,6 +395,7 @@ RunService.Heartbeat:Connect(function(dt)
 	local agora = os.clock()
 	-- intencao valida (Uivo/Parado, pacote velho ou sem controlador = sem direcao)
 	local dir = ctrl.dir
+	if lobo:GetAttribute("OlharAlvo") and not (ctrl.olhar and agora - ctrl.olharT < CFG.pacoteVelho) then lobo:SetAttribute("OlharAlvo", nil) end   -- r12: sem pedido de olhar, a cabeca (cliente) volta
 	if not (ctrl.jogador or ctrl.ia) or agora - ctrl.t > CFG.pacoteVelho or lobo:GetAttribute("Parado") or E.frear then dir = Vector3.zero end
 	if lobo:GetAttribute("Parado") and E.modo ~= "Parado" and E.modo ~= "Clipe" then
 		-- Uivo comecou com o lobo andando (nao deveria: o servidor do Uivo recusa em movimento) -> para ja
@@ -409,14 +420,20 @@ RunService.Heartbeat:Connect(function(dt)
 		if E.modo == "Clipe" and (t >= len - 0.02 or not f.IsPlaying) then
 			if ehVirar(E.clipe) then fimGiro = agora end   -- r8: histerese da zona morta conta do fim do giro
 			if E.clipe and E.clipe:find("VirarCombate", 1, true) then fimGiroCombate = agora end   -- r11e
-			if E.destino then entrarLaco(E.destino) else entrarParado(0.2) end
+			if E.destino and E.destino:find("AndarCurva", 1, true) then local d = E.destino; entrarLaco("Andar"); iniciarAndarCurva(d, mult)   -- r12
+			elseif E.destino then entrarLaco(E.destino) else entrarParado(0.2) end
 		end
 	elseif E.modo == "Parado" then
 		if dir.Magnitude > 0.1 then
 			local a = angulo(frente, dir)
 			if math.abs(a) > math.rad(CFG.anguloVirar) then
 				local vc = emCombate() and viradaCombate(a)                                  -- r11d/r11e
-				if vc then iniciarClipe(vc, nil, 1) elseif not emCombate() then iniciarClipe(a > 0 and "VirarEsquerda" or "VirarDireita", nil, 1) end
+				if vc then iniciarClipe(vc, nil, 1)
+				elseif not emCombate() then
+					if TEM_PARTIDA and pedida == "Andar" and temChao(pv * CFrame.new(0, 0, -1)) and not obstaculo(pv, 2.0 * esc()) then   -- r12: parte ja em curva
+						local l = a > 0 and "Esquerda" or "Direita"; iniciarClipe("PartidaCurva" .. l, "AndarCurva" .. l, ritmoDe(mult))
+					else iniciarClipe(a > 0 and "VirarEsquerda" or "VirarDireita", nil, 1) end
+				end
 			elseif not temChao(pv * CFrame.new(0, 0, -1)) then
 				-- r2: sem chao a frente fica parado (antes alternava Parado/Andar a cada quadro na borda)
 				lobo:SetAttribute("CtrlBloqueio", "sem chao a frente @" .. string.format("%.1f", agora))
@@ -443,14 +460,18 @@ RunService.Heartbeat:Connect(function(dt)
 					end
 				end
 				if not girou then
-					if pedida == "Corrida" then iniciarClipe("Arrancada", "Corrida", ritmoDe(mult)) else entrarLaco("Andar") end
+					if pedida == "Corrida" then iniciarClipe("Arrancada", "Corrida", ritmoDe(mult))
+					elseif TEM_PARTIDA and pedida == "Andar" and not emCombate() then                                      -- r12: partida com passos
+						if math.abs(a) < math.rad(25) then iniciarClipe("PartidaAndar", "Andar", ritmoDe(mult))
+						else local l = a > 0 and "Esquerda" or "Direita"; iniciarClipe("PartidaCurva" .. l, "AndarCurva" .. l, ritmoDe(mult)) end
+					else entrarLaco("Andar") end
 				end
 			end
 		elseif ctrl.olhar and agora - ctrl.olharT < CFG.pacoteVelho and not lobo:GetAttribute("Parado") then
 			-- r7 (IA selvagem, contato de ataque): so ORIENTA para o alvo, sem andar. Acima de anguloVirar usa o clipe de
 			-- virada aprovado; abaixo gira devagar no lugar (giro do Andar), sem giro instantaneo.
 			-- r8: direcao suavizada (alvo oscilando nao faz tremer); zona morta -> o corpo fica (cabeca acompanha no cliente)
-			ctrl.olharF = ctrl.olharF and (ctrl.olharF:Lerp(ctrl.olhar, 1 - math.exp(-dt / CFG.suavOlhar))) or ctrl.olhar
+			ctrl.olharF = ctrl.olharF and (ctrl.olharF:Lerp(ctrl.olhar, 1 - math.exp(-dt / (emCombate() and 0.15 or CFG.suavOlhar)))) or ctrl.olhar   -- r11f: 0,15 s em combate
 			if ctrl.olharF.Magnitude < 1e-3 then ctrl.olharF = ctrl.olhar end
 			ctrl.olharF = ctrl.olharF.Unit
 			local a = angulo(frente, ctrl.olharF)
@@ -462,12 +483,14 @@ RunService.Heartbeat:Connect(function(dt)
 				iniciarClipe(g, nil, 1)
 			end
 		end
-	elseif E.modo == "Laco" and E.marcha == "Andar" and TEM_CURVAS and dir.Magnitude >= 0.1 and pedida == "Andar" then
+	elseif E.modo == "Laco" and E.marcha == "Andar" and TEM_CURVAS and ((dir.Magnitude >= 0.1 and pedida == "Andar") or E.pararNoCiclo) then
+		if dir.Magnitude >= 0.1 then E.pararNoCiclo = nil end                                             -- r12: voltou a ter direcao -> segue andando
+		local dirC = dir.Magnitude >= 0.1 and dir or frente                                                 -- r12: parando no fim do ciclo = reto
 		-- r11c: so quando o pedido e ANDAR. Trote/Corrida (perseguicao, defesa) sobem de marcha na hora pelo caminho da r10e:
 		-- em Defender a curva larga afastava o lobo ate 20 studs por 8 s antes de trotar.
 		-- r11: ANDAR EM CURVA. O pivo segue a trajetoria do clipe atual; no fim do ciclo/clipe decide o proximo pelo rumo que falta.
 		-- r11d: em combate, alvo a mais de 60 graus andando -> para ja e vira com a virada de combate (no Parado)
-		if emCombate() and math.abs(angulo(frente, dir)) > math.rad(45) and os.clock() - fimGiroCombate > 0.5 then
+		if emCombate() and math.abs(angulo(frente, dirC)) > math.rad(45) and os.clock() - fimGiroCombate > 0.5 then
 			CV.clipe = nil; lobo:SetAttribute("CtrlCurva", nil); entrarParado(0.12)
 		else
 		if not CV.clipe or not CV.base then
@@ -480,21 +503,26 @@ RunService.Heartbeat:Connect(function(dt)
 			if acabou or CV.decidirJa then
 				if acabou then CV.base = CV.base * cfAndar(CV.clipe, len) end   -- fim exato do ciclo/clipe (sem acumular erro de quadro)
 				CV.decidirJa = nil
-				local alvoDir = rumoComDesvio(CV.base, dir, agora, 10.0 * esc()) -- r11b: olha ~16 studs (curva precisa de tempo para desviar)
-				local a = angulo(plano(CV.base.LookVector).Unit, alvoDir)
-				local querSubir = pedida ~= "Andar"
-				local prox = proximoAndar(CV.clipe, a, querSubir)
-			if emCombate() and (NIVEL_FIM[CV.clipe] or 0) == 0 and not querSubir then   -- r11e: em combate, sem curva larga: reto ou curva breve
-				prox = math.abs(a) < math.rad(12) and "Andar" or (a > 0 and "CurvaBreveEsquerda" or "CurvaBreveDireita")
-			end
-				if querSubir and NIVEL_FIM[CV.clipe] == 0 and prox == "Andar" and SUBIR.Andar then
-					CV.clipe = nil; lobo:SetAttribute("CtrlCurva", nil)
-					iniciarClipe(SUBIR.Andar, "Trote", ritmoDe(mult))
+				if E.pararNoCiclo and acabou and (NIVEL_FIM[CV.clipe] or 0) == 0 and TEM_PARTIDA then          -- r12: fim do ciclo -> ParadaAndar
+					E.pararNoCiclo = nil; CV.clipe = nil; lobo:SetAttribute("CtrlCurva", nil)
+					local b = CV.base; iniciarClipe("ParadaAndar", nil, ritmoDe(mult)); E.base = b
 				else
-					local continua = prox == CV.clipe and (prox == "Andar" or LACO_CURVA[prox])   -- mesmo laco: segue tocando (t ja deu a volta)
-					if not continua then
-						tocando = nil; CV.clipe = prox; tocar(prox, ritmoDe(mult), 0); faixa(prox).TimePosition = 0; t = 0
-						lobo:SetAttribute("CtrlCurva", prox)
+					local alvoDir = rumoComDesvio(CV.base, dirC, agora, 10.0 * esc()) -- r11b: olha ~16 studs (curva precisa de tempo para desviar)
+					local a = angulo(plano(CV.base.LookVector).Unit, alvoDir)
+					local querSubir = pedida ~= "Andar"
+					local prox = proximoAndar(CV.clipe, a, querSubir)
+				if emCombate() and (NIVEL_FIM[CV.clipe] or 0) == 0 and not querSubir then   -- r11e: em combate, sem curva larga: reto ou curva breve
+					prox = math.abs(a) < math.rad(12) and "Andar" or (a > 0 and "CurvaBreveEsquerda" or "CurvaBreveDireita")
+				end
+					if querSubir and NIVEL_FIM[CV.clipe] == 0 and prox == "Andar" and SUBIR.Andar then
+						CV.clipe = nil; lobo:SetAttribute("CtrlCurva", nil)
+						iniciarClipe(SUBIR.Andar, "Trote", ritmoDe(mult))
+					else
+						local continua = prox == CV.clipe and (prox == "Andar" or LACO_CURVA[prox])   -- mesmo laco: segue tocando (t ja deu a volta)
+						if not continua then
+							tocando = nil; CV.clipe = prox; tocar(prox, ritmoDe(mult), 0); faixa(prox).TimePosition = 0; t = 0
+							lobo:SetAttribute("CtrlCurva", prox)
+						end
 					end
 				end
 			end
@@ -509,6 +537,8 @@ RunService.Heartbeat:Connect(function(dt)
 				end
 			end
 		end
+	elseif E.modo == "Laco" and E.marcha == "Andar" and dir.Magnitude < 0.1 and TEM_PARTIDA and TEM_CURVAS and CV.clipe ~= nil and (NIVEL_FIM[CV.clipe] or 0) == 0 and (NIVEL_FIM[CV.clipe] ~= nil) and not emCombate() then
+		E.pararNoCiclo = true                                                   -- r12: nao para no meio do passo; termina o ciclo e faz a ParadaAndar
 	elseif E.modo == "Laco" then
 		local m = E.marcha
 		if m == "Andar" then CV.clipe = nil; lobo:SetAttribute("CtrlCurva", nil) end
@@ -611,4 +641,4 @@ evIAuivo.Event:Connect(function()
 	if E.modo == "Parado" then pedirU:Fire(); return end
 	E.frear = true; E.aoParar = function() pedirU:Fire() end
 end)
-pasta:SetAttribute("Controle_Versao", "r11e 24/11 (virada mais proxima, sem vai-e-volta; espera sem virada calma) | r11d 24/11 (virada de combate) | r11c 23/11 (curvas so no andar) | r11b 23/11 (decide no 1o passo; olha 16 studs; encostado vira) | r11 PROPOSTA 20/11 (curvas andando com passos; anim_v46b) | r10e 20/11 (ponto de passagem ao lado do tronco) | r10d 20/11 (desvio checa a direcao desejada) | r10c 20/11 (desvio olha a frente; barra so em contato) | r10b 20/11 (desvio com memoria) | r10 20/11 (contorna obstaculos solidos) | r9 20/11 (inclinacao + patas no chao; sem giro de pivo) | r8b 20/11 (giro so se melhora) | r8 20/11 (viradas naturais: zona morta, VirarCurto com passos) | r7 19/11 (IA_Olhar: orienta sem andar) | r6b 19/11 (ganchos da IA selvagem; gira no lugar sem chao a frente) | r5 19/11 (velocidade da idade relativa ao tamanho) | r4 18/11 (idades: escala no deslocamento e ritmo do clipe; r3 pausa durante PoderAtivo)")
+pasta:SetAttribute("Controle_Versao", "r12 26/11 (partida/parada com passos) | r11f 26/11 (suaviza menos em combate) | r11e 24/11 (virada mais proxima, sem vai-e-volta; espera sem virada calma) | r11d 24/11 (virada de combate) | r11c 23/11 (curvas so no andar) | r11b 23/11 (decide no 1o passo; olha 16 studs; encostado vira) | r11 PROPOSTA 20/11 (curvas andando com passos; anim_v46b) | r10e 20/11 (ponto de passagem ao lado do tronco) | r10d 20/11 (desvio checa a direcao desejada) | r10c 20/11 (desvio olha a frente; barra so em contato) | r10b 20/11 (desvio com memoria) | r10 20/11 (contorna obstaculos solidos) | r9 20/11 (inclinacao + patas no chao; sem giro de pivo) | r8b 20/11 (giro so se melhora) | r8 20/11 (viradas naturais: zona morta, VirarCurto com passos) | r7 19/11 (IA_Olhar: orienta sem andar) | r6b 19/11 (ganchos da IA selvagem; gira no lugar sem chao a frente) | r5 19/11 (velocidade da idade relativa ao tamanho) | r4 18/11 (idades: escala no deslocamento e ritmo do clipe; r3 pausa durante PoderAtivo)")

@@ -1,4 +1,4 @@
--- IA_LoboArtico (Script dentro da pasta de UM lobo selvagem, criada pelo IA_LoboArtico_Servidor) - r7 20/11/2026
+-- IA_LoboArtico (Script dentro da pasta de UM lobo selvagem, criada pelo IA_LoboArtico_Servidor) - r7b 26/11/2026 (mira do peito) | r7 20/11/2026
 -- (r7, usuario: "arrume onde o lobo vira sem fisica / anda com as pernas paradas": as poses da IA (ameaca, investida, vida) tem
 -- prioridade Action e corpo inteiro; tocando enquanto o Controle anda ou vira, congelavam as pernas (parecia shift lock e
 -- "andar com as pernas paradas"). Agora: pose nao comeca com o Controle em Laco/Clipe; se ele comecar a andar/virar, a pose
@@ -175,6 +175,13 @@ end)
 
 -- movimento -----------------------------------------------------------------------------------------------------------------
 local function pos() return lobo:GetPivot().Position end
+-- r7b (26/11): mira a partir do PEITO (3,6 studs a frente do pivo, na escala da idade). O pivo fica perto das traseiras: com o
+-- intruso colado na cabeca, o angulo medido do pivo trocava de lado a cada virada de combate (vai-e-volta). Copia: IA_LoboArtico_r7.
+local function posMira()
+	local cf = lobo:GetPivot(); local f = Vector3.new(cf.LookVector.X, 0, cf.LookVector.Z)
+	if f.Magnitude < 1e-3 then return cf.Position end
+	return cf.Position + f.Unit * 3.6 * (lobo:GetAttribute("Escala") or 1)
+end
 local function plano(v) return Vector3.new(v.X, 0, v.Z) end
 local function parar() evMover:Fire(Vector3.zero, "andar") end
 local function olhar(d, preciso) if evOlhar then evOlhar:Fire(d, preciso) else parar() end end   -- r4: preciso = contato de mordida (Controle r8)
@@ -818,7 +825,7 @@ local function ameacar(intrP)
 			if controleMovendo() and os.clock() - INV.carga < A.cargaMax + 1.5 then          -- r7: espera a frenagem (pernas)
 				INV.freando = true; pasta:SetAttribute("IA_Contato", "carga: freando"); return
 			end
-			INV.freando = nil; INV.carga = nil; INV.ultima = os.clock(); olhar(plano(intrP - pos()), true)
+			INV.freando = nil; INV.carga = nil; INV.ultima = os.clock(); olhar(plano(intrP - posMira()), true)
 			pastaAlcateia:SetAttribute("CargaAte", os.clock() + 1.0 + A.pertoAtaca)       -- r6d: so "ficou perto apos a investida" escala
 			pasta:SetAttribute("IA_Contato", "investida de aviso")
 			tocarUmaVez("InvestidaAviso", "Ameaca")
@@ -830,7 +837,7 @@ local function ameacar(intrP)
 		return
 	end
 	if INV.perto then
-		olhar(plano(intrP - pos()), true)
+		olhar(plano(intrP - posMira()), true)
 		if INV.ultima < INV.perto and os.clock() - INV.ultima > A.investidaRecarga then
 			INV.carga = os.clock(); INV.ultima = os.clock(); pasta:SetAttribute("IA_Contato", "carga de aviso"); rosnar(true)
 			pastaAlcateia:SetAttribute("CargaAte", os.clock() + A.cargaMax + 1.0 + A.pertoAtaca)   -- r6d: a carga nao conta como "encostou"
@@ -845,7 +852,7 @@ local function ameacar(intrP)
 	-- ja esta perto demais do intruso (ele veio ate o lobo): nao avanca; encara (recuar = clipe ausente)
 	if dF - frenagem() < A.distConfronto * e then                       -- r3g: desconta a frenagem (parava a 8,7 com 11 pedidos)
 		pasta:SetAttribute("IA_Contato", "confronto: segura a posicao")
-		olhar(plano(intrP - pos())); sinal("Ameaca"); return
+		olhar(plano(intrP - posMira())); sinal("Ameaca"); return
 	end
 	local dPosto = plano(posto - pos()).Magnitude
 	if INV.postoAlvo and (posto - INV.postoAlvo).Magnitude > 3 then INV.postoRef = nil end      -- posto mudou: conta de novo
@@ -862,7 +869,7 @@ local function ameacar(intrP)
 	else
 		pasta:SetAttribute("IA_Contato", preso and dPosto > CFG.chegada and "posto inalcancavel: ameaca daqui" or "no posto")
 	end
-	olhar(plano(intrP - pos())); sinal("Ameaca")
+	olhar(plano(intrP - posMira())); sinal("Ameaca")
 	if lidera then pasta:SetAttribute("IA_Vocal", "rosnado")   -- gancho do som futuro (nao ha som aprovado)
 	end
 end
@@ -894,7 +901,7 @@ local function defender(c)
 		pasta:SetAttribute("IA_Contato", "guarda o ovo")
 		local posto = pontoAbrigo + plano(alvoPos - pontoAbrigo).Unit * A.guardiaoPosto
 		if plano(posto - pos()).Magnitude > CFG.chegada and irPara(posto, "trote") == "andando" then return end
-		olhar(plano(alvoPos - pos())); return
+		olhar(plano(alvoPos - posMira())); return
 	end
 	local g = geometria(alvoPos)
 	-- r2h: Uivo Boreal (PODER, com bonus) so ja em Defesa e de LONGE; nao e o aviso
@@ -948,11 +955,11 @@ local function defender(c)
 		end
 		if s == "chegou" then
 			pasta:SetAttribute("IA_Contato", "limite da toca: encara")
-			olhar(plano(alvoPos - pos()))
+			olhar(plano(alvoPos - posMira()))
 		elseif s == "falhou" then
 			pasta:SetAttribute("IA_Contato", "sem caminho: volta ao posto")
 			local postoOvo = pontoAbrigo + plano(alvoPos - pontoAbrigo).Unit * 6
-			if irPara(postoOvo, "trote") ~= "andando" then olhar(plano(alvoPos - pos())) end
+			if irPara(postoOvo, "trote") ~= "andando" then olhar(plano(alvoPos - posMira())) end
 		end
 	end
 end

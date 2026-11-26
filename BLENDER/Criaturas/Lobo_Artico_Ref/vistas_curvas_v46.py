@@ -13,7 +13,8 @@ import linha_curvas_v46 as LC
 a = sys.argv[sys.argv.index("--") + 1:]; OUT = os.path.abspath(a[0]); L, CN = a[1], a[2]; VS = a[3].split(","); ANTES = "--antes" in a
 RES = next((tuple(int(c) for c in o[4:].split("x")) for o in a if o.startswith("res=")), (560, 360)); PASSO = next((int(o[6:]) for o in a if o.startswith("passo=")), 2)
 os.makedirs(OUT, exist_ok=True); sc = bpy.context.scene; SRC = os.path.dirname(bpy.data.filepath)
-VJ = json.load(open(os.path.join(SRC, "curvas_v46b.json")))["acoes"]; PIV = json.load(open(os.path.join(SRC, "rig_pivos.json")))
+VJ = json.load(open(os.path.join(SRC, "curvas_v46b.json")))["acoes"]
+if os.path.exists(os.path.join(SRC, "partida_v48.json")): VJ.update(json.load(open(os.path.join(SRC, "partida_v48.json")))["acoes"]); PIV = json.load(open(os.path.join(SRC, "rig_pivos.json")))
 ARM = bpy.data.objects["LoboArtico_Rig"]; P = ARM.pose.bones
 for pb in P: pb.rotation_mode = "QUATERNION"
 LT = LC.linha_seq(CN, VJ)
