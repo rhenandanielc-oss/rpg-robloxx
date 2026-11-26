@@ -221,4 +221,4 @@ Base de comparação: Chamas Tríplices v6.2 (3 × 0,6× = 1,8× total, queimadu
   - Fúria violeta.
   - Evidências em `BLENDER/Criaturas/Cerbero_Sombrio_Ref/aura/A4/`. Aguarda revisão; nada no Roblox.
 - **20/11 — A4 r4 (dorso sem fileira de espinhos: menos chamas na crista, altura/inclinação variadas) APROVADA pelo usuário.** Vídeos refeitos em modo ultraleve (r3 guardada em `aura/A4/r3_antes_dorso/`). Ainda só Blender; Studio continua com a aura r6.
-- **23/11 — A4 no Studio (Cerbero-testes):** 90 chamas + 8 brasas, inclinação pela velocidade, Fúria violeta pelo atributo `Furia`, sem luzes; testado em Play (≈290 partículas). r3 (chamas presas ao corpo) APROVADA 24/11; celular não testado.
+- **23/11 — A4 no Studio (Cerbero-testes):** 90 chamas + 8 brasas, inclinação pela velocidade, Fúria violeta pelo atributo `Furia`, sem luzes; testado em Play (≈290 partículas). r3 (chamas presas ao corpo) APROVADA 24/11. Medição 24/11: ~0,23 ms de CPU de render por Cérbero (metade: ~0,13 ms); celular real não testado.

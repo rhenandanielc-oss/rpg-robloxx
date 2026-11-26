@@ -1024,3 +1024,15 @@ A faixa antiga presa ao corpo foi desligada.
   - Causa: as partículas ficavam soltas no mundo, então a criatura corria e deixava o fogo para trás; a inclinação forte (0,8) piorava.
   - Correção: chamas e brasas presas ao corpo (`LockedToPart = true`); inclinação reduzida para 0,35.
   - Play: corrida a 26 studs/s com o fogo acompanhando o corpo e pendendo de leve para trás. Vídeo `studio/video_2011/A4/A4r3_corrida_presa.mp4`. Place local salvo.
+- **Desempenho (24/11, Cerbero-testes, 5 Cérberos parados, câmera fixa a menos de 90 studs, 20 s por caso):**
+
+  | Caso | CPU de render por quadro | Emissores ligados | Partículas vivas (estimativa) |
+  |---|---|---|---|
+  | Aura ligada | 5,11 ms (repetição: 5,08 ms) | 490 | ~1.452 |
+  | Aura desligada | 3,96 ms | 0 | 0 |
+  | Metade das chamas (celular emulado) | 4,62 ms | 273 | ~844 |
+
+  - A aura custa cerca de 1,1 ms de CPU de render para 5 Cérberos, ou seja ~0,23 ms cada. Na metade, ~0,13 ms cada.
+  - O FPS ficou travado em 15 em todos os casos: o Studio limita o FPS com outros Studios abertos. A GPU não foi medida (o Stats devolveu 0). A memória se manteve em ~6,66 GB (o Studio inteiro).
+  - Celular real não testado. As cópias não estavam animadas.
+  - Método: o LocalScript temporário `MedirDesempenho_A4` lia `Stats.RenderCPUFrameTime` (em segundos) e escrevia no log em `%LOCALAPPDATA%\Roblox\logs`. O Play foi iniciado por `StudioTestService:ExecutePlayModeAsync` e encerrado por um Script temporário com `EndTest`. Os scripts e as cópias foram apagados depois, e o place foi salvo limpo.
