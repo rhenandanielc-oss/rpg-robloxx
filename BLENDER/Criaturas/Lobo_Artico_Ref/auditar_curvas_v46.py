@@ -17,6 +17,10 @@ if SEQ:
     VJB = json.load(open(os.path.join(os.path.dirname(bpy.data.filepath), "curvas_v46b.json")))["acoes"]; CEN = [c for c in CEN if c in LC.SEQ_B]
     _pp = os.path.join(os.path.dirname(bpy.data.filepath), "partida_v48.json")
     if os.path.exists(_pp): VJB.update(json.load(open(_pp))["acoes"])
+    for _m in ("trote", "corrida"):
+        _pm = os.path.join(os.path.dirname(bpy.data.filepath), "curvas_%s_v49.json" % _m)
+        if os.path.exists(_pm): VJB.update(json.load(open(_pm))["acoes"])
+    _MARCHAS = json.load(open(os.path.join(os.path.dirname(bpy.data.filepath), "clipes_v21.json")))["marchas"]
 SRC = os.path.dirname(bpy.data.filepath); PIV = json.load(open(os.path.join(SRC, "rig_pivos.json")))
 ARM = bpy.data.objects["LoboArtico_Rig"]; P = ARM.pose.bones; sc = bpy.context.scene
 REST = {b.name: b.matrix_local.copy() for b in ARM.data.bones}
@@ -33,8 +37,8 @@ def basis(acao, q):
         DED[(acao, q)] = {k: (ARM.matrix_world @ P[b].tail).to_2d().to_3d() for k, b in DEDB.items()}
         ARM.animation_data.action = None
     return CACHE[(acao, q)]
-for n in ["Repouso", "Andar"] + (list(VJB) if SEQ else ["AndarCurvaEsquerda", "AndarCurvaDireita", "AndarCurvaFechadaEsquerda", "AndarCurvaFechadaDireita"]):
-    for q in range(240 if n == "Repouso" else (VJB[n]["quadros"] if SEQ and n in VJB else LC.NQ)): basis(n, q)
+for n in ["Repouso", "Andar"] + (["Trote", "Corrida"] if SEQ else []) + (list(VJB) if SEQ else ["AndarCurvaEsquerda", "AndarCurvaDireita", "AndarCurvaFechadaEsquerda", "AndarCurvaFechadaDireita"]):
+    for q in range(240 if n == "Repouso" else (VJB[n]["quadros"] if SEQ and n in VJB else (int(bpy.data.actions[n].frame_range[1] - bpy.data.actions[n].frame_range[0]) if n in ("Trote", "Corrida") else LC.NQ))): basis(n, q)
 ARM.animation_data.action = None
 C = bpy.data.objects[L + "_Corpo"]; Mw = C.matrix_world.copy()
 for pb in P: pb.matrix_basis.identity()
@@ -43,7 +47,8 @@ patas = {k: [i for i, p in enumerate(P0) if p.z < 0.5 and math.hypot(p.x - xy[0]
 zr = {k: min(P0[i].z for i in ids) for k, ids in patas.items()}; amo = list(range(0, len(P0), 23))
 R = {"metodo": __doc__.split("Uso:")[0], "lod": L, "modo": "ANTES (Andar reto + pivo girando)" if ANTES else ("v46b (sequencia de clipes, curva externa de cada clipe)" if SEQ else ("v46 (mistura Andar/Curva; pivo pelas patas apoiadas)" if PES else "v46 (mistura Andar/Curva; giro nominal)")), "tolerancia_deslize": 0.03, "cenarios": {}}
 for cn in CEN:
-    LT = LC.linha_seq(cn, VJB) if SEQ else LC.linha(cn)
+    _g = next((m for m in ("Trote", "Corrida") if cn.startswith(m.lower())), None)
+    LT = LC.linha_seq(cn, VJB, G=(dict(_MARCHAS[_g], nome=_g) if _g else None)) if SEQ else LC.linha(cn)
     if ANTES: LT = [dict(e, mix=[("Repouso", q_, w) if a_ == "Repouso" else ("Andar", q_, w) for a_, q_, w in e["mix"]]) for e in LT]
     elif PES and not SEQ:
         def dedos(mix):

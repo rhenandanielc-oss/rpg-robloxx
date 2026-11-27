@@ -17,13 +17,19 @@ VJ = json.load(open(os.path.join(SRC, "curvas_v46b.json")))["acoes"]
 if os.path.exists(os.path.join(SRC, "partida_v48.json")): VJ.update(json.load(open(os.path.join(SRC, "partida_v48.json")))["acoes"]); PIV = json.load(open(os.path.join(SRC, "rig_pivos.json")))
 ARM = bpy.data.objects["LoboArtico_Rig"]; P = ARM.pose.bones
 for pb in P: pb.rotation_mode = "QUATERNION"
-LT = LC.linha_seq(CN, VJ)
+for _m in ("trote", "corrida"):
+    _pm = os.path.join(SRC, "curvas_%s_v49.json" % _m)
+    if os.path.exists(_pm): VJ.update(json.load(open(_pm))["acoes"])
+_g = next((m for m in ("Trote", "Corrida") if CN.startswith(m.lower())), None)
+G = dict(json.load(open(os.path.join(SRC, "clipes_v21.json")))["marchas"][_g], nome=_g) if _g else None
+RETO = _g or "Andar"; NQR = int(round(G["T"] * 30)) if G else LC.NQ
+LT = LC.linha_seq(CN, VJ, G=G)
 if ANTES:                                                      # Controle r10e: Andar reto + pivo girando em volta de si mesmo
     psi = 0.0; pos = V((0, 0, 0)); qm = 0
     for e in LT:
         e["M"] = Matrix.Translation(pos) @ Matrix.Rotation(psi, 4, "Z"); e["psi"] = math.degrees(psi); e["pos"] = pos.copy()
         if e["clipe"] != "Repouso":
-            e["mix"] = [("Repouso", m_[1], m_[2]) if m_[0] == "Repouso" else ("Andar", qm % LC.NQ, m_[2]) for m_ in e["mix"]]; qm += 1
+            e["mix"] = [("Repouso", m_[1], m_[2]) if m_[0] == "Repouso" else (RETO, qm % NQR, m_[2]) for m_ in e["mix"]]; qm += 1
         dt = 1.0 / LC.FPS; om = math.radians(e["omega"]); pm = psi + om * dt / 2
         pos = pos + V((math.sin(pm), -math.cos(pm), 0)) * e["v"] * dt; psi += om * dt
 CONJ = {"LOW": ["LOW_Cabeca", "LOW_Corpo", "LOW_Marca", "LOW_Cristais"], "LOD1": ["LOD1_Cabeca", "LOD1_Corpo", "LOW_Marca", "LOW_Cristais"], "LOD2": ["LOD2_Cabeca", "LOD2_Corpo", "LOW_Cristais"]}[L]

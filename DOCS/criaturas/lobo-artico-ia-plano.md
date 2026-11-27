@@ -1325,3 +1325,52 @@ Nos três: 0° girados com o pivô parado e 0 bloqueios. Na patrulha, o lobo sel
   - partida e parada saindo do trote.
 
 Sem commit.
+
+## 17. Rodada "próximo passo" (26/11/2026)
+
+Decisões do usuário (26/11): ampliar o túnel da toca; pode baixar um vídeo real; o usuário publica depois; trote/corrida com a mesma técnica, primeiro no Blender com vídeo para aprovação e depois no rpg_roblox.
+
+### 17.1 Vídeo real de lobo
+- "Close opnamen wolf – Stichting Natuurbeelden" (Wikimedia Commons, CC BY-SA 3.0 NL, Enting Films / Sound and Vision), 19,6 MB, guardado só em `%TEMP%` (fora do git).
+- Viradas em 0:24–0:26 e 1:33–1:37: o lobo vira andando com passos, sem girar no lugar; ~90° em cerca de 1 s.
+- Comparação: `review/v49_ref_real/comparacao_real_x_nosso.jpg`.
+
+### 17.2 Curvas de trote e corrida (anim_v49, `gerar_curvas_marcha_v49.py`)
+- Mesma técnica do Andar (clipe aprovado dobrado, patas fixas no mundo). Trote 45/90°/s (baixar 0,10); Corrida 60/120°/s (baixar 0,16).
+- 16 clipes por marcha (`<G>Curva`, `<G>CurvaFechada`, `<G>ParaCurva`, `<G>CurvaParaReto`, `<G>CurvaParaFechada`, `<G>FechadaParaCurva`, `<G>CurvaBreve`, `<G>CurvaCurta`, E/D).
+- Auditoria nos 3 LODs: 0 fases acima de 0,03 de deslize (pior 0,023). Aceleração do trote igual à do reto; corrida à direita 1,42 contra 1,09 do reto (resíduo).
+- Vídeo antes × depois: `review/v49_trote_corrida/video_v49_trote_corrida.mp4` — **aguarda aprovação**.
+- Vídeo **APROVADO** pelo usuário (26/11, "Aprovar e instalar").
+- **Instalado no rpg_roblox (26/11):** 32 KFS (`montar_kfs_lobo_v49.luau`, prioridade Movement, laços `<G>Curva`/`<G>CurvaFechada`), Controle r13 (modelo selvagem + Teste_LoboArtico) e `Movimento_LoboArtico` v49; backup `ServerStorage.LoboArtico_Backups.Antes_r13_26_11`.
+- **Play (Teste_LoboArtico, módulo temporário `selvagem/teste_r13_modulo.luau`, apagado depois):**
+  - Trote reto → alvo a 90° à direita: TroteParaCurva → TroteCurva → TroteCurvaParaReto → Trote (+ CurvaBreve de correção); 0° girados com o pivô parado, 0 bloqueios.
+  - Corrida reta → 90° à direita: CorridaParaCurva → CorridaCurva → CorridaCurvaParaReto; ~110° em 1,8 s correndo; 0° parado, 0 bloqueios.
+  - Corrida → esquerda: CorridaParaCurvaEsquerda → CorridaCurvaEsquerda (o ensaio terminou no meio da curva pelo tempo).
+  - Servidor 17,4–17,6 ms por quadro; nenhum erro do Controle no console.
+  - Limites: a medição de deslize das patas no Play pegou poucas fases (a pista acaba em ~150 studs; corrida bate na borda), então vale a auditoria do Blender; Filhote/Ancião, combate em trote e celular não testados nesta rodada.
+
+### 17.3 Túnel da toca (rpg_roblox, terreno)
+- Backup antes de mexer: `ServerStorage.LoboArtico_Backups.Toca_Terreno_<Alcateia>_26_11` (original) e `..._cadeia_26_11` (cadeia inteira, após a 1ª escavação). Restaurar primeiro "cadeia", depois o original (`PasteRegion` no atributo `CantoVoxel`).
+- Teto escavado em Floresta, Maciço e Campos; 7 pontos de teto fino no Maciço foram pulados para não abrir buraco.
+- Verificação por caixa varrida (simulando a IA): com tolerância de degrau 1,8, Floresta 53/53 e Campos 40/40 passam (Adulto e Ancião). Com a tolerância atual (1,0) os degraus do piso ainda bloqueiam.
+- Maciço para no trecho 49→50: um ressalto de rocha (Slate) de 2,4 studs no piso em (-1048, 95,8, -5118). Escavar o teto não resolve; seria preciso rebaixar o piso ali.
+- Correção do diagnóstico: no Maciço o bloqueio do trecho 49 não era o piso, era a **parede lateral** do túnel (voxels a 4 studs do caminho; `FillBlock` não os alcançava). Usuário: "Prossiga" (26/11).
+- **Feito (26/11):**
+  - **IA r7c** (`selvagem/IA_LoboArtico.server.luau`, cópia `_r7b`, instalador `selvagem/instalar_r7c.luau`): a conferência do túnel tolera degrau de `degrauToca` 1,8 × Escala (mínimo 1,0). Instalada no modelo `ServerStorage.LoboArtico_Selvagem_Modelo`; backup `Antes_r7c_26_11`.
+  - Paredes alargadas voxel a voxel (`WriteVoxels`), só quando o voxel de trás continua sólido e o teto acima tem 3 studs ou mais:
+    - Maciço: 9 voxels (trechos 49–50; backup `Toca_Terreno_Alcateia_Macico_parede49_26_11`);
+    - Campos: 4 voxels perto da entrada (backup `Toca_Terreno_Alcateia_Campos_caminhoPlay_26_11`).
+- **Play (caminho recalculado pela IA, como ela faz):**
+
+  | Toca | Filhote | Adulto | Ancião |
+  |---|---|---|---|
+  | Floresta | 32/53 (degrau do piso) | 53/53 | 53/53 |
+  | Maciço | 68/169 | 75/169, cristal `Cristais_Gelo_Largo` | 29/169 |
+  | Campos | 40/40 | 6/40 (caminho mudou depois de alargar) | 6/40 |
+
+- **Problema de fundo:** o Pathfinding da IA calcula um caminho diferente a cada Play (e depois de cada mudança no terreno); alargar um ponto muda o caminho. No Maciço o caminho atravessa os cristais de gelo da gruta (`Formacoes_Gelo_Gruta.Salao_das_Colunas`, mapa da Tundra; não mexi).
+- Onde não cabe, a IA já para no limite do túnel e defende dali (r2 D / r6c); nada quebra.
+- **Não testado:** andar pelo túnel com o lobo de teste. Fora da arena, o `Teste_LoboArtico` vai para (0, -1000000, 0) logo depois de ser colocado na toca.
+- **Proposta:** gravar uma cadeia FIXA por toca (pontos medidos e aprovados) em vez de recalcular por Pathfinding, e alargar só ao longo dela; decidir com o dono do mapa se o lobo pode passar pelos cristais do Maciço.
+
+Sem commit.

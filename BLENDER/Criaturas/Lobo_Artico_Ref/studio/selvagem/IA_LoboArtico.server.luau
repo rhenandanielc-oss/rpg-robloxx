@@ -1,9 +1,11 @@
--- IA_LoboArtico (Script dentro da pasta de UM lobo selvagem, criada pelo IA_LoboArtico_Servidor) - r7b 26/11/2026 (mira do peito) | r7 20/11/2026
+-- IA_LoboArtico (Script dentro da pasta de UM lobo selvagem, criada pelo IA_LoboArtico_Servidor) - r7c 26/11/2026 (degrau da toca 1,8) | r7b 26/11/2026 (mira do peito) | r7 20/11/2026
 -- (r7, usuario: "arrume onde o lobo vira sem fisica / anda com as pernas paradas": as poses da IA (ameaca, investida, vida) tem
 -- prioridade Action e corpo inteiro; tocando enquanto o Controle anda ou vira, congelavam as pernas (parecia shift lock e
 -- "andar com as pernas paradas"). Agora: pose nao comeca com o Controle em Laco/Clipe; se ele comecar a andar/virar, a pose
 -- para na hora (0,15 s) e a IA a retoma quando ele parar; o bote da carga espera a frenagem terminar. Atributo IA_Pose para o
 -- Controle r9 ligar o IK das patas so em pose de pe. Copia: _r6d.)
+-- (r7c 26/11, usuario aprovou: a conferencia do tunel da toca tolera degrau de 1,8 x Escala no piso (antes 1,0; o Controle
+-- sobe esses degraus pelo raio do chao), minimo 1,0. Copia: _r7b.)
 -- (r6d, Play: a propria carga levava o focinho ao jogador e o coordenador escalava por "encostou no lobo" 0,4 s depois do
 -- bote; agora durante a carga e ate 1 s apos o bote (atributo CargaAte da alcateia) "encostou" nao conta. Copia: _r6c.)
 -- (r6c, Play: com o posto inalcancavel (limite do tunel) o lobo ficava "indo ao posto" sem ameacar; agora se em 2 s nao chega
@@ -84,7 +86,7 @@ local CFG = {
 	raioAlvo = 1.0, estacaoFolga = 0.8, separacao = 3.5,
 	troncoLado = 1.8, troncoAtras = 1.0,
 	intervaloMordida = 0.5,                                   -- = Kit basico.intervalo (o Kit recusa antes disso)
-	corpoLargura = 2.0, alturaCabeca = 6.0,                   -- caixa do Blockcast da toca (x Escala); cabeca do Adulto ~6,05 acima do chao
+	corpoLargura = 2.0, alturaCabeca = 6.0, degrauToca = 1.8,                   -- caixa do Blockcast da toca (x Escala); cabeca do Adulto ~6,05 acima do chao
 	desacel = 12,                                             -- r3: studs/s2 da frenagem (transicoes reais sao clipes; mesmo valor da simulacao)
 	-- r3: ameaca antes do ataque. Raios em studs a partir do ABRIGO do ovo (territorio, nao escalam com o lobo); distancias
 	-- ate o lobo x Escala da idade. Tudo [PROPOSTA][A TESTAR].
@@ -251,11 +253,12 @@ local function construirCadeia()
 		return r and r.Position or q
 	end
 	for i = 1, #c do c[i] = chaoDe(c[i]) end
-	local alt = CFG.alturaCabeca * e - 1.0
+	local deg = math.max(1.0, CFG.degrauToca * e)                   -- r7c
+	local alt = CFG.alturaCabeca * e - deg
 	local caixa = Vector3.new(CFG.corpoLargura * e, alt, 0.5)
 	limiteCadeia = #c
 	for i = 1, #c - 1 do
-		local a = c[i] + Vector3.new(0, 1.0 + alt / 2, 0); local b = c[i + 1] + Vector3.new(0, 1.0 + alt / 2, 0)
+		local a = c[i] + Vector3.new(0, deg + alt / 2, 0); local b = c[i + 1] + Vector3.new(0, deg + alt / 2, 0)
 		local d = b - a
 		if d.Magnitude > 0.2 then
 			local r = workspace:Blockcast(CFrame.lookAt(a, b), caixa, d, rpLivre)

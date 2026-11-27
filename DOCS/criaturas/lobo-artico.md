@@ -4501,3 +4501,8 @@ Pendente: aprovação visual → export/reimport (GLB por LOD) → JSON → KFS 
 - **Guia de publicação:** `lobo-artico-publicar-animacoes.md`.
 - **Pendentes (usuário):** toca, vídeo real e publicação.
 - Sem commit. Plano §16.
+
+### 8.94 Trote/corrida em curva (Blender) e túnel da toca (26/11/2026)
+- anim_v49: curvas com passos no Trote e na Corrida; auditoria ok nos 3 LODs; vídeo `review/v49_trote_corrida/` APROVADO 26/11; instalado no rpg_roblox (Controle r13, Movimento v49, 32 KFS; backup Antes_r13_26_11) e testado em Play (trote e corrida virando 90° com passos, 0° parado, 0 bloqueios).
+- Vídeo real (Commons, CC BY-SA) e comparação em `review/v49_ref_real/`.
+- Toca: teto escavado nas 3 alcateias com backup TerrainRegion; Floresta e Campos passam com degrau 1,8; Maciço para num ressalto de 2,4 no piso (trecho 49). IA r7c (degrau 1,8) INSTALADA; paredes alargadas no Maciço/Campos; no Play só a Floresta passa inteira (Adulto/Ancião), porque o Pathfinding muda o caminho a cada Play e no Maciço ele atravessa os cristais da gruta; proposta: cadeia fixa por toca. Plano §17. Sem commit.

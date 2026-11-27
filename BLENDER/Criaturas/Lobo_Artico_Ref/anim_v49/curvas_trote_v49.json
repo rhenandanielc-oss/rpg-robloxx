@@ -1,0 +1,6318 @@
+{
+ "metodo": "v49 (26/11/2026, usuario \"Sim, mesma tecnica\"): CURVAS DE TROTE E CORRIDA com passos = gerar_curvas_v46b generalizado por marcha\n(MARCHA_V49=Trote|Corrida). Mesmos 8 tipos de clipe por lado (laco aberto e fechado, entrada, saida, aberta<->fechada, breve, curta),\ncom o prefixo da marcha. Taxas: Trote 45/90 graus/s, Corrida 60/120 [PROPOSTA][A TESTAR]; inclinacao para dentro maior nas marchas\nrapidas. Saida: curvas_<marcha>_v49.json. ",
+ "parametros": {
+  "omega_ref": 45.0,
+  "Pescoco1": 5.0,
+  "Pescoco2": 2.5,
+  "Cabeca": 3.5,
+  "Coluna1": 1.5,
+  "Coluna2": 2.5,
+  "Coluna3": 2.0,
+  "cauda": [
+   -1.5,
+   -2.3,
+   -3.1,
+   -4.0
+  ],
+  "rolamento": 4.0,
+  "baixar": 0.1
+ },
+ "andar": {
+  "T": 0.6,
+  "D": 4.0,
+  "apoio": 0.4,
+  "fases": {
+   "DE": 0.0,
+   "TD": 0.0,
+   "DD": 0.5,
+   "TE": 0.5
+  },
+  "centro": {
+   "DE": -0.35,
+   "DD": -0.35,
+   "TE": 0.0,
+   "TD": 0.0
+  },
+  "altura": {
+   "D": 0.55,
+   "T": 0.45
+  },
+  "rolamento_graus": 15.0,
+  "rolo_ini": 0.7,
+  "dobra_graus": {
+   "D": 105.0,
+   "T": 75.0
+  },
+  "quadril_z": -0.12,
+  "v_studs_s": 6.667,
+  "varredura_apoio": 1.6,
+  "cadencia_hz": 1.667
+ },
+ "fps": 30,
+ "acoes": {
+  "TroteCurvaEsquerda": {
+   "quadros": 18,
+   "duracao_s": 0.6,
+   "laco": true,
+   "omega_ini_graus_s": 45.0,
+   "omega_fim_graus_s": 45.0,
+   "ciclos": 1,
+   "pico_graus_s": null,
+   "rampa_s": 0.0,
+   "raio_pivo_final_studs": 8.489,
+   "v_studs_s": 6.667,
+   "giro_total_graus": 27.0,
+   "omega_por_quadro": [
+    45.0,
+    45.0,
+    45.0,
+    45.0,
+    45.0,
+    45.0,
+    45.0,
+    45.0,
+    45.0,
+    45.0,
+    45.0,
+    45.0,
+    45.0,
+    45.0,
+    45.0,
+    45.0,
+    45.0,
+    45.0,
+    45.0
+   ],
+   "externa_por_quadro_xy_psi": [
+    [
+     0.0,
+     0.0,
+     -0.0
+    ],
+    [
+     -0.02196,
+     -0.22253,
+     1.5
+    ],
+    [
+     -0.03809,
+     -0.44557,
+     3.0
+    ],
+    [
+     -0.04837,
+     -0.66894,
+     4.5
+    ],
+    [
+     -0.0528,
+     -0.89251,
+     6.0
+    ],
+    [
+     -0.05138,
+     -1.11612,
+     7.5
+    ],
+    [
+     -0.0441,
+     -1.33962,
+     9.0
+    ],
+    [
+     -0.03098,
+     -1.56285,
+     10.5
+    ],
+    [
+     -0.01202,
+     -1.78566,
+     12.0
+    ],
+    [
+     0.01277,
+     -2.00789,
+     13.5
+    ],
+    [
+     0.04337,
+     -2.2294,
+     15.0
+    ],
+    [
+     0.07975,
+     -2.45004,
+     16.5
+    ],
+    [
+     0.1219,
+     -2.66964,
+     18.0
+    ],
+    [
+     0.16978,
+     -2.88807,
+     19.5
+    ],
+    [
+     0.22337,
+     -3.10517,
+     21.0
+    ],
+    [
+     0.28261,
+     -3.3208,
+     22.5
+    ],
+    [
+     0.34749,
+     -3.53479,
+     24.0
+    ],
+    [
+     0.41794,
+     -3.74702,
+     25.5
+    ],
+    [
+     0.49392,
+     -3.95733,
+     27.0
+    ]
+   ],
+   "apoio_por_quadro": {
+    "DE": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true
+    ],
+    "DD": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false
+    ],
+    "TE": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false
+    ],
+    "TD": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true
+    ]
+   },
+   "erro_ik_max": 0.002356,
+   "extensao_max_perna": {
+    "DE": 0.976,
+    "DD": 0.9,
+    "TE": 0.901,
+    "TD": 0.818
+   },
+   "q0_x_qfim_graus": 0.0,
+   "pior_ik_por_pata": {
+    "TD": [
+     0.0,
+     18,
+     true,
+     -0.246,
+     -0.093,
+     5.4
+    ],
+    "DD": [
+     0.0,
+     16,
+     true,
+     -0.235,
+     0.076,
+     -5.1
+    ],
+    "DE": [
+     0.0024,
+     5,
+     true,
+     -0.1,
+     -0.033,
+     -2.1
+    ],
+    "TE": [
+     0.0,
+     17,
+     false,
+     0.326,
+     -0.13,
+     -5.4
+    ]
+   },
+   "dentro_max": 99.0,
+   "fora_max": 99.0,
+   "ik_suave": 0.97,
+   "centro_giro_y": -0.949999988079071,
+   "folga_lateral_min_MCP": {
+    "d": [
+     0.958,
+     9,
+     false,
+     true,
+     -3.32,
+     -4.85
+    ],
+    "t": [
+     1.37,
+     7,
+     false,
+     true
+    ]
+   }
+  },
+  "TroteCurvaFechadaEsquerda": {
+   "quadros": 18,
+   "duracao_s": 0.6,
+   "laco": true,
+   "omega_ini_graus_s": 90.0,
+   "omega_fim_graus_s": 90.0,
+   "ciclos": 1,
+   "pico_graus_s": null,
+   "rampa_s": 0.0,
+   "raio_pivo_final_studs": 4.244,
+   "v_studs_s": 6.667,
+   "giro_total_graus": 54.0,
+   "omega_por_quadro": [
+    90.0,
+    90.0,
+    90.0,
+    90.0,
+    90.0,
+    90.0,
+    90.0,
+    90.0,
+    90.0,
+    90.0,
+    90.0,
+    90.0,
+    90.0,
+    90.0,
+    90.0,
+    90.0,
+    90.0,
+    90.0,
+    90.0
+   ],
+   "externa_por_quadro_xy_psi": [
+    [
+     0.0,
+     0.0,
+     -0.0
+    ],
+    [
+     -0.0439,
+     -0.22343,
+     3.0
+    ],
+    [
+     -0.07605,
+     -0.44886,
+     6.0
+    ],
+    [
+     -0.09636,
+     -0.67566,
+     9.0
+    ],
+    [
+     -0.10477,
+     -0.90321,
+     12.0
+    ],
+    [
+     -0.10126,
+     -1.13089,
+     15.0
+    ],
+    [
+     -0.08583,
+     -1.35807,
+     18.0
+    ],
+    [
+     -0.05854,
+     -1.58414,
+     21.0
+    ],
+    [
+     -0.01946,
+     -1.80846,
+     24.0
+    ],
+    [
+     0.03132,
+     -2.03044,
+     27.0
+    ],
+    [
+     0.09363,
+     -2.24945,
+     30.0
+    ],
+    [
+     0.16733,
+     -2.4649,
+     33.0
+    ],
+    [
+     0.2522,
+     -2.6762,
+     36.0
+    ],
+    [
+     0.34802,
+     -2.88276,
+     39.0
+    ],
+    [
+     0.45451,
+     -3.08403,
+     42.0
+    ],
+    [
+     0.57139,
+     -3.27945,
+     45.0
+    ],
+    [
+     0.69834,
+     -3.46849,
+     48.0
+    ],
+    [
+     0.835,
+     -3.65062,
+     51.0
+    ],
+    [
+     0.98102,
+     -3.82535,
+     54.0
+    ]
+   ],
+   "apoio_por_quadro": {
+    "DE": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true
+    ],
+    "DD": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false
+    ],
+    "TE": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false
+    ],
+    "TD": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true
+    ]
+   },
+   "erro_ik_max": 0.000236,
+   "extensao_max_perna": {
+    "DE": 0.972,
+    "DD": 0.835,
+    "TE": 0.833,
+    "TD": 0.739
+   },
+   "q0_x_qfim_graus": 0.0,
+   "pior_ik_por_pata": {
+    "TD": [
+     0.0,
+     18,
+     true,
+     -0.483,
+     -0.209,
+     10.8
+    ],
+    "DE": [
+     0.0002,
+     5,
+     true,
+     -0.201,
+     -0.062,
+     -4.2
+    ],
+    "DD": [
+     0.0,
+     18,
+     false,
+     -0.443,
+     0.177,
+     -10.0
+    ],
+    "TE": [
+     0.0,
+     17,
+     false,
+     0.638,
+     -0.289,
+     -10.7
+    ]
+   },
+   "dentro_max": 99.0,
+   "fora_max": 99.0,
+   "ik_suave": 0.97,
+   "centro_giro_y": -0.949999988079071,
+   "folga_lateral_min_MCP": {
+    "d": [
+     0.403,
+     9,
+     false,
+     true,
+     -3.37,
+     -4.88
+    ],
+    "t": [
+     0.792,
+     9,
+     true,
+     false
+    ]
+   }
+  },
+  "TroteParaCurvaEsquerda": {
+   "quadros": 36,
+   "duracao_s": 1.2,
+   "laco": false,
+   "omega_ini_graus_s": 0.0,
+   "omega_fim_graus_s": 45.0,
+   "ciclos": 2,
+   "pico_graus_s": null,
+   "rampa_s": 0.6,
+   "raio_pivo_final_studs": 8.489,
+   "v_studs_s": 6.667,
+   "giro_total_graus": 40.5,
+   "omega_por_quadro": [
+    0.0,
+    0.4012,
+    1.5432,
+    3.3333,
+    5.679,
+    8.4877,
+    11.6667,
+    15.1235,
+    18.7654,
+    22.5,
+    26.2346,
+    29.8765,
+    33.3333,
+    36.5123,
+    39.321,
+    41.6667,
+    43.4568,
+    44.5988,
+    45.0,
+    45.0,
+    45.0,
+    45.0,
+    45.0,
+    45.0,
+    45.0,
+    45.0,
+    45.0,
+    45.0,
+    45.0,
+    45.0,
+    45.0,
+    45.0,
+    45.0,
+    45.0,
+    45.0,
+    45.0,
+    45.0
+   ],
+   "externa_por_quadro_xy_psi": [
+    [
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     -7e-05,
+     -0.22223,
+     0.0045
+    ],
+    [
+     -0.00051,
+     -0.44447,
+     0.03497
+    ],
+    [
+     -0.00156,
+     -0.6667,
+     0.11458
+    ],
+    [
+     -0.00332,
+     -0.88894,
+     0.26337
+    ],
+    [
+     -0.00577,
+     -1.11119,
+     0.49832
+    ],
+    [
+     -0.00877,
+     -1.33348,
+     0.83332
+    ],
+    [
+     -0.01211,
+     -1.55581,
+     1.27918
+    ],
+    [
+     -0.01544,
+     -1.77821,
+     1.84361
+    ],
+    [
+     -0.0184,
+     -2.00072,
+     2.53124
+    ],
+    [
+     -0.0205,
+     -2.22335,
+     3.34361
+    ],
+    [
+     -0.02124,
+     -2.44613,
+     4.27918
+    ],
+    [
+     -0.02008,
+     -2.66904,
+     5.33332
+    ],
+    [
+     -0.01642,
+     -2.89208,
+     6.49832
+    ],
+    [
+     -0.00968,
+     -3.1152,
+     7.76337
+    ],
+    [
+     0.00075,
+     -3.33831,
+     9.11458
+    ],
+    [
+     0.01545,
+     -3.5613,
+     10.53497
+    ],
+    [
+     0.03497,
+     -3.78401,
+     12.0045
+    ],
+    [
+     0.05983,
+     -4.00623,
+     13.5
+    ],
+    [
+     0.09043,
+     -4.22774,
+     15.0
+    ],
+    [
+     0.12682,
+     -4.44838,
+     16.5
+    ],
+    [
+     0.16896,
+     -4.66798,
+     18.0
+    ],
+    [
+     0.21685,
+     -4.88641,
+     19.5
+    ],
+    [
+     0.27043,
+     -5.10351,
+     21.0
+    ],
+    [
+     0.32968,
+     -5.31913,
+     22.5
+    ],
+    [
+     0.39455,
+     -5.53313,
+     24.0
+    ],
+    [
+     0.465,
+     -5.74535,
+     25.5
+    ],
+    [
+     0.54098,
+     -5.95566,
+     27.0
+    ],
+    [
+     0.62245,
+     -6.16391,
+     28.5
+    ],
+    [
+     0.70933,
+     -6.36995,
+     30.0
+    ],
+    [
+     0.80158,
+     -6.57365,
+     31.5
+    ],
+    [
+     0.89913,
+     -6.77487,
+     33.0
+    ],
+    [
+     1.00192,
+     -6.97346,
+     34.5
+    ],
+    [
+     1.10986,
+     -7.16929,
+     36.0
+    ],
+    [
+     1.2229,
+     -7.36223,
+     37.5
+    ],
+    [
+     1.34095,
+     -7.55215,
+     39.0
+    ],
+    [
+     1.46393,
+     -7.73891,
+     40.5
+    ]
+   ],
+   "apoio_por_quadro": {
+    "DE": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true
+    ],
+    "DD": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false
+    ],
+    "TE": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false
+    ],
+    "TD": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true
+    ]
+   },
+   "erro_ik_max": 0.002356,
+   "extensao_max_perna": {
+    "DE": 0.976,
+    "DD": 0.907,
+    "TE": 0.917,
+    "TD": 0.853
+   },
+   "q0_x_qfim_graus": 21.2379,
+   "pior_ik_por_pata": {
+    "DD": [
+     0.0,
+     36,
+     false,
+     -0.226,
+     0.077,
+     -5.0
+    ],
+    "TD": [
+     0.0,
+     36,
+     true,
+     -0.246,
+     -0.093,
+     5.4
+    ],
+    "DE": [
+     0.0024,
+     23,
+     true,
+     -0.1,
+     -0.033,
+     -2.1
+    ],
+    "TE": [
+     0.0,
+     35,
+     false,
+     0.326,
+     -0.13,
+     -5.4
+    ]
+   },
+   "dentro_max": 99.0,
+   "fora_max": 99.0,
+   "ik_suave": 0.97,
+   "centro_giro_y": -0.949999988079071,
+   "folga_lateral_min_MCP": {
+    "d": [
+     0.958,
+     27,
+     false,
+     true,
+     -3.32,
+     -4.85
+    ],
+    "t": [
+     1.368,
+     25,
+     false,
+     true
+    ]
+   }
+  },
+  "TroteCurvaParaRetoEsquerda": {
+   "quadros": 36,
+   "duracao_s": 1.2,
+   "laco": false,
+   "omega_ini_graus_s": 45.0,
+   "omega_fim_graus_s": 0.0,
+   "ciclos": 2,
+   "pico_graus_s": null,
+   "rampa_s": 0.6,
+   "raio_pivo_final_studs": null,
+   "v_studs_s": 6.667,
+   "giro_total_graus": 13.5,
+   "omega_por_quadro": [
+    45.0,
+    44.5988,
+    43.4568,
+    41.6667,
+    39.321,
+    36.5123,
+    33.3333,
+    29.8765,
+    26.2346,
+    22.5,
+    18.7654,
+    15.1235,
+    11.6667,
+    8.4877,
+    5.679,
+    3.3333,
+    1.5432,
+    0.4012,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "externa_por_quadro_xy_psi": [
+    [
+     0.0,
+     0.0,
+     -0.0
+    ],
+    [
+     -0.02189,
+     -0.22253,
+     1.4955
+    ],
+    [
+     -0.03758,
+     -0.44554,
+     2.96503
+    ],
+    [
+     -0.04681,
+     -0.66882,
+     4.38542
+    ],
+    [
+     -0.0495,
+     -0.89215,
+     5.73663
+    ],
+    [
+     -0.04566,
+     -1.11533,
+     7.00168
+    ],
+    [
+     -0.03545,
+     -1.33816,
+     8.16668
+    ],
+    [
+     -0.01909,
+     -1.56048,
+     9.22082
+    ],
+    [
+     0.00305,
+     -1.78214,
+     10.15639
+    ],
+    [
+     0.03059,
+     -2.00307,
+     10.96876
+    ],
+    [
+     0.06304,
+     -2.22321,
+     11.65639
+    ],
+    [
+     0.09989,
+     -2.44257,
+     12.22082
+    ],
+    [
+     0.1406,
+     -2.66116,
+     12.66668
+    ],
+    [
+     0.18458,
+     -2.87907,
+     13.00168
+    ],
+    [
+     0.23126,
+     -3.09638,
+     13.23663
+    ],
+    [
+     0.28005,
+     -3.31321,
+     13.38542
+    ],
+    [
+     0.33038,
+     -3.52967,
+     13.46503
+    ],
+    [
+     0.38171,
+     -3.7459,
+     13.4955
+    ],
+    [
+     0.43351,
+     -3.96201,
+     13.5
+    ],
+    [
+     0.48539,
+     -4.1781,
+     13.5
+    ],
+    [
+     0.53727,
+     -4.39419,
+     13.5
+    ],
+    [
+     0.58915,
+     -4.61029,
+     13.5
+    ],
+    [
+     0.64103,
+     -4.82638,
+     13.5
+    ],
+    [
+     0.69291,
+     -5.04247,
+     13.5
+    ],
+    [
+     0.74479,
+     -5.25857,
+     13.5
+    ],
+    [
+     0.79667,
+     -5.47466,
+     13.5
+    ],
+    [
+     0.84855,
+     -5.69075,
+     13.5
+    ],
+    [
+     0.90043,
+     -5.90684,
+     13.5
+    ],
+    [
+     0.95231,
+     -6.12294,
+     13.5
+    ],
+    [
+     1.00419,
+     -6.33903,
+     13.5
+    ],
+    [
+     1.05607,
+     -6.55512,
+     13.5
+    ],
+    [
+     1.10795,
+     -6.77122,
+     13.5
+    ],
+    [
+     1.15983,
+     -6.98731,
+     13.5
+    ],
+    [
+     1.21171,
+     -7.2034,
+     13.5
+    ],
+    [
+     1.26359,
+     -7.41948,
+     13.5
+    ],
+    [
+     1.31547,
+     -7.63556,
+     13.5
+    ],
+    [
+     1.36735,
+     -7.85165,
+     13.5
+    ]
+   ],
+   "apoio_por_quadro": {
+    "DE": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true
+    ],
+    "DD": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false
+    ],
+    "TE": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false
+    ],
+    "TD": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true
+    ]
+   },
+   "erro_ik_max": 0.001426,
+   "extensao_max_perna": {
+    "DE": 0.975,
+    "DD": 0.95,
+    "TE": 0.925,
+    "TD": 0.853
+   },
+   "q0_x_qfim_graus": 21.2218,
+   "pior_ik_por_pata": {
+    "DD": [
+     0.0,
+     34,
+     true,
+     -0.0,
+     -0.0,
+     0.0
+    ],
+    "TD": [
+     0.0,
+     36,
+     true,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "DE": [
+     0.0014,
+     5,
+     true,
+     -0.085,
+     -0.028,
+     -1.8
+    ],
+    "TE": [
+     0.0,
+     36,
+     false,
+     -0.0,
+     -0.0,
+     0.0
+    ]
+   },
+   "dentro_max": 99.0,
+   "fora_max": 99.0,
+   "ik_suave": 0.97,
+   "centro_giro_y": -0.949999988079071,
+   "folga_lateral_min_MCP": {
+    "d": [
+     1.17,
+     10,
+     false,
+     true,
+     -3.94,
+     -4.59
+    ],
+    "t": [
+     1.592,
+     10,
+     true,
+     false
+    ]
+   }
+  },
+  "TroteCurvaParaFechadaEsquerda": {
+   "quadros": 36,
+   "duracao_s": 1.2,
+   "laco": false,
+   "omega_ini_graus_s": 45.0,
+   "omega_fim_graus_s": 90.0,
+   "ciclos": 2,
+   "pico_graus_s": null,
+   "rampa_s": 0.6,
+   "raio_pivo_final_studs": 4.244,
+   "v_studs_s": 6.667,
+   "giro_total_graus": 94.5,
+   "omega_por_quadro": [
+    45.0,
+    45.4012,
+    46.5432,
+    48.3333,
+    50.679,
+    53.4877,
+    56.6667,
+    60.1235,
+    63.7654,
+    67.5,
+    71.2346,
+    74.8765,
+    78.3333,
+    81.5123,
+    84.321,
+    86.6667,
+    88.4568,
+    89.5988,
+    90.0,
+    90.0,
+    90.0,
+    90.0,
+    90.0,
+    90.0,
+    90.0,
+    90.0,
+    90.0,
+    90.0,
+    90.0,
+    90.0,
+    90.0,
+    90.0,
+    90.0,
+    90.0,
+    90.0,
+    90.0,
+    90.0
+   ],
+   "externa_por_quadro_xy_psi": [
+    [
+     0.0,
+     0.0,
+     -0.0
+    ],
+    [
+     -0.02203,
+     -0.22254,
+     1.5045
+    ],
+    [
+     -0.0386,
+     -0.44559,
+     3.03497
+    ],
+    [
+     -0.04992,
+     -0.66907,
+     4.61458
+    ],
+    [
+     -0.0561,
+     -0.89289,
+     6.26337
+    ],
+    [
+     -0.05709,
+     -1.11697,
+     7.99832
+    ],
+    [
+     -0.05274,
+     -1.34123,
+     9.83332
+    ],
+    [
+     -0.0428,
+     -1.56557,
+     11.77918
+    ],
+    [
+     -0.02694,
+     -1.78986,
+     13.84361
+    ],
+    [
+     -0.00474,
+     -2.01393,
+     16.03124
+    ],
+    [
+     0.02426,
+     -2.23756,
+     18.34361
+    ],
+    [
+     0.06058,
+     -2.46049,
+     20.77918
+    ],
+    [
+     0.10474,
+     -2.68235,
+     23.33332
+    ],
+    [
+     0.15729,
+     -2.90274,
+     25.99832
+    ],
+    [
+     0.21876,
+     -3.12116,
+     28.76337
+    ],
+    [
+     0.28962,
+     -3.33701,
+     31.61458
+    ],
+    [
+     0.3703,
+     -3.54965,
+     34.53497
+    ],
+    [
+     0.46114,
+     -3.75833,
+     37.5045
+    ],
+    [
+     0.56239,
+     -3.96227,
+     40.5
+    ],
+    [
+     0.67412,
+     -4.16069,
+     43.5
+    ],
+    [
+     0.79607,
+     -4.35298,
+     46.5
+    ],
+    [
+     0.92792,
+     -4.53863,
+     49.5
+    ],
+    [
+     1.06931,
+     -4.71712,
+     52.5
+    ],
+    [
+     1.21985,
+     -4.88797,
+     55.5
+    ],
+    [
+     1.37912,
+     -5.0507,
+     58.5
+    ],
+    [
+     1.54669,
+     -5.20488,
+     61.5
+    ],
+    [
+     1.7221,
+     -5.35007,
+     64.5
+    ],
+    [
+     1.90487,
+     -5.48589,
+     67.5
+    ],
+    [
+     2.09449,
+     -5.61196,
+     70.5
+    ],
+    [
+     2.29045,
+     -5.72792,
+     73.5
+    ],
+    [
+     2.49222,
+     -5.83348,
+     76.5
+    ],
+    [
+     2.69923,
+     -5.92833,
+     79.5
+    ],
+    [
+     2.91092,
+     -6.01221,
+     82.5
+    ],
+    [
+     3.12671,
+     -6.0849,
+     85.5
+    ],
+    [
+     3.34601,
+     -6.1462,
+     88.5
+    ],
+    [
+     3.56822,
+     -6.19594,
+     91.5
+    ],
+    [
+     3.79272,
+     -6.23398,
+     94.5
+    ]
+   ],
+   "apoio_por_quadro": {
+    "DE": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true
+    ],
+    "DD": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false
+    ],
+    "TE": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false
+    ],
+    "TD": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true
+    ]
+   },
+   "erro_ik_max": 0.002789,
+   "extensao_max_perna": {
+    "DE": 0.977,
+    "DD": 0.843,
+    "TE": 0.873,
+    "TD": 0.818
+   },
+   "q0_x_qfim_graus": 24.3752,
+   "pior_ik_por_pata": {
+    "TD": [
+     0.0,
+     36,
+     true,
+     -0.483,
+     -0.209,
+     10.8
+    ],
+    "DD": [
+     0.0,
+     36,
+     false,
+     -0.443,
+     0.177,
+     -10.0
+    ],
+    "DE": [
+     0.0028,
+     5,
+     true,
+     -0.114,
+     -0.037,
+     -2.4
+    ],
+    "TE": [
+     0.0,
+     35,
+     false,
+     0.638,
+     -0.289,
+     -10.7
+    ]
+   },
+   "dentro_max": 99.0,
+   "fora_max": 99.0,
+   "ik_suave": 0.97,
+   "centro_giro_y": -0.949999988079071,
+   "folga_lateral_min_MCP": {
+    "d": [
+     0.403,
+     27,
+     false,
+     true,
+     -3.37,
+     -4.88
+    ],
+    "t": [
+     0.792,
+     27,
+     true,
+     false
+    ]
+   }
+  },
+  "TroteFechadaParaCurvaEsquerda": {
+   "quadros": 36,
+   "duracao_s": 1.2,
+   "laco": false,
+   "omega_ini_graus_s": 90.0,
+   "omega_fim_graus_s": 45.0,
+   "ciclos": 2,
+   "pico_graus_s": null,
+   "rampa_s": 0.6,
+   "raio_pivo_final_studs": 8.489,
+   "v_studs_s": 6.667,
+   "giro_total_graus": 67.5,
+   "omega_por_quadro": [
+    90.0,
+    89.5988,
+    88.4568,
+    86.6667,
+    84.321,
+    81.5123,
+    78.3333,
+    74.8765,
+    71.2346,
+    67.5,
+    63.7654,
+    60.1235,
+    56.6667,
+    53.4877,
+    50.679,
+    48.3333,
+    46.5432,
+    45.4012,
+    45.0,
+    45.0,
+    45.0,
+    45.0,
+    45.0,
+    45.0,
+    45.0,
+    45.0,
+    45.0,
+    45.0,
+    45.0,
+    45.0,
+    45.0,
+    45.0,
+    45.0,
+    45.0,
+    45.0,
+    45.0,
+    45.0
+   ],
+   "externa_por_quadro_xy_psi": [
+    [
+     0.0,
+     0.0,
+     -0.0
+    ],
+    [
+     -0.04383,
+     -0.22343,
+     2.9955
+    ],
+    [
+     -0.07554,
+     -0.4488,
+     5.96503
+    ],
+    [
+     -0.09482,
+     -0.6754,
+     8.88542
+    ],
+    [
+     -0.10153,
+     -0.90248,
+     11.73663
+    ],
+    [
+     -0.0957,
+     -1.12929,
+     14.50168
+    ],
+    [
+     -0.07755,
+     -1.35512,
+     17.16668
+    ],
+    [
+     -0.04738,
+     -1.57931,
+     19.72082
+    ],
+    [
+     -0.00564,
+     -1.80127,
+     22.15639
+    ],
+    [
+     0.04713,
+     -2.0205,
+     24.46876
+    ],
+    [
+     0.11033,
+     -2.2366,
+     26.65639
+    ],
+    [
+     0.18332,
+     -2.44926,
+     28.72082
+    ],
+    [
+     0.2654,
+     -2.65826,
+     30.66668
+    ],
+    [
+     0.35591,
+     -2.86349,
+     32.50168
+    ],
+    [
+     0.45414,
+     -3.06488,
+     34.23663
+    ],
+    [
+     0.55944,
+     -3.26247,
+     35.88542
+    ],
+    [
+     0.67118,
+     -3.45634,
+     37.46503
+    ],
+    [
+     0.78878,
+     -3.6466,
+     38.9955
+    ],
+    [
+     0.91169,
+     -3.83341,
+     40.5
+    ],
+    [
+     1.03952,
+     -4.01689,
+     42.0
+    ],
+    [
+     1.17211,
+     -4.19695,
+     43.5
+    ],
+    [
+     1.30936,
+     -4.37349,
+     45.0
+    ],
+    [
+     1.45119,
+     -4.54637,
+     46.5
+    ],
+    [
+     1.59749,
+     -4.71548,
+     48.0
+    ],
+    [
+     1.74817,
+     -4.88071,
+     49.5
+    ],
+    [
+     1.90313,
+     -5.04193,
+     51.0
+    ],
+    [
+     2.06225,
+     -5.19904,
+     52.5
+    ],
+    [
+     2.22543,
+     -5.35193,
+     54.0
+    ],
+    [
+     2.39255,
+     -5.5005,
+     55.5
+    ],
+    [
+     2.56351,
+     -5.64464,
+     57.0
+    ],
+    [
+     2.73818,
+     -5.78426,
+     58.5
+    ],
+    [
+     2.91645,
+     -5.91925,
+     60.0
+    ],
+    [
+     3.09819,
+     -6.04954,
+     61.5
+    ],
+    [
+     3.28328,
+     -6.17502,
+     63.0
+    ],
+    [
+     3.47159,
+     -6.29561,
+     64.5
+    ],
+    [
+     3.66299,
+     -6.41124,
+     66.0
+    ],
+    [
+     3.85735,
+     -6.52181,
+     67.5
+    ]
+   ],
+   "apoio_por_quadro": {
+    "DE": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true
+    ],
+    "DD": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false
+    ],
+    "TE": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false
+    ],
+    "TD": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true
+    ]
+   },
+   "erro_ik_max": 0.002356,
+   "extensao_max_perna": {
+    "DE": 0.976,
+    "DD": 0.9,
+    "TE": 0.901,
+    "TD": 0.818
+   },
+   "q0_x_qfim_graus": 24.3591,
+   "pior_ik_por_pata": {
+    "DD": [
+     0.0,
+     34,
+     true,
+     -0.235,
+     0.076,
+     -5.1
+    ],
+    "TD": [
+     0.0,
+     36,
+     true,
+     -0.246,
+     -0.093,
+     5.4
+    ],
+    "DE": [
+     0.0024,
+     23,
+     true,
+     -0.1,
+     -0.033,
+     -2.1
+    ],
+    "TE": [
+     0.0,
+     35,
+     false,
+     0.326,
+     -0.13,
+     -5.4
+    ]
+   },
+   "dentro_max": 99.0,
+   "fora_max": 99.0,
+   "ik_suave": 0.97,
+   "centro_giro_y": -0.949999988079071,
+   "folga_lateral_min_MCP": {
+    "d": [
+     0.656,
+     9,
+     false,
+     true,
+     -3.36,
+     -4.87
+    ],
+    "t": [
+     1.035,
+     9,
+     true,
+     false
+    ]
+   }
+  },
+  "TroteCurvaBreveEsquerda": {
+   "quadros": 18,
+   "duracao_s": 0.6,
+   "laco": false,
+   "omega_ini_graus_s": 0.0,
+   "omega_fim_graus_s": 0.0,
+   "ciclos": 1,
+   "pico_graus_s": 45.0,
+   "rampa_s": 0.0,
+   "raio_pivo_final_studs": null,
+   "v_studs_s": 6.667,
+   "giro_total_graus": 13.5,
+   "omega_por_quadro": [
+    0.0,
+    1.3569,
+    5.264,
+    11.25,
+    18.5929,
+    26.4071,
+    33.75,
+    39.736,
+    43.6431,
+    45.0,
+    43.6431,
+    39.736,
+    33.75,
+    26.4071,
+    18.5929,
+    11.25,
+    5.264,
+    1.3569,
+    0.0
+   ],
+   "externa_por_quadro_xy_psi": [
+    [
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     -0.00024,
+     -0.22223,
+     0.01513
+    ],
+    [
+     -0.00174,
+     -0.44447,
+     0.11889
+    ],
+    [
+     -0.0053,
+     -0.66672,
+     0.38924
+    ],
+    [
+     -0.01111,
+     -0.88903,
+     0.88402
+    ],
+    [
+     -0.01875,
+     -1.11148,
+     1.63402
+    ],
+    [
+     -0.0272,
+     -1.33418,
+     2.63924
+    ],
+    [
+     -0.035,
+     -1.55721,
+     3.86889
+    ],
+    [
+     -0.04042,
+     -1.78058,
+     5.26513
+    ],
+    [
+     -0.04166,
+     -2.00417,
+     6.75
+    ],
+    [
+     -0.03708,
+     -2.2277,
+     8.23487
+    ],
+    [
+     -0.0254,
+     -2.45082,
+     9.63111
+    ],
+    [
+     -0.00587,
+     -2.67312,
+     10.86076
+    ],
+    [
+     0.02165,
+     -2.89427,
+     11.86598
+    ],
+    [
+     0.0567,
+     -3.11407,
+     12.61598
+    ],
+    [
+     0.09825,
+     -3.33253,
+     13.11076
+    ],
+    [
+     0.14487,
+     -3.54986,
+     13.38111
+    ],
+    [
+     0.19487,
+     -3.76641,
+     13.48487
+    ],
+    [
+     0.24649,
+     -3.98256,
+     13.5
+    ]
+   ],
+   "apoio_por_quadro": {
+    "DE": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true
+    ],
+    "DD": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false
+    ],
+    "TE": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false
+    ],
+    "TD": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true
+    ]
+   },
+   "erro_ik_max": 9.3e-05,
+   "extensao_max_perna": {
+    "DE": 0.971,
+    "DD": 0.932,
+    "TE": 0.902,
+    "TD": 0.854
+   },
+   "q0_x_qfim_graus": 2.7648,
+   "pior_ik_por_pata": {
+    "DD": [
+     0.0,
+     16,
+     true,
+     -0.091,
+     0.026,
+     -1.9
+    ],
+    "TD": [
+     0.0,
+     18,
+     true,
+     0.0,
+     -0.0,
+     0.0
+    ],
+    "DE": [
+     0.0001,
+     5,
+     true,
+     -0.046,
+     -0.016,
+     -1.0
+    ],
+    "TE": [
+     0.0,
+     17,
+     false,
+     0.114,
+     -0.043,
+     -1.9
+    ]
+   },
+   "dentro_max": 99.0,
+   "fora_max": 99.0,
+   "ik_suave": 0.97,
+   "centro_giro_y": -0.949999988079071,
+   "folga_lateral_min_MCP": {
+    "d": [
+     1.071,
+     9,
+     false,
+     true,
+     -3.3,
+     -4.85
+    ],
+    "t": [
+     1.5,
+     7,
+     false,
+     true
+    ]
+   }
+  },
+  "TroteCurvaCurtaEsquerda": {
+   "quadros": 36,
+   "duracao_s": 1.2,
+   "laco": false,
+   "omega_ini_graus_s": 0.0,
+   "omega_fim_graus_s": 0.0,
+   "ciclos": 2,
+   "pico_graus_s": 45.0,
+   "rampa_s": 0.0,
+   "raio_pivo_final_studs": null,
+   "v_studs_s": 6.667,
+   "giro_total_graus": 27.0,
+   "omega_por_quadro": [
+    0.0,
+    0.3418,
+    1.3569,
+    3.0144,
+    5.264,
+    8.0373,
+    11.25,
+    14.8045,
+    18.5929,
+    22.5,
+    26.4071,
+    30.1955,
+    33.75,
+    36.9627,
+    39.736,
+    41.9856,
+    43.6431,
+    44.6582,
+    45.0,
+    44.6582,
+    43.6431,
+    41.9856,
+    39.736,
+    36.9627,
+    33.75,
+    30.1955,
+    26.4071,
+    22.5,
+    18.5929,
+    14.8045,
+    11.25,
+    8.0373,
+    5.264,
+    3.0144,
+    1.3569,
+    0.3418,
+    0.0
+   ],
+   "externa_por_quadro_xy_psi": [
+    [
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     -6e-05,
+     -0.22223,
+     0.0038
+    ],
+    [
+     -0.00044,
+     -0.44447,
+     0.03027
+    ],
+    [
+     -0.00138,
+     -0.6667,
+     0.1014
+    ],
+    [
+     -0.00301,
+     -0.88894,
+     0.23781
+    ],
+    [
+     -0.00535,
+     -1.11119,
+     0.45816
+    ],
+    [
+     -0.00829,
+     -1.33347,
+     0.77852
+    ],
+    [
+     -0.01166,
+     -1.55579,
+     1.21196
+    ],
+    [
+     -0.01514,
+     -1.77819,
+     1.76809
+    ],
+    [
+     -0.01834,
+     -2.00069,
+     2.4528
+    ],
+    [
+     -0.02079,
+     -2.22332,
+     3.26809
+    ],
+    [
+     -0.02196,
+     -2.4461,
+     4.21196
+    ],
+    [
+     -0.02123,
+     -2.66904,
+     5.27852
+    ],
+    [
+     -0.018,
+     -2.89211,
+     6.45816
+    ],
+    [
+     -0.01163,
+     -3.11526,
+     7.73781
+    ],
+    [
+     -0.00148,
+     -3.3384,
+     9.1014
+    ],
+    [
+     0.01305,
+     -3.56142,
+     10.53027
+    ],
+    [
+     0.0325,
+     -3.78414,
+     12.0038
+    ],
+    [
+     0.05735,
+     -4.00636,
+     13.5
+    ],
+    [
+     0.088,
+     -4.22786,
+     14.9962
+    ],
+    [
+     0.12476,
+     -4.44838,
+     16.46973
+    ],
+    [
+     0.1678,
+     -4.66768,
+     17.8986
+    ],
+    [
+     0.2172,
+     -4.88552,
+     19.26219
+    ],
+    [
+     0.27293,
+     -5.10169,
+     20.54184
+    ],
+    [
+     0.33483,
+     -5.31602,
+     21.72148
+    ],
+    [
+     0.40266,
+     -5.52838,
+     22.78804
+    ],
+    [
+     0.47608,
+     -5.73871,
+     23.73191
+    ],
+    [
+     0.55467,
+     -5.94702,
+     24.5472
+    ],
+    [
+     0.63794,
+     -6.15337,
+     25.23191
+    ],
+    [
+     0.72536,
+     -6.35789,
+     25.78804
+    ],
+    [
+     0.81638,
+     -6.56076,
+     26.22148
+    ],
+    [
+     0.9104,
+     -6.76219,
+     26.54184
+    ],
+    [
+     1.00685,
+     -6.96244,
+     26.76219
+    ],
+    [
+     1.10515,
+     -7.16176,
+     26.8986
+    ],
+    [
+     1.20478,
+     -7.36041,
+     26.96973
+    ],
+    [
+     1.30523,
+     -7.55865,
+     26.9962
+    ],
+    [
+     1.40607,
+     -7.75669,
+     27.0
+    ]
+   ],
+   "apoio_por_quadro": {
+    "DE": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true
+    ],
+    "DD": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false
+    ],
+    "TE": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false
+    ],
+    "TD": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true
+    ]
+   },
+   "erro_ik_max": 0.001487,
+   "extensao_max_perna": {
+    "DE": 0.975,
+    "DD": 0.946,
+    "TE": 0.92,
+    "TD": 0.853
+   },
+   "q0_x_qfim_graus": 0.9245,
+   "pior_ik_por_pata": {
+    "TD": [
+     0.0,
+     36,
+     true,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "DD": [
+     0.0,
+     34,
+     true,
+     -0.026,
+     0.007,
+     -0.5
+    ],
+    "DE": [
+     0.0015,
+     23,
+     true,
+     -0.086,
+     -0.029,
+     -1.8
+    ],
+    "TE": [
+     0.0,
+     35,
+     false,
+     0.033,
+     -0.012,
+     -0.5
+    ]
+   },
+   "dentro_max": 99.0,
+   "fora_max": 99.0,
+   "ik_suave": 0.97,
+   "centro_giro_y": -0.949999988079071,
+   "folga_lateral_min_MCP": {
+    "d": [
+     1.17,
+     28,
+     false,
+     true,
+     -3.94,
+     -4.59
+    ],
+    "t": [
+     1.591,
+     28,
+     true,
+     false
+    ]
+   }
+  },
+  "TroteCurvaDireita": {
+   "quadros": 18,
+   "duracao_s": 0.6,
+   "laco": true,
+   "omega_ini_graus_s": -45.0,
+   "omega_fim_graus_s": -45.0,
+   "ciclos": 1,
+   "pico_graus_s": null,
+   "rampa_s": 0.0,
+   "raio_pivo_final_studs": 8.489,
+   "v_studs_s": 6.667,
+   "giro_total_graus": -27.0,
+   "omega_por_quadro": [
+    -45.0,
+    -45.0,
+    -45.0,
+    -45.0,
+    -45.0,
+    -45.0,
+    -45.0,
+    -45.0,
+    -45.0,
+    -45.0,
+    -45.0,
+    -45.0,
+    -45.0,
+    -45.0,
+    -45.0,
+    -45.0,
+    -45.0,
+    -45.0,
+    -45.0
+   ],
+   "externa_por_quadro_xy_psi": [
+    [
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.02196,
+     -0.22253,
+     -1.5
+    ],
+    [
+     0.03809,
+     -0.44557,
+     -3.0
+    ],
+    [
+     0.04837,
+     -0.66894,
+     -4.5
+    ],
+    [
+     0.0528,
+     -0.89251,
+     -6.0
+    ],
+    [
+     0.05138,
+     -1.11612,
+     -7.5
+    ],
+    [
+     0.0441,
+     -1.33962,
+     -9.0
+    ],
+    [
+     0.03098,
+     -1.56285,
+     -10.5
+    ],
+    [
+     0.01202,
+     -1.78566,
+     -12.0
+    ],
+    [
+     -0.01277,
+     -2.00789,
+     -13.5
+    ],
+    [
+     -0.04337,
+     -2.2294,
+     -15.0
+    ],
+    [
+     -0.07975,
+     -2.45004,
+     -16.5
+    ],
+    [
+     -0.1219,
+     -2.66964,
+     -18.0
+    ],
+    [
+     -0.16978,
+     -2.88807,
+     -19.5
+    ],
+    [
+     -0.22337,
+     -3.10517,
+     -21.0
+    ],
+    [
+     -0.28261,
+     -3.3208,
+     -22.5
+    ],
+    [
+     -0.34749,
+     -3.53479,
+     -24.0
+    ],
+    [
+     -0.41794,
+     -3.74702,
+     -25.5
+    ],
+    [
+     -0.49392,
+     -3.95733,
+     -27.0
+    ]
+   ],
+   "apoio_por_quadro": {
+    "DE": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true
+    ],
+    "DD": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false
+    ],
+    "TE": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false
+    ],
+    "TD": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true
+    ]
+   },
+   "erro_ik_max": 0.004786,
+   "extensao_max_perna": {
+    "DE": 0.914,
+    "DD": 0.979,
+    "TE": 0.904,
+    "TD": 0.843
+   },
+   "q0_x_qfim_graus": 0.0,
+   "pior_ik_por_pata": {
+    "DD": [
+     0.0048,
+     14,
+     true,
+     0.107,
+     -0.025,
+     2.1
+    ],
+    "TD": [
+     0.0,
+     18,
+     true,
+     0.254,
+     0.068,
+     -5.4
+    ],
+    "DE": [
+     0.0,
+     17,
+     false,
+     -0.308,
+     -0.074,
+     -5.3
+    ],
+    "TE": [
+     0.0,
+     17,
+     false,
+     -0.337,
+     0.1,
+     5.4
+    ]
+   },
+   "dentro_max": 99.0,
+   "fora_max": 99.0,
+   "ik_suave": 0.97,
+   "centro_giro_y": -0.949999988079071,
+   "folga_lateral_min_MCP": {
+    "d": [
+     0.977,
+     16,
+     false,
+     true,
+     -4.66,
+     -3.35
+    ],
+    "t": [
+     1.343,
+     18,
+     false,
+     true
+    ]
+   }
+  },
+  "TroteCurvaFechadaDireita": {
+   "quadros": 18,
+   "duracao_s": 0.6,
+   "laco": true,
+   "omega_ini_graus_s": -90.0,
+   "omega_fim_graus_s": -90.0,
+   "ciclos": 1,
+   "pico_graus_s": null,
+   "rampa_s": 0.0,
+   "raio_pivo_final_studs": 4.244,
+   "v_studs_s": 6.667,
+   "giro_total_graus": -54.0,
+   "omega_por_quadro": [
+    -90.0,
+    -90.0,
+    -90.0,
+    -90.0,
+    -90.0,
+    -90.0,
+    -90.0,
+    -90.0,
+    -90.0,
+    -90.0,
+    -90.0,
+    -90.0,
+    -90.0,
+    -90.0,
+    -90.0,
+    -90.0,
+    -90.0,
+    -90.0,
+    -90.0
+   ],
+   "externa_por_quadro_xy_psi": [
+    [
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0439,
+     -0.22343,
+     -3.0
+    ],
+    [
+     0.07605,
+     -0.44886,
+     -6.0
+    ],
+    [
+     0.09636,
+     -0.67566,
+     -9.0
+    ],
+    [
+     0.10477,
+     -0.90321,
+     -12.0
+    ],
+    [
+     0.10126,
+     -1.13089,
+     -15.0
+    ],
+    [
+     0.08583,
+     -1.35807,
+     -18.0
+    ],
+    [
+     0.05854,
+     -1.58414,
+     -21.0
+    ],
+    [
+     0.01946,
+     -1.80846,
+     -24.0
+    ],
+    [
+     -0.03132,
+     -2.03044,
+     -27.0
+    ],
+    [
+     -0.09363,
+     -2.24945,
+     -30.0
+    ],
+    [
+     -0.16733,
+     -2.4649,
+     -33.0
+    ],
+    [
+     -0.2522,
+     -2.6762,
+     -36.0
+    ],
+    [
+     -0.34802,
+     -2.88276,
+     -39.0
+    ],
+    [
+     -0.45451,
+     -3.08403,
+     -42.0
+    ],
+    [
+     -0.57139,
+     -3.27945,
+     -45.0
+    ],
+    [
+     -0.69834,
+     -3.46849,
+     -48.0
+    ],
+    [
+     -0.835,
+     -3.65062,
+     -51.0
+    ],
+    [
+     -0.98102,
+     -3.82535,
+     -54.0
+    ]
+   ],
+   "apoio_por_quadro": {
+    "DE": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true
+    ],
+    "DD": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false
+    ],
+    "TE": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false
+    ],
+    "TD": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true
+    ]
+   },
+   "erro_ik_max": 0.013371,
+   "extensao_max_perna": {
+    "DE": 0.853,
+    "DD": 0.983,
+    "TE": 0.845,
+    "TD": 0.788
+   },
+   "q0_x_qfim_graus": 0.0,
+   "pior_ik_por_pata": {
+    "DD": [
+     0.0134,
+     14,
+     true,
+     0.214,
+     -0.046,
+     4.2
+    ],
+    "TE": [
+     0.0,
+     18,
+     false,
+     -0.644,
+     0.154,
+     10.0
+    ],
+    "TD": [
+     0.0,
+     18,
+     true,
+     0.513,
+     0.11,
+     -10.8
+    ],
+    "DE": [
+     0.0,
+     17,
+     false,
+     -0.622,
+     -0.119,
+     -10.7
+    ]
+   },
+   "dentro_max": 99.0,
+   "fora_max": 99.0,
+   "ik_suave": 0.97,
+   "centro_giro_y": -0.949999988079071,
+   "folga_lateral_min_MCP": {
+    "d": [
+     0.44,
+     16,
+     false,
+     true,
+     -4.7,
+     -3.39
+    ],
+    "t": [
+     0.757,
+     0,
+     false,
+     true
+    ]
+   }
+  },
+  "TroteParaCurvaDireita": {
+   "quadros": 36,
+   "duracao_s": 1.2,
+   "laco": false,
+   "omega_ini_graus_s": 0.0,
+   "omega_fim_graus_s": -45.0,
+   "ciclos": 2,
+   "pico_graus_s": null,
+   "rampa_s": 0.6,
+   "raio_pivo_final_studs": 8.489,
+   "v_studs_s": 6.667,
+   "giro_total_graus": -40.5,
+   "omega_por_quadro": [
+    0.0,
+    -0.4012,
+    -1.5432,
+    -3.3333,
+    -5.679,
+    -8.4877,
+    -11.6667,
+    -15.1235,
+    -18.7654,
+    -22.5,
+    -26.2346,
+    -29.8765,
+    -33.3333,
+    -36.5123,
+    -39.321,
+    -41.6667,
+    -43.4568,
+    -44.5988,
+    -45.0,
+    -45.0,
+    -45.0,
+    -45.0,
+    -45.0,
+    -45.0,
+    -45.0,
+    -45.0,
+    -45.0,
+    -45.0,
+    -45.0,
+    -45.0,
+    -45.0,
+    -45.0,
+    -45.0,
+    -45.0,
+    -45.0,
+    -45.0,
+    -45.0
+   ],
+   "externa_por_quadro_xy_psi": [
+    [
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     7e-05,
+     -0.22223,
+     -0.0045
+    ],
+    [
+     0.00051,
+     -0.44447,
+     -0.03497
+    ],
+    [
+     0.00156,
+     -0.6667,
+     -0.11458
+    ],
+    [
+     0.00332,
+     -0.88894,
+     -0.26337
+    ],
+    [
+     0.00577,
+     -1.11119,
+     -0.49832
+    ],
+    [
+     0.00877,
+     -1.33348,
+     -0.83332
+    ],
+    [
+     0.01211,
+     -1.55581,
+     -1.27918
+    ],
+    [
+     0.01544,
+     -1.77821,
+     -1.84361
+    ],
+    [
+     0.0184,
+     -2.00072,
+     -2.53124
+    ],
+    [
+     0.0205,
+     -2.22335,
+     -3.34361
+    ],
+    [
+     0.02124,
+     -2.44613,
+     -4.27918
+    ],
+    [
+     0.02008,
+     -2.66904,
+     -5.33332
+    ],
+    [
+     0.01642,
+     -2.89208,
+     -6.49832
+    ],
+    [
+     0.00968,
+     -3.1152,
+     -7.76337
+    ],
+    [
+     -0.00075,
+     -3.33831,
+     -9.11458
+    ],
+    [
+     -0.01545,
+     -3.5613,
+     -10.53497
+    ],
+    [
+     -0.03497,
+     -3.78401,
+     -12.0045
+    ],
+    [
+     -0.05983,
+     -4.00623,
+     -13.5
+    ],
+    [
+     -0.09043,
+     -4.22774,
+     -15.0
+    ],
+    [
+     -0.12682,
+     -4.44838,
+     -16.5
+    ],
+    [
+     -0.16896,
+     -4.66798,
+     -18.0
+    ],
+    [
+     -0.21685,
+     -4.88641,
+     -19.5
+    ],
+    [
+     -0.27043,
+     -5.10351,
+     -21.0
+    ],
+    [
+     -0.32968,
+     -5.31913,
+     -22.5
+    ],
+    [
+     -0.39455,
+     -5.53313,
+     -24.0
+    ],
+    [
+     -0.465,
+     -5.74535,
+     -25.5
+    ],
+    [
+     -0.54098,
+     -5.95566,
+     -27.0
+    ],
+    [
+     -0.62245,
+     -6.16391,
+     -28.5
+    ],
+    [
+     -0.70933,
+     -6.36995,
+     -30.0
+    ],
+    [
+     -0.80158,
+     -6.57365,
+     -31.5
+    ],
+    [
+     -0.89913,
+     -6.77487,
+     -33.0
+    ],
+    [
+     -1.00192,
+     -6.97346,
+     -34.5
+    ],
+    [
+     -1.10986,
+     -7.16929,
+     -36.0
+    ],
+    [
+     -1.2229,
+     -7.36223,
+     -37.5
+    ],
+    [
+     -1.34095,
+     -7.55215,
+     -39.0
+    ],
+    [
+     -1.46393,
+     -7.73891,
+     -40.5
+    ]
+   ],
+   "apoio_por_quadro": {
+    "DE": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true
+    ],
+    "DD": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false
+    ],
+    "TE": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false
+    ],
+    "TD": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true
+    ]
+   },
+   "erro_ik_max": 0.004786,
+   "extensao_max_perna": {
+    "DE": 0.951,
+    "DD": 0.979,
+    "TE": 0.923,
+    "TD": 0.853
+   },
+   "q0_x_qfim_graus": 18.8495,
+   "pior_ik_por_pata": {
+    "TD": [
+     0.0,
+     36,
+     true,
+     0.254,
+     0.068,
+     -5.4
+    ],
+    "DD": [
+     0.0048,
+     32,
+     true,
+     0.107,
+     -0.025,
+     2.1
+    ],
+    "DE": [
+     0.0,
+     36,
+     true,
+     -0.312,
+     -0.075,
+     -5.4
+    ],
+    "TE": [
+     0.0,
+     35,
+     false,
+     -0.337,
+     0.1,
+     5.4
+    ]
+   },
+   "dentro_max": 99.0,
+   "fora_max": 99.0,
+   "ik_suave": 0.97,
+   "centro_giro_y": -0.949999988079071,
+   "folga_lateral_min_MCP": {
+    "d": [
+     0.977,
+     34,
+     false,
+     true,
+     -4.66,
+     -3.35
+    ],
+    "t": [
+     1.343,
+     36,
+     false,
+     true
+    ]
+   }
+  },
+  "TroteCurvaParaRetoDireita": {
+   "quadros": 36,
+   "duracao_s": 1.2,
+   "laco": false,
+   "omega_ini_graus_s": -45.0,
+   "omega_fim_graus_s": 0.0,
+   "ciclos": 2,
+   "pico_graus_s": null,
+   "rampa_s": 0.6,
+   "raio_pivo_final_studs": null,
+   "v_studs_s": 6.667,
+   "giro_total_graus": -13.5,
+   "omega_por_quadro": [
+    -45.0,
+    -44.5988,
+    -43.4568,
+    -41.6667,
+    -39.321,
+    -36.5123,
+    -33.3333,
+    -29.8765,
+    -26.2346,
+    -22.5,
+    -18.7654,
+    -15.1235,
+    -11.6667,
+    -8.4877,
+    -5.679,
+    -3.3333,
+    -1.5432,
+    -0.4012,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "externa_por_quadro_xy_psi": [
+    [
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.02189,
+     -0.22253,
+     -1.4955
+    ],
+    [
+     0.03758,
+     -0.44554,
+     -2.96503
+    ],
+    [
+     0.04681,
+     -0.66882,
+     -4.38542
+    ],
+    [
+     0.0495,
+     -0.89215,
+     -5.73663
+    ],
+    [
+     0.04566,
+     -1.11533,
+     -7.00168
+    ],
+    [
+     0.03545,
+     -1.33816,
+     -8.16668
+    ],
+    [
+     0.01909,
+     -1.56048,
+     -9.22082
+    ],
+    [
+     -0.00305,
+     -1.78214,
+     -10.15639
+    ],
+    [
+     -0.03059,
+     -2.00307,
+     -10.96876
+    ],
+    [
+     -0.06304,
+     -2.22321,
+     -11.65639
+    ],
+    [
+     -0.09989,
+     -2.44257,
+     -12.22082
+    ],
+    [
+     -0.1406,
+     -2.66116,
+     -12.66668
+    ],
+    [
+     -0.18458,
+     -2.87907,
+     -13.00168
+    ],
+    [
+     -0.23126,
+     -3.09638,
+     -13.23663
+    ],
+    [
+     -0.28005,
+     -3.31321,
+     -13.38542
+    ],
+    [
+     -0.33038,
+     -3.52967,
+     -13.46503
+    ],
+    [
+     -0.38171,
+     -3.7459,
+     -13.4955
+    ],
+    [
+     -0.43351,
+     -3.96201,
+     -13.5
+    ],
+    [
+     -0.48539,
+     -4.1781,
+     -13.5
+    ],
+    [
+     -0.53727,
+     -4.39419,
+     -13.5
+    ],
+    [
+     -0.58915,
+     -4.61029,
+     -13.5
+    ],
+    [
+     -0.64103,
+     -4.82638,
+     -13.5
+    ],
+    [
+     -0.69291,
+     -5.04247,
+     -13.5
+    ],
+    [
+     -0.74479,
+     -5.25857,
+     -13.5
+    ],
+    [
+     -0.79667,
+     -5.47466,
+     -13.5
+    ],
+    [
+     -0.84855,
+     -5.69075,
+     -13.5
+    ],
+    [
+     -0.90043,
+     -5.90684,
+     -13.5
+    ],
+    [
+     -0.95231,
+     -6.12294,
+     -13.5
+    ],
+    [
+     -1.00419,
+     -6.33903,
+     -13.5
+    ],
+    [
+     -1.05607,
+     -6.55512,
+     -13.5
+    ],
+    [
+     -1.10795,
+     -6.77122,
+     -13.5
+    ],
+    [
+     -1.15983,
+     -6.98731,
+     -13.5
+    ],
+    [
+     -1.21171,
+     -7.2034,
+     -13.5
+    ],
+    [
+     -1.26359,
+     -7.41948,
+     -13.5
+    ],
+    [
+     -1.31547,
+     -7.63556,
+     -13.5
+    ],
+    [
+     -1.36735,
+     -7.85165,
+     -13.5
+    ]
+   ],
+   "apoio_por_quadro": {
+    "DE": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true
+    ],
+    "DD": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false
+    ],
+    "TE": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false
+    ],
+    "TD": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true
+    ]
+   },
+   "erro_ik_max": 1e-06,
+   "extensao_max_perna": {
+    "DE": 0.957,
+    "DD": 0.956,
+    "TE": 0.925,
+    "TD": 0.853
+   },
+   "q0_x_qfim_graus": 18.8793,
+   "pior_ik_por_pata": {
+    "DE": [
+     0.0,
+     35,
+     false,
+     -0.0,
+     0.0,
+     0.0
+    ],
+    "DD": [
+     0.0,
+     35,
+     false,
+     0.0,
+     -0.0,
+     0.0
+    ],
+    "TD": [
+     0.0,
+     36,
+     true,
+     -0.0,
+     0.0,
+     0.0
+    ],
+    "TE": [
+     0.0,
+     35,
+     false,
+     0.0,
+     -0.0,
+     0.0
+    ]
+   },
+   "dentro_max": 99.0,
+   "fora_max": 99.0,
+   "ik_suave": 0.97,
+   "centro_giro_y": -0.949999988079071,
+   "folga_lateral_min_MCP": {
+    "d": [
+     1.079,
+     0,
+     true,
+     false,
+     -4.69,
+     -3.51
+    ],
+    "t": [
+     1.347,
+     0,
+     false,
+     true
+    ]
+   }
+  },
+  "TroteCurvaParaFechadaDireita": {
+   "quadros": 36,
+   "duracao_s": 1.2,
+   "laco": false,
+   "omega_ini_graus_s": -45.0,
+   "omega_fim_graus_s": -90.0,
+   "ciclos": 2,
+   "pico_graus_s": null,
+   "rampa_s": 0.6,
+   "raio_pivo_final_studs": 4.244,
+   "v_studs_s": 6.667,
+   "giro_total_graus": -94.5,
+   "omega_por_quadro": [
+    -45.0,
+    -45.4012,
+    -46.5432,
+    -48.3333,
+    -50.679,
+    -53.4877,
+    -56.6667,
+    -60.1235,
+    -63.7654,
+    -67.5,
+    -71.2346,
+    -74.8765,
+    -78.3333,
+    -81.5123,
+    -84.321,
+    -86.6667,
+    -88.4568,
+    -89.5988,
+    -90.0,
+    -90.0,
+    -90.0,
+    -90.0,
+    -90.0,
+    -90.0,
+    -90.0,
+    -90.0,
+    -90.0,
+    -90.0,
+    -90.0,
+    -90.0,
+    -90.0,
+    -90.0,
+    -90.0,
+    -90.0,
+    -90.0,
+    -90.0,
+    -90.0
+   ],
+   "externa_por_quadro_xy_psi": [
+    [
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.02203,
+     -0.22254,
+     -1.5045
+    ],
+    [
+     0.0386,
+     -0.44559,
+     -3.03497
+    ],
+    [
+     0.04992,
+     -0.66907,
+     -4.61458
+    ],
+    [
+     0.0561,
+     -0.89289,
+     -6.26337
+    ],
+    [
+     0.05709,
+     -1.11697,
+     -7.99832
+    ],
+    [
+     0.05274,
+     -1.34123,
+     -9.83332
+    ],
+    [
+     0.0428,
+     -1.56557,
+     -11.77918
+    ],
+    [
+     0.02694,
+     -1.78986,
+     -13.84361
+    ],
+    [
+     0.00474,
+     -2.01393,
+     -16.03124
+    ],
+    [
+     -0.02426,
+     -2.23756,
+     -18.34361
+    ],
+    [
+     -0.06058,
+     -2.46049,
+     -20.77918
+    ],
+    [
+     -0.10474,
+     -2.68235,
+     -23.33332
+    ],
+    [
+     -0.15729,
+     -2.90274,
+     -25.99832
+    ],
+    [
+     -0.21876,
+     -3.12116,
+     -28.76337
+    ],
+    [
+     -0.28962,
+     -3.33701,
+     -31.61458
+    ],
+    [
+     -0.3703,
+     -3.54965,
+     -34.53497
+    ],
+    [
+     -0.46114,
+     -3.75833,
+     -37.5045
+    ],
+    [
+     -0.56239,
+     -3.96227,
+     -40.5
+    ],
+    [
+     -0.67412,
+     -4.16069,
+     -43.5
+    ],
+    [
+     -0.79607,
+     -4.35298,
+     -46.5
+    ],
+    [
+     -0.92792,
+     -4.53863,
+     -49.5
+    ],
+    [
+     -1.06931,
+     -4.71712,
+     -52.5
+    ],
+    [
+     -1.21985,
+     -4.88797,
+     -55.5
+    ],
+    [
+     -1.37912,
+     -5.0507,
+     -58.5
+    ],
+    [
+     -1.54669,
+     -5.20488,
+     -61.5
+    ],
+    [
+     -1.7221,
+     -5.35007,
+     -64.5
+    ],
+    [
+     -1.90487,
+     -5.48589,
+     -67.5
+    ],
+    [
+     -2.09449,
+     -5.61196,
+     -70.5
+    ],
+    [
+     -2.29045,
+     -5.72792,
+     -73.5
+    ],
+    [
+     -2.49222,
+     -5.83348,
+     -76.5
+    ],
+    [
+     -2.69923,
+     -5.92833,
+     -79.5
+    ],
+    [
+     -2.91092,
+     -6.01221,
+     -82.5
+    ],
+    [
+     -3.12671,
+     -6.0849,
+     -85.5
+    ],
+    [
+     -3.34601,
+     -6.1462,
+     -88.5
+    ],
+    [
+     -3.56822,
+     -6.19594,
+     -91.5
+    ],
+    [
+     -3.79272,
+     -6.23398,
+     -94.5
+    ]
+   ],
+   "apoio_por_quadro": {
+    "DE": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true
+    ],
+    "DD": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false
+    ],
+    "TE": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false
+    ],
+    "TD": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true
+    ]
+   },
+   "erro_ik_max": 0.013371,
+   "extensao_max_perna": {
+    "DE": 0.903,
+    "DD": 0.983,
+    "TE": 0.883,
+    "TD": 0.843
+   },
+   "q0_x_qfim_graus": 20.5569,
+   "pior_ik_por_pata": {
+    "DD": [
+     0.0134,
+     32,
+     true,
+     0.214,
+     -0.046,
+     4.2
+    ],
+    "TD": [
+     0.0,
+     36,
+     true,
+     0.513,
+     0.11,
+     -10.8
+    ],
+    "TE": [
+     0.0,
+     35,
+     false,
+     -0.682,
+     0.168,
+     10.7
+    ],
+    "DE": [
+     0.0,
+     35,
+     false,
+     -0.622,
+     -0.119,
+     -10.7
+    ]
+   },
+   "dentro_max": 99.0,
+   "fora_max": 99.0,
+   "ik_suave": 0.97,
+   "centro_giro_y": -0.949999988079071,
+   "folga_lateral_min_MCP": {
+    "d": [
+     0.44,
+     34,
+     false,
+     true,
+     -4.7,
+     -3.39
+    ],
+    "t": [
+     0.757,
+     36,
+     false,
+     true
+    ]
+   }
+  },
+  "TroteFechadaParaCurvaDireita": {
+   "quadros": 36,
+   "duracao_s": 1.2,
+   "laco": false,
+   "omega_ini_graus_s": -90.0,
+   "omega_fim_graus_s": -45.0,
+   "ciclos": 2,
+   "pico_graus_s": null,
+   "rampa_s": 0.6,
+   "raio_pivo_final_studs": 8.489,
+   "v_studs_s": 6.667,
+   "giro_total_graus": -67.5,
+   "omega_por_quadro": [
+    -90.0,
+    -89.5988,
+    -88.4568,
+    -86.6667,
+    -84.321,
+    -81.5123,
+    -78.3333,
+    -74.8765,
+    -71.2346,
+    -67.5,
+    -63.7654,
+    -60.1235,
+    -56.6667,
+    -53.4877,
+    -50.679,
+    -48.3333,
+    -46.5432,
+    -45.4012,
+    -45.0,
+    -45.0,
+    -45.0,
+    -45.0,
+    -45.0,
+    -45.0,
+    -45.0,
+    -45.0,
+    -45.0,
+    -45.0,
+    -45.0,
+    -45.0,
+    -45.0,
+    -45.0,
+    -45.0,
+    -45.0,
+    -45.0,
+    -45.0,
+    -45.0
+   ],
+   "externa_por_quadro_xy_psi": [
+    [
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.04383,
+     -0.22343,
+     -2.9955
+    ],
+    [
+     0.07554,
+     -0.4488,
+     -5.96503
+    ],
+    [
+     0.09482,
+     -0.6754,
+     -8.88542
+    ],
+    [
+     0.10153,
+     -0.90248,
+     -11.73663
+    ],
+    [
+     0.0957,
+     -1.12929,
+     -14.50168
+    ],
+    [
+     0.07755,
+     -1.35512,
+     -17.16668
+    ],
+    [
+     0.04738,
+     -1.57931,
+     -19.72082
+    ],
+    [
+     0.00564,
+     -1.80127,
+     -22.15639
+    ],
+    [
+     -0.04713,
+     -2.0205,
+     -24.46876
+    ],
+    [
+     -0.11033,
+     -2.2366,
+     -26.65639
+    ],
+    [
+     -0.18332,
+     -2.44926,
+     -28.72082
+    ],
+    [
+     -0.2654,
+     -2.65826,
+     -30.66668
+    ],
+    [
+     -0.35591,
+     -2.86349,
+     -32.50168
+    ],
+    [
+     -0.45414,
+     -3.06488,
+     -34.23663
+    ],
+    [
+     -0.55944,
+     -3.26247,
+     -35.88542
+    ],
+    [
+     -0.67118,
+     -3.45634,
+     -37.46503
+    ],
+    [
+     -0.78878,
+     -3.6466,
+     -38.9955
+    ],
+    [
+     -0.91169,
+     -3.83341,
+     -40.5
+    ],
+    [
+     -1.03952,
+     -4.01689,
+     -42.0
+    ],
+    [
+     -1.17211,
+     -4.19695,
+     -43.5
+    ],
+    [
+     -1.30936,
+     -4.37349,
+     -45.0
+    ],
+    [
+     -1.45119,
+     -4.54637,
+     -46.5
+    ],
+    [
+     -1.59749,
+     -4.71548,
+     -48.0
+    ],
+    [
+     -1.74817,
+     -4.88071,
+     -49.5
+    ],
+    [
+     -1.90313,
+     -5.04193,
+     -51.0
+    ],
+    [
+     -2.06225,
+     -5.19904,
+     -52.5
+    ],
+    [
+     -2.22543,
+     -5.35193,
+     -54.0
+    ],
+    [
+     -2.39255,
+     -5.5005,
+     -55.5
+    ],
+    [
+     -2.56351,
+     -5.64464,
+     -57.0
+    ],
+    [
+     -2.73818,
+     -5.78426,
+     -58.5
+    ],
+    [
+     -2.91645,
+     -5.91925,
+     -60.0
+    ],
+    [
+     -3.09819,
+     -6.04954,
+     -61.5
+    ],
+    [
+     -3.28328,
+     -6.17502,
+     -63.0
+    ],
+    [
+     -3.47159,
+     -6.29561,
+     -64.5
+    ],
+    [
+     -3.66299,
+     -6.41124,
+     -66.0
+    ],
+    [
+     -3.85735,
+     -6.52181,
+     -67.5
+    ]
+   ],
+   "apoio_por_quadro": {
+    "DE": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true
+    ],
+    "DD": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false
+    ],
+    "TE": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false
+    ],
+    "TD": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true
+    ]
+   },
+   "erro_ik_max": 0.00727,
+   "extensao_max_perna": {
+    "DE": 0.914,
+    "DD": 0.98,
+    "TE": 0.904,
+    "TD": 0.843
+   },
+   "q0_x_qfim_graus": 20.6763,
+   "pior_ik_por_pata": {
+    "DD": [
+     0.0073,
+     14,
+     true,
+     0.125,
+     -0.029,
+     2.5
+    ],
+    "TE": [
+     0.0,
+     35,
+     false,
+     -0.337,
+     0.1,
+     5.4
+    ],
+    "TD": [
+     0.0,
+     36,
+     true,
+     0.254,
+     0.068,
+     -5.4
+    ],
+    "DE": [
+     0.0,
+     35,
+     false,
+     -0.308,
+     -0.074,
+     -5.3
+    ]
+   },
+   "dentro_max": 99.0,
+   "fora_max": 99.0,
+   "ik_suave": 0.97,
+   "centro_giro_y": -0.949999988079071,
+   "folga_lateral_min_MCP": {
+    "d": [
+     0.526,
+     0,
+     true,
+     false,
+     -4.74,
+     -3.54
+    ],
+    "t": [
+     0.762,
+     0,
+     false,
+     true
+    ]
+   }
+  },
+  "TroteCurvaBreveDireita": {
+   "quadros": 18,
+   "duracao_s": 0.6,
+   "laco": false,
+   "omega_ini_graus_s": 0.0,
+   "omega_fim_graus_s": 0.0,
+   "ciclos": 1,
+   "pico_graus_s": -45.0,
+   "rampa_s": 0.0,
+   "raio_pivo_final_studs": null,
+   "v_studs_s": 6.667,
+   "giro_total_graus": -13.5,
+   "omega_por_quadro": [
+    -0.0,
+    -1.3569,
+    -5.264,
+    -11.25,
+    -18.5929,
+    -26.4071,
+    -33.75,
+    -39.736,
+    -43.6431,
+    -45.0,
+    -43.6431,
+    -39.736,
+    -33.75,
+    -26.4071,
+    -18.5929,
+    -11.25,
+    -5.264,
+    -1.3569,
+    -0.0
+   ],
+   "externa_por_quadro_xy_psi": [
+    [
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.00024,
+     -0.22223,
+     -0.01513
+    ],
+    [
+     0.00174,
+     -0.44447,
+     -0.11889
+    ],
+    [
+     0.0053,
+     -0.66672,
+     -0.38924
+    ],
+    [
+     0.01111,
+     -0.88903,
+     -0.88402
+    ],
+    [
+     0.01875,
+     -1.11148,
+     -1.63402
+    ],
+    [
+     0.0272,
+     -1.33418,
+     -2.63924
+    ],
+    [
+     0.035,
+     -1.55721,
+     -3.86889
+    ],
+    [
+     0.04042,
+     -1.78058,
+     -5.26513
+    ],
+    [
+     0.04166,
+     -2.00417,
+     -6.75
+    ],
+    [
+     0.03708,
+     -2.2277,
+     -8.23487
+    ],
+    [
+     0.0254,
+     -2.45082,
+     -9.63111
+    ],
+    [
+     0.00587,
+     -2.67312,
+     -10.86076
+    ],
+    [
+     -0.02165,
+     -2.89427,
+     -11.86598
+    ],
+    [
+     -0.0567,
+     -3.11407,
+     -12.61598
+    ],
+    [
+     -0.09825,
+     -3.33253,
+     -13.11076
+    ],
+    [
+     -0.14487,
+     -3.54986,
+     -13.38111
+    ],
+    [
+     -0.19487,
+     -3.76641,
+     -13.48487
+    ],
+    [
+     -0.24649,
+     -3.98256,
+     -13.5
+    ]
+   ],
+   "apoio_por_quadro": {
+    "DE": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true
+    ],
+    "DD": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false
+    ],
+    "TE": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false
+    ],
+    "TD": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true
+    ]
+   },
+   "erro_ik_max": 0.0,
+   "extensao_max_perna": {
+    "DE": 0.934,
+    "DD": 0.966,
+    "TE": 0.9,
+    "TD": 0.853
+   },
+   "q0_x_qfim_graus": 2.7676,
+   "pior_ik_por_pata": {
+    "TD": [
+     0.0,
+     18,
+     true,
+     -0.0,
+     -0.0,
+     0.0
+    ],
+    "DD": [
+     0.0,
+     18,
+     false,
+     0.089,
+     -0.022,
+     1.9
+    ],
+    "DE": [
+     0.0,
+     17,
+     false,
+     0.001,
+     0.0,
+     0.0
+    ],
+    "TE": [
+     0.0,
+     17,
+     false,
+     -0.115,
+     0.039,
+     1.9
+    ]
+   },
+   "dentro_max": 99.0,
+   "fora_max": 99.0,
+   "ik_suave": 0.97,
+   "centro_giro_y": -0.949999988079071,
+   "folga_lateral_min_MCP": {
+    "d": [
+     1.346,
+     15,
+     false,
+     true,
+     -5.0,
+     -3.51
+    ],
+    "t": [
+     1.803,
+     18,
+     false,
+     true
+    ]
+   }
+  },
+  "TroteCurvaCurtaDireita": {
+   "quadros": 36,
+   "duracao_s": 1.2,
+   "laco": false,
+   "omega_ini_graus_s": 0.0,
+   "omega_fim_graus_s": 0.0,
+   "ciclos": 2,
+   "pico_graus_s": -45.0,
+   "rampa_s": 0.0,
+   "raio_pivo_final_studs": null,
+   "v_studs_s": 6.667,
+   "giro_total_graus": -27.0,
+   "omega_por_quadro": [
+    -0.0,
+    -0.3418,
+    -1.3569,
+    -3.0144,
+    -5.264,
+    -8.0373,
+    -11.25,
+    -14.8045,
+    -18.5929,
+    -22.5,
+    -26.4071,
+    -30.1955,
+    -33.75,
+    -36.9627,
+    -39.736,
+    -41.9856,
+    -43.6431,
+    -44.6582,
+    -45.0,
+    -44.6582,
+    -43.6431,
+    -41.9856,
+    -39.736,
+    -36.9627,
+    -33.75,
+    -30.1955,
+    -26.4071,
+    -22.5,
+    -18.5929,
+    -14.8045,
+    -11.25,
+    -8.0373,
+    -5.264,
+    -3.0144,
+    -1.3569,
+    -0.3418,
+    -0.0
+   ],
+   "externa_por_quadro_xy_psi": [
+    [
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     6e-05,
+     -0.22223,
+     -0.0038
+    ],
+    [
+     0.00044,
+     -0.44447,
+     -0.03027
+    ],
+    [
+     0.00138,
+     -0.6667,
+     -0.1014
+    ],
+    [
+     0.00301,
+     -0.88894,
+     -0.23781
+    ],
+    [
+     0.00535,
+     -1.11119,
+     -0.45816
+    ],
+    [
+     0.00829,
+     -1.33347,
+     -0.77852
+    ],
+    [
+     0.01166,
+     -1.55579,
+     -1.21196
+    ],
+    [
+     0.01514,
+     -1.77819,
+     -1.76809
+    ],
+    [
+     0.01834,
+     -2.00069,
+     -2.4528
+    ],
+    [
+     0.02079,
+     -2.22332,
+     -3.26809
+    ],
+    [
+     0.02196,
+     -2.4461,
+     -4.21196
+    ],
+    [
+     0.02123,
+     -2.66904,
+     -5.27852
+    ],
+    [
+     0.018,
+     -2.89211,
+     -6.45816
+    ],
+    [
+     0.01163,
+     -3.11526,
+     -7.73781
+    ],
+    [
+     0.00148,
+     -3.3384,
+     -9.1014
+    ],
+    [
+     -0.01305,
+     -3.56142,
+     -10.53027
+    ],
+    [
+     -0.0325,
+     -3.78414,
+     -12.0038
+    ],
+    [
+     -0.05735,
+     -4.00636,
+     -13.5
+    ],
+    [
+     -0.088,
+     -4.22786,
+     -14.9962
+    ],
+    [
+     -0.12476,
+     -4.44838,
+     -16.46973
+    ],
+    [
+     -0.1678,
+     -4.66768,
+     -17.8986
+    ],
+    [
+     -0.2172,
+     -4.88552,
+     -19.26219
+    ],
+    [
+     -0.27293,
+     -5.10169,
+     -20.54184
+    ],
+    [
+     -0.33483,
+     -5.31602,
+     -21.72148
+    ],
+    [
+     -0.40266,
+     -5.52838,
+     -22.78804
+    ],
+    [
+     -0.47608,
+     -5.73871,
+     -23.73191
+    ],
+    [
+     -0.55467,
+     -5.94702,
+     -24.5472
+    ],
+    [
+     -0.63794,
+     -6.15337,
+     -25.23191
+    ],
+    [
+     -0.72536,
+     -6.35789,
+     -25.78804
+    ],
+    [
+     -0.81638,
+     -6.56076,
+     -26.22148
+    ],
+    [
+     -0.9104,
+     -6.76219,
+     -26.54184
+    ],
+    [
+     -1.00685,
+     -6.96244,
+     -26.76219
+    ],
+    [
+     -1.10515,
+     -7.16176,
+     -26.8986
+    ],
+    [
+     -1.20478,
+     -7.36041,
+     -26.96973
+    ],
+    [
+     -1.30523,
+     -7.55865,
+     -26.9962
+    ],
+    [
+     -1.40607,
+     -7.75669,
+     -27.0
+    ]
+   ],
+   "apoio_por_quadro": {
+    "DE": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true
+    ],
+    "DD": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false
+    ],
+    "TE": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false
+    ],
+    "TD": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true
+    ]
+   },
+   "erro_ik_max": 0.002699,
+   "extensao_max_perna": {
+    "DE": 0.951,
+    "DD": 0.977,
+    "TE": 0.923,
+    "TD": 0.853
+   },
+   "q0_x_qfim_graus": 0.9228,
+   "pior_ik_por_pata": {
+    "DE": [
+     0.0,
+     36,
+     true,
+     -0.0,
+     0.0,
+     0.0
+    ],
+    "TD": [
+     0.0,
+     36,
+     true,
+     -0.0,
+     0.0,
+     0.0
+    ],
+    "TE": [
+     0.0,
+     35,
+     false,
+     -0.033,
+     0.012,
+     0.5
+    ],
+    "DD": [
+     0.0027,
+     14,
+     true,
+     0.089,
+     -0.021,
+     1.8
+    ]
+   },
+   "dentro_max": 99.0,
+   "fora_max": 99.0,
+   "ik_suave": 0.97,
+   "centro_giro_y": -0.949999988079071,
+   "folga_lateral_min_MCP": {
+    "d": [
+     0.999,
+     15,
+     false,
+     true,
+     -5.06,
+     -3.52
+    ],
+    "t": [
+     1.378,
+     18,
+     false,
+     true
+    ]
+   }
+  }
+ }
+}

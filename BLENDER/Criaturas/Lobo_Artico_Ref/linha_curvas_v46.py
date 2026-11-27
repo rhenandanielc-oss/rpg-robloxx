@@ -113,9 +113,19 @@ SEQ_B = {
     "partida_curva_D": ["Repouso*15", "PartidaCurvaDireita", "AndarCurvaDireita", "CurvaParaAndarDireita", "ParadaAndar", "RepousoFim*20"],
 }
 SEM_FADE = {"PartidaAndar", "PartidaCurvaEsquerda", "PartidaCurvaDireita"}
-def linha_seq(nome, VJ, fade_s=0.25):
+# v49: trote e corrida em curva (marcha reta = "Trote"/"Corrida"; parametros da marcha passados em G)
+for _G in ("Trote", "Corrida"):
+    SEQ_B[_G.lower() + "_aberta_E"] = [_G, _G + "ParaCurvaEsquerda", _G + "CurvaEsquerda", _G + "CurvaEsquerda", _G + "CurvaParaRetoEsquerda", _G]
+    SEQ_B[_G.lower() + "_aberta_D"] = [_G, _G + "ParaCurvaDireita", _G + "CurvaDireita", _G + "CurvaDireita", _G + "CurvaParaRetoDireita", _G]
+    SEQ_B[_G.lower() + "_fechada_D"] = [_G, _G + "ParaCurvaDireita", _G + "CurvaParaFechadaDireita", _G + "CurvaFechadaDireita", _G + "FechadaParaCurvaDireita", _G + "CurvaParaRetoDireita", _G]
+    SEQ_B[_G.lower() + "_fechada_E"] = [_G, _G + "ParaCurvaEsquerda", _G + "CurvaParaFechadaEsquerda", _G + "CurvaFechadaEsquerda", _G + "FechadaParaCurvaEsquerda", _G + "CurvaParaRetoEsquerda", _G]
+    SEQ_B[_G.lower() + "_reto"] = [_G, _G, _G, _G, _G]
+    SEQ_B[_G.lower() + "_zigue"] = [_G, _G + "CurvaBreveEsquerda", _G + "CurvaBreveDireita", _G + "CurvaCurtaEsquerda", _G + "CurvaCurtaDireita", _G]
+def linha_seq(nome, VJ, fade_s=0.25, G=None):
     """VJ = curvas_v46b.json['acoes']. Andar = reto a VEL; Repouso*N = N quadros parado; depois do Repouso, fade de fade_s (como o
     Controle) misturando o Repouso no inicio do primeiro clipe de marcha (o unico trecho com mistura)."""
+    RETO = "Andar"; NQ_, VEL_, FASE_, BETA_ = NQ, VEL, FASE, BETA
+    if G: RETO = G["nome"]; NQ_ = int(round(G["T"] * FPS)); VEL_ = G["v_studs_s"]; FASE_ = G["fases"]; BETA_ = G["apoio"]
     out = []; base = Matrix.Identity(4); qm = 0; t_rep = None
     for item in SEQ_B[nome]:
         if item.startswith("RepousoFim"):
@@ -127,19 +137,19 @@ def linha_seq(nome, VJ, fade_s=0.25):
             for i in range(n): out.append({"mix": [("Repouso", (240 - n + i) % 240, 1.0)], "M": base.copy(), "omega": 0.0, "v": 0.0, "apoio": {k: True for k in FASE}, "clipe": "Repouso", "q": i})
             t_rep = len(out); continue
         if item in SEM_FADE: t_rep = None
-        nq = NQ if item == "Andar" else VJ[item]["quadros"]
+        nq = NQ_ if item == RETO else VJ[item]["quadros"]
         for q in range(nq):
-            if item == "Andar": ext = Matrix.Translation(V((0.0, -VEL * q / FPS, 0.0))); om = 0.0
+            if item == RETO: ext = Matrix.Translation(V((0.0, -VEL_ * q / FPS, 0.0))); om = 0.0
             else:
                 x, y, ps = VJ[item]["externa_por_quadro_xy_psi"][q]; ext = Matrix.Translation(V((x, y, 0.0))) @ Matrix.Rotation(math.radians(ps), 4, "Z"); om = VJ[item]["omega_por_quadro"][q]
-            u = (qm % NQ) / NQ; ap = {k: ((u - FASE[k]) % 1.0) < BETA for k in FASE}
-            if item != "Andar" and "apoio_por_quadro" in VJ[item] and item in SEM_FADE | {"ParadaAndar"}: ap = {k: VJ[item]["apoio_por_quadro"][k][q] for k in FASE}
-            mix = [(item, q, 1.0)] if item != "Andar" else [("Andar", qm % NQ, 1.0)]
+            u = (qm % NQ_) / NQ_; ap = {k: ((u - FASE_[k]) % 1.0) < BETA_ for k in FASE_}
+            if item != RETO and "apoio_por_quadro" in VJ[item] and (item in SEM_FADE | {"ParadaAndar"} or G): ap = {k: VJ[item]["apoio_por_quadro"][k][q] for k in FASE}
+            mix = [(item, q, 1.0)] if item != RETO else [(RETO, qm % NQ_, 1.0)]
             if t_rep is not None:
                 wr = 1 - suave((len(out) - t_rep) / (fade_s * FPS))
                 if wr > 1e-6: mix = [("Repouso", (t_rep - 1) % 240, wr), (mix[0][0], mix[0][1], 1 - wr)]
-            M = base @ ext; out.append({"mix": mix, "M": M, "omega": om, "v": VEL, "apoio": ap, "clipe": item, "q": q}); qm += 1
-        if item == "Andar": base = base @ Matrix.Translation(V((0.0, -VEL * nq / FPS, 0.0)))
+            M = base @ ext; out.append({"mix": mix, "M": M, "omega": om, "v": VEL_, "apoio": ap, "clipe": item, "q": q}); qm += 1
+        if item == RETO: base = base @ Matrix.Translation(V((0.0, -VEL_ * nq / FPS, 0.0)))
         else:
             x, y, ps = VJ[item]["externa_por_quadro_xy_psi"][nq]; base = base @ Matrix.Translation(V((x, y, 0.0))) @ Matrix.Rotation(math.radians(ps), 4, "Z")
     for e in out:
