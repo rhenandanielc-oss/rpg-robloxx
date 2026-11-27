@@ -1,0 +1,9 @@
+C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Cerbero_Sombrio_Ref\montaria\m3_textura_glb.py:85: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  mj = bpy.data.materials.new("M_CerberoSombrio_Sela_Jogo"); mj.use_nodes = True; nt = mj.node_tree; b = nt.nodes["Principled BSDF"]
+INFO:glTFImporter:Starting glTF 2.0 export
+WARNING:glTFImporter:Mesh Cerbero_Sombrio_Sela is not valid, and may be exported wrongly
+INFO:glTFImporter:Extracting primitive: Cerbero_Sombrio_Sela
+WARNING:glTFImporter:Cerbero_Sombrio_Sela: Could not calculate tangents. Please try to triangulate the mesh first.
+WARNING:glTFImporter:More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+INFO:glTFImporter:Primitives created: 1
+INFO:glTFImporter:Finished glTF 2.0 export in 0.20333576202392578 s

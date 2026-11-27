@@ -1,0 +1,120 @@
+{
+ "MontarE": {
+  "duracao_s": 9.0,
+  "loop": false,
+  "quadros": 271,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 0.0,
+  "erro_ik_max": 0.001,
+  "pior_ik_pata_quadro": [
+   "PeD",
+   216
+  ],
+  "erro_ik_no_ar": 0.0,
+  "desliza_pata_max_studs_s": 0.352,
+  "pior_desliza_pata_quadro": [
+   "MaoE",
+   216
+  ],
+  "pata_min_z": -0.081,
+  "malha_min_z_fora_das_patas": -0.139,
+  "folga_cabecas_min": 3.204,
+  "eventos_s": {
+   "deita": 0.3,
+   "deitado": 2.9,
+   "agarra": 2.95,
+   "sentado": 6.35,
+   "levanta": 6.8,
+   "em_pe": 9.0
+  }
+ },
+ "DesmontarE": {
+  "duracao_s": 9.1,
+  "loop": false,
+  "quadros": 274,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 0.0,
+  "erro_ik_max": 0.001,
+  "pior_ik_pata_quadro": [
+   "PeD",
+   219
+  ],
+  "erro_ik_no_ar": 0.0,
+  "desliza_pata_max_studs_s": 0.352,
+  "pior_desliza_pata_quadro": [
+   "MaoE",
+   219
+  ],
+  "pata_min_z": -0.081,
+  "malha_min_z_fora_das_patas": -0.139,
+  "folga_cabecas_min": 3.299,
+  "eventos_s": {
+   "deita": 0.3,
+   "deitado": 2.9,
+   "solta_sela": 3.0,
+   "salta": 4.975,
+   "no_chao": 5.6,
+   "levanta": 6.9,
+   "em_pe": 9.1
+  }
+ },
+ "MontarD": {
+  "duracao_s": 9.0,
+  "loop": false,
+  "quadros": 271,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 0.0,
+  "erro_ik_max": 0.001,
+  "pior_ik_pata_quadro": [
+   "PeD",
+   216
+  ],
+  "erro_ik_no_ar": 0.0,
+  "desliza_pata_max_studs_s": 0.352,
+  "pior_desliza_pata_quadro": [
+   "MaoE",
+   216
+  ],
+  "pata_min_z": -0.081,
+  "malha_min_z_fora_das_patas": -0.139,
+  "folga_cabecas_min": 3.2,
+  "eventos_s": {
+   "deita": 0.3,
+   "deitado": 2.9,
+   "agarra": 2.95,
+   "sentado": 6.35,
+   "levanta": 6.8,
+   "em_pe": 9.0
+  }
+ },
+ "DesmontarD": {
+  "duracao_s": 9.1,
+  "loop": false,
+  "quadros": 274,
+  "fps": 30,
+  "velocidade_studs_s_PARAMETRO": 0.0,
+  "erro_ik_max": 0.001,
+  "pior_ik_pata_quadro": [
+   "PeD",
+   219
+  ],
+  "erro_ik_no_ar": 0.0,
+  "desliza_pata_max_studs_s": 0.352,
+  "pior_desliza_pata_quadro": [
+   "MaoE",
+   219
+  ],
+  "pata_min_z": -0.081,
+  "malha_min_z_fora_das_patas": -0.139,
+  "folga_cabecas_min": 3.297,
+  "eventos_s": {
+   "deita": 0.3,
+   "deitado": 2.9,
+   "solta_sela": 3.0,
+   "salta": 4.975,
+   "no_chao": 5.6,
+   "levanta": 6.9,
+   "em_pe": 9.1
+  }
+ }
+}

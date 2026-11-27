@@ -816,8 +816,10 @@ PONTO_BOCA = {}                                              # ponto da boca no 
 for kk in CABS:
     p_ = (BD["Cabeca" + kk].tail_local * 0.6 + BD["Mandibula" + kk].tail_local * 0.4)
     PONTO_BOCA[kk] = [round(c_, 4) for c_ in (BD["Cabeca" + kk].matrix_local.inverted() @ p_)]
-EVENTOS_CLIPE = {"Mordida": EV_MORD, **EVENTOS_LOTE2, **EVENTOS_L3}
-COM_ALTURA_PROPRIA = {"Andar", "Corrida", "Trote", "Partida", "Freada", "VirarE", "VirarD", "Salto", "Deitar", "Descanso", "Levantar", "Investida", "InvestidaR3", "InvestidaSobre", "InvestidaImpacto"} | set(CAMADA) | set(PREVIA)
+if os.environ.get("CERB_MONTARIA"):                 # montaria M2 (27/11): MontarE/D e DesmontarE/D (../montaria/clipes_montaria.py)
+    exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "montaria", "clipes_montaria.py"), encoding="utf-8").read(), globals())
+EVENTOS_CLIPE = {"Mordida": EV_MORD, **EVENTOS_LOTE2, **EVENTOS_L3, **globals().get("EVENTOS_MONTARIA", {})}
+COM_ALTURA_PROPRIA = {"Andar", "Corrida", "Trote", "Partida", "Freada", "VirarE", "VirarD", "Salto", "Deitar", "Descanso", "Levantar", "Investida", "InvestidaR3", "InvestidaSobre", "InvestidaImpacto"} | set(CAMADA) | set(PREVIA) | set(globals().get("EVENTOS_MONTARIA", {}))
 QUAIS = ARGS[1].split(",") if len(ARGS) > 1 else list(CLIPES)
 
 # ------------------------------------------------------------------ amostragem -> FK -> acao + JSON + QA
@@ -860,7 +862,7 @@ def calibrar_deitado():
         else: hi_ = m_                                              # ainda acima: desce
     lo_ = hi_; DEITADO["z"] = hi_; aplicar("Descanso", lambda t: c_descanso(0.75), 0.0)
     print("DEITADO_Z calibrado", round(lo_, 3), {k: round(v, 3) for k, v in regioes_zmin().items()}, flush=True)
-if any(n in QUAIS for n in ("Deitar", "Descanso", "Levantar")): calibrar_deitado()
+if any(n in QUAIS for n in ("Deitar", "Descanso", "Levantar")) or any(n.startswith(("Montar", "Desmontar")) for n in QUAIS): calibrar_deitado()
 aplicar("Repouso", c_repouso, 0.0)                           # L3: pose local das dianteiras no Repouso (neutro da garra)
 for sd in "ED":
     for nm in PERNA_D[sd]: NEUTRO[nm] = arm.convert_space(pose_bone=PB[nm], matrix=PB[nm].matrix, from_space="POSE", to_space="LOCAL").to_quaternion()

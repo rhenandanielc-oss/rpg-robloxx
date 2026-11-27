@@ -1,0 +1,58 @@
+{
+ "alca_subida": {
+  "Left": [
+   2.254,
+   -2.474,
+   13.889
+  ],
+  "Right": [
+   -3.395,
+   -2.476,
+   13.895
+  ]
+ },
+ "z_quadril": 15.862533378601075,
+ "z_assento_centro": 15.312533378601074,
+ "quadril": [
+  -0.57,
+  -0.95,
+  15.862533378601075
+ ],
+ "apoios_pe": {
+  "Left": {
+   "tornozelo": [
+    1.035,
+    -1.4,
+    14.766
+   ],
+   "perna": 1.62,
+   "pele_sob_pe": 13.984
+  },
+  "Right": {
+   "tornozelo": [
+    -2.175,
+    -1.4,
+    14.755
+   ],
+   "perna": 1.628,
+   "pele_sob_pe": 13.996
+  }
+ },
+ "alca": [
+  -0.57,
+  -2.3600000000000003,
+  16.297772216796876
+ ],
+ "cunha_max": 0.842,
+ "tris": 12890,
+ "vertices": 6687,
+ "materiais": [
+  "M_SelaCerb_CouroEscuro",
+  "M_SelaCerb_CouroManta",
+  "M_SelaCerb_CosturaRubra",
+  "M_SelaCerb_CouroCinta",
+  "M_SelaCerb_PedraRubra",
+  "M_SelaCerb_FerroEnegrecido",
+  "M_SelaCerb_PlacaFerro"
+ ]
+}

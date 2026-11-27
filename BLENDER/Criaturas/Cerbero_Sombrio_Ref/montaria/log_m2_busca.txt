@@ -1,0 +1,12 @@
+00:02.547  blend            | Read blend: "C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Cerbero_Sombrio_Ref\montaria\CB_M1_sela.blend"
+BlenderMCP addon registered
+
+Wiggle Bones registered
+MELHOR {"dz": 0.3, "dy": 0.3, "ax": 0.45, "az": 0.15, "pior": -0.129, "gap_quadril": 0.479} corpo {'LowerTorso': 1.655, 'UpperTorso': 1.944, 'Head': 3.0, 'LeftUpperArm': 2.12, 'LeftLowerArm': 1.649, 'LeftHand': 1.533, 'LeftUpperLeg': 0.845, 'LeftLowerLeg': 0.423, 'LeftFoot': 0.373, 'RightUpperArm': 2.13, 'RightLowerArm': 1.677, 'RightHand': 1.534, 'RightUpperLeg': 0.857, 'RightLowerLeg': 0.444, 'RightFoot': 0.406} sela {'LowerTorso': 0.479, 'UpperTorso': 0.947, 'Head': 1.916, 'LeftUpperArm': 1.464, 'LeftLowerArm': 0.752, 'LeftHand': 0.396, 'LeftUpperLeg': -0.126, 'LeftLowerLeg': -0.129, 'LeftFoot': -0.007, 'RightUpperArm': 1.539, 'RightLowerArm': 0.755, 'RightHand': 0.396, 'RightUpperLeg': -0.108, 'RightLowerLeg': -0.127, 'RightFoot': -0.003}
+R1_EQUIV pior -0.253 gap 0.403
+BUSCA_OK
+BlenderMCP addon unregistered
+Wiggle Bones unregistered
+Blender 5.2.2 LTS (hash d13f752e3b9c built 2026-09-15 01:37:04)
+
+Blender quit

@@ -1165,3 +1165,145 @@ A faixa antiga presa ao corpo foi desligada.
   - o clique à mão não foi testado;
   - a câmera do ensaio deixa os bonecos encobrirem as cabeças;
   - sem PvP e sem celular.
+
+## Montaria M0: medidas do dorso (27/11/2026) → `montaria/`
+- **Decisões do usuário (27/11):**
+  - o Cérbero deita para o cavaleiro subir e descer, e o cavaleiro sobe pelo ombro segurando na sela;
+  - sela de couro escuro grosso com bordas de ferro enegrecido, cintas largas e costuras em vermelho sombrio, por cima da armadura do dorso;
+  - cavaleiro sentado, com os pés nos estribos e as mãos numa alça na frente;
+  - etapa só no Blender (M0 a M3), um passo por vez.
+- **Script:** `montaria/m0_medir_dorso.py`, que só lê `rig/clipes_L3r7/CR_Cerbero_Anim.blend`. Mede em pé (repouso) e deitado (quadro 79 do `Cerbero_Deitar`) e grava `montaria/m0_dorso.json`. O perfil fica em `montaria/review_m0/m0_perfil.png`.
+- **Medidas, em studs (frente = −y; centro do corpo em x −0,57):**
+
+  | Ponto | Em pé | Deitado |
+  |---|---|---|
+  | Topo da juba e da base dos pescoços (y −9) | 19,1 | 14,1 |
+  | Raiz dos pescoços, osso `Coluna3` (y −3,6) | 10,7 | 5,8 |
+  | Topo do dorso na zona proposta da sela, y −3,5 a +1 | 15,1 a 13,2 | 10,4 a 8,2 |
+  | Escápula | 12,7 | 7,9 |
+  | Cotovelo, osso `Braco` | 9,4 | 4,6 |
+
+  - Largura do dorso na zona da sela: cerca de 6,4 a 1 stud abaixo do topo e cerca de 7,4 a 2,5 abaixo.
+- **Leitura:**
+  - Atrás dos pescoços, o dorso desce cerca de 2 studs da frente para trás (y −3,5 → +1). A sela precisa de um arção alto na frente, colado à juba, ou de um calço para nivelar o assento.
+  - Deitado, o assento fica a 9 a 10 studs do chão, quase o dobro do cavaleiro (5). A subida é pelo cotovelo (4,6) e pelo ombro (7,9), com a mão numa alça lateral da sela.
+  - O dorso é largo (cerca de 6,4) para um R15. As pernas ficam bem abertas, e os estribos vão em cintas que descem pelo flanco. Conferir com o manequim na M1.
+
+## Montaria M1: sela reforçada (27/11/2026, r2 APROVADA pelo usuário em 27/11) → `montaria/`
+- **Scripts:**
+  - `montaria/m1_sela_cerbero.py` gera a sela. Usa o mesmo método da sela reforçada do Urso: campo de alturas, manta, aba, assento, cilha por raios e pesos copiados da pele, sem cabeças, pescoços e cauda.
+  - `montaria/m1_render_sela.py` faz os renders em modo leve (EEVEE, 1 thread, 2 s de pausa entre quadros).
+  - Saídas: `montaria/CB_M1_sela.blend`, `montaria/m1_sela.json` e `montaria/review_m1/` (`prancha_M1_r2.jpg`; a r1 fica em `review_m1/r1/`).
+  - Nada do Cérbero foi alterado: malha, rig, pesos e escala continuam como estavam.
+- **Peças e materiais:**
+  - manta de couro escuro grosso, com debrum vermelho sombrio;
+  - placas de ferro enegrecido rebitadas na borda, lembrando a armadura do dorso; a frente fica livre para a juba;
+  - aba e assento de couro escuro, com costura vermelha;
+  - cunha que nivela o assento: até 0,84 stud atrás, compensando 75% da descida do dorso;
+  - arcão reforçado com arcos de ferro e rebites na cabeça e na patilha;
+  - alça da frente: aro de ferro enrolado em couro;
+  - adorno de placa de ferro em ponta, com pedra rubra escura sem brilho;
+  - cilha larga de couro com argolas de ferro;
+  - alça lateral de subida dos dois lados: tira de couro com aro de ferro, em y −2,47 e z ~13,4 em pé;
+  - apoios de pé sobre a manta, com arco de ferro.
+- **Números:**
+  - quadril do cavaleiro em (−0,57, −0,95, 15,86), assento a 15,31;
+  - tornozelos a 1,62 do quadril;
+  - 12.890 triângulos, 7 materiais.
+- **r1 → r2:**
+  - a manta largura 3,25 caía em aba vertical pelo flanco: passou para 2,70;
+  - a cunha só cai na beirada: os arcos ficavam em gancho;
+  - placas de ferro maiores e mais claras: sumiam no couro.
+- **Pendências:**
+  - triângulos altos para uma sela; reduzir na M3;
+  - os arcos de ferro dos apoios de pé parecem ganchos de perto;
+  - a alça lateral ainda não foi testada com o cavaleiro subindo (M2);
+  - pesos conferidos só em repouso.
+
+## Montaria M2: montar e desmontar com o Cérbero deitado (27/11/2026, r1 — substituída pela r2 abaixo; arquivos da r1 em `montaria/r1/`) → `montaria/`
+- **Clipes do Cérbero (`montaria/clipes_montaria.py`):**
+  - Carregados por `exec` dentro de `rig/anim_cerbero.py` quando `CERB_MONTARIA=1`. O gancho tem 3 linhas; sem a variável, a execução padrão e os clipes aprovados não mudam.
+  - Comando: `CERB_MONTARIA=1 blender -b -t 1 rig/CR_Cerbero_Rig.blend -P rig/anim_cerbero.py -- montaria/clipes_m2 MontarE,MontarD,DesmontarE,DesmontarD`.
+  - Saída em `montaria/clipes_m2/` (JSON + `CR_Cerbero_Anim.blend` + manifesto).
+  - Reaproveitam as poses do Deitar e do Levantar aprovados, sem a pose de descanso das cabeças: ele fica alerta, a cabeça do lado do cavaleiro olha para ele, a central acompanha e a do outro lado vigia.
+  - Com o cavaleiro subindo pelo lado, o corpo rola 2,5°, e cede 0,10 quando ele senta.
+  - **`MontarE/D`** (8,7 s): deita de 0,3 a 2,9; o cavaleiro agarra aos 3,0 e senta aos 5,9; levanta de 6,5 a 8,7.
+  - **`DesmontarE/D`** (7,8 s): deita de 0,3 a 2,9; o cavaleiro solta a sela aos 3,0 e chega ao chão aos 4,9; levanta de 5,6 a 7,8.
+  - Os eventos ficam nos JSON.
+  - E = x− (lado da cabeça E), D = x+.
+  - **QA:** erro do IK 0,001; deslize máximo das patas 0,35 studs/s, igual ao Levantar aprovado; menor altura da malha −0,24 (o Deitar aprovado tem −0,14 e o Descanso −0,18).
+- **Cavaleiro de teste (`montaria/m2_demo_montaria.py`):**
+  - Manequim R15 aproximado, só demonstração.
+  - Apoios medidos no Cérbero deitado: alça lateral da sela a ~8,7 de altura, borda da sela, cotovelo (degrau 1, ~4,2) e ombro (degrau 2, ~7,0).
+  - **Subida:** chega ao lado; agarra a alça e a borda; põe o pé da frente no cotovelo e sobe; põe o pé de trás no ombro e sobe de novo; se puxa por cima da borda; a perna de trás passa pela garupa e vai ao apoio do outro lado; senta.
+  - **Descida:** faz o caminho inverso e pula o último trecho.
+  - Cena gravada em `montaria/CB_M2_montaria.blend`; QA em `montaria/m2_qa.json`.
+  - O quadril fica fora do flanco; braços e pés entram até ~0,9 na malha nos trechos de pegada. O manequim é feito de caixas de 1 stud.
+- **Evidência:** `montaria/review_m2/` (pranchas e vídeos da vista de lado, 15 fps).
+
+## Montaria M2 r2: correção da subida e da descida (27/11/2026, APROVADA pelo usuário em 27/11) → `montaria/`
+- **Pedido:** `DOCS/pedidos/2026-11-27-cerbero-sombrio-m2-corrigir-subida-descida.md`, aprovado pelo usuário em 27/11.
+- **Preservado:** a sela M1 e a malha do Cérbero não mudaram. A r1 está guardada em `montaria/r1/` (scripts, QA e cena) e `montaria/clipes_m2/` + `review_m2/`.
+- **Referências:** `REFERENCIAS/` não tem pasta de Terras Corrompidas nem de montaria. A referência visual usada é `DOCS/pedidos/2026-11-17-cerbero-sombrio-referencia.png`.
+- **Cérbero (`clipes_montaria.py` r2 → `montaria/clipes_m2_r2/`):**
+  - **Chão:** a raiz sobe 0,10 enquanto ele rola para o lado do cavaleiro, e não afunda mais quando o cavaleiro senta (antes afundava 0,10). O mínimo da malha voltou a −0,139, igual ao Deitar aceito; na r1 era −0,237.
+  - **Deitado por mais tempo:** no `MontarE/D` (9,0 s) ele levanta aos 6,8, depois de o cavaleiro sentar aos 6,35. No `DesmontarE/D` (9,1 s) levanta aos 6,9, depois do pouso aos 5,6 e de o cavaleiro já estar se afastando.
+  - A cabeça do lado do cavaleiro acompanha até ele se afastar.
+  - O erro do IK continua 0,001 e o deslize das patas 0,35, iguais ao Levantar aceito.
+- **Cavaleiro (`m2_demo_montaria.py` r2 → `CB_M2_montaria_r2.blend`, `m2_qa_r2.json`):**
+  - **Pegadas em ordem de alcance:** do chão, as mãos vão ao ombro e ao flanco, a ~5,6–6 de altura. A alça lateral (~8,7) só depois do pé no cotovelo; a borda da sela só depois do pé no ombro. Na r1 a mão ia à alça ainda no chão, fora de alcance, e o braço atravessava o flanco.
+  - **Alça:** o ponto vem da malha real da sela deformada (aro mais baixo), não de uma estimativa pelo osso.
+  - **Degraus:** o degrau do ombro é o trecho mais plano da malha. Os pés ficam de lado (ponta ao longo do corpo) e com 0,15 a mais de folga.
+  - **Corpo:** o quadril fica a 1,35 do flanco durante a pegada.
+  - **Pose sentada fixa no osso do dorso:** vem da busca `m2_sentado_busca.py` (`m2_sentado_busca.json`): quadril 0,25 mais alto e 0,3 mais para trás, pés 0,45 mais abertos e 0,15 mais altos nos apoios.
+  - **Corretor automático de folgas (`_resolver`):** só na subida e na descida, nunca sentado, para não tremer. A parte que entra empurra para fora o alvo que a controla, e o empurrão é suavizado no tempo.
+  - **Mais tempo nos trechos rápidos:** passar por cima da borda vai de 4,75–5,95 s para 4,75–6,35 s; a saída da sela até o cotovelo vai de 3,2–4,45 s para 3,2–4,825 s.
+  - **Pulo final:**
+    - agacha no cotovelo segurando a alça com as duas mãos;
+    - solta aos 4,975 empurrando para fora (2,4 studs/s) e para cima (2,2);
+    - voo balístico com g = 28 studs/s² (9,81 m/s² com 1 stud ≈ 0,35 m), braços abertos;
+    - contato aos 5,6 com 15,3 studs/s;
+    - absorve 1,0 stud dobrando os joelhos em 0,13 s, com desaceleração constante e sem parada seca;
+    - fica agachado 0,15 s, levanta em 0,5 s e se afasta dois passos.
+- **QA r1 → r2** (penetração mínima com sinal: negativo = dentro; contato de pegada/apoio é esperado perto de 0):
+
+  | Clipe | Mãos/braços no corpo | Pés/pernas no corpo | Pernas na sela | Tronco | Pico do quadril (studs/s) |
+  |---|---|---|---|---|---|
+  | MontarE | −0,84 → −0,25 | −0,63 → −0,20 | −0,29 → −0,16 | −0,19 → +0,14 | 17,7 → 15,1 |
+  | MontarD | −0,91 → −0,10 | −0,60 → −0,05 | −0,30 → −0,16 | −0,22 → +0,01 | 17,8 → 14,8 |
+  | DesmontarE | −0,80 → −0,21 | −0,60 → −0,08 | −0,35 → −0,16 | 0,00 → +0,48 | 27,5 → 18,2 |
+  | DesmontarD | −0,78 → −0,09 | −0,72 → −0,01 | −0,34 → −0,16 | −0,17 → +0,60 | 27,4 → 18,3 |
+  | Sentado | — | −0,12 → +0,38 | −0,22 → −0,16 | +0,40 → +0,48 | — |
+
+  - O que ainda passa de −0,15 está só nos pontos de contato:
+    - mão no flanco aos 2,83 s (−0,25) e pé no cotovelo aos 3,4 s (−0,20), ambos no MontarE;
+    - canelas sentadas na sela (−0,16).
+  - O pico de 18 studs/s da descida é o deslize da sela para o ombro (3,8–3,9 s); o pulo tem 15,3 no contato.
+- **Exportação:** `rig/conferir_json.py` em `clipes_m2_r2`: diferença JSON × ação de 0,0003, 38 ossos, nenhum faltando, eventos nos 4 clipes (`log_conferir_m2_r2.txt`). Deitar, Descanso e Levantar regerados sem a montaria ficaram idênticos aos de `rig/clipes_L3r7` (diferença 0,0, mesmos eventos).
+- **Evidências em `montaria/review_m2_r2/`:**
+  - `Cerbero_<clipe>_lado_r2.mp4`: os 4 clipes completos, vista de perfil, 15 fps em velocidade normal;
+  - `Cerbero_<clipe>_34_trechos_r2.mp4`: 3/4 na pegada, nos degraus, na passagem da perna e na aterrissagem;
+  - `prancha_34_*.jpg`;
+  - `comparacao_r1_r2_<clipe>.jpg`: r1 em cima e r2 embaixo, mesma câmera, luz e escala, por etapa.
+- **Limitações:**
+  - O manequim continua sendo o de caixas do R15 (membros de 1 stud). O dorso tem ~6,4 de largura: nenhuma pose sentada fica totalmente livre da sela com essas pernas (a busca achou no máximo −0,13). Um avatar real, mais fino, deve encostar menos.
+  - Não foi testado no Roblox nem com avatar real.
+  - A câmera 3/4 deixa a cabeça E encobrir parte do cavaleiro.
+
+## Montaria M3: textura de jogo e GLB da sela (27/11/2026, APROVADA pelo usuário em 27/11) → `montaria/export_sela/`
+- **Script:** `montaria/m3_textura_glb.py`, adaptado do M3 aprovado do Lobo e do Urso, com um passo novo de redução. O `.blend` de entrada (`CB_M1_sela.blend`) não é salvo, e o Cérbero não muda.
+  - **Redução:** Decimate por colapso, razão 0,42, sem simetria (a sela é simétrica em x = −0,57). Passou de 12.890 para 5.368 triângulos e 2.948 vértices. As peças são ilhas separadas e os pesos são interpolados.
+  - **Textura:** UV de jogo única e bake Cycles em 1 thread (modo leve), 1024 px, dos 7 materiais: cor, normal (tangente, OpenGL), rugosidade e metal. Metal e rugosidade são empacotados no padrão glTF (G = rugosidade, B = metal).
+  - **Material:** um só, `M_CerberoSombrio_Sela_Jogo`; pesos limitados a 4 por vértice e normalizados.
+  - **GLB:** `Cerbero_Sombrio_Sela.glb` (2,1 MB) com a sela e a armadura do Cérbero (38 ossos do rig r2), sem animação e com as texturas embutidas. Há também os PNG, `Cerbero_Sombrio_Sela_Jogo.blend` e `sela_jogo_info.json`.
+- **Validação (`m3_validar_glb.py` → `validacao_glb.json`, reimportando em cena vazia):**
+  - 5.368 triângulos, 1 material, UV presente;
+  - no máximo 4 influências, 0 vértices sem peso, 38 ossos;
+  - altura z de 6,21 a 16,42 (em pé);
+  - texturas de 1024.
+  - O "Icosphere" listado é a forma de exibição dos ossos que o importador do glTF cria; não faz parte do arquivo.
+- **Revisão:** `montaria/review_m3/prancha_M1_x_M3.jpg` mostra a sela procedural (M1) e a de jogo (M3) nas mesmas vistas, luz e câmera. A diferença visível é mínima.
+- **Pendências:**
+  - não foi importado no Studio;
+  - desempenho no celular não medido;
+  - o encaixe do cavaleiro real fica para a etapa do Roblox.

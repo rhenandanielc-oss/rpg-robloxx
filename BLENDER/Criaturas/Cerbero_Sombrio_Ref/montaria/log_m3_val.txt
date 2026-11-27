@@ -1,0 +1,7 @@
+11:20:08 | INFO: Data are loaded, start creating Blender stuff
+11:20:08 | INFO: Blender create Mesh node Cerbero_Sombrio_Sela
+11:20:08 | INFO: glTF import finished in 0.07s
+VALIDA {"malhas": [{"nome": "Cerbero_Sombrio_Sela", "tris": 5368, "vertices": 6688, "materiais": ["M_CerberoSombrio_Sela_Jogo"], "uv": ["UVMap"], "max_influencias": 4, "sem_peso": 0, "grupos": 38, "z_min_max": [6.21, 16.42], "pai": "Cerbero_Rig"}, {"nome": "Icosphere", "tris": 80, "vertices": 42, "materiais": [], "uv": ["UVMap"], "max_influencias": 0, "sem_peso": 42, "grupos": 0, "z_min_max": [-1.0, 1.0], "pai": null}], "armaduras": [{"nome": "Cerbero_Rig", "ossos": 38}], "imagens": [{"nome": "T_CerberoSombrio_Sela_Cor", "tamanho": [1024, 1024]}, {"nome": "T_CerberoSombrio_Sela_MetalRug", "tamanho": [1024, 1024]}, {"nome": "T_CerberoSombrio_Sela_Normal", "tamanho": [1024, 1024]}, {"nome": "Viewer Node", "tamanho": [256, 256]}]}
+Blender 5.2.2 LTS (hash d13f752e3b9c built 2026-09-15 01:37:04)
+
+Blender quit

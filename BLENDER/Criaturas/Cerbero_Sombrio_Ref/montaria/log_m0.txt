@@ -1,0 +1,12 @@
+00:11.391  blend            | Read blend: "C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Cerbero_Sombrio_Ref\rig\clipes_L3r7\CR_Cerbero_Anim.blend"
+BlenderMCP addon registered
+
+Wiggle Bones registered
+ARM Cerbero_Rig MALHAS ['Cerbero_Bocas', 'Cerbero_Cabecas', 'Cerbero_Corpo'] ACOES ['Cerbero_Alerta', 'Cerbero_Andar', 'Cerbero_BolaInfernal', 'Cerbero_BolaInfernalR2', 'Cerbero_BolaInfernalR2Camada', 'Cerbero_ChamasTriplices', 'Cerbero_Corrida', 'Cerbero_Deitar', 'Cerbero_Descanso', 'Cerbero_Freada', 'Cerbero_FuriaLoop', 'Cerbero_FuriaRugido', 'Cerbero_FuriaRugidoR4', 'Cerbero_FuriaRugidoR4Camada', 'Cerbero_FuriaSaida', 'Cerbero_GarraD', 'Cerbero_GarraE', 'Cerbero_Investida', 'Cerbero_InvestidaImpacto', 'Cerbero_InvestidaR3', 'Cerbero_InvestidaSobre', 'Cerbero_Levantar', 'Cerbero_Mordida', 'Cerbero_MordidaC', 'Cerbero_MordidaD', 'Cerbero_MordidaE', 'Cerbero_Observar', 'Cerbero_Partida', 'Cerbero_Prev_Bola2', 'Cerbero_Prev_Bola2_Andar', 'Cerbero_Prev_Bola_Andar', 'Cerbero_Prev_Bola_Repouso', 'Cerbero_Prev_Chamas_Andar', 'Cerbero_Prev_Chamas_Repouso', 'Cerbero_Prev_Furia_Andar', 'Cerbero_Prev_FuriaR4', 'Cerbero_Prev_GarraD_Trote', 'Cerbero_Prev_GarraE_Andar', 'Cerbero_Prev_MordidaC_Andar', 'Cerbero_Prev_MordidaE_Corrida', 'Cerbero_ReacaoGolpe', 'Cerbero_Repouso', 'Cerbero_Salto', 'Cerbero_Trote', 'Cerbero_VirarD', 'Cerbero_VirarE']
+MEDIDO rest [-6.52, -12.08, -0.0] [6.53, 12.05, 19.63]
+MEDIDO deitado [-6.69, -11.41, -0.51] [6.61, 12.04, 15.28]
+BlenderMCP addon unregistered
+Wiggle Bones unregistered
+Blender 5.2.2 LTS (hash d13f752e3b9c built 2026-09-15 01:37:04)
+
+Blender quit

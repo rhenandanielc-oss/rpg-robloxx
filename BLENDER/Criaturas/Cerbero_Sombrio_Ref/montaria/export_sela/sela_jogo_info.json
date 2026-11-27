@@ -1,0 +1,16 @@
+{
+ "tris_m1": 12890,
+ "tris": 5368,
+ "vertices": 2948,
+ "texturas": {
+  "cor": "T_CerberoSombrio_Sela_Cor.png",
+  "normal": "T_CerberoSombrio_Sela_Normal.png",
+  "rug": "T_CerberoSombrio_Sela_Rug.png",
+  "metal": "T_CerberoSombrio_Sela_Metal.png",
+  "mr": "T_CerberoSombrio_Sela_MetalRug.png"
+ },
+ "resolucao": 1024,
+ "glb": "Cerbero_Sombrio_Sela.glb",
+ "glb_bytes": 2165764,
+ "grupos": 22
+}

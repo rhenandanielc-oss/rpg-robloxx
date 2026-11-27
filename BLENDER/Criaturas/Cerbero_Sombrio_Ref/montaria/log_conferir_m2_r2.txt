@@ -1,0 +1,14 @@
+00:02.609  blend            | Read blend: "C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Cerbero_Sombrio_Ref\rig\CR_Cerbero_Rig.blend"
+BlenderMCP addon registered
+
+Wiggle Bones registered
+JSON Cerbero_DesmontarD;quadros=274;ossos=38;faltam=[];dif_json_x_acao=0.00030;ponta_pata_min_z=0.571;salto_loop_ultimo_primeiro=None;eventos={'deita': 0.3, 'deitado': 2.9, 'solta_sela': 3.0, 'salta': 4.975, 'no_chao': 5.6, 'levanta': 6.9, 'em_pe': 9.1}
+JSON Cerbero_DesmontarE;quadros=274;ossos=38;faltam=[];dif_json_x_acao=0.00031;ponta_pata_min_z=0.571;salto_loop_ultimo_primeiro=None;eventos={'deita': 0.3, 'deitado': 2.9, 'solta_sela': 3.0, 'salta': 4.975, 'no_chao': 5.6, 'levanta': 6.9, 'em_pe': 9.1}
+JSON Cerbero_MontarD;quadros=271;ossos=38;faltam=[];dif_json_x_acao=0.00030;ponta_pata_min_z=0.571;salto_loop_ultimo_primeiro=None;eventos={'deita': 0.3, 'deitado': 2.9, 'agarra': 2.95, 'sentado': 6.35, 'levanta': 6.8, 'em_pe': 9.0}
+JSON Cerbero_MontarE;quadros=271;ossos=38;faltam=[];dif_json_x_acao=0.00033;ponta_pata_min_z=0.571;salto_loop_ultimo_primeiro=None;eventos={'deita': 0.3, 'deitado': 2.9, 'agarra': 2.95, 'sentado': 6.35, 'levanta': 6.8, 'em_pe': 9.0}
+CONFERENCIA_OK
+BlenderMCP addon unregistered
+Wiggle Bones unregistered
+Blender 5.2.2 LTS (hash d13f752e3b9c built 2026-09-15 01:37:04)
+
+Blender quit

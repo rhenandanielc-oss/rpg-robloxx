@@ -1,0 +1,2 @@
+C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Cerbero_Sombrio_Ref\montaria\m1_sela_cerbero.py:413: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  mt = bpy.data.materials.new(nome); mt.use_nodes = True; nt = mt.node_tree; b = nt.nodes["Principled BSDF"]

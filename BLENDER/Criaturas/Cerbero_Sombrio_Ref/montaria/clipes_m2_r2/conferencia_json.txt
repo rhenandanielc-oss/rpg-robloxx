@@ -1,0 +1,4 @@
+Cerbero_DesmontarD;quadros=274;ossos=38;faltam=[];dif_json_x_acao=0.00030;ponta_pata_min_z=0.571;salto_loop_ultimo_primeiro=None;eventos={'deita': 0.3, 'deitado': 2.9, 'solta_sela': 3.0, 'salta': 4.975, 'no_chao': 5.6, 'levanta': 6.9, 'em_pe': 9.1}
+Cerbero_DesmontarE;quadros=274;ossos=38;faltam=[];dif_json_x_acao=0.00031;ponta_pata_min_z=0.571;salto_loop_ultimo_primeiro=None;eventos={'deita': 0.3, 'deitado': 2.9, 'solta_sela': 3.0, 'salta': 4.975, 'no_chao': 5.6, 'levanta': 6.9, 'em_pe': 9.1}
+Cerbero_MontarD;quadros=271;ossos=38;faltam=[];dif_json_x_acao=0.00030;ponta_pata_min_z=0.571;salto_loop_ultimo_primeiro=None;eventos={'deita': 0.3, 'deitado': 2.9, 'agarra': 2.95, 'sentado': 6.35, 'levanta': 6.8, 'em_pe': 9.0}
+Cerbero_MontarE;quadros=271;ossos=38;faltam=[];dif_json_x_acao=0.00033;ponta_pata_min_z=0.571;salto_loop_ultimo_primeiro=None;eventos={'deita': 0.3, 'deitado': 2.9, 'agarra': 2.95, 'sentado': 6.35, 'levanta': 6.8, 'em_pe': 9.0}

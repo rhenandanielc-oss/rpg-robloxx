@@ -1,0 +1,24 @@
+00:02.406  blend            | Read blend: "C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Cerbero_Sombrio_Ref\montaria\CB_M1_sela.blend"
+00:04.344  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Cerbero_Sombrio_Ref\montaria\review_m1\sela_perfil_D.png'
+00:06.531  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Cerbero_Sombrio_Ref\montaria\review_m1\sela_perfil_E.png'
+00:08.735  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Cerbero_Sombrio_Ref\montaria\review_m1\sela_34_frente.png'
+00:10.922  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Cerbero_Sombrio_Ref\montaria\review_m1\sela_34_tras.png'
+00:13.078  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Cerbero_Sombrio_Ref\montaria\review_m1\sela_topo.png'
+00:15.250  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Cerbero_Sombrio_Ref\montaria\review_m1\sela_close_assento.png'
+00:17.406  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Cerbero_Sombrio_Ref\montaria\review_m1\sela_close_lado_E.png'
+00:19.578  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Cerbero_Sombrio_Ref\montaria\review_m1\sela_cav_perfil_D.png'
+00:21.735  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Cerbero_Sombrio_Ref\montaria\review_m1\sela_cav_perfil_E.png'
+00:23.938  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Cerbero_Sombrio_Ref\montaria\review_m1\sela_cav_34_frente.png'
+00:26.125  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Cerbero_Sombrio_Ref\montaria\review_m1\sela_cav_34_tras.png'
+00:28.422  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Cerbero_Sombrio_Ref\montaria\review_m1\sela_cav_topo.png'
+00:30.610  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Cerbero_Sombrio_Ref\montaria\review_m1\sela_cav_close_assento.png'
+00:32.828  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Cerbero_Sombrio_Ref\montaria\review_m1\sela_cav_close_lado_E.png'
+BlenderMCP addon registered
+
+Wiggle Bones registered
+RENDER_M1_OK
+BlenderMCP addon unregistered
+Wiggle Bones unregistered
+Blender 5.2.2 LTS (hash d13f752e3b9c built 2026-09-15 01:37:04)
+
+Blender quit

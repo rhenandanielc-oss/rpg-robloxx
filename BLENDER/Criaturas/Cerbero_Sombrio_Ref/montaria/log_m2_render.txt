@@ -1,0 +1,30 @@
+00:02.172  blend            | Read blend: "C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Cerbero_Sombrio_Ref\montaria\CB_M2_montaria.blend"
+00:03.813  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Cerbero_Sombrio_Ref\montaria\review_m2\Montar_E\lado_0073.png'
+00:04.579  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Cerbero_Sombrio_Ref\montaria\review_m2\Montar_E\lado_0091.png'
+00:05.344  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Cerbero_Sombrio_Ref\montaria\review_m2\Montar_E\lado_0106.png'
+00:06.125  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Cerbero_Sombrio_Ref\montaria\review_m2\Montar_E\lado_0118.png'
+00:06.875  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Cerbero_Sombrio_Ref\montaria\review_m2\Montar_E\lado_0133.png'
+00:07.625  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Cerbero_Sombrio_Ref\montaria\review_m2\Montar_E\lado_0145.png'
+00:08.375  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Cerbero_Sombrio_Ref\montaria\review_m2\Montar_E\lado_0154.png'
+00:09.141  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Cerbero_Sombrio_Ref\montaria\review_m2\Montar_E\lado_0163.png'
+00:09.907  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Cerbero_Sombrio_Ref\montaria\review_m2\Montar_E\lado_0178.png'
+00:10.688  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Cerbero_Sombrio_Ref\montaria\review_m2\Montar_E\lado_0229.png'
+00:11.454  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Cerbero_Sombrio_Ref\montaria\review_m2\Montar_E\tras_34_0073.png'
+00:12.235  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Cerbero_Sombrio_Ref\montaria\review_m2\Montar_E\tras_34_0091.png'
+00:13.000  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Cerbero_Sombrio_Ref\montaria\review_m2\Montar_E\tras_34_0106.png'
+00:13.782  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Cerbero_Sombrio_Ref\montaria\review_m2\Montar_E\tras_34_0118.png'
+00:14.563  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Cerbero_Sombrio_Ref\montaria\review_m2\Montar_E\tras_34_0133.png'
+00:15.329  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Cerbero_Sombrio_Ref\montaria\review_m2\Montar_E\tras_34_0145.png'
+00:16.094  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Cerbero_Sombrio_Ref\montaria\review_m2\Montar_E\tras_34_0154.png'
+00:16.860  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Cerbero_Sombrio_Ref\montaria\review_m2\Montar_E\tras_34_0163.png'
+00:17.625  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Cerbero_Sombrio_Ref\montaria\review_m2\Montar_E\tras_34_0178.png'
+00:18.391  render           | Saved: 'C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Cerbero_Sombrio_Ref\montaria\review_m2\Montar_E\tras_34_0229.png'
+BlenderMCP addon registered
+
+Wiggle Bones registered
+RENDER_S2_OK Montar E
+BlenderMCP addon unregistered
+Wiggle Bones unregistered
+Blender 5.2.2 LTS (hash d13f752e3b9c built 2026-09-15 01:37:04)
+
+Blender quit

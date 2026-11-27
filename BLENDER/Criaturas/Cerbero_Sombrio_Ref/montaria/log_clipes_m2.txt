@@ -1,0 +1,20 @@
+00:03.109  blend            | Read blend: "C:\Users\Rhenan\Downloads\RPG_Roblox_GitHub_Pacote_Inicial\BLENDER\Criaturas\Cerbero_Sombrio_Ref\rig\CR_Cerbero_Rig.blend"
+BlenderMCP addon registered
+
+Wiggle Bones registered
+POLO MaoE 94.25 erro 0.0038
+POLO MaoD 86.0 erro 0.0013
+POLO PeE -86.5 erro 0.0009
+POLO PeD -97.5 erro 0.0021
+DEITADO_Z calibrado -5.298 {'pata': -0.081, 'resto': -0.1}
+CLIPE MontarE {'duracao_s': 8.7, 'loop': False, 'quadros': 262, 'fps': 30, 'velocidade_studs_s_PARAMETRO': 0.0, 'erro_ik_max': 0.001, 'pior_ik_pata_quadro': ('PeD', 70), 'erro_ik_no_ar': 0.0, 'desliza_pata_max_studs_s': 0.352, 'pior_desliza_pata_quadro': ('MaoE', 207), 'pata_min_z': -0.081, 'malha_min_z_fora_das_patas': -0.237, 'folga_cabecas_min': 3.204, 'eventos_s': {'deita': 0.3, 'deitado': 2.9, 'agarra': 3.0, 'sentado': 5.9, 'levanta': 6.5, 'em_pe': 8.7}}
+CLIPE MontarD {'duracao_s': 8.7, 'loop': False, 'quadros': 262, 'fps': 30, 'velocidade_studs_s_PARAMETRO': 0.0, 'erro_ik_max': 0.001, 'pior_ik_pata_quadro': ('PeD', 70), 'erro_ik_no_ar': 0.0, 'desliza_pata_max_studs_s': 0.352, 'pior_desliza_pata_quadro': ('MaoE', 207), 'pata_min_z': -0.081, 'malha_min_z_fora_das_patas': -0.237, 'folga_cabecas_min': 3.2, 'eventos_s': {'deita': 0.3, 'deitado': 2.9, 'agarra': 3.0, 'sentado': 5.9, 'levanta': 6.5, 'em_pe': 8.7}}
+CLIPE DesmontarE {'duracao_s': 7.8, 'loop': False, 'quadros': 235, 'fps': 30, 'velocidade_studs_s_PARAMETRO': 0.0, 'erro_ik_max': 0.001, 'pior_ik_pata_quadro': ('PeD', 180), 'erro_ik_no_ar': 0.0, 'desliza_pata_max_studs_s': 0.352, 'pior_desliza_pata_quadro': ('MaoE', 180), 'pata_min_z': -0.081, 'malha_min_z_fora_das_patas': -0.179, 'folga_cabecas_min': 3.299, 'eventos_s': {'deita': 0.3, 'deitado': 2.9, 'solta_sela': 3.0, 'no_chao': 4.9, 'levanta': 5.6, 'em_pe': 7.8}}
+CLIPE DesmontarD {'duracao_s': 7.8, 'loop': False, 'quadros': 235, 'fps': 30, 'velocidade_studs_s_PARAMETRO': 0.0, 'erro_ik_max': 0.001, 'pior_ik_pata_quadro': ('PeD', 180), 'erro_ik_no_ar': 0.0, 'desliza_pata_max_studs_s': 0.352, 'pior_desliza_pata_quadro': ('MaoE', 180), 'pata_min_z': -0.081, 'malha_min_z_fora_das_patas': -0.178, 'folga_cabecas_min': 3.297, 'eventos_s': {'deita': 0.3, 'deitado': 2.9, 'solta_sela': 3.0, 'no_chao': 4.9, 'levanta': 5.6, 'em_pe': 7.8}}
+Info: Saved as "CR_Cerbero_Anim.blend"
+ANIM_OK ['MontarE', 'MontarD', 'DesmontarE', 'DesmontarD']
+BlenderMCP addon unregistered
+Wiggle Bones unregistered
+Blender 5.2.2 LTS (hash d13f752e3b9c built 2026-09-15 01:37:04)
+
+Blender quit
