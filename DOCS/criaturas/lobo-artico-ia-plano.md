@@ -1374,3 +1374,25 @@ Decisões do usuário (26/11): ampliar o túnel da toca; pode baixar um vídeo r
 - **Proposta:** gravar uma cadeia FIXA por toca (pontos medidos e aprovados) em vez de recalcular por Pathfinding, e alargar só ao longo dela; decidir com o dono do mapa se o lobo pode passar pelos cristais do Maciço.
 
 Sem commit.
+
+### 17.4 Cadeia fixa da toca (IA r7d, 26/11; usuário: "Sim, cadeia fixa")
+- **Pontos:** Pathfinding com agente largo (raio 3, altura 6), para o caminho passar pelo meio do túnel; no Maciço só existe caminho com raio 1,5. Pontos colados ao chão; os que caíam em cima de cristais/estalagmites foram retirados.
+- **Alargamento ao longo da cadeia** (`selvagem/alargar_cadeia_toca.luau`): no trecho que trava, abre o voxel de rocha mais próximo, só se não for piso, o teto acima tiver ≥ 3 studs e a rocha atrás continuar; senão afasta os pontos 1,5 stud. O mesmo vale para objetos do mapa, que não foram mexidos. Backups: `Toca_Terreno_<Alcateia>_cadeiaFixa_26_11`.
+- **Gravado no mapa:** `Toca.Cadeia_Fixa` (Vector3Value P001…, atributos `Pontos`, `IndiceDescanso`):
+
+  | Toca | Pontos | Descanso |
+  |---|---|---|
+  | Floresta | 77 | 54 |
+  | Campos | 56 | 33 |
+  | Maciço | 111 | termina no descanso |
+
+- **Conferência** (caixa varrida, degrau 1,8 × Escala, mínimo 1,0): Filhote, Adulto e Ancião passam pela cadeia inteira nas 3 tocas.
+- **IA r7d** (`selvagem/IA_LoboArtico.server.luau`, cópia `_r7c`, instalador `selvagem/instalar_r7d.luau`): se a Toca tem `Cadeia_Fixa`, a cadeia sai dela (atributo `IA_CadeiaFonte = fixa`); sem a pasta, usa o Pathfinding como antes. Backup `Antes_r7d_26_11`.
+- **Play:**
+  - Nas 3 alcateias, `IA_CadeiaFonte = fixa` e limite = cadeia inteira (77/77, 56/56, 111/111), sem bloqueio.
+  - Com o jogador dentro do túnel, os lobos da Floresta e dos Campos foram até ele: 12 e 5 studs, em carga/aproximação.
+  - No Maciço, o lobo dormia no descanso de costas para o túnel e só reagiu (Ameaça + carga de aviso) com o jogador a 10 studs.
+- **Achado do mapa (Maciço):** o `Abrigo_Filhotes` fica a 511 studs do descanso, num túnel separado; o único caminho entre os dois sai da caverna e passa pela montanha. Por isso a cadeia do Maciço vai só da entrada ao descanso. Mover o abrigo (ou ligar os túneis) é decisão do mapa/usuário.
+- **Não testado:** Filhote e Ancião selvagens em Play (os 3 lobos do place são Adultos); celular.
+- Esqueci de marcar o Studio como EM USO no início desta rodada (corrigido no fim; nenhum outro chat registrou uso).
+

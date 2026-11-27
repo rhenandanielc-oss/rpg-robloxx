@@ -1,4 +1,4 @@
--- IA_LoboArtico (Script dentro da pasta de UM lobo selvagem, criada pelo IA_LoboArtico_Servidor) - r7c 26/11/2026 (degrau da toca 1,8) | r7b 26/11/2026 (mira do peito) | r7 20/11/2026
+-- IA_LoboArtico (Script dentro da pasta de UM lobo selvagem, criada pelo IA_LoboArtico_Servidor) - r7d 26/11/2026 (cadeia fixa da toca) | r7c 26/11/2026 (degrau da toca 1,8) | r7b 26/11/2026 (mira do peito) | r7 20/11/2026
 -- (r7, usuario: "arrume onde o lobo vira sem fisica / anda com as pernas paradas": as poses da IA (ameaca, investida, vida) tem
 -- prioridade Action e corpo inteiro; tocando enquanto o Controle anda ou vira, congelavam as pernas (parecia shift lock e
 -- "andar com as pernas paradas"). Agora: pose nao comeca com o Controle em Laco/Clipe; se ele comecar a andar/virar, a pose
@@ -6,6 +6,8 @@
 -- Controle r9 ligar o IK das patas so em pose de pe. Copia: _r6d.)
 -- (r7c 26/11, usuario aprovou: a conferencia do tunel da toca tolera degrau de 1,8 x Escala no piso (antes 1,0; o Controle
 -- sobe esses degraus pelo raio do chao), minimo 1,0. Copia: _r7b.)
+-- (r7d 26/11, usuario: "Sim, cadeia fixa": o Pathfinding da cadeia mudava a cada Play (e a cada mudanca no terreno); se a Toca
+-- tem a pasta Cadeia_Fixa (Vector3Value P001.., atributo IndiceDescanso), a cadeia sai dela; sem a pasta, como antes. Copia: _r7c.)
 -- (r6d, Play: a propria carga levava o focinho ao jogador e o coordenador escalava por "encostou no lobo" 0,4 s depois do
 -- bote; agora durante a carga e ate 1 s apos o bote (atributo CargaAte da alcateia) "encostou" nao conta. Copia: _r6c.)
 -- (r6c, Play: com o posto inalcancavel (limite do tunel) o lobo ficava "indo ao posto" sem ameacar; agora se em 2 s nao chega
@@ -236,14 +238,7 @@ end
 -- toca: cadeia (agente pequeno) + conferencia do volume do lobo da idade -----------------------------------------------------
 local cadeia, limiteCadeia
 local iNucleo = 1                                                -- r3c: indice do Descanso_Toca na cadeia (nucleo = descanso -> abrigo)
-local function construirCadeia()
-	local c = {pontoEntrada}
-	local path = PFS:CreatePath({AgentRadius = 1, AgentHeight = 3, AgentCanJump = true, WaypointSpacing = 6})
-	pcall(function() path:ComputeAsync(pontoEntrada, pontoDescanso) end)
-	if path.Status == Enum.PathStatus.Success then for _, w in ipairs(path:GetWaypoints()) do table.insert(c, w.Position) end end
-	table.insert(c, pontoDescanso); iNucleo = #c
-	local n = math.max(1, math.floor((pontoAbrigo - pontoDescanso).Magnitude / 6))
-	for k = 1, n do table.insert(c, pontoDescanso:Lerp(pontoAbrigo, k / n)) end
+local function conferirCadeia(c)                                  -- r7d: conferencia separada (cadeia fixa ou do Pathfinding)
 	-- r2 D/r2d: o lobo desta idade cabe? Cada ponto vai para o CHAO real (r2c usava a altura dos marcadores e batia em
 	-- degrau); a caixa vai de chao+1,0 (degrau tolerado) ate a altura da cabeca (6,0 x Escala), largura 2,0 x Escala.
 	filtrosLivres()
@@ -271,6 +266,25 @@ local function construirCadeia()
 	end
 	pasta:SetAttribute("IA_CadeiaToca", #c); pasta:SetAttribute("IA_CadeiaLimite", limiteCadeia)
 	return c
+end
+local function construirCadeia()
+	local fixa = habitat:FindFirstChild("Cadeia_Fixa", true)                -- r7d
+	if fixa and #fixa:GetChildren() >= 2 then
+		local pts = fixa:GetChildren(); table.sort(pts, function(a, b) return a.Name < b.Name end)
+		local c = {}; for _, v in ipairs(pts) do table.insert(c, v.Value) end
+		iNucleo = math.clamp(fixa:GetAttribute("IndiceDescanso") or 1, 1, #c)
+		pasta:SetAttribute("IA_CadeiaFonte", "fixa")
+		return conferirCadeia(c)
+	end
+	pasta:SetAttribute("IA_CadeiaFonte", "pathfinding")
+	local c = {pontoEntrada}
+	local path = PFS:CreatePath({AgentRadius = 1, AgentHeight = 3, AgentCanJump = true, WaypointSpacing = 6})
+	pcall(function() path:ComputeAsync(pontoEntrada, pontoDescanso) end)
+	if path.Status == Enum.PathStatus.Success then for _, w in ipairs(path:GetWaypoints()) do table.insert(c, w.Position) end end
+	table.insert(c, pontoDescanso); iNucleo = #c
+	local n = math.max(1, math.floor((pontoAbrigo - pontoDescanso).Magnitude / 6))
+	for k = 1, n do table.insert(c, pontoDescanso:Lerp(pontoAbrigo, k / n)) end
+	return conferirCadeia(c)
 end
 local function prox(p)
 	local bi, bd = 1, math.huge

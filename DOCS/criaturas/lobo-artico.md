@@ -4506,3 +4506,8 @@ Pendente: aprovação visual → export/reimport (GLB por LOD) → JSON → KFS 
 - anim_v49: curvas com passos no Trote e na Corrida; auditoria ok nos 3 LODs; vídeo `review/v49_trote_corrida/` APROVADO 26/11; instalado no rpg_roblox (Controle r13, Movimento v49, 32 KFS; backup Antes_r13_26_11) e testado em Play (trote e corrida virando 90° com passos, 0° parado, 0 bloqueios).
 - Vídeo real (Commons, CC BY-SA) e comparação em `review/v49_ref_real/`.
 - Toca: teto escavado nas 3 alcateias com backup TerrainRegion; Floresta e Campos passam com degrau 1,8; Maciço para num ressalto de 2,4 no piso (trecho 49). IA r7c (degrau 1,8) INSTALADA; paredes alargadas no Maciço/Campos; no Play só a Floresta passa inteira (Adulto/Ancião), porque o Pathfinding muda o caminho a cada Play e no Maciço ele atravessa os cristais da gruta; proposta: cadeia fixa por toca. Plano §17. Sem commit.
+- **Cadeia fixa (26/11, IA r7d):**
+  - `Toca.Cadeia_Fixa` nas 3 alcateias; Filhote, Adulto e Ancião cabem na cadeia inteira.
+  - Play: a IA usa a cadeia fixa, com limite cheio; os lobos entram no túnel atrás do jogador.
+  - Maciço: abrigo dos filhotes a 511 studs do descanso, em túnel separado (decisão pendente).
+  - Plano §17.4.
