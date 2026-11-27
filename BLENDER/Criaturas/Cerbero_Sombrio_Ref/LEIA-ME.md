@@ -1109,3 +1109,33 @@ A faixa antiga presa ao corpo foi desligada.
   - a câmera do ensaio segue o Cérbero, mas o enquadramento varia;
   - sem PvP e sem celular;
   - a Investida e o Sol Infernal não se bloqueiam entre si no protótipo (falta um estado de "poder ativo" comum).
+
+## Vigília + Fúria no Studio (Cerbero-testes.rbxl) — 26/11 — protótipo r1 APROVADO pelo usuário 26/11
+- **Fontes em `studio/vigilia/`:**
+  - `VigiliaFuria_Config.luau` (números oficiais e decisões de 26/11);
+  - `VigiliaFuria_Servidor.server.luau` e `VigiliaFuria_Cliente.client.luau` (tecla F + visual);
+  - `medir_olhos.py` + `olhos.json`: os 6 olhos medidos no Blender em repouso, com a mesma busca do fx_vigilia r3.
+- **No place:**
+  - `ReplicatedStorage.VigiliaFuria` (config + RemoteEvents PedidoFuria e Efeito);
+  - 6 ossos `Pupila_*` nas cabeças, com emissor "Pupila" desligado;
+  - `Workspace.Treino_Vigilia` (Boneco_Invisivel com o atributo `Invisivel`, que anda entrando e saindo do raio; Boneco_Rugido a 20 studs).
+  - O Sol Infernal e a Investida agora multiplicam o dano pelo atributo `MultDano` do Cérbero. Backups no ServerStorage: `SolInfernal_Servidor_antesFuria_2026-11-26` e `Investida_Servidor_antesFuria_2026-11-26`.
+- **Fúria (tecla F):**
+  - clipe FuriaRugidoR4; estouro de fogo roxo em cada boca nos rugidos (C 0,27; E 0,97; D 1,67);
+  - no 1º rugido, a cor fica roxa e o Rugido Infernal atinge os inimigos a 25 studs: −15% de velocidade e dano causado ×0,85 por 4 s, com fumaça cinza;
+  - em 2,9 s entra na Fúria: `MultDano` 1,2 por 8 s, clipe FuriaLoop, 3 faixas de vento roxo girando no tronco, que enfraquecem no último 1,5 s;
+  - depois, FuriaSaida e Repouso; recarga de 30 s.
+- **Vigília:** a cada 0,2 s o servidor procura modelos com `Invisivel` a até 15 studs da cabeça mais próxima. Ao detectar: pupilas acesas por 1 s (todos veem) e contorno laranja + leve visibilidade só no cliente do dono (`DonoId`).
+- **Ensaio em Play (26/11):**
+  - Vigília: detectou o boneco invisível a 12,6 / 14,9 / 11,6 studs e perdeu a 15,7–16,0.
+  - Rugido em Boneco_Rugido (20,2 studs): velocidade 16 → 13,6 por 4 s.
+  - Sol durante a Fúria: 36,7 (1,8 × 1,2), explosão 20,4 e queimadura 2,0 enquanto a Fúria durava.
+  - A Fúria terminou em 10,9 s.
+- **Evidências:** `studio/video_2011/Cerbero_Studio_VigiliaFuria_r1.mp4` e `prancha_VigiliaFuria_r1.jpg`.
+- **Pendências:**
+  - +15% de velocidade de ataque e cabeças independentes (dependem da mordida básica);
+  - redução de atordoamento (só o atributo);
+  - o roxo da aura troca de uma vez (não há transição gradual de cor);
+  - as pupilas saem quase brancas por causa do Bloom;
+  - teclas F, R e E não testadas à mão; sem PvP e sem celular.
+- **Achado:** as chamas da aura A4 foram posicionadas com a Raiz somada duas vezes (deslocamento de ~0,57 stud para o lado). Os olhos foram corrigidos. Na aura, a diferença não aparece; fica registrada.

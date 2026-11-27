@@ -42,6 +42,8 @@ end
 
 local function aplicarDano(m, h, valor, tipo)
 	if not h or h.Health <= 0 then return end
+	local md = cerbero:GetAttribute("MultDano") or 1      -- Furia: +20% (VigiliaFuria_Servidor)
+	if md ~= 1 then valor = valor * md; tipo = tipo .. string.format(" x%.1f Furia", md) end
 	h:TakeDamage(valor)
 	log(string.format("%s recebeu %.1f (%s) -> vida %.1f/%.0f", m.Name, valor, tipo, h.Health, h.MaxHealth))
 end
