@@ -1077,3 +1077,35 @@ A faixa antiga presa ao corpo foi desligada.
   - Ensaio em Play: 30,6 + 17,0 + queimadura 3 × 1,7 (igual à r2); Fúria roxa OK.
   - Backups no place: `ServerStorage.SolInfernal_Config_r2_2026-11-26` e `SolInfernal_Cliente_r2_2026-11-26`. Arquivo r2 em `studio/sol/SolInfernal_Cliente_r2.client.luau`.
   - Evidências: vídeo `studio/video_2011/Cerbero_Studio_SolInfernal_r3.mp4` e prancha `prancha_SolInfernal_r3_explosao.jpg`.
+
+## Investida Sombria no Studio (Cerbero-testes.rbxl) — 26/11 — protótipo r1 APROVADO pelo usuário 26/11
+- **Decisões do usuário (26/11):** alvo MÉDIO também para e morde (2,7×). Porte = altura do corpo (caixa do modelo) comparada à cernelha 13,72: até 50% passa por cima.
+- **Fontes em `studio/investida/`:** `Investida_Config.luau`, `Investida_Servidor.server.luau`, `Investida_Cliente.client.luau` (tecla E + visual) e `criar_treino_investida.luau`.
+- **No place:**
+  - `ReplicatedStorage.InvestidaSombria` (config + RemoteEvents Pedido, Direcao, Efeito);
+  - `ServerScriptService.Investida_Servidor` e `StarterPlayerScripts.Investida_Cliente`;
+  - `Workspace.Treino_Investida`: alvos de 300 de vida com altura 6,4 / 13 / 19,2, parede e um boneco que cruza o rastro. As faixas começam em x = 80/110/140/170/200, z = 60.
+- **Como funciona:**
+  - **Impulso:** 12 studs em 0,5 s entre os marcadores do clipe InvestidaR3.
+  - **Boost:** 22 × 1,4 = 30,8 studs/s por 4 s com o clipe Corrida; a tecla E faz a direção seguir o mouse até 180°/s.
+  - **Detecção:** corredor de 14 de largura à frente. Pequeno a 18 studs → clipe InvestidaSobre, 1,0× no ápice (1,13 s). Médio ou maior a 12,5 → clipe InvestidaImpacto, 0,6× aos 0,13 s e mordidas C, E e D de 0,7× aos 0,47, 0,53 e 0,57 s.
+  - **Parede:** um blockcast para o Cérbero 13 studs antes, sem dano.
+  - **Rastro:** um trecho a cada 2,5 studs, dura 3 s; quem pisa fica 15% mais lento (`Humanoid.WalkSpeed`), e o dono fica de fora.
+  - **Custo:** recarga de 12 s; a energia 25 só aparece no log.
+- **Ensaio em Play (26/11)**, com o Play iniciado por `StudioTestService` e lido no log do Studio:
+
+  | Faixa | Resultado |
+  |---|---|
+  | Pequeno (6,4) | passou por cima, 17,0 (1,0×) |
+  | Médio (13) | parou e mordeu: 10,2 + 3 × 11,9 = 45,9 (2,7×) |
+  | Grande (19,2) | 45,9 |
+  | Parede | parou em 0,9 s, sem dano |
+  | Fúria | rastro roxo; o boneco que entrou no rastro foi de 16 para 13,6 e depois foi restaurado |
+
+  O alvo pequeno também ficou mais lento ao ficar sobre o rastro (esperado).
+- **Evidências:** `studio/video_2011/Cerbero_Studio_Investida_r1.mp4` e `prancha_Investida_r1_pequeno_medio.jpg`.
+- **Limites:**
+  - não usei a tecla E à mão;
+  - a câmera do ensaio segue o Cérbero, mas o enquadramento varia;
+  - sem PvP e sem celular;
+  - a Investida e o Sol Infernal não se bloqueiam entre si no protótipo (falta um estado de "poder ativo" comum).
