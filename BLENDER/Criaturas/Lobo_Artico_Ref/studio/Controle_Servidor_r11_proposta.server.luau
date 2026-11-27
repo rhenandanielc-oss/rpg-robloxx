@@ -1,3 +1,4 @@
+-- r14 27/11: partida em curva v51 (87 graus): so com desvio >= partidaCurvaMin (75); depois dela decide na hora pelo que falta (sem laco forcado). Copia: Controle_Servidor_r13.
 -- r13 26/11: curvas com passos no Trote e na Corrida (anim_v49; fora de combate); limites pelo giro dos clipes. Copia: Controle_Servidor_r12.
 -- r12 26/11: partida e parada do Andar com passos (PartidaAndar, PartidaCurva E/D, ParadaAndar). Copia: Controle_Servidor_r11f.
 -- r11f 26/11: suavizacao da direcao 0,15 s em combate (0,4 s dividia um desvio de 85 em duas viradas de 45). Copia: Controle_Servidor_r11e.
@@ -72,6 +73,7 @@ local Mov = require(lib:WaitForChild("Movimento_LoboArtico"))
 local CFG = {
 	giro = {Andar = 60, Trote = 70, Corrida = 45},       -- graus/s andando (PROVISORIO)
 	anguloVirar = 60,                                     -- parado: acima disso vira no lugar com o clipe
+	partidaCurvaMin = 75,                                 -- r14: parado, desvio >= isso parte ja em curva (PartidaCurva gira 87); abaixo parte reto [A TESTAR]
 	zonaMorta = 35, zonaMortaApos = 40, posGiroSeg = 1.0,  -- r8: parado, desvio ate isso nao gira o corpo [PROPOSTA][A TESTAR]
 	zonaPrecisa = 20, zonaPrecisaApos = 30,               -- r8: IA pediu precisao (contato de mordida)
 	suavOlhar = 0.4, persisteGiro = 0.3,                  -- r8: s de suavizacao da direcao e de persistencia do desvio
@@ -436,7 +438,7 @@ RunService.Heartbeat:Connect(function(dt)
 		if E.modo == "Clipe" and (t >= len - 0.02 or not f.IsPlaying) then
 			if ehVirar(E.clipe) then fimGiro = agora end   -- r8: histerese da zona morta conta do fim do giro
 			if E.clipe and E.clipe:find("VirarCombate", 1, true) then fimGiroCombate = agora end   -- r11e
-			if E.destino and E.destino:find("AndarCurva", 1, true) then local d = E.destino; entrarLaco("Andar"); iniciarAndarCurva(d, mult)   -- r12
+			if E.destino and E.destino:find("AndarCurva", 1, true) then local d = E.destino; entrarLaco("Andar"); iniciarAndarCurva(d, mult); CV.decidirJa = true   -- r12; r14: decide ja (sem ciclo de laco forcado)
 			elseif E.destino then entrarLaco(E.destino) else entrarParado(0.2) end
 		end
 	elseif E.modo == "Parado" then
@@ -447,7 +449,9 @@ RunService.Heartbeat:Connect(function(dt)
 				if vc then iniciarClipe(vc, nil, 1)
 				elseif not emCombate() then
 					if TEM_PARTIDA and pedida == "Andar" and temChao(pv * CFrame.new(0, 0, -1)) and not obstaculo(pv, 2.0 * esc()) then   -- r12: parte ja em curva
-						local l = a > 0 and "Esquerda" or "Direita"; iniciarClipe("PartidaCurva" .. l, "AndarCurva" .. l, ritmoDe(mult))
+						local l = a > 0 and "Esquerda" or "Direita"
+						if math.abs(a) >= math.rad(CFG.partidaCurvaMin) then iniciarClipe("PartidaCurva" .. l, "AndarCurva" .. l, ritmoDe(mult))
+						else iniciarClipe("PartidaAndar", "Andar", ritmoDe(mult)) end                          -- r14: parte reto e corrige andando
 					else iniciarClipe(a > 0 and "VirarEsquerda" or "VirarDireita", nil, 1) end
 				end
 			elseif not temChao(pv * CFrame.new(0, 0, -1)) then
@@ -478,7 +482,7 @@ RunService.Heartbeat:Connect(function(dt)
 				if not girou then
 					if pedida == "Corrida" then iniciarClipe("Arrancada", "Corrida", ritmoDe(mult))
 					elseif TEM_PARTIDA and pedida == "Andar" and not emCombate() then                                      -- r12: partida com passos
-						if math.abs(a) < math.rad(25) then iniciarClipe("PartidaAndar", "Andar", ritmoDe(mult))
+						if math.abs(a) < math.rad(CFG.partidaCurvaMin) then iniciarClipe("PartidaAndar", "Andar", ritmoDe(mult))   -- r14: 25 -> partidaCurvaMin
 						else local l = a > 0 and "Esquerda" or "Direita"; iniciarClipe("PartidaCurva" .. l, "AndarCurva" .. l, ritmoDe(mult)) end
 					else entrarLaco("Andar") end
 				end
@@ -659,4 +663,4 @@ evIAuivo.Event:Connect(function()
 	if E.modo == "Parado" then pedirU:Fire(); return end
 	E.frear = true; E.aoParar = function() pedirU:Fire() end
 end)
-pasta:SetAttribute("Controle_Versao", "r13 26/11 (curvas no trote e na corrida) | r12 26/11 (partida/parada com passos) | r11f 26/11 (suaviza menos em combate) | r11e 24/11 (virada mais proxima, sem vai-e-volta; espera sem virada calma) | r11d 24/11 (virada de combate) | r11c 23/11 (curvas so no andar) | r11b 23/11 (decide no 1o passo; olha 16 studs; encostado vira) | r11 PROPOSTA 20/11 (curvas andando com passos; anim_v46b) | r10e 20/11 (ponto de passagem ao lado do tronco) | r10d 20/11 (desvio checa a direcao desejada) | r10c 20/11 (desvio olha a frente; barra so em contato) | r10b 20/11 (desvio com memoria) | r10 20/11 (contorna obstaculos solidos) | r9 20/11 (inclinacao + patas no chao; sem giro de pivo) | r8b 20/11 (giro so se melhora) | r8 20/11 (viradas naturais: zona morta, VirarCurto com passos) | r7 19/11 (IA_Olhar: orienta sem andar) | r6b 19/11 (ganchos da IA selvagem; gira no lugar sem chao a frente) | r5 19/11 (velocidade da idade relativa ao tamanho) | r4 18/11 (idades: escala no deslocamento e ritmo do clipe; r3 pausa durante PoderAtivo)")
+pasta:SetAttribute("Controle_Versao", "r14 27/11 (partida em curva so com desvio grande; sem laco forcado) | r13 26/11 (curvas no trote e na corrida) | r12 26/11 (partida/parada com passos) | r11f 26/11 (suaviza menos em combate) | r11e 24/11 (virada mais proxima, sem vai-e-volta; espera sem virada calma) | r11d 24/11 (virada de combate) | r11c 23/11 (curvas so no andar) | r11b 23/11 (decide no 1o passo; olha 16 studs; encostado vira) | r11 PROPOSTA 20/11 (curvas andando com passos; anim_v46b) | r10e 20/11 (ponto de passagem ao lado do tronco) | r10d 20/11 (desvio checa a direcao desejada) | r10c 20/11 (desvio olha a frente; barra so em contato) | r10b 20/11 (desvio com memoria) | r10 20/11 (contorna obstaculos solidos) | r9 20/11 (inclinacao + patas no chao; sem giro de pivo) | r8b 20/11 (giro so se melhora) | r8 20/11 (viradas naturais: zona morta, VirarCurto com passos) | r7 19/11 (IA_Olhar: orienta sem andar) | r6b 19/11 (ganchos da IA selvagem; gira no lugar sem chao a frente) | r5 19/11 (velocidade da idade relativa ao tamanho) | r4 18/11 (idades: escala no deslocamento e ritmo do clipe; r3 pausa durante PoderAtivo)")

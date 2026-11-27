@@ -1,0 +1,189 @@
+{
+ "poses": {
+  "uivar": {
+   "parametros": {
+    "pitch_graus": -4,
+    "desce_quadril": 0.45,
+    "y_quadril": 0.0,
+    "rolos": {},
+    "pata_D_x": 0.0,
+    "pata_D_y": 0.0,
+    "pata_T_x": 0.0,
+    "pata_T_y": 0.0,
+    "pescoco_graus": -44,
+    "pescoco_divisao": [
+     0.45,
+     0.55
+    ],
+    "cabeca_graus": -55.0,
+    "cabeca_rolo": 0.0,
+    "boca_graus": 18.0,
+    "orelhas_graus": -18.0,
+    "cauda_lado": 0.0,
+    "cauda_ergue": 14
+   }
+  },
+  "sacudir": {
+   "parametros": {
+    "pitch_graus": 2.0,
+    "desce_quadril": 0.5,
+    "y_quadril": 0.0,
+    "rolos": {
+     "Quadril": -5,
+     "Coluna2": 12,
+     "Coluna3": 16
+    },
+    "pata_D_x": 0.2,
+    "pata_D_y": 0.0,
+    "pata_T_x": 0.2,
+    "pata_T_y": 0.0,
+    "pescoco_graus": 6.0,
+    "pescoco_divisao": [
+     0.5,
+     0.5
+    ],
+    "cabeca_graus": 10.0,
+    "cabeca_rolo": -42.0,
+    "boca_graus": 4.0,
+    "orelhas_graus": -10.0,
+    "cauda_lado": 35.0,
+    "cauda_ergue": 10.0
+   }
+  }
+ },
+ "acoes": {
+  "Uivar": {
+   "quadros": 36,
+   "erro_ik": 0.0,
+   "plantas": {
+    "DE": [
+     [
+      0,
+      36
+     ]
+    ],
+    "DD": [
+     [
+      0,
+      36
+     ]
+    ],
+    "TE": [
+     [
+      0,
+      36
+     ]
+    ],
+    "TD": [
+     [
+      0,
+      36
+     ]
+    ]
+   },
+   "marcadores_s": {
+    "BocaAberta": 1.13
+   }
+  },
+  "Uivando": {
+   "quadros": 150,
+   "erro_ik": 0.0,
+   "plantas": {
+    "DE": [
+     [
+      0,
+      150
+     ]
+    ],
+    "DD": [
+     [
+      0,
+      150
+     ]
+    ],
+    "TE": [
+     [
+      0,
+      150
+     ]
+    ],
+    "TD": [
+     [
+      0,
+      150
+     ]
+    ]
+   },
+   "laco": true,
+   "marcadores_s": {
+    "FimDaNota": 3.67
+   }
+  },
+  "PararUivar": {
+   "quadros": 36,
+   "erro_ik": 0.0,
+   "plantas": {
+    "DE": [
+     [
+      0,
+      36
+     ]
+    ],
+    "DD": [
+     [
+      0,
+      36
+     ]
+    ],
+    "TE": [
+     [
+      0,
+      36
+     ]
+    ],
+    "TD": [
+     [
+      0,
+      36
+     ]
+    ]
+   },
+   "marcadores_s": {
+    "Repouso": 1.2
+   }
+  },
+  "Sacudir": {
+   "quadros": 60,
+   "erro_ik": 0.0,
+   "plantas": {
+    "DE": [
+     [
+      0,
+      60
+     ]
+    ],
+    "DD": [
+     [
+      0,
+      60
+     ]
+    ],
+    "TE": [
+     [
+      0,
+      60
+     ]
+    ],
+    "TD": [
+     [
+      0,
+      60
+     ]
+    ]
+   },
+   "marcadores_s": {
+    "Pico": 0.9
+   }
+  }
+ }
+}

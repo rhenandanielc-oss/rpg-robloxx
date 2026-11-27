@@ -1,0 +1,67 @@
+{
+ "parametros": {
+  "Z_CHEIO": 0.03,
+  "Z_ZERO": 0.06,
+  "Z_VIZ": 0.8
+ },
+ "LOD1": {
+  "DE": {
+   "vertices_pata": 44,
+   "vertices_repesados": 7,
+   "mantidos_por_aresta_longa": 0,
+   "dist_max_a_pele_LOW": 0.0176,
+   "mudanca_max_de_peso": 0.046
+  },
+  "DD": {
+   "vertices_pata": 43,
+   "vertices_repesados": 14,
+   "mantidos_por_aresta_longa": 0,
+   "dist_max_a_pele_LOW": 0.0208,
+   "mudanca_max_de_peso": 0.071
+  },
+  "TE": {
+   "vertices_pata": 40,
+   "vertices_repesados": 10,
+   "mantidos_por_aresta_longa": 0,
+   "dist_max_a_pele_LOW": 0.0097,
+   "mudanca_max_de_peso": 0.064
+  },
+  "TD": {
+   "vertices_pata": 40,
+   "vertices_repesados": 4,
+   "mantidos_por_aresta_longa": 0,
+   "dist_max_a_pele_LOW": 0.0288,
+   "mudanca_max_de_peso": 0.004
+  }
+ },
+ "LOD2": {
+  "DE": {
+   "vertices_pata": 12,
+   "vertices_repesados": 4,
+   "mantidos_por_aresta_longa": 0,
+   "dist_max_a_pele_LOW": 0.0536,
+   "mudanca_max_de_peso": 0.09
+  },
+  "DD": {
+   "vertices_pata": 12,
+   "vertices_repesados": 6,
+   "mantidos_por_aresta_longa": 1,
+   "dist_max_a_pele_LOW": 0.0689,
+   "mudanca_max_de_peso": 0.146
+  },
+  "TE": {
+   "vertices_pata": 15,
+   "vertices_repesados": 5,
+   "mantidos_por_aresta_longa": 1,
+   "dist_max_a_pele_LOW": 0.031,
+   "mudanca_max_de_peso": 0.204
+  },
+  "TD": {
+   "vertices_pata": 11,
+   "vertices_repesados": 4,
+   "mantidos_por_aresta_longa": 0,
+   "dist_max_a_pele_LOW": 0.0384,
+   "mudanca_max_de_peso": 0.019
+  }
+ }
+}

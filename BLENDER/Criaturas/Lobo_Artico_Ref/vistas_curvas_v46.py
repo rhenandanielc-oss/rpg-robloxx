@@ -15,6 +15,8 @@ RES = next((tuple(int(c) for c in o[4:].split("x")) for o in a if o.startswith("
 os.makedirs(OUT, exist_ok=True); sc = bpy.context.scene; SRC = os.path.dirname(bpy.data.filepath)
 VJ = json.load(open(os.path.join(SRC, "curvas_v46b.json")))["acoes"]
 if os.path.exists(os.path.join(SRC, "partida_v48.json")): VJ.update(json.load(open(os.path.join(SRC, "partida_v48.json")))["acoes"]); PIV = json.load(open(os.path.join(SRC, "rig_pivos.json")))
+if os.path.exists(os.path.join(SRC, "partida_v50.json")): VJ.update(json.load(open(os.path.join(SRC, "partida_v50.json")))["acoes"])   # v50
+if os.path.exists(os.path.join(SRC, "partida_v51.json")): VJ.update(json.load(open(os.path.join(SRC, "partida_v51.json")))["acoes"])   # v51
 ARM = bpy.data.objects["LoboArtico_Rig"]; P = ARM.pose.bones
 for pb in P: pb.rotation_mode = "QUATERNION"
 for _m in ("trote", "corrida"):

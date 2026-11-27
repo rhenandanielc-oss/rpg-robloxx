@@ -1409,3 +1409,226 @@ Sem commit.
 - **Lição de teste:** mover o personagem pelo servidor não vale, porque o cliente devolve a posição. É preciso mover pelo Client, sem ancorar a HumanoidRootPart (ancorada, a posição não replica).
 - **Não testado:** Floresta e Campos com a r7e (a mudança só afeta a medida do teto, conferida ponto a ponto); celular.
 
+### 17.6 Testes de confirmação em Play (27/11; usuário: "Prossiga ao próximo passo")
+Só testes; nada alterado no Edit.
+
+**IA r7e na Floresta e nos Campos** (jogador colocado pelo Client a 60% da cadeia):
+
+| Toca | Cadeia | Reação | Menor distância |
+|---|---|---|---|
+| Floresta | `fixa`, limite 77/77 | Ameaça (investida de aviso) → Defender | 7 studs, no mesmo ponto da cadeia |
+| Campos | `fixa`, limite 56/56 | carga de aviso → Defender | 5 studs |
+
+Nenhuma regressão.
+
+**Curvas de trote e corrida por idade** (`Teste_LoboArtico`, atributo `Idade` trocado só no Play):
+
+| Idade | Marcha | Curva | Sequência de clipes |
+|---|---|---|---|
+| Filhote (0,40) | trote | 81° à direita | TroteParaCurva → TroteCurva → TroteCurvaParaReto → Trote |
+| Filhote (0,40) | corrida | 87° à esquerda | CorridaParaCurva → CorridaCurva → CorridaCurvaParaReto |
+| Ancião (1,10) | trote | 81° à direita | TroteParaCurva → TroteCurva → TroteCurvaParaReto → Trote |
+| Ancião (1,10) | corrida | 112° à esquerda | CorridaParaCurva → CorridaCurva → CorridaCurvaParaReto |
+
+Em todos: 0° girados com o pivô parado e 0 bloqueios.
+
+**Ainda não testado:** celular; dois jogadores; trote/corrida em combate (por projeto, a curva com passos fica fora de combate).
+
+## 18. Partida em curva mais rápida (anim_v50, 27/11; usuário: "Virada forte no começo")
+
+**Gerador:** `gerar_partida_v50.py`, base anim_v49, só PartidaCurvaEsquerda/Direita.
+
+**Perfil de giro:**
+- ω = a rampa da v48 (até 30°/s, emenda no laço AndarCurva) + um pulso sen² de 55°/s nos primeiros 1,2 s.
+- Durante o pulso, o centro do giro fica a 45% das traseiras para as dianteiras (um pouco atrás do meio do corpo) e volta ao meio entre 0,72 e 1,6 s.
+- A curvatura do corpo e o agachamento ficam limitados a 2× os do AndarCurva.
+- Números [PROPOSTA][A TESTAR].
+
+**Variantes testadas:**
+
+| Pulso | Centro do giro | Giro | Problema |
+|---|---|---|---|
+| 90°/s | traseiras | 117° | pata não alcança (erro 1,0) |
+| 70°/s | 30% | — | erro 0,085 |
+| 70°/s | 45% | — | traseiras se cruzando na direita (folga −0,23) |
+| 60°/s | 55% | — | traseiras se cruzando (−0,34) |
+| **55°/s** | **45%** | **87°** | escolhida: erro de alcance 0 / 0,029, folgas ≥ 0,22 |
+
+**Resultado:**
+- 87° em 2,4 s (v48: 54°), ~51° em 1,2 s.
+
+**Auditoria nos 3 LODs** (sequência Repouso → PartidaCurva → AndarCurva → CurvaParaAndar → ParadaAndar):
+
+| Medida | v50 | v48 | Situação |
+|---|---|---|---|
+| Deslize da traseira esquerda | 0,070–0,071 (3 fases > 0,03) | 0,034 | **resíduo** |
+| Deslize das demais | ≤ 0,043 | — | iguais ao laço já aprovado |
+| Aceleração máxima | 0,41 / 0,32 / 0,27 | igual | ok |
+| Afundamento | ≤ 0,032 | — | ok |
+
+**Vídeo:** `review/v50_partida/video_v50_partida_curva.mp4` (antes v48 × depois v50) — **aguarda aprovação**. Não instalado no rpg_roblox.
+
+### 18.1 Correção do apoio: anim_v51 (27/11; pedido `DOCS/pedidos/2026-11-27-lobo-artico-correcao-apoio-curva-v50.md`)
+A v50 **não** foi aprovada; a v51 é a correção local. v49 e v50 foram preservadas. Sem Studio, commit ou push.
+
+**Diagnóstico.**
+- No apoio, o alvo da pata é o ponto plantado no mundo mais o "resíduo": o rolamento do pé do próprio Andar, medido nos eixos do **corpo**.
+- Com o corpo girando durante o apoio, esse vetor gira junto e arrasta a sola. O deslize vale |resíduo| × giro no apoio:
+  - 0,034–0,040 a 30°/s;
+  - 0,07 no pulso da v50 (traseira esquerda, fase dos quadros 0–37 da sequência, com 71°/s).
+- O valor é o mesmo virando para a esquerda e para a direita, porque depende do tamanho do giro e não do lado. Por isso a auditoria dá números iguais por pata nos dois lados; os clipes E e D são diferentes (conferido pose a pose).
+
+**Correção** (`gerar_partida_v51.py`, base anim_v50):
+- O resíduo passa a ser expresso no rumo em que a pata **pousou** (girado por rumo plantado − rumo atual), em todo ramo que o usa: apoio, saída do Repouso, alvo dos balanços.
+- Em linha reta nada muda.
+- Perfil de giro idêntico ao da v50: 51,0° em 1,2 s, 87,0° em 2,4 s, deslocamento de 4,55 studs em 2,4 s.
+
+**Auditoria mundial** (`auditar_curvas_v46.py --seq`, sequência Repouso → PartidaCurva → AndarCurva → CurvaParaAndar → ParadaAndar → Repouso, E e D, 3 LODs, mesmo método para v50, v51 e reimportação).
+- Tabela completa por pata, LOD, lado e trecho: `review/v51_partida/tabela_v51.md` (script `tabela_aud_v51.py`).
+- Máximos nos 3 LODs e nos dois lados:
+
+  | trecho | versão | DE | DD | TE | TD |
+  |---|---|---|---|---|---|
+  | partida | v50 | **0,0430** | **0,0396** | **0,0714** | 0,0255 |
+  | partida | v51 | 0,0167 | **0,0396*** | 0,0214 | 0,0233 |
+  | laço | v50 = v51 | 0,0268 | **0,0396** | **0,0335** | 0,0233 |
+  | saída | v50 = v51 | 0,0172 | **0,0375** | 0,0258 | 0,0232 |
+  | parada | v50 = v51 | 0,0167 | 0,0298 | 0,0214 | 0,0085 |
+
+  \* Na v51, a única fase da partida acima de 0,03 é o apoio DD dos quadros 79–100. Ele começa no fim da partida (79–86) e termina no laço AndarCurva (87–100); é a emenda com o laço. As fases inteiramente dentro da partida ficam ≤ 0,0298 (DD 0–28: 0,0289; DD 42–64: 0,0298; TE 0–37: 0,0208).
+
+- **Fases acima de 0,03 que restam** (iguais na E e na D, nos 3 LODs; LOW indicado):
+  - DD 79–100 (0,0396): emenda partida → laço;
+  - TE 87–109 (0,0335): laço;
+  - DD 114–136 (0,0375): laço → saída CurvaParaAndar.
+
+  Todas vêm do **laço/saída compartilhados** (`gerar_curvas_v46b.py`, anim_v46c, instalados no jogo), que têm o mesmo erro de resíduo no eixo do corpo. Evidência: a mesma correção baixou a fase DD 42–64 da partida de 0,0396 (v48/v50) para 0,0298.
+- **Sem regressão:**
+  - folga lateral mínima: dianteiras 0,305–0,545, traseiras 0,283–1,185 (v50: 0,216);
+  - aceleração máxima igual (0,41 / 0,32 / 0,27);
+  - afundamento igual (0,0115 / 0,0147 / 0,0316), flutuação 0;
+  - erro de alcance (IK) 0 / 0,029.
+
+**Exportação e reimportação:**
+- `studio/exportar_clipes_json_v51.py` → `studio/json_v51/` (7 clipes da sequência; `rest_v51.json`).
+- `reimportar_json_v46b.py` (JSON_DIR_V46=json_v51) → `anim_v51_reimport/`:
+  - rotação: diferença 0°; ponta dos dedos: ≤ 0,00027;
+  - auditoria do reimportado nos 3 LODs igual à da v51 (diferenças ≤ 0,0002).
+
+**Evidência visual:**
+- `review/v51_partida/video_v51_apoio_partida_curva.mp4`: v50 × v51 em velocidade normal e câmera lenta; perfil, três-quartos, topo e close das patas; esquerda e direita; chão em grade com rastros fixos.
+- `review/v51_partida/prancha_ref_v51.jpg`:
+  - lobo real (Commons, 0:23,5–0:27,5, parado → vira ~90° e sai andando);
+  - v50 e v51 nos mesmos instantes;
+  - imagem de referência × v51 de perfil.
+- O trecho real de 1:33–1:37 mostra só cabeça e tronco virando, sem passos: não serve de referência de passada.
+- Limite da comparação: o lobo real fica ~2 s parado antes de virar, então os instantes não se alinham um a um.
+
+**Pendências:**
+- 3 fases > 0,03 no laço/saída compartilhados. A decisão de corrigir `gerar_curvas_v46b.py` (curvas instaladas) é separada.
+- A sequência inteira **não** está aprovada enquanto essas fases excederem 0,03.
+- Não instalado; nada testado no Roblox, no celular ou com vários jogadores.
+
+### 18.2 Correção do laço/saída compartilhados: anim_v52 (27/11; usuário: "Sim, corrigir o laço")
+Local, sem Studio, commit ou push. v46c, v49, v50 e v51 preservadas.
+
+**Gerador** `gerar_curvas_v52.py` (cópia de `gerar_curvas_v46b.py`, base anim_v51):
+- Mesma correção da v51, agora nas 16 curvas do Andar: AndarCurva, AndarCurvaFechada, AndarParaCurva, CurvaParaAndar, CurvaParaFechada, FechadaParaCurva, CurvaBreve, CurvaCurta, E e D.
+- O desvio da pata ganha `Rz(guinada)·r − r`, com r = MCP do Andar − (meio do apoio + recuo). Assim o rolamento do pé fica no rumo em que a pata pousou, no apoio e nas pontas dos balanços.
+- **Conferência de que só isso mudou:** na v52 só os ossos das pernas mudam, no máximo 0,016 nos componentes do quaternion. Corpo, coluna, pescoço, cabeça e cauda ficam idênticos aos da v46c instalada (os outros parâmetros não mudaram).
+
+**Sequência da partida** (Repouso → PartidaCurva → AndarCurva → CurvaParaAndar → ParadaAndar → Repouso; E e D; 3 LODs; mesmo método). Tabela completa em `review/v52_laco/tabela_v52.md`; máximos:
+
+| trecho | versão | DE | DD | TE | TD |
+|---|---|---|---|---|---|
+| partida | v51 | 0,0167 | **0,0396** | 0,0214 | 0,0233 |
+| partida | v52 | 0,0167 | 0,0298 | 0,0214 | 0,0117 |
+| laço | v51 | 0,0268 | **0,0396** | **0,0335** | 0,0233 |
+| laço | v52 | 0,0166 | 0,0298 | 0,0214 | 0,0085 |
+| saída | v51 | 0,0172 | **0,0375** | 0,0258 | 0,0232 |
+| saída | v52 | 0,0167 | 0,0298 | 0,0214 | 0,0085 |
+| parada | v51 = v52 | 0,0167 | 0,0298 | 0,0214 | 0,0085 |
+
+- **0 fases acima de 0,03** na sequência inteira, nos 3 LODs, E e D. O maior valor (DD 0,0298) é o do próprio Andar reto aprovado.
+- **Sem regressão:**
+  - folga lateral mínima: dianteiras 0,305 / 0,545, traseiras 0,283 / 1,212;
+  - aceleração máxima igual (0,41 / 0,32 / 0,27);
+  - afundamento igual; flutuação 0;
+  - giro e deslocamento iguais (51° em 1,2 s; 87° em 2,4 s).
+
+**Outras curvas do Andar** (LOW, mesmo método; `review/v52_laco/aud_outras_v51_LOW.json` × `_v52_`):
+- 77 fases acima de 0,03 na v51 → 5 na v52.
+- Restam:
+  - `fechada_D`: TE 0,0311 nos quadros 144–166 e 180–202 (laço AndarCurvaFechadaDireita a 45°/s; o lado E tem 0);
+  - `ajuste_breve_E` e `zigue_zague`: TD 0,0416 nos quadros 54–76 e 0,0405 nos quadros 90–112.
+- O caso TD é um apoio que começa no fim do CurvaBreve e termina no Andar reto, ou seja, emenda. A curva planta a pata no rumo do meio do apoio, e o Andar seguinte assume o rumo atual. Tem outra origem, já existia igual na v51/v46c e não foi tratado aqui.
+
+**Exportação e reimportação:**
+- `studio/exportar_clipes_json_v52.py` → `studio/json_v52/` (20 clipes).
+- `reimportar_json_v46b.py` → `anim_v52_reimport/`:
+  - rotação: diferença 0°; dedos: ≤ 0,00031;
+  - auditoria do reimportado igual (≤ 0,0002 de diferença).
+
+**Vídeo:** `review/v52_laco/video_v52_laco_corrigido.mp4` (v51 × v52):
+- partida E: perfil, três-quartos, close, câmera lenta;
+- partida D: topo, close, câmera lenta;
+- curva fechada D: topo, close.
+
+**Pendências:**
+- As 5 fases acima (CurvaBreve → Andar e fechada D) continuam pendentes.
+- Nada instalado. A instalação substituiria as 16 curvas do Andar e as 2 partidas no rpg_roblox, e precisa de autorização específica e reserva do Studio.
+- Roblox, celular e multijogador não testados.
+
+### 18.3 Instalação da anim_v52 no rpg_roblox (27/11; usuário: "Aprovar e instalar")
+**Instalado (Edit):**
+- `Movimento_LoboArtico` v52 (`gerar_movimento_v52.py`): só as trajetórias da PartidaCurva E/D mudam.
+- 18 KFS remontados por `montar_kfs_lobo_v52.luau`: 16 curvas do Andar + PartidaCurva E/D.
+- Backup `ServerStorage.LoboArtico_Backups.Antes_v52_27_11`: Movimento v49 + os 18 KFS anteriores, 19 itens. Instalador `selvagem/instalar_v52.luau`.
+- Controle r13 sem mudança. Place não salvo.
+
+**Play** (Teste_LoboArtico, parado → alvo andando; esperando a ParadaAndar terminar entre os casos):
+
+| Alvo | Alinha (< 10°) em | Passa do alvo |
+|---|---|---|
+| +30° | 0,6 s | **113°** |
+| −60° | 1,2 s | **83°** |
+| +90° | 2,2 s | **52°** |
+| +135° | 3,8 s | 4° |
+
+- Em todos: ≤ 2° girados com o pivô parado.
+- O atributo `CtrlBloqueio` mostrou um valor antigo ("sem chão à frente @54500"), que não é limpo; não indica bloqueio nesta rodada.
+
+**Causa:** o Controle r12/r13 escolhe a PartidaCurva para qualquer desvio ≥ 25° e, depois dela, força um ciclo inteiro do laço AndarCurva (+36°). Com a partida v51 (87°), o lobo passa do alvo em desvios menores que ~120°. Com a v48 (54°), o mesmo efeito era menor.
+
+**Pendente (decisão do usuário):**
+- (a) Controle r14: usar a PartidaCurva só com desvio grande e decidir o clipe seguinte pelo desvio que resta (CurvaParaAndar/CurvaBreve em vez do laço fixo); ou
+- (b) voltar só a PartidaCurva E/D e o Movimento ao estado anterior (backup) até o r14.
+
+### 18.4 Controle r14 (27/11; usuário: "Ajustar o controle")
+**Tentativa descartada:** encerrar a PartidaCurva no fim do 1º ciclo (q36). Medido no Blender, a pose ali difere da do laço em até 24° e 0,6 stud no pé (a PartidaAndar, 6° e 0,18). Só o fim do clipe (q72) emenda: 1,9° e 0,000.
+
+**Controle r14** (`Controle_Servidor_r11_proposta.server.luau`, cópia `Controle_Servidor_r13`, instalador `selvagem/instalar_r14.luau`, backup `Antes_r14_27_11`; modelo selvagem + Teste_LoboArtico):
+- Parado, pedindo andar fora de combate:
+  - PartidaCurva só com desvio ≥ `partidaCurvaMin` = 75° [A TESTAR];
+  - abaixo disso, PartidaAndar, e o lobo corrige andando (CurvaBreve 18°, CurvaCurta 36°, AndarParaCurva).
+- Ao fim da PartidaCurva, decide **na hora** pelo que falta girar (`CV.decidirJa`). Antes, forçava um ciclo inteiro do laço AndarCurva (+36°).
+- Nada mais muda.
+
+**Play** (Teste_LoboArtico, mesmos alvos, esperando a parada terminar entre os casos):
+
+| Alvo | r13: passou do alvo | r14: passou do alvo | r14: alinha / estável | r14: sequência |
+|---|---|---|---|---|
+| +30° | 113° | 5° | 3,9 s / 3,9 s | PartidaAndar → CurvaCurta → Andar |
+| −60° | 83° | 10° | 4,8 s / 7,5 s | PartidaAndar → AndarParaCurva → CurvaParaAndar → CurvaBreve |
+| +90° | 52° | 14° | 2,2 s / 5,3 s | PartidaCurva → CurvaParaAndar → CurvaBreve (correção) → Andar |
+| −90° | — | 14° | 2,2 s / parou | igual ao +90°; parou na borda do buraco da arena ("sem chão à frente" em −588, −602), não pelo controle |
+| +135° | 4° | 4° | 3,8 s / 3,8 s | PartidaCurva → AndarCurva → CurvaParaAndar → Andar |
+
+- Em todos: ≤ 2° girados com o pivô parado.
+
+**Limites:**
+- Entre 25° e 75°, a partida é reta: o lobo leva ~2,5 s até começar a curva.
+- Com desvio de ~90°, ainda passa ~14° e corrige com uma CurvaBreve.
+- Um clipe de partida que termine reto ("PartidaCurva" curta, girando ~60–90° e saindo no Andar) acabaria com isso, mas é animação nova: precisa de aprovação.
+- Lobos selvagens com r14 e celular não testados.
+

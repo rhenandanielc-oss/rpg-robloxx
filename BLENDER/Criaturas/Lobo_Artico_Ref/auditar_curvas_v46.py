@@ -17,6 +17,10 @@ if SEQ:
     VJB = json.load(open(os.path.join(os.path.dirname(bpy.data.filepath), "curvas_v46b.json")))["acoes"]; CEN = [c for c in CEN if c in LC.SEQ_B]
     _pp = os.path.join(os.path.dirname(bpy.data.filepath), "partida_v48.json")
     if os.path.exists(_pp): VJB.update(json.load(open(_pp))["acoes"])
+    _p50 = os.path.join(os.path.dirname(bpy.data.filepath), "partida_v50.json")          # v50: partida em curva rapida substitui a v48
+    if os.path.exists(_p50): VJB.update(json.load(open(_p50))["acoes"])
+    _p51 = os.path.join(os.path.dirname(bpy.data.filepath), "partida_v51.json")          # v51: correcao do apoio
+    if os.path.exists(_p51): VJB.update(json.load(open(_p51))["acoes"])
     for _m in ("trote", "corrida"):
         _pm = os.path.join(os.path.dirname(bpy.data.filepath), "curvas_%s_v49.json" % _m)
         if os.path.exists(_pm): VJB.update(json.load(open(_pm))["acoes"])
