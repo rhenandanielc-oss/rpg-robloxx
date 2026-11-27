@@ -4511,3 +4511,8 @@ Pendente: aprovação visual → export/reimport (GLB por LOD) → JSON → KFS 
   - Play: a IA usa a cadeia fixa, com limite cheio; os lobos entram no túnel atrás do jogador.
   - Maciço: abrigo dos filhotes a 511 studs do descanso, em túnel separado (decisão pendente).
   - Plano §17.4.
+- **Abrigo do Maciço (26/11, IA r7e):**
+  - O marcador `Abrigo_Filhotes` foi para dentro da caverna, 67 studs depois do descanso (o original está no backup); a cadeia passou a ter 130 pontos.
+  - A IA passa a considerar teto alto (até 60 studs) como toca, e o posto que estava inalcançável é tentado de novo a cada 5 s.
+  - Play: o lobo defende entre o jogador e o ovo.
+  - Plano §17.5.

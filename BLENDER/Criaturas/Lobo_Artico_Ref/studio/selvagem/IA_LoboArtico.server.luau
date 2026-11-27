@@ -1,4 +1,4 @@
--- IA_LoboArtico (Script dentro da pasta de UM lobo selvagem, criada pelo IA_LoboArtico_Servidor) - r7d 26/11/2026 (cadeia fixa da toca) | r7c 26/11/2026 (degrau da toca 1,8) | r7b 26/11/2026 (mira do peito) | r7 20/11/2026
+-- IA_LoboArtico (Script dentro da pasta de UM lobo selvagem, criada pelo IA_LoboArtico_Servidor) - r7e 26/11/2026 (teto alto conta como toca) | r7d 26/11/2026 (cadeia fixa da toca) | r7c 26/11/2026 (degrau da toca 1,8) | r7b 26/11/2026 (mira do peito) | r7 20/11/2026
 -- (r7, usuario: "arrume onde o lobo vira sem fisica / anda com as pernas paradas": as poses da IA (ameaca, investida, vida) tem
 -- prioridade Action e corpo inteiro; tocando enquanto o Controle anda ou vira, congelavam as pernas (parecia shift lock e
 -- "andar com as pernas paradas"). Agora: pose nao comeca com o Controle em Laco/Clipe; se ele comecar a andar/virar, a pose
@@ -8,6 +8,10 @@
 -- sobe esses degraus pelo raio do chao), minimo 1,0. Copia: _r7b.)
 -- (r7d 26/11, usuario: "Sim, cadeia fixa": o Pathfinding da cadeia mudava a cada Play (e a cada mudanca no terreno); se a Toca
 -- tem a pasta Cadeia_Fixa (Vector3Value P001.., atributo IndiceDescanso), a cadeia sai dela; sem a pasta, como antes. Copia: _r7c.)
+-- (r7e 26/11, Play: no Maciço o descanso e o abrigo ficam no Salao das Colunas, com teto a 26-60 studs; "coberto" so olhava
+-- 25 studs para cima e a IA achava que o lobo estava fora da toca (ficava parado: "posto inalcancavel"). Agora CFG.tetoToca = 60;
+-- na Floresta e nos Campos nenhum ponto da cadeia muda. Posto "inalcancavel" (r6c) agora tenta de novo a cada 5 s (antes so se o
+-- posto mudasse); atributo IA_PostoDist. Copia: _r7d.)
 -- (r6d, Play: a propria carga levava o focinho ao jogador e o coordenador escalava por "encostou no lobo" 0,4 s depois do
 -- bote; agora durante a carga e ate 1 s apos o bote (atributo CargaAte da alcateia) "encostou" nao conta. Copia: _r6c.)
 -- (r6c, Play: com o posto inalcancavel (limite do tunel) o lobo ficava "indo ao posto" sem ameacar; agora se em 2 s nao chega
@@ -88,7 +92,7 @@ local CFG = {
 	raioAlvo = 1.0, estacaoFolga = 0.8, separacao = 3.5,
 	troncoLado = 1.8, troncoAtras = 1.0,
 	intervaloMordida = 0.5,                                   -- = Kit basico.intervalo (o Kit recusa antes disso)
-	corpoLargura = 2.0, alturaCabeca = 6.0, degrauToca = 1.8,                   -- caixa do Blockcast da toca (x Escala); cabeca do Adulto ~6,05 acima do chao
+	corpoLargura = 2.0, alturaCabeca = 6.0, degrauToca = 1.8, tetoToca = 60,                   -- caixa do Blockcast da toca (x Escala); cabeca do Adulto ~6,05 acima do chao
 	desacel = 12,                                             -- r3: studs/s2 da frenagem (transicoes reais sao clipes; mesmo valor da simulacao)
 	-- r3: ameaca antes do ataque. Raios em studs a partir do ABRIGO do ovo (territorio, nao escalam com o lobo); distancias
 	-- ate o lobo x Escala da idade. Tudo [PROPOSTA][A TESTAR].
@@ -295,7 +299,7 @@ end
 -- lobo seguia a cadeia para longe do alvo)
 local function coberto(p)
 	filtrosLivres()
-	return workspace:Raycast(p + Vector3.new(0, 1, 0), Vector3.new(0, 25, 0), rpLivre) ~= nil
+	return workspace:Raycast(p + Vector3.new(0, 1, 0), Vector3.new(0, CFG.tetoToca, 0), rpLivre) ~= nil   -- r7e: 25 -> 60
 end
 local function andarReto(ponto, marcha)
 	local d = plano(ponto - pos())
@@ -875,7 +879,9 @@ local function ameacar(intrP)
 	if INV.postoAlvo and (posto - INV.postoAlvo).Magnitude > 3 then INV.postoRef = nil end      -- posto mudou: conta de novo
 	INV.postoAlvo = posto
 	if not INV.postoRef or dPosto < INV.postoRef - 1 then INV.postoRef, INV.postoT = dPosto, os.clock() end
+	if INV.postoT and os.clock() - INV.postoT > 5 then INV.postoRef, INV.postoT = dPosto, os.clock() end   -- r7e: tenta de novo a cada 5 s
 	local preso = os.clock() - (INV.postoT or os.clock()) > 2                -- r6c: 2 s sem chegar mais perto do posto
+	pasta:SetAttribute("IA_PostoDist", math.floor(dPosto * 10) / 10)
 	if dPosto > CFG.chegada and not preso then
 		pasta:SetAttribute("IA_Contato", "indo ao posto")
 		sinal(nil)

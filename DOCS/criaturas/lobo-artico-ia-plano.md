@@ -1396,3 +1396,16 @@ Sem commit.
 - **Não testado:** Filhote e Ancião selvagens em Play (os 3 lobos do place são Adultos); celular.
 - Esqueci de marcar o Studio como EM USO no início desta rodada (corrigido no fim; nenhum outro chat registrou uso).
 
+### 17.5 Abrigo do Maciço dentro da caverna + IA r7e (26/11; usuário: "Mover o abrigo")
+- **Marcador:** `Alcateia_Macico.Toca.Abrigo_Filhotes` movido de (-1520, 110, -5450) para (-1195, 94, -5145), dentro do Salão das Colunas, 67 studs mais fundo que o descanso (teto de 35 studs). O original está em `ServerStorage.LoboArtico_Backups.Abrigo_Macico_antes_26_11`. Terreno e objetos do mapa não foram mexidos.
+- **Cadeia fixa** estendida do descanso até o abrigo: 130 pontos, `IndiceDescanso` 111. Filhote, Adulto e Ancião cabem nela inteira, sem precisar abrir voxel.
+- **IA r7e** (`selvagem/IA_LoboArtico.server.luau`, cópia `_r7d`, instalador `selvagem/instalar_r7e.luau`, backup `Antes_r7e_26_11`):
+  - `coberto` olha 60 studs para cima (`CFG.tetoToca`; antes 25). O Salão das Colunas tem teto a 26–60 e a IA achava que o descanso e o abrigo ficavam "fora da toca". Na Floresta e nos Campos nenhum ponto da cadeia muda.
+  - Posto "inalcançável" (r6c) tenta de novo a cada 5 s; antes ficava preso para sempre se o posto não mudasse. Atributo novo `IA_PostoDist`.
+- **Play:**
+  - O ovo nasce no abrigo novo (0,5 stud do marcador).
+  - Com o jogador entre o descanso e o ovo, o lobo saiu do descanso pela cadeia (P111 → P117), passou a Defender e chegou ao contato a 9 studs (P124), entre o jogador e o ovo.
+  - Antes da r7e, ele ficava parado no descanso ("posto inalcançável").
+- **Lição de teste:** mover o personagem pelo servidor não vale, porque o cliente devolve a posição. É preciso mover pelo Client, sem ancorar a HumanoidRootPart (ancorada, a posição não replica).
+- **Não testado:** Floresta e Campos com a r7e (a mudança só afeta a medida do teto, conferida ponto a ponto); celular.
+
