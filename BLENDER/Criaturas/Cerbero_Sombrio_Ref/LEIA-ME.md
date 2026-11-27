@@ -1036,3 +1036,44 @@ A faixa antiga presa ao corpo foi desligada.
   - O FPS ficou travado em 15 em todos os casos: o Studio limita o FPS com outros Studios abertos. A GPU não foi medida (o Stats devolveu 0). A memória se manteve em ~6,66 GB (o Studio inteiro).
   - Celular real não testado. As cópias não estavam animadas.
   - Método: o LocalScript temporário `MedirDesempenho_A4` lia `Stats.RenderCPUFrameTime` (em segundos) e escrevia no log em `%LOCALAPPDATA%\Roblox\logs`. O Play foi iniciado por `StudioTestService:ExecutePlayModeAsync` e encerrado por um Script temporário com `EndTest`. Os scripts e as cópias foram apagados depois, e o place foi salvo limpo.
+
+## Sol Infernal no Studio (Cerbero-testes.rbxl) — 26/11 — protótipo r3 APROVADO pelo usuário 26/11
+- **Decisões do usuário (26/11):** tecla de teste; núcleo + camadas de fogo; queimadura 0,1× por segundo por 3 s [PROPOSTA até o balanceamento]; protótipo próprio só no place de teste.
+- **Fontes em `studio/sol/`:**
+  - `SolInfernal_Config.luau`: números aprovados em 19/11.
+  - `SolInfernal_Servidor.server.luau`: autoridade no servidor (recarga, mira, voo, colisão, dano, explosão, queimadura).
+  - `SolInfernal_Cliente.client.luau`: tecla R + visual; r1 em `SolInfernal_Cliente_r1.client.luau`.
+  - `criar_treino_sol.luau`: 4 bonecos de 200 de vida + parede + RemoteEvents.
+- **No place:**
+  - `ReplicatedStorage.SolInfernal` (config + RemoteEvents Pedido, Explodiu, Queima).
+  - `ServerScriptService.SolInfernal_Servidor`, `StarterPlayerScripts.SolInfernal_Cliente`.
+  - `Workspace.Treino_SolInfernal`, com o atributo `LevarJogador`, que leva o jogador para perto do Cérbero.
+  - Backup do cliente r1 em `ServerStorage.SolInfernal_Cliente_r1_2026-11-26`.
+  - O combate dos dragões e o rpg_roblox não foram tocados.
+- **Como funciona:**
+  - Carga de 3,37 s com o clipe `BolaInfernalR2`; a bola cresce entre os marcadores carga_inicio e carga_max, 22 studs à frente e 18 acima do RootPart.
+  - Voo a 30 studs/s com curva de 130°/s; acerto a 8 studs; explosão de raio 12; spherecast de raio 2 contra paredes e terreno.
+  - A explosão também respeita paredes (linha de visada).
+  - Recarga de 14 s contada do fim do voo.
+  - O atributo `Atordoado` interrompe a carga: a bola some e a recarga cai pela metade (no código; não testado).
+  - A energia 35 só aparece no log.
+- **Ensaios em Play (26/11)**, com o Play iniciado por `StudioTestService` e lido no log do Studio:
+
+  | Alvo | Resultado |
+  |---|---|
+  | Boneco parado | 30,6 (1,8×) + queimadura 3 × 1,7; o boneco andando, dentro do raio, levou 17,0 (1,0×) |
+  | Boneco andando | 30,6 + queimadura 3 × 1,7 (acompanhou o alvo em movimento) |
+  | Boneco atrás da parede | a bola explodiu na parede; o boneco levou 0 |
+  | Fúria | bola roxa; o boneco andando entrou na frente e virou o alvo atingido ("uma bola só") |
+
+- **Visual:**
+  - r1 saiu branca e estourada pelo Bloom.
+  - r2: núcleo laranja translúcido, chamas maiores e menos brilhantes, clarão menor e laranja.
+  - Vídeo `studio/video_2011/Cerbero_Studio_SolInfernal_r2.mp4`.
+- **Limites:** sem energia real, sem PvP, sem celular. O FPS do Studio fica travado em 15. A tecla R manual não foi testada (o plugin do MCP não carrega no Play).
+- **r3 (26/11) — pedido do usuário: "a bola deve ser feita em cima, e desejo mais efeitos na colisão":**
+  - A bola agora se forma ACIMA e um pouco à frente das 3 cabeças: `OrigemLocal` (0; 31,5; −15,5), como no Blender r3b (boca + R×0,55 à frente + R×1,55 acima).
+  - A explosão segue a do Blender r3 e tem cinco partes: massa de fogo maior, clarão, faíscas, línguas de fogo subindo do chão, fumaça subindo e marca queimada com brasas, que some em ~5 s. Sem luz extra.
+  - Ensaio em Play: 30,6 + 17,0 + queimadura 3 × 1,7 (igual à r2); Fúria roxa OK.
+  - Backups no place: `ServerStorage.SolInfernal_Config_r2_2026-11-26` e `SolInfernal_Cliente_r2_2026-11-26`. Arquivo r2 em `studio/sol/SolInfernal_Cliente_r2.client.luau`.
+  - Evidências: vídeo `studio/video_2011/Cerbero_Studio_SolInfernal_r3.mp4` e prancha `prancha_SolInfernal_r3_explosao.jpg`.
