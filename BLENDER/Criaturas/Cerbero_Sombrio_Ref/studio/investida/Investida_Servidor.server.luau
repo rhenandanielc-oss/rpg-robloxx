@@ -135,6 +135,8 @@ local function investir(dono, ponto)
 	if estado.ocupado then log("recusado: ja em uso") return end
 	local agora = os.clock()
 	if agora < estado.prontoEm then log(string.format("recusado: recarga (faltam %.1f s)", estado.prontoEm - agora)) return end
+	if cerbero:GetAttribute("PoderAtivo") then log("recusado: poder ativo (" .. tostring(cerbero:GetAttribute("PoderAtivo")) .. ")") return end
+	cerbero:SetAttribute("PoderAtivo", "Investida")   -- poder ativo (27/11); mordida liberada no boost
 	estado.ocupado = true; estado.dono = dono; estado.dirAlvo = nil; donoRastro = dono
 	local roxo = cerbero:GetAttribute("Furia") == true
 	log(string.format("investida: energia %d%s", C.Energia, roxo and " FURIA(roxo)" or ""))
@@ -165,6 +167,7 @@ local function investir(dono, ponto)
 			end
 			if ts >= C.DuracaoSobre then
 				sobre = nil
+				cerbero:SetAttribute("MordidaBloqueada", nil)
 				if t < fimBoost then tocar("Cerbero_Corrida", 0.2) end
 			end
 		elseif t < C.ImpulsoInicio then
@@ -194,12 +197,14 @@ local function investir(dono, ponto)
 						acertou = true
 						log(string.format("%s: altura %.2f (<= %.2f) -> PASSA POR CIMA", m.Name, alt, C.Cernelha * C.LimitePequeno))
 						sobre = {modelo = m, h = h, inicio = os.clock(), danoFeito = false}
+						cerbero:SetAttribute("MordidaBloqueada", true)
 						tocar("Cerbero_InvestidaSobre", 0.1)
 					elseif not pequeno and d <= C.GatilhoImpacto then
 						acertou = true
 						log(string.format("%s: altura %.2f (> %.2f) -> PARA E MORDE", m.Name, alt, C.Cernelha * C.LimitePequeno))
 						motivo = "impacto em " .. m.Name
 						tocar("Cerbero_InvestidaImpacto", 0.08)
+						cerbero:SetAttribute("MordidaBloqueada", true)
 						Efeito:FireAllClients("impacto", m, roxo)
 						local ti = os.clock()
 						local feitos = {false, false, false, false}
@@ -233,6 +238,7 @@ local function investir(dono, ponto)
 	Efeito:FireAllClients("fim", cerbero)
 	estado.prontoEm = os.clock() + C.Recarga
 	estado.ocupado = false; estado.dono = nil
+	cerbero:SetAttribute("PoderAtivo", nil); cerbero:SetAttribute("MordidaBloqueada", nil)
 	task.delay(C.RastroDuracao, function() if not estado.ocupado then donoRastro = nil end end)
 end
 

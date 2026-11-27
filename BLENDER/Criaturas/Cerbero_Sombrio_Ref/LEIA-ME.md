@@ -1139,3 +1139,29 @@ A faixa antiga presa ao corpo foi desligada.
   - as pupilas saem quase brancas por causa do Bloom;
   - teclas F, R e E não testadas à mão; sem PvP e sem celular.
 - **Achado:** as chamas da aura A4 foram posicionadas com a Raiz somada duas vezes (deslocamento de ~0,57 stud para o lado). Os olhos foram corrigidos. Na aura, a diferença não aparece; fica registrada.
+
+## Mordida básica + poder ativo no Studio (Cerbero-testes.rbxl) — 27/11 — protótipo r1 APROVADO pelo usuário 27/11
+- **Fontes em `studio/mordida/`:**
+  - `Mordida_Config.luau`, `Mordida_Servidor.server.luau` e `Mordida_Cliente.client.luau` (clique esquerdo + faíscas no acerto);
+  - `patches_poder_ativo.py`/`.lua`: as mesmas trocas aplicadas nos arquivos e no Studio, tudo ou nada.
+- **No place:**
+  - `ReplicatedStorage.MordidaCerbero` e `Workspace.Treino_Mordida` (3 bonecos de 16 de altura e 300 de vida);
+  - backups `ServerStorage.{SolInfernal,Investida,VigiliaFuria}_Servidor_antesPoderAtivo_2026-11-27`.
+- **Como funciona a mordida:**
+  - morde a cabeça cuja boca está mais perto do alvo, com o clipe em camada MordidaC/E/D (Action2), sem parar a locomoção;
+  - aos 0,30 s, uma esfera de raio 3,5, posta 3,5 studs à frente da mandíbula, testa o contato: 17 × MultDano, um acerto;
+  - intervalo de 0,8 s.
+  - No servidor os ossos ficam em repouso: o contato usa a boca em repouso mais o alcance.
+- **Fúria sustentada** (atributo `FuriaSustentada`): as 3 cabeças mordem sozinhas o alvo a até 7 studs da boca de cada uma, a cada 0,8/1,15 ≈ 0,7 s, com o clipe 1,15× mais rápido.
+- **Poder ativo:** o atributo `PoderAtivo` (Sol, Investida ou Fúria) recusa outro poder. `MordidaBloqueada` vale na carga do Sol, no salto ou impacto da Investida e no rugido. Na Fúria, `PoderAtivo` só dura o rugido, então dá para usar o Sol durante a Fúria.
+- **Ensaio em Play (27/11):**
+  - **Andando:** 2 mordidas no ar (nada perto), depois E acertou 2 vezes, D acertou 2 vezes e D acertou o boneco C, 17,0 cada.
+  - **Rugido:** mordida recusada ("bloqueada (Fúria)") e Sol recusado ("poder ativo (Fúria)").
+  - **Fúria:** 10 rodadas das 3 cabeças sozinhas, 20,4 cada.
+  - **Depois da Fúria:** a mordida manual voltou com 17,0.
+  - Vídeo em `studio/video_2011/Cerbero_Studio_Mordida_r1.mp4`.
+- **Limites:**
+  - o contato do servidor não acompanha a animação;
+  - o clique à mão não foi testado;
+  - a câmera do ensaio deixa os bonecos encobrirem as cabeças;
+  - sem PvP e sem celular.

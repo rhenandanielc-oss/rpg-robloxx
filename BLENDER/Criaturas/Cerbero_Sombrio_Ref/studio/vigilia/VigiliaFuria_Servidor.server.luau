@@ -44,6 +44,8 @@ local function furia(quem)
 	if estado.ocupado then log("Furia recusada: ja ativa") return end
 	local agora = os.clock()
 	if agora < estado.prontoEm then log(string.format("Furia recusada: recarga (faltam %.1f s)", estado.prontoEm - agora)) return end
+	if cerbero:GetAttribute("PoderAtivo") then log("recusado: poder ativo (" .. tostring(cerbero:GetAttribute("PoderAtivo")) .. ")") return end
+	cerbero:SetAttribute("PoderAtivo", "Furia"); cerbero:SetAttribute("MordidaBloqueada", true)   -- poder ativo so no rugido (27/11)
 	estado.ocupado = true
 	log(string.format("FURIA: rugido + furia (energia %d)", C.Energia))
 	tocar("Cerbero_FuriaRugidoR4", 0.15)
@@ -79,12 +81,15 @@ local function furia(quem)
 	end
 	task.delay(C.EntraFuria, function()
 		cerbero:SetAttribute("MultDano", C.FuriaMultDano)
-		log(string.format("entrou na Furia: dano x%.1f por %d s (velocidade de ataque x%.2f PENDENTE: sem mordida basica)", C.FuriaMultDano, C.FuriaDuracao, C.FuriaVelAtaque))
+		cerbero:SetAttribute("PoderAtivo", nil); cerbero:SetAttribute("MordidaBloqueada", nil)
+		cerbero:SetAttribute("FuriaSustentada", true)   -- Mordida_Servidor: cabecas independentes, +15% de velocidade de ataque
+		log(string.format("entrou na Furia: dano x%.1f por %d s (cabecas mordem sozinhas, velocidade de ataque x%.2f - Mordida_Servidor)", C.FuriaMultDano, C.FuriaDuracao, C.FuriaVelAtaque))
 		tocar("Cerbero_FuriaLoop", 0.3)
 	end)
 	task.delay(C.EntraFuria + C.FuriaDuracao - C.FuriaFade, function() cerbero:SetAttribute("FuriaFade", true) end)
 	task.delay(C.EntraFuria + C.FuriaDuracao, function()
 		cerbero:SetAttribute("MultDano", 1); cerbero:SetAttribute("Furia", false); cerbero:SetAttribute("FuriaFade", nil)
+		cerbero:SetAttribute("FuriaSustentada", nil)
 		tocar("Cerbero_FuriaSaida", 0.2)
 		task.delay(0.8, function() tocar("Cerbero_Repouso", 0.3) end)
 		log(string.format("Furia terminou (%.1f s desde o rugido)", os.clock() - t0))

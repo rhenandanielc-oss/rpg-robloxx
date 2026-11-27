@@ -97,6 +97,8 @@ local function lancar(dono, alvo, pontoMira)
 	if estado.ocupado then log("recusado: ja carregando") return end
 	local agora = os.clock()
 	if agora < estado.prontoEm then log(string.format("recusado: recarga (faltam %.1f s)", estado.prontoEm - agora)) return end
+	if cerbero:GetAttribute("PoderAtivo") then log("recusado: poder ativo (" .. tostring(cerbero:GetAttribute("PoderAtivo")) .. ")") return end
+	cerbero:SetAttribute("PoderAtivo", "Sol"); cerbero:SetAttribute("MordidaBloqueada", true)   -- poder ativo (27/11)
 	estado.ocupado = true
 	local roxo = cerbero:GetAttribute("Furia") == true
 	log(string.format("lancando: alvo=%s ponto=%s energia=%d%s", alvo and alvo.Name or "nenhum", tostring(pontoMira), C.Energia, roxo and " FURIA(roxo)" or ""))
@@ -127,6 +129,7 @@ local function lancar(dono, alvo, pontoMira)
 		if cerbero:GetAttribute("Atordoado") or not cerbero.Parent then
 			log("carga INTERROMPIDA: bola desfeita, recarga pela metade")
 			bola:Destroy()
+			cerbero:SetAttribute("PoderAtivo", nil); cerbero:SetAttribute("MordidaBloqueada", nil)
 			estado.prontoEm = os.clock() + C.Recarga * C.RecargaInterrompida
 			estado.ocupado = false
 			return
@@ -137,6 +140,7 @@ local function lancar(dono, alvo, pontoMira)
 		bola.CFrame = rp.CFrame * CFrame.new(C.OrigemLocal)
 	end
 	bola:SetAttribute("Escala", 1); bola:SetAttribute("Voando", true)
+	cerbero:SetAttribute("MordidaBloqueada", nil)   -- disparou: pode morder
 	task.delay(C.DuracaoClipe - C.Carga, function() if T then pcall(T.tocar, "Cerbero_Repouso", 0.3) end end)
 
 	-- VOO teleguiado
@@ -189,6 +193,7 @@ local function lancar(dono, alvo, pontoMira)
 		if percorrido >= C.Alcance - 1e-3 then explodir(pos, nil, roxo, "fim do alcance", dono, dir) break end
 	end
 	bola:Destroy()
+	cerbero:SetAttribute("PoderAtivo", nil)
 	estado.prontoEm = os.clock() + C.Recarga
 	estado.ocupado = false
 end
